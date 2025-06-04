@@ -20,7 +20,6 @@ import CommentList from "../CommentList";
 import ProfileAvatar from "../../assets/images/profile-avatar.png"; // 
 
 const Post = ({ post }) => {
-  console.log(post)
   const { refetch } = useQuery(GET_POSTS);
   const [isEditing, setIsEditing] = useState(false);
   const [postText, setPostText] = useState(post.postText);
@@ -128,7 +127,7 @@ const Post = ({ post }) => {
           to={`/profiles/${post.userId}`}
         >
           <img
-  src={post?.profile?.profilePic || ProfileAvatar}
+  src={post?.userId?.profilePic || ProfileAvatar}
   alt="profile"
   className="w-8 h-8 rounded-full object-cover mr-2"
 />

@@ -54,31 +54,35 @@ const PostForm = () => {
       </h4>
       {Auth.loggedIn() ? (
         <>
-          <form onSubmit={handleFormSubmit} className="flex-row justify-center align-center">
-            <div className="col-12 col-lg-9">
-              <input
-                placeholder="What's on your mind?"
-                value={postText}
-                className="mb-2 block w-full rounded-md border-0 px-3.5 py-2"
-                onChange={(e) => setPostText(e.target.value)}
-                disabled={loading}
-              />
-            </div>
-            <div className="col-12 col-lg-3">
-              <button
-                type="submit"
-                className="w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm"
-                disabled={loading}
-              >
-                {loading ? "Posting..." : "Post Now"}
-              </button>
-            </div>
-            {errorMessage && (
-              <div className="col-12 my-3 bg-red-500 text-white p-3">
-                {errorMessage}
-              </div>
-            )}
-          </form>
+          <form
+  onSubmit={handleFormSubmit}
+  className="flex flex-col lg:flex-row items-center justify-center gap-4"
+>
+  <div className="w-full lg:w-3/4">
+    <input
+      placeholder="What's on your mind?"
+      value={postText}
+      className="mb-2 w-full rounded-md border-0 px-3.5 py-2"
+      onChange={(e) => setPostText(e.target.value)}
+      disabled={loading}
+    />
+  </div>
+  <div className="w-full lg:w-1/4">
+    <button
+      type="submit"
+      className="w-full mb-2 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm"
+      disabled={loading}
+    >
+      {loading ? "Posting..." : "Post Now"}
+    </button>
+  </div>
+  {errorMessage && (
+    <div className="w-full my-3 bg-red-500 text-white p-3">
+      {errorMessage}
+    </div>
+  )}
+</form>
+
           <PostsList loggedInUserId={userId} />
         </>
       ) : (
