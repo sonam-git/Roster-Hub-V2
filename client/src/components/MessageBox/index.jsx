@@ -5,7 +5,7 @@ import Modal from "../Modal";
 import MessageSentModal from "../MessageSentModal";
 import { QUERY_ME } from "../../utils/queries";
 
-const ChatBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode }) => {
+const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode }) => {
   const [message, setMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [messageSent, setMessageSent] = useState(false);
@@ -128,4 +128,4 @@ const ChatBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode }) => {
   );
 };
 
-export default ChatBox;
+export default MessageBox;

@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_ME, QUERY_PROFILES } from "../../utils/queries";
 import { REMOVE_MESSAGE, SEND_MESSAGE } from "../../utils/mutations";
 import { MailIcon, PlusIcon } from "@heroicons/react/solid";
-import ChatBox from "../MessageBox";
+import MessageBox from "../MessageBox";
 import UserListModal from "../UserListModal";
 import MessageCard from "../MessageCard";
 import { getDateFromObjectId } from "../messageUtils";
@@ -136,7 +136,7 @@ const MessageList = ({ isLoggedInUser = false, isDarkMode }) => {
       />
 
       {showChatModal && selectedRecipient && (
-        <ChatBox
+        <MessageBox
           recipient={selectedRecipient}
           selectedMessage={selectedMessage}
           onCloseModal={() => {

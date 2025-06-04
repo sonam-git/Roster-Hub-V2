@@ -3,7 +3,7 @@ import ProfileAvatar from "../../assets/images/profile-avatar.png";
 import { FaUser, FaPhone, FaRegCommentDots } from "react-icons/fa";
 import { RiTShirt2Line } from "react-icons/ri";
 import renderStars from "../../utils/renderStars";
-import ChatBox from "../MessageBox"; // Make sure this path is correct
+import MessageBox from "../MessageBox"; 
 
 const ProfileCard = ({ profile, isDarkMode }) => {
   const [showMessageModal, setShowMessageModal] = useState(false);
@@ -142,7 +142,7 @@ const ProfileCard = ({ profile, isDarkMode }) => {
 
       {/* Modal for Chat */}
       {showMessageModal && (
-        <ChatBox
+        <MessageBox
           recipient={profile}
           onCloseModal={handleCloseModal}
           isDarkMode={isDarkMode}

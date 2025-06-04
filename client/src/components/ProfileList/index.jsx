@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import ChatBox from '../MessageBox';
+import MessageBox from '../MessageBox';
 import { AiOutlineMessage, AiFillStar } from 'react-icons/ai'; // Import the chat and star icons
 import { RiProfileLine, RiTShirt2Line } from 'react-icons/ri';
 import Auth from '../../utils/auth';
@@ -141,7 +141,7 @@ const ProfileList = ({ profiles, title }) => {
       </div>
       {/* Render the chat box if a user is selected */}
       {selectedUser &&  showModal && (
-        <ChatBox recipient={selectedUser} onCloseModal={handleModalClose} isDarkMode={isDarkMode} />
+        <MessageBox recipient={selectedUser} onCloseModal={handleModalClose} isDarkMode={isDarkMode} />
       )}
       {/* Render the rating modal if a profile is selected for rating */}
       {ratingProfile && (
