@@ -1,0 +1,52 @@
+.message-container {
+    width: 100%;
+  }
+  
+  .message-item {
+    margin-bottom: 10px;
+  }
+  
+  .message-card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .message-header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .message-text {
+    flex: 1;
+  }
+  
+  .author-name {
+    margin-left: 10px;
+    font-style: italic;
+  }
+  
+  .remove-button {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  
+  .remove-button:hover {
+    background-color: #c82333;
+  }
+  
+  .error-message {
+    margin-top: 10px;
+    background-color: #dc3545;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  

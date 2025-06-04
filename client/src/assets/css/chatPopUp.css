@@ -1,0 +1,86 @@
+.chat-popup {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 300px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px 8px 0 0;
+  }
+  
+  .chat-popup-header {
+    background: #007bff;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .chat-popup-body {
+    display: flex;
+  }
+  
+  .chat-popup-users {
+    flex: 1;
+    border-right: 1px solid #ccc;
+    padding: 10px;
+    overflow-y: auto;
+  }
+  
+  .chat-popup-users div {
+    padding: 5px;
+    cursor: pointer;
+  }
+  
+  .chat-popup-users div:hover {
+    background: #f1f1f1;
+  }
+  
+  .chat-popup-messages {
+    flex: 2;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+  }
+  
+  .messages .sent {
+    align-self: flex-end;
+    background: #007bff;
+    color: white;
+    padding: 5px;
+    border-radius: 8px;
+    margin: 5px;
+  }
+  
+  .messages .received {
+    align-self: flex-start;
+    background: #f1f1f1;
+    padding: 5px;
+    border-radius: 8px;
+    margin: 5px;
+  }
+  
+  .chat-input {
+    display: flex;
+    border-top: 1px solid #ccc;
+    padding: 5px;
+  }
+  
+  .chat-input input {
+    flex: 1;
+    padding: 5px;
+    border: none;
+  }
+  
+  .chat-input button {
+    padding: 5px 10px;
+    background: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  

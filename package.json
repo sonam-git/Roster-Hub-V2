@@ -1,0 +1,23 @@
+{
+  "name": "roster-hub",
+  "version": "1.0.0",
+  "description": "This is the platform where each player within the team can create their profile, upload their profile picture, update information such as playing position, name, jersey number, photo, password, etc. Each player can endorse their teammates for their skills. It also has messaging features where players can post their thoughts, comments, and send texts to each other.",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "heroku-postbuild": "cd client && npm install && npm run build",
+    "develop": "concurrently \"cd server && npm run start\" \"cd client && npm run dev\"",
+    "install": "cd server && npm i && cd ../client && npm i",
+    "seed": "cd server && npm run seed",
+    "build": "cd client && npm run build"
+  },
+  "keywords": [],
+  "author": "Sonam J Sherpa",
+  "license": "ISC",
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "concurrently": "^8.2.2",
+    "postcss": "^8.5.4",
+    "tailwindcss": "^4.1.8"
+  }
+}

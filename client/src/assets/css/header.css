@@ -1,0 +1,88 @@
+.header-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    color: #000;
+  }
+  
+  .dark-mode {
+    background-color: #1f2937;
+    color: #fff;
+  }
+  
+  .sidebar {
+    width: 220px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+    background-color: #eee;
+  }
+  
+  .sidebar.closed {
+    display: none;
+  }
+  
+  .sidebar.open {
+    display: block;
+  }
+  
+  .logo-image {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .logo-title {
+    font-size: 1.25rem;
+    margin-left: 1rem;
+  }
+  
+  .menu-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 2rem;
+  }
+  
+  .menu-item {
+    margin: 0.5rem 0;
+  }
+  
+  .menu-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .menu-icon-img {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .message-count {
+    background: red;
+    color: white;
+    font-size: 10px;
+    padding: 0 6px;
+    border-radius: 999px;
+    margin-left: 6px;
+  }
+  
+  .toggle-button {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    cursor: pointer;
+    width: 30px;
+  }
+  
+  .toggle-button.rotated {
+    transform: rotate(180deg);
+  }
+  
+  .mobile-toggle-button {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1000;
+  }
+  
