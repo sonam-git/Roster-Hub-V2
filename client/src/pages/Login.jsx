@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useTransition } from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { LOGIN_USER } from "../utils/mutations";
@@ -11,29 +11,29 @@ const Login = () => {
   const { isDarkMode } = useContext(ThemeContext);
   const [formState, setFormState] = useState({ email: "", password: "" });
   const [login, { error, data }] = useMutation(LOGIN_USER);
+  const [isPending, startTransition] = useTransition();
 
-  // update state based on form input changes
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormState({
-      ...formState,
+    setFormState((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
 
-  // submit form
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    try {
-      const { data } = await login({
-        variables: { ...formState },
-      });
-      Auth.login(data.login.token);
-    } catch (e) {
-      console.error(e);
-    }
-    // clear form values
-    setFormState({ email: "", password: "" });
+    startTransition(async () => {
+      try {
+        const { data } = await login({
+          variables: { ...formState },
+        });
+        Auth.login(data.login.token);
+      } catch (e) {
+        console.error(e);
+      }
+      setFormState({ email: "", password: "" });
+    });
   };
 
   return (
@@ -54,27 +54,27 @@ const Login = () => {
               Login
             </h4>
             {data ? (
-              <p className="text-center text-gray-900">
-                Success! You may now head{" "}
-                <Link to="/me">back to the homepage.</Link>
+              <p className="text-center text-gray-900 dark:text-white">
+                Success! You may now head <Link to="/me">back to the homepage</Link>.
               </p>
             ) : (
               <form onSubmit={handleFormSubmit} className="space-y-6">
                 <div>
                   <label
-                  aria-autocomplete="list"
                     htmlFor="email"
                     className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
                   >
                     Email address
                   </label>
                   <input
+                    id="email"
                     className="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                     placeholder="Your email"
                     name="email"
                     type="email"
                     value={formState.email}
                     onChange={handleChange}
+                    required
                   />
                 </div>
                 <div>
@@ -85,35 +85,37 @@ const Login = () => {
                     Password
                   </label>
                   <input
+                    id="password"
                     className="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                     placeholder="******"
                     name="password"
                     type="password"
                     value={formState.password}
                     onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="flex justify-between items-center">
                   <button
-                    className="bg-blue-500 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring focus:ring-blue-200 hover:bg-blue-800"
-                    style={{ cursor: "pointer" }}
+                    className="bg-blue-500 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring focus:ring-blue-200 hover:bg-blue-800 cursor-pointer disabled:opacity-50"
                     type="submit"
+                    disabled={isPending}
                   >
-                    Submit
+                    {isPending ? "Logging in..." : "Submit"}
                   </button>
                 </div>
-                <div className="flex justify-between mt-3">
+                <div className="flex justify-between mt-3 text-sm">
                   <Link
                     to="/signup"
-                    className="text-gray-600 hover:text-blue-500  dark:text-white dark:hover:text-blue-400 hover:no-underline"
+                    className="text-gray-600 hover:text-blue-500 dark:text-white dark:hover:text-blue-400"
                   >
-                    New User ?
+                    New User?
                   </Link>
                   <Link
                     to="/forgot-password"
-                    className="text-gray-600 hover:text-blue-500  dark:text-white dark:hover:text-blue-400 hover:no-underline"
+                    className="text-gray-600 hover:text-blue-500 dark:text-white dark:hover:text-blue-400"
                   >
-                    Forgot Password ?
+                    Forgot Password?
                   </Link>
                 </div>
               </form>
