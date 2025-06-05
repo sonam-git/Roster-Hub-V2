@@ -60,7 +60,7 @@ const SkillForm = ({ profileId, teamMate }) => {
           />
           <button
             type="submit"
-            className="rounded-md bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus:outline focus:ring-2 focus:ring-indigo-600 w-full md:w-auto"
+            className="rounded-md bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus:outline focus:ring-2 focus:ring-indigo-600 w-full md:w-auto"
           >
             Endorse
           </button>
