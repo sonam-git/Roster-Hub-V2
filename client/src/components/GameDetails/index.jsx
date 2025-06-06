@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+// src/components/GameDetails.jsx
+
+import React, { useState, useEffect, useContext } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 import { QUERY_GAME, QUERY_GAMES } from "../../utils/queries";
@@ -8,16 +10,20 @@ import {
   CANCEL_GAME,
 } from "../../utils/mutations";
 import Auth from "../../utils/auth";
+import { ThemeContext } from "../ThemeContext";
 
-const GameDetails = ({ gameId, isDarkMode }) => {
+const GameDetails = ({ gameId }) => {
   const navigate = useNavigate();
+  const { isDarkMode } = useContext(ThemeContext);
   const userId = Auth.getProfile()?.data?._id || null;
 
+  // Fetch the single game
   const { loading, error, data, refetch } = useQuery(QUERY_GAME, {
     variables: { gameId },
     pollInterval: 5000,
   });
 
+  // Mutations for voting, confirming, canceling
   const [respondToGame] = useMutation(RESPOND_TO_GAME, {
     onCompleted: () => refetch(),
   });
@@ -30,6 +36,7 @@ const GameDetails = ({ gameId, isDarkMode }) => {
     refetchQueries: [{ query: QUERY_GAMES, variables: { status: "PENDING" } }],
   });
 
+  // Track if the current user already voted
   const [hasResponded, setHasResponded] = useState(false);
   const [myResponse, setMyResponse] = useState(null);
 
@@ -66,11 +73,12 @@ const GameDetails = ({ gameId, isDarkMode }) => {
   const game = data.game;
   const isCreator = game.creator._id === userId;
 
-  // Convert date
+  // Convert the stored date (which is a stringified timestamp) back to a Date
   const ts = Number(game.date);
   const dateObj = isNaN(ts) ? new Date(game.date) : new Date(ts);
   const humanDate = dateObj.toLocaleDateString();
 
+  // Vote handler
   const handleVote = async (isAvailable) => {
     if (!userId) return alert("You must be logged in to vote");
     try {
@@ -82,6 +90,7 @@ const GameDetails = ({ gameId, isDarkMode }) => {
     }
   };
 
+  // Confirm handler
   const handleConfirm = async () => {
     try {
       await confirmGame({ variables: { gameId } });
@@ -90,6 +99,7 @@ const GameDetails = ({ gameId, isDarkMode }) => {
     }
   };
 
+  // Cancel handler
   const handleCancel = async () => {
     try {
       await cancelGame({ variables: { gameId } });
@@ -101,21 +111,44 @@ const GameDetails = ({ gameId, isDarkMode }) => {
   return (
     <div
       className={`max-w-2xl mx-auto p-6 rounded-lg shadow-md ${
-        isDarkMode ? "bg-gray-700 text-gray-200" : "bg-white text-gray-800"
+        isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-800"
       }`}
     >
-      <h2 className="text-2xl font-bold mb-2">
-        Game: {humanDate} @ {game.time}
-      </h2>
-      <p className="mb-1">
-        <strong>Venue:</strong> {game.venue}
-      </p>
-      {game.notes && (
-        <p className="mb-4">
-          <strong>Notes:</strong> {game.notes}
-        </p>
-      )}
+      {/* Back to list button */}
+      <button
+        onClick={() => navigate("/game-schedule")}
+        className={`mb-4 px-4 py-2 rounded ${
+          isDarkMode
+            ? "bg-gray-700 text-white hover:bg-gray-600"
+            : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+        }`}
+      >
+        ← Back to Game List
+      </button>
 
+      {/* Header: Date & Time */}
+      <div className="flex justify-between items-center mb-2">
+        <h3 className="text-2xl font-semibold">
+          <span>
+            <span className="font-bold">Date:</span> {humanDate} &nbsp;|&nbsp;
+            <span className="font-bold">Time:</span> {game.time}
+          </span>
+        </h3>
+      </div>
+
+      {/* Venue, Notes, Created By */}
+      <p className="mb-1">
+        <span className="font-bold">Venue:</span> {game.venue}
+      </p>
+      <p className="text-sm mb-2">
+        <span className="font-bold">Note:</span>{" "}
+        {game.notes || "No notes provided"}
+      </p>
+      <p className="mb-4">
+        <span className="font-bold">Created By:</span> {game.creator.name}
+      </p>
+
+      {/* Voting or Status */}
       {game.status === "PENDING" && !hasResponded && (
         <div className="mb-4">
           <p className="mb-2 font-medium">Are you available to play?</p>
@@ -160,6 +193,7 @@ const GameDetails = ({ gameId, isDarkMode }) => {
         </p>
       )}
 
+      {/* Vote counts */}
       <div className="flex space-x-6 mb-6">
         <div className="flex items-center">
           <span className="text-green-600 mr-1">👍</span>
@@ -171,6 +205,10 @@ const GameDetails = ({ gameId, isDarkMode }) => {
         </div>
       </div>
 
+      {/* Creator-only buttons: */}
+      {/* If PENDING → show Confirm + Cancel */}
+      {/* If CONFIRMED → show only Cancel (to revert) */}
+      {/* If CANCELLED → show only Confirm (to reinstate) */}
       {isCreator && game.status === "PENDING" && (
         <div className="flex space-x-4 mb-4">
           <button
@@ -188,13 +226,26 @@ const GameDetails = ({ gameId, isDarkMode }) => {
         </div>
       )}
 
-      {isCreator && game.status !== "PENDING" && (
-        <button
-          onClick={() => navigate("/game-schedule")}
-          className="mt-4 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
-        >
-          Back to Game List
-        </button>
+      {isCreator && game.status === "CONFIRMED" && (
+        <div className="mb-4">
+          <button
+            onClick={handleCancel}
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Cancel Game
+          </button>
+        </div>
+      )}
+
+      {isCreator && game.status === "CANCELLED" && (
+        <div className="mb-4">
+          <button
+            onClick={handleConfirm}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Re-Confirm Game
+          </button>
+        </div>
       )}
     </div>
   );

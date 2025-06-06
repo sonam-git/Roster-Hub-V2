@@ -1,24 +1,35 @@
-import React from "react";
+// src/pages/Game.jsx
+
+import React, { useContext } from "react";
 import { useParams } from "react-router-dom";
 import GameList from "../components/GameList";
 import GameForm from "../components/GameForm";
 import GameDetails from "../components/GameDetails";
+import { ThemeContext } from "../components/ThemeContext";
 
-const Game = ({ isDarkMode }) => {
+const Game = () => {
   const { gameId } = useParams();
-
-  // Uncomment to debug:
-  // console.log("Game.jsx useParams:", useParams());
+  const { isDarkMode } = useContext(ThemeContext);
 
   return (
-    <div className="container mt-5">
+    <div
+      className={`container mx-auto mt-5 ${
+        isDarkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
+      } p-4 rounded-lg`}
+    >
       {gameId ? (
         <GameDetails gameId={gameId} isDarkMode={isDarkMode} />
       ) : (
-        <>
-          <GameForm />
-          <GameList isDarkMode={isDarkMode} />
-        </>
+        <div className="flex flex-col lg:flex-row lg:space-x-6">
+          {/* Left column: GameForm */}
+          <div className="lg:w-1/2 w-full mb-6 lg:mb-0">
+            <GameForm />
+          </div>
+          {/* Right column: GameList */}
+          <div className="lg:w-1/2 w-full">
+            <GameList />
+          </div>
+        </div>
       )}
     </div>
   );
