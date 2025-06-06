@@ -17,7 +17,7 @@ import {
 import { GET_POSTS } from "../../utils/queries";
 import Auth from "../../utils/auth";
 import CommentList from "../CommentList";
-import ProfileAvatar from "../../assets/images/profile-avatar.png"; // 
+import ProfileAvatar from "../../assets/images/profile-avatar.png"; //
 
 const Post = ({ post }) => {
   const { refetch } = useQuery(GET_POSTS);
@@ -30,7 +30,7 @@ const Post = ({ post }) => {
   const [likes, setLikes] = useState(post.likes);
   const [likedBy, setLikedBy] = useState(post.likedBy || []);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [removePost] = useMutation(REMOVE_POST, {
     refetchQueries: [{ query: GET_POSTS }],
@@ -80,10 +80,10 @@ const Post = ({ post }) => {
   };
 
   const handleAddComment = async () => {
-    if(!commentText){
-      setErrorMessage('Please write a comment.');
+    if (!commentText) {
+      setErrorMessage("Please write a comment.");
       setTimeout(() => {
-        setErrorMessage('');
+        setErrorMessage("");
       }, 2000);
       return;
     }
@@ -127,10 +127,10 @@ const Post = ({ post }) => {
           to={`/profiles/${post.userId}`}
         >
           <img
-  src={post?.userId?.profilePic || ProfileAvatar}
-  alt="profile"
-  className="w-8 h-8 rounded-full object-cover mr-2"
-/>
+            src={post?.userId?.profilePic || ProfileAvatar}
+            alt="profile"
+            className="w-8 h-8 rounded-full object-cover mr-2"
+          />
           <h3 className="text-sm md:text-md lg:text-lg xl:text-xl">
             {post?.postAuthor}
           </h3>
@@ -172,7 +172,9 @@ const Post = ({ post }) => {
         </div>
       ) : (
         <>
-          <p className="text-gray-700 dark:text-white text-sm md:text-sm lg:text-md xl:text-lg mt-2">{post?.postText}</p>
+          <p className="text-gray-700 dark:text-white text-sm md:text-sm lg:text-md xl:text-lg mt-2">
+            {post?.postText}
+          </p>
           {isEdited && (
             <small className="text-gray-500">
               Edited: {new Date().toLocaleString()}
@@ -235,7 +237,7 @@ const Post = ({ post }) => {
           )}
         </div>
       </div>
-       {errorMessage && <div className="text-red-500 p-2">{errorMessage}</div>}
+      {errorMessage && <div className="text-red-500 p-2">{errorMessage}</div>}
       {isCommenting && (
         <div>
           <textarea

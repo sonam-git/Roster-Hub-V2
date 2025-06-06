@@ -45,6 +45,7 @@ const Header = () => {
         { title: "Roster", src: rosterImage, path: "/roster" },
         { title: "Skill - List", src: skillImage, path: "/skill" },
         { title: "Message", src: chatImage, path: "/message" },
+        { title: "Game", src: skillImage, path: "/game-schedule" },
         { title: "Logout", src: logoutImage, action: handleLogout },
       ]
     : [

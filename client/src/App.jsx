@@ -22,6 +22,7 @@ import Footer from "./components/Footer";
 import Roster from "./pages/Roster";
 import Message from "./pages/Message";
 import Skill from "./pages/Skill";
+import Game from "./pages/Game";
 import ForgotPassword from "./pages/ForgetPassword";
 import PasswordReset from "./pages/PasswordReset";
 import { ThemeProvider, ThemeContext } from "./components/ThemeContext";
@@ -29,6 +30,7 @@ import ChatPopup from "./components/ChatPopup";
 import { QUERY_ME } from "./utils/queries";
 import Auth from "./utils/auth";
 import MainHeader from "./components/MainHeader";
+
 
 // --- Apollo Setup ---
 
@@ -107,6 +109,8 @@ function AppContent() {
             <Route path="/profiles/:profileId" element={<Profile />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<PasswordReset />} />
+            <Route path="/game-schedule" element={<Game />} />
+            <Route path="/game-schedule/:gameId" element={<Game isDarkMode={isDarkMode} />} />
           </Routes>
           {Auth.loggedIn() && currentUser && (
             <ChatPopup currentUser={currentUser} isDarkMode={isDarkMode} />

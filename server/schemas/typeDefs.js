@@ -77,6 +77,47 @@ type Chat {
   type ResponseMessage {
     message: String!
   }
+    ############ TYPES & ENUMS ############
+
+  enum GameStatus {
+    PENDING
+    CONFIRMED
+    CANCELLED
+  }
+
+  type Response {
+    user: Profile!
+    isAvailable: Boolean!
+  }
+
+  type Game {
+    _id: ID!
+    creator: Profile!
+    date: String!           # ISO-formatted Date
+    time: String!           # e.g. "18:30"
+    venue: String!
+    notes: String
+    status: GameStatus!
+    responses: [Response!]!
+    availableCount: Int!    # computed
+    unavailableCount: Int!  # computed
+    createdAt: String!
+    updatedAt: String!
+  }
+
+  ########## INPUT TYPES ##########
+
+  input CreateGameInput {
+    date: String!    # ISO string (e.g. "2025-06-15T00:00:00.000Z")
+    time: String!    # e.g. "18:30"
+    venue: String!
+    notes: String
+  }
+
+  input RespondToGameInput {
+    gameId: ID!
+    isAvailable: Boolean!
+  }
  
   input RatingInput {
     user: ID!
@@ -104,6 +145,8 @@ type Chat {
     getChatByUser(to: ID!): [Chat]
     getAllChats: [Chat]
     getChatsBetweenUsers(userId1: ID!, userId2: ID!): [Chat]
+    games(status: GameStatus): [Game!]!
+    game(gameId: ID!): Game
   }
  
   type Mutation {
@@ -130,6 +173,14 @@ type Chat {
     likePost(postId: ID!): Post
     ratePlayer(profileId: ID!, ratingInput: RatingInput!): Profile
     createChat(from: ID!, to: ID!, content: String!): Chat
+    # Create a new game poll (authenticated)
+    createGame(input: CreateGameInput!): Game!
+    # Cast or update a vote (Yes/No)
+    respondToGame(input: RespondToGameInput!): Game!
+    # Confirm a pending game (only the creator)
+    confirmGame(gameId: ID!): Game!
+    # Cancel a pending game (only the creator)
+    cancelGame(gameId: ID!): Game!
   }
   type Subscription {
     chatCreated: Chat

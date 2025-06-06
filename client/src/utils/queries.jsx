@@ -326,3 +326,51 @@ query GetChatByUser($to: ID!) {
   }
 }
 `;
+// 1. Fetch all games (optionally filter by status)
+export const QUERY_GAMES = gql`
+  query Games($status: GameStatus) {
+    games(status: $status) {
+      _id
+      creator {
+        _id
+        name
+      }
+      date
+      time
+      venue
+      notes
+      status
+      availableCount
+      unavailableCount
+    }
+  }
+`;
+
+// 2. Fetch a single game by ID (with votes and counts)
+export const QUERY_GAME = gql`
+  query Game($gameId: ID!) {
+    game(gameId: $gameId) {
+      _id
+      creator {
+        _id
+        name
+      }
+      date
+      time
+      venue
+      notes
+      status
+      responses {
+        user {
+          _id
+          name
+        }
+        isAvailable
+      }
+      availableCount
+      unavailableCount
+      createdAt
+      updatedAt
+    }
+  }
+`;

@@ -289,4 +289,66 @@ export const CREATE_CHAT = gql`
     }
   }
 `;
+// 1. Create a new game poll
+export const CREATE_GAME = gql`
+  mutation CreateGame($input: CreateGameInput!) {
+    createGame(input: $input) {
+      _id
+      creator {
+        _id
+        name
+      }
+      date
+      time
+      venue
+      notes
+      status
+      availableCount
+      unavailableCount
+    }
+  }
+`;
+
+// 2. Respond (Yes/No) to a game
+export const RESPOND_TO_GAME = gql`
+  mutation RespondToGame($input: RespondToGameInput!) {
+    respondToGame(input: $input) {
+      _id
+      status
+      responses {
+        user {
+          _id
+          name
+        }
+        isAvailable
+      }
+      availableCount
+      unavailableCount
+    }
+  }
+`;
+
+// 3. Confirm a pending game (only creator)
+export const CONFIRM_GAME = gql`
+  mutation ConfirmGame($gameId: ID!) {
+    confirmGame(gameId: $gameId) {
+      _id
+      status
+      availableCount
+      unavailableCount
+    }
+  }
+`;
+
+// 4. Cancel a pending game (only creator)
+export const CANCEL_GAME = gql`
+  mutation CancelGame($gameId: ID!) {
+    cancelGame(gameId: $gameId) {
+      _id
+      status
+      availableCount
+      unavailableCount
+    }
+  }
+`;
 
