@@ -187,9 +187,9 @@ const typeDefs = gql`
     # Cast or update a vote (Yes/No)
     respondToGame(input: RespondToGameInput!): Game!
     # Confirm a pending game (only the creator)
-    confirmGame(gameId: ID!): Game!
+    confirmGame(gameId: ID!, note: String): Game
     # Cancel a pending game (only the creator)
-    cancelGame(gameId: ID!): Game!
+     cancelGame(gameId: ID!, note: String): Game
     # Remove the current user's vote on a game
     unvoteGame(gameId: ID!): Game!
   }

@@ -921,7 +921,7 @@ const resolvers = {
     },
 
     // ──────── Confirm a game (only creator) ────────
-    confirmGame: async (_, { gameId }, context) => {
+    confirmGame: async (_, { gameId, note }, context) => {
       if (!context.user) {
         throw new AuthenticationError("You need to be logged in to confirm a game");
       }
@@ -932,17 +932,21 @@ const resolvers = {
       if (!game.creator.equals(context.user._id)) {
         throw new AuthenticationError("You are not the creator of this game");
       }
-      // Allow confirming if status is PENDING or CANCELLED
       if (game.status === "CONFIRMED") {
         throw new UserInputError("Game is already confirmed");
       }
       game.status = "CONFIRMED";
+      if (note !== undefined) {
+        game.notes = note;
+      }
       await game.save();
-      return Game.findById(gameId).populate("creator").populate("responses.user");
+      return Game.findById(gameId)
+        .populate("creator")
+        .populate("responses.user");
     },
 
     // ──────── Cancel a game (only creator) ────────
-    cancelGame: async (_, { gameId }, context) => {
+    cancelGame: async (_, { gameId, note }, context) => {
       if (!context.user) {
         throw new AuthenticationError("You need to be logged in to cancel a game");
       }
@@ -953,35 +957,34 @@ const resolvers = {
       if (!game.creator.equals(context.user._id)) {
         throw new AuthenticationError("You are not the creator of this game");
       }
-      // Allow cancelling if status is PENDING or CONFIRMED
       if (game.status === "CANCELLED") {
         throw new UserInputError("Game is already cancelled");
       }
       game.status = "CANCELLED";
+      if (note !== undefined) {
+        game.notes = note;
+      }
       await game.save();
-      return Game.findById(gameId).populate("creator").populate("responses.user");
+      return Game.findById(gameId)
+        .populate("creator")
+        .populate("responses.user");
     },
     // ──────── Unvote a game (remove response) ────────
     unvoteGame: async (_, { gameId }, context) => {
       if (!context.user) {
         throw new AuthenticationError("You need to be logged in to unvote");
       }
-    
       const game = await Game.findById(gameId);
       if (!game) {
         throw new UserInputError("Game not found");
       }
-    
-      // Remove any response subdocument belonging to this user
       const beforeCount = game.responses.length;
       game.responses = game.responses.filter(
         (r) => !r.user.equals(context.user._id)
       );
-    
       if (game.responses.length === beforeCount) {
         throw new UserInputError("You have not voted on this game");
       }
-    
       await game.save();
       return Game.findById(gameId)
         .populate("creator")

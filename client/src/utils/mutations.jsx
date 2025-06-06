@@ -49,7 +49,6 @@ export const UPLOAD_PROFILE_PIC = gql`
   }
 `;
 
-
 export const ADD_SKILL = gql`
   mutation addSkill($profileId: ID!, $skillText: String!) {
     addSkill(profileId: $profileId, skillText: $skillText) {
@@ -85,40 +84,40 @@ export const REMOVE_SKILL = gql`
 `;
 
 export const REMOVE_MESSAGE = gql`
-mutation Mutation($messageId: ID!) {
-  removeMessage(messageId: $messageId) {
-    _id
-    text
+  mutation Mutation($messageId: ID!) {
+    removeMessage(messageId: $messageId) {
+      _id
+      text
+    }
   }
-}
 `;
 
 export const SEND_MESSAGE = gql`
-mutation SendMessage($recipientId: ID!, $text: String!) {
-  sendMessage(recipientId: $recipientId, text: $text) {
-    text
-    _id
-    createdAt
-    recipient {
+  mutation SendMessage($recipientId: ID!, $text: String!) {
+    sendMessage(recipientId: $recipientId, text: $text) {
+      text
       _id
-      name
-    }
-    sender {
-      _id
-      name
+      createdAt
+      recipient {
+        _id
+        name
+      }
+      sender {
+        _id
+        name
+      }
     }
   }
-}
 `;
 export const SAVE_SOCIAL_MEDIA_LINK = gql`
-mutation  saveSocialMediaLink($userId: ID!, $type: String!, $link: String!) {
-  saveSocialMediaLink(userId: $userId, type: $type, link: $link) {
-    _id
-    userId
-    type
-    link
+  mutation saveSocialMediaLink($userId: ID!, $type: String!, $link: String!) {
+    saveSocialMediaLink(userId: $userId, type: $type, link: $link) {
+      _id
+      userId
+      type
+      link
+    }
   }
-}
 `;
 
 export const UPDATE_NAME_MUTATION = gql`
@@ -132,21 +131,23 @@ export const UPDATE_NAME_MUTATION = gql`
 
 // Mutation to update the password
 export const UPDATE_PASSWORD_MUTATION = gql`
-mutation UpdatePassword($currentPassword: String!, $newPassword: String!) {
-  updatePassword(currentPassword: $currentPassword, newPassword: $newPassword) {
-    _id
-    name
+  mutation UpdatePassword($currentPassword: String!, $newPassword: String!) {
+    updatePassword(
+      currentPassword: $currentPassword
+      newPassword: $newPassword
+    ) {
+      _id
+      name
+    }
   }
-}
 `;
 export const DELETE_PROFILE = gql`
-mutation DeleteProfile($profileId: ID!) {
-  deleteProfile(profileId: $profileId) {
-    _id
+  mutation DeleteProfile($profileId: ID!) {
+    deleteProfile(profileId: $profileId) {
+      _id
+    }
   }
-}
 `;
-
 
 export const SEND_RESET_PASSWORD_EMAIL = gql`
   mutation sendResetPasswordEmail($email: String!) {
@@ -173,25 +174,25 @@ export const ADD_POST = gql`
       postAuthor
       createdAt
       userId
-      comments{
+      comments {
         _id
-      userId
-      commentText
-      commentAuthor
-      createdAt
+        userId
+        commentText
+        commentAuthor
+        createdAt
       }
     }
   }
 `;
 
 export const REMOVE_POST = gql`
-mutation RemovePost($postId: ID!) {
-  removePost(postId: $postId) {
-    _id
-    postText
-    postAuthor
+  mutation RemovePost($postId: ID!) {
+    removePost(postId: $postId) {
+      _id
+      postText
+      postAuthor
+    }
   }
-}
 `;
 
 export const UPDATE_POST = gql`
@@ -218,15 +219,15 @@ export const ADD_COMMENT = gql`
 `;
 
 export const UPDATE_COMMENT = gql`
-mutation updateComment( $commentId: ID!, $commentText: String!) {
-updateComment(commentId: $commentId, commentText: $commentText) {
-    _id
-    commentText
-    commentAuthor
-    createdAt
-    userId
+  mutation updateComment($commentId: ID!, $commentText: String!) {
+    updateComment(commentId: $commentId, commentText: $commentText) {
+      _id
+      commentText
+      commentAuthor
+      createdAt
+      userId
+    }
   }
-}
 `;
 
 export const REMOVE_COMMENT = gql`
@@ -257,7 +258,6 @@ export const LIKE_POST = gql`
     }
   }
 `;
-
 
 export const RATE_PLAYER = gql`
   mutation ratePlayer($profileId: ID!, $ratingInput: RatingInput!) {
@@ -315,6 +315,7 @@ export const RESPOND_TO_GAME = gql`
     respondToGame(input: $input) {
       _id
       status
+      notes
       responses {
         user {
           _id
@@ -327,37 +328,61 @@ export const RESPOND_TO_GAME = gql`
     }
   }
 `;
-
-// 3. Confirm a pending game (only creator)
+// 3. Confirm a pending game (only creator), now with an optional `note` argument
 export const CONFIRM_GAME = gql`
-  mutation ConfirmGame($gameId: ID!) {
-    confirmGame(gameId: $gameId) {
+  mutation ConfirmGame($gameId: ID!, $note: String) {
+    confirmGame(gameId: $gameId, note: $note) {
       _id
       status
+      notes
       availableCount
       unavailableCount
+      creator {
+        _id
+        name
+      }
+      responses {
+        user {
+          _id
+          name
+        }
+        isAvailable
+      }
     }
   }
 `;
 
-// 4. Cancel a pending game (only creator)
+// 4. Cancel a pending game (only creator), now with an optional `note` argument
 export const CANCEL_GAME = gql`
-  mutation CancelGame($gameId: ID!) {
-    cancelGame(gameId: $gameId) {
+  mutation CancelGame($gameId: ID!, $note: String) {
+    cancelGame(gameId: $gameId, note: $note) {
       _id
       status
+      notes
       availableCount
       unavailableCount
+      creator {
+        _id
+        name
+      }
+      responses {
+        user {
+          _id
+          name
+        }
+        isAvailable
+      }
     }
   }
 `;
 
-//unvote or change response to a game
+// 5. Unvote or change response to a game
 export const UNVOTE_GAME = gql`
   mutation UnvoteGame($gameId: ID!) {
     unvoteGame(gameId: $gameId) {
       _id
       status
+      notes
       responses {
         user {
           _id

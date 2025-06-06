@@ -350,27 +350,25 @@ export const QUERY_GAMES = gql`
 export const QUERY_GAME = gql`
   query Game($gameId: ID!) {
     game(gameId: $gameId) {
+    _id
+    date
+    time
+    venue
+    notes
+    status
+    creator {
       _id
-      creator {
+      name
+    }
+    responses {
+      user {
         _id
         name
       }
-      date
-      time
-      venue
-      notes
-      status
-      responses {
-        user {
-          _id
-          name
-        }
-        isAvailable
-      }
-      availableCount
-      unavailableCount
-      createdAt
-      updatedAt
+      isAvailable
     }
+    availableCount
+    unavailableCount
+  }
   }
 `;
