@@ -352,3 +352,21 @@ export const CANCEL_GAME = gql`
   }
 `;
 
+//unvote or change response to a game
+export const UNVOTE_GAME = gql`
+  mutation UnvoteGame($gameId: ID!) {
+    unvoteGame(gameId: $gameId) {
+      _id
+      status
+      responses {
+        user {
+          _id
+          name
+        }
+        isAvailable
+      }
+      availableCount
+      unavailableCount
+    }
+  }
+`;

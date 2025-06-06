@@ -1,7 +1,7 @@
-const { gql } = require('apollo-server-express');
+const { gql } = require("apollo-server-express");
 
 const typeDefs = gql`
-scalar Upload
+  scalar Upload
   type Profile {
     _id: ID
     name: String
@@ -25,7 +25,7 @@ scalar Upload
   }
 
   type Skill {
-     _id: ID!
+    _id: ID!
     skillText: String
     skillAuthor: String
     createdAt: String!
@@ -58,7 +58,7 @@ scalar Upload
     createdAt: String!
   }
 
-type Chat {
+  type Chat {
     id: ID!
     from: Profile
     to: Profile
@@ -77,7 +77,7 @@ type Chat {
   type ResponseMessage {
     message: String!
   }
-    ############ TYPES & ENUMS ############
+  ############ TYPES & ENUMS ############
 
   enum GameStatus {
     PENDING
@@ -93,14 +93,14 @@ type Chat {
   type Game {
     _id: ID!
     creator: Profile!
-    date: String!           # ISO-formatted Date
-    time: String!           # e.g. "18:30"
+    date: String! # ISO-formatted Date
+    time: String! # e.g. "18:30"
     venue: String!
     notes: String
     status: GameStatus!
     responses: [Response!]!
-    availableCount: Int!    # computed
-    unavailableCount: Int!  # computed
+    availableCount: Int! # computed
+    unavailableCount: Int! # computed
     createdAt: String!
     updatedAt: String!
   }
@@ -108,8 +108,8 @@ type Chat {
   ########## INPUT TYPES ##########
 
   input CreateGameInput {
-    date: String!    # ISO string (e.g. "2025-06-15T00:00:00.000Z")
-    time: String!    # e.g. "18:30"
+    date: String! # ISO string (e.g. "2025-06-15T00:00:00.000Z")
+    time: String! # e.g. "18:30"
     venue: String!
     notes: String
   }
@@ -118,7 +118,7 @@ type Chat {
     gameId: ID!
     isAvailable: Boolean!
   }
- 
+
   input RatingInput {
     user: ID!
     rating: Int!
@@ -133,14 +133,14 @@ type Chat {
     profiles: [Profile]!
     profile(profileId: ID!): Profile
     me: Profile
-    skills : [Skill]
-    skill(skillId: ID!) : Skill
+    skills: [Skill]
+    skill(skillId: ID!): Skill
     receivedMessages: [Message]!
     socialMediaLinks(userId: ID!): [SocialMediaLink]!
     posts: [Post]
     post(postId: ID!): Post
-    comments:[Comment]
-    comment(commentId : ID!): Comment
+    comments: [Comment]
+    comment(commentId: ID!): Comment
     getPlayerRating(profileId: ID!): Float
     getChatByUser(to: ID!): [Chat]
     getAllChats: [Chat]
@@ -148,25 +148,34 @@ type Chat {
     games(status: GameStatus): [Game!]!
     game(gameId: ID!): Game
   }
- 
+
   type Mutation {
-    addProfile(name: String!, email: String!, password: String! ): Auth
+    addProfile(name: String!, email: String!, password: String!): Auth
     login(email: String!, password: String!): Auth
-    addInfo(profileId: ID!, jerseyNumber: Int!, position: String!, phoneNumber: String!): Profile
+    addInfo(
+      profileId: ID!
+      jerseyNumber: Int!
+      position: String!
+      phoneNumber: String!
+    ): Profile
     uploadProfilePic(profileId: ID!, profilePic: Upload!): Profile
-    addSkill(profileId: ID!, skillText: String! ): Skill
+    addSkill(profileId: ID!, skillText: String!): Skill
     sendMessage(recipientId: ID!, text: String!): Message!
     removeSkill(skillId: ID!): Skill
     removeMessage(messageId: ID!): Message
-    saveSocialMediaLink(userId: ID!, type: String!, link: String!): SocialMediaLink!
+    saveSocialMediaLink(
+      userId: ID!
+      type: String!
+      link: String!
+    ): SocialMediaLink!
     updateName(name: String!): Profile
     updatePassword(currentPassword: String!, newPassword: String!): Profile
-    deleteProfile(profileId: ID!):Profile
-    addPost( profileId: ID!,postText: String!): Post
+    deleteProfile(profileId: ID!): Profile
+    addPost(profileId: ID!, postText: String!): Post
     updatePost(postId: ID!, postText: String!): Post
     removePost(postId: ID!): Post
     addComment(postId: ID!, commentText: String!): Post
-    updateComment( commentId: ID!, commentText: String!): Comment
+    updateComment(commentId: ID!, commentText: String!): Comment
     removeComment(postId: ID!, commentId: ID!): Post
     sendResetPasswordEmail(email: String!): ResponseMessage!
     resetPassword(token: String!, newPassword: String!): ResponseMessage!
@@ -181,6 +190,8 @@ type Chat {
     confirmGame(gameId: ID!): Game!
     # Cancel a pending game (only the creator)
     cancelGame(gameId: ID!): Game!
+    # Remove the current user's vote on a game
+    unvoteGame(gameId: ID!): Game!
   }
   type Subscription {
     chatCreated: Chat

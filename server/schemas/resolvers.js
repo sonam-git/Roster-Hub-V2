@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { PubSub } = require('graphql-subscriptions');
+const { PubSub } = require("graphql-subscriptions");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const {
@@ -185,7 +185,7 @@ const resolvers = {
     },
 
     // ************************** QUERY CHAT *******************************************//
-    getChatByUser : async (parent, { to }, context) => {
+    getChatByUser: async (parent, { to }, context) => {
       const userId = context.user._id;
       // console.log(userId)
       // Check if user is authenticated
@@ -194,20 +194,20 @@ const resolvers = {
           "You need to be logged in to view chat conversation"
         );
       }
-    
+
       try {
         // Query for chat using Chat model
         const chat = await Chat.find({
           $or: [
             { from: userId, to },
-            { from: to, to: userId }
-          ]
-        }).populate('from to'); // Assuming 'from' and 'to' are references to User model
-    
+            { from: to, to: userId },
+          ],
+        }).populate("from to"); // Assuming 'from' and 'to' are references to User model
+
         return chat;
       } catch (error) {
-        console.error('Error fetching chat:', error);
-        throw new Error('Failed to fetch chat');
+        console.error("Error fetching chat:", error);
+        throw new Error("Failed to fetch chat");
       }
     },
 
@@ -223,30 +223,30 @@ const resolvers = {
       }).populate("from to");
     },
     // ************************** QUERY GAME *******************************************//
-  // ──────── List all games (optionally by status) ────────
-  games: async (_, { status }, context) => {
-    if (!context.user) {
-      throw new AuthenticationError("You need to be logged in to view games");
-    }
-    const filter = {};
-    if (status) {
-      filter.status = status;
-    }
-    return Game.find(filter)
-      .populate("creator")           // ensure 'creator' is a Profile document
-      .populate("responses.user")    // ensure each 'responses.user' is a Profile
-      .sort({ date: 1, time: 1 });
-  },
+    // ──────── List all games (optionally by status) ────────
+    games: async (_, { status }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in to view games");
+      }
+      const filter = {};
+      if (status) {
+        filter.status = status;
+      }
+      return Game.find(filter)
+        .populate("creator")
+        .populate("responses.user")
+        .sort({ date: 1, time: 1 });
+    },
 
-  // ──────── Fetch a single game by ID ────────
-  game: async (_, { gameId }, context) => {
-    if (!context.user) {
-      throw new AuthenticationError("You need to be logged in to view a game");
-    }
-    return Game.findById(gameId)
-      .populate("creator")
-      .populate("responses.user");
-  },
+    // ──────── Fetch a single game by ID ────────
+    game: async (_, { gameId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in to view a game");
+      }
+      return Game.findById(gameId)
+        .populate("creator")
+        .populate("responses.user");
+    },
   },
   // ########## MUTAIIONS ########### //
   Mutation: {
@@ -475,38 +475,41 @@ const resolvers = {
         throw new Error("Error deleting Message.");
       }
     },
-   
-// ************************** CREATE CHAT AND SEND CHAT  *******************************************//
-createChat: async (parent, { from, to, content }, context) => {
-  if (!context.user) {
-    throw new AuthenticationError("You need to be logged in to create a chat!");
-  }
-  try {
-    // Ensure the from, to, and content fields are provided
-    if (!from || !to || !content) {
-      throw new Error("All fields (from, to, content) are required.");
-    }
 
-    // Create the new chat document
-    const newChat = await Chat.create({
-      from,
-      to,
-      content
-    });
+    // ************************** CREATE CHAT AND SEND CHAT  *******************************************//
+    createChat: async (parent, { from, to, content }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError(
+          "You need to be logged in to create a chat!"
+        );
+      }
+      try {
+        // Ensure the from, to, and content fields are provided
+        if (!from || !to || !content) {
+          throw new Error("All fields (from, to, content) are required.");
+        }
 
-    const populatedChat = await Chat.findById(newChat._id).populate("from to");
+        // Create the new chat document
+        const newChat = await Chat.create({
+          from,
+          to,
+          content,
+        });
 
-    // Publish the new chat event
-    pubsub.publish('CHAT_CREATED', { chatCreated: populatedChat });
+        const populatedChat = await Chat.findById(newChat._id).populate(
+          "from to"
+        );
 
-    return populatedChat;
-  } catch (error) {
-    console.error("Error creating chat:", error);
-    throw new Error("Failed to create chat");
-  }
-},
+        // Publish the new chat event
+        pubsub.publish("CHAT_CREATED", { chatCreated: populatedChat });
 
-    
+        return populatedChat;
+      } catch (error) {
+        console.error("Error creating chat:", error);
+        throw new Error("Failed to create chat");
+      }
+    },
+
     // ************************** SAVE SOCIAL MEDIA LINK  *******************************************//
     saveSocialMediaLink: async (_, { userId, type, link }) => {
       try {
@@ -868,7 +871,7 @@ createChat: async (parent, { from, to, content }, context) => {
       }
     },
     // ************************** CREATE GAME *******************************************//
-        // Create a new Game poll
+    // Create a new Game poll
     createGame: async (_, { input }, context) => {
       if (!context.user) {
         throw new AuthenticationError("You need to be logged in to create a game");
@@ -877,7 +880,6 @@ createChat: async (parent, { from, to, content }, context) => {
       if (!date || !time || !venue) {
         throw new UserInputError("Date, time, and venue are required");
       }
-
       const newGame = await Game.create({
         creator: context.user._id,
         date,
@@ -887,8 +889,6 @@ createChat: async (parent, { from, to, content }, context) => {
         status: "PENDING",
         responses: [],
       });
-
-      // Return with creator populated
       return newGame.populate("creator");
     },
 
@@ -905,28 +905,19 @@ createChat: async (parent, { from, to, content }, context) => {
       if (game.status !== "PENDING") {
         throw new UserInputError("Cannot vote on a game that is not pending");
       }
-
-      // Check if user has already responded
       const existingIndex = game.responses.findIndex((r) =>
         r.user.equals(context.user._id)
       );
       if (existingIndex !== -1) {
-        // Overwrite existing vote
         game.responses[existingIndex].isAvailable = isAvailable;
       } else {
-        // Add new response
         game.responses.push({
           user: context.user._id,
           isAvailable,
         });
       }
-
       await game.save();
-
-      // Return updated game with both fields populated
-      return Game.findById(gameId)
-        .populate("creator")
-        .populate("responses.user");
+      return Game.findById(gameId).populate("creator").populate("responses.user");
     },
 
     // ──────── Confirm a game (only creator) ────────
@@ -941,14 +932,13 @@ createChat: async (parent, { from, to, content }, context) => {
       if (!game.creator.equals(context.user._id)) {
         throw new AuthenticationError("You are not the creator of this game");
       }
-      if (game.status !== "PENDING") {
-        throw new UserInputError("Only pending games can be confirmed");
+      // Allow confirming if status is PENDING or CANCELLED
+      if (game.status === "CONFIRMED") {
+        throw new UserInputError("Game is already confirmed");
       }
       game.status = "CONFIRMED";
       await game.save();
-      return Game.findById(gameId)
-        .populate("creator")
-        .populate("responses.user");
+      return Game.findById(gameId).populate("creator").populate("responses.user");
     },
 
     // ──────── Cancel a game (only creator) ────────
@@ -963,103 +953,47 @@ createChat: async (parent, { from, to, content }, context) => {
       if (!game.creator.equals(context.user._id)) {
         throw new AuthenticationError("You are not the creator of this game");
       }
-      if (game.status !== "PENDING") {
-        throw new UserInputError("Only pending games can be cancelled");
+      // Allow cancelling if status is PENDING or CONFIRMED
+      if (game.status === "CANCELLED") {
+        throw new UserInputError("Game is already cancelled");
       }
       game.status = "CANCELLED";
+      await game.save();
+      return Game.findById(gameId).populate("creator").populate("responses.user");
+    },
+    // ──────── Unvote a game (remove response) ────────
+    unvoteGame: async (_, { gameId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in to unvote");
+      }
+    
+      const game = await Game.findById(gameId);
+      if (!game) {
+        throw new UserInputError("Game not found");
+      }
+    
+      // Remove any response subdocument belonging to this user
+      const beforeCount = game.responses.length;
+      game.responses = game.responses.filter(
+        (r) => !r.user.equals(context.user._id)
+      );
+    
+      if (game.responses.length === beforeCount) {
+        throw new UserInputError("You have not voted on this game");
+      }
+    
       await game.save();
       return Game.findById(gameId)
         .populate("creator")
         .populate("responses.user");
     },
-    
-        // Respond (Yes/No) to an existing Game
-        respondToGame: async (_, { input }, context) => {
-          if (!context.user) {
-            throw new AuthenticationError("You need to be logged in to vote");
-          }
-          const { gameId, isAvailable } = input;
-          const game = await Game.findById(gameId);
-          if (!game) {
-            throw new UserInputError("Game not found");
-          }
-          if (game.status !== "PENDING") {
-            throw new UserInputError("Cannot vote on a game that is not pending");
-          }
-    
-          // Check if this user already responded
-          const existingIndex = game.responses.findIndex((r) =>
-            r.user.equals(context.user._id)
-          );
-          if (existingIndex !== -1) {
-            // Overwrite their previous response
-            game.responses[existingIndex].isAvailable = isAvailable;
-          } else {
-            // Add a new response
-            game.responses.push({
-              user: context.user._id,
-              isAvailable,
-            });
-          }
-    
-          await game.save();
-          return Game.findById(gameId)
-            .populate('creator')
-            .populate('responses.user');
-        },
-    
-        // Confirm a pending Game (only creator can do this)
-        confirmGame: async (_, { gameId }, context) => {
-          if (!context.user) {
-            throw new AuthenticationError("You need to be logged in to confirm a game");
-          }
-          const game = await Game.findById(gameId);
-          if (!game) {
-            throw new UserInputError("Game not found");
-          }
-          if (!game.creator.equals(context.user._id)) {
-            throw new AuthenticationError("You are not the creator of this game");
-          }
-          if (game.status !== "PENDING") {
-            throw new UserInputError("Only pending games can be confirmed");
-          }
-    
-          game.status = "CONFIRMED";
-          await game.save();
-          return Game.findById(gameId)
-            .populate('creator')
-            .populate('responses.user');
-        },
-    
-        // Cancel a pending Game (only creator can do this)
-        cancelGame: async (_, { gameId }, context) => {
-          if (!context.user) {
-            throw new AuthenticationError("You need to be logged in to cancel a game");
-          }
-          const game = await Game.findById(gameId);
-          if (!game) {
-            throw new UserInputError("Game not found");
-          }
-          if (!game.creator.equals(context.user._id)) {
-            throw new AuthenticationError("You are not the creator of this game");
-          }
-          if (game.status !== "PENDING") {
-            throw new UserInputError("Only pending games can be cancelled");
-          }
-    
-          game.status = "CANCELLED";
-          await game.save();
-          return Game.findById(gameId)
-            .populate('creator')
-            .populate('responses.user');
-        },
   },
   Subscription: {
     chatCreated: {
-      subscribe: () => pubsub.asyncIterator(['CHAT_CREATED']) 
+      subscribe: () => pubsub.asyncIterator(["CHAT_CREATED"]),
     },
   },
-  
+
   Chat: {
     from: async (chat) => {
       return await Profile.findById(chat.from);
@@ -1071,21 +1005,13 @@ createChat: async (parent, { from, to, content }, context) => {
   // ──────── Type‐level resolvers for Game ────────
   Game: {
     availableCount: (parent) => {
-      // parent.responses is assumed to be an array of { user, isAvailable }
       return parent.responses.filter((r) => r.isAvailable).length;
     },
     unavailableCount: (parent) => {
       return parent.responses.filter((r) => !r.isAvailable).length;
     },
-
-    // Because we populated both `creator` and `responses.user` in the Query resolvers,
-    // these fields now exist as full objects. We can return them directly:
-    creator: (parent) => {
-      return parent.creator;
-    },
-    responses: (parent) => {
-      return parent.responses;
-    },
+    creator: (parent) => parent.creator,
+    responses: (parent) => parent.responses,
   },
 };
 
