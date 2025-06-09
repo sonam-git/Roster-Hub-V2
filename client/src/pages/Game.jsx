@@ -13,9 +13,7 @@ const Game = () => {
 
   return (
     <div
-      className={`container mx-auto mt-5 ${
-        isDarkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
-      } p-4 rounded-lg`}
+      className={`container mx-auto mt-5 p-4 `}
     >
       {gameId ? (
         <GameDetails gameId={gameId} isDarkMode={isDarkMode} />
