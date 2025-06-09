@@ -107,8 +107,8 @@ const GameDetails = ({ gameId }) => {
           onClick={() => navigate("/game-schedule")}
           className={`mb-4 px-4 py-2 rounded ${
             isDarkMode
-              ? "bg-gray-700 text-white hover:bg-gray-600"
-              : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+              ? "bg-gray-500 text-white hover:bg-gray-900"
+              : "bg-indigo-600 text-white hover:bg-gray-800"
           }`}
         >
           ← Back to Game List

@@ -990,6 +990,29 @@ const resolvers = {
         .populate("creator")
         .populate("responses.user");
     },
+    // ──────── Delete a game (only creator) ────────
+    deleteGame: async (_, { gameId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You must be logged in to delete games");
+      }
+
+      // fetch the game
+      const game = await Game.findById(gameId);
+      if (!game) {
+        throw new Error("Game not found");
+      }
+      // only creator can delete
+      if (game.creator.toString() !== context.user._id) {
+        throw new AuthenticationError("Not authorized");
+      }
+
+      // delete and return the deleted doc
+      const deleted = await Game.findByIdAndDelete(gameId);
+      if (!deleted) {
+        throw new Error("Failed to delete");
+      }
+      return deleted; // <-- must be a full Game, so Game._id isn’t null
+    },
   },
   Subscription: {
     chatCreated: {

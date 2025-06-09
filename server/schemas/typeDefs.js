@@ -192,6 +192,7 @@ const typeDefs = gql`
      cancelGame(gameId: ID!, note: String): Game
     # Remove the current user's vote on a game
     unvoteGame(gameId: ID!): Game!
+    deleteGame(gameId: ID!): Game!
   }
   type Subscription {
     chatCreated: Chat

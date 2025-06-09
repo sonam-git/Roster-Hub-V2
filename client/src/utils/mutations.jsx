@@ -395,3 +395,11 @@ export const UNVOTE_GAME = gql`
     }
   }
 `;
+// 5. Delete a game (only for creator)
+export const DELETE_GAME = gql`
+  mutation DeleteGame($gameId: ID!) {
+    deleteGame(gameId: $gameId) {
+      _id
+    }
+  }
+`;

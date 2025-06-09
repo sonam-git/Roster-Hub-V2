@@ -18,6 +18,7 @@ import rosterImage from "../../assets/images/iconizer-roster.png";
 import logoutImage from "../../assets/images/iconizer-logout.png";
 import loginImage from "../../assets/images/iconizer-login.png";
 import signupImage from "../../assets/images/iconizer-signup.png";
+import calenderImage from "../../assets/images/iconizer-calender.png";
 
 const Header = () => {
   const [open, setOpen] = React.useState(false);
@@ -45,7 +46,7 @@ const Header = () => {
         { title: "Roster", src: rosterImage, path: "/roster" },
         { title: "Skill - List", src: skillImage, path: "/skill" },
         { title: "Message", src: chatImage, path: "/message" },
-        { title: "Game - Schedule", src: skillImage, path: "/game-schedule" },
+        { title: "Game - Schedule", src: calenderImage, path: "/game-schedule" },
         { title: "Logout", src: logoutImage, action: handleLogout },
       ]
     : [
