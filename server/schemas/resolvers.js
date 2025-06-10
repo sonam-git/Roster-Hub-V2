@@ -123,7 +123,7 @@ const resolvers = {
           .sort({ createdAt: -1 })
           .populate("comments")
           .populate("likedBy")
-          .populate("userId");
+          .populate("userId","name profilePic");
         return posts;
       } catch (err) {
         throw new Error(err);
@@ -135,7 +135,7 @@ const resolvers = {
         const post = await Post.findById(postId)
           .populate("comments")
           .populate("likedBy")
-          .populate("userId");
+          .populate("userId","name profilePic");
         if (post) {
           return post;
         } else {
@@ -618,7 +618,12 @@ const resolvers = {
           { _id: profileId },
           { $addToSet: { posts: post._id } }
         );
-        return post;
+        const populated = await Post.findById(post._id)
+      .populate("userId", "name profilePic")
+      .populate("comments")
+      .populate("likedBy");
+
+    return populated;
       } catch (err) {
         console.error("Error creating post:", err);
         throw new Error("Error creating post");

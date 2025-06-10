@@ -120,7 +120,7 @@ const Post = ({ post }) => {
   );
 
   return (
-    <div className="relative bg-gray-300 dark:bg-gray-800 shadow-md rounded-lg p-4 mb-4">
+    <div className="relative bg-gray-100 dark:bg-gray-800 shadow-md rounded-lg p-4 mb-4">
       <div className="flex justify-between items-center">
         <Link
           className="flex items-center hover:no-underline hover:text-dark dark:hover:text-white"
@@ -135,7 +135,7 @@ const Post = ({ post }) => {
             {post?.userId?.name || "Anonymous"}
           </h3>
         </Link>
-        {Auth.loggedIn() && Auth.getProfile().data._id === post.userId && (
+        {Auth.loggedIn() && Auth.getProfile().data._id === post.userId._id && (
           <div className="absolute top-3 right-3 flex space-x-2">
             <PencilAltIcon
               className="h-5 w-5 text-blue-500 cursor-pointer"

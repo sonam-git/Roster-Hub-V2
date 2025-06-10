@@ -169,11 +169,14 @@ export const ADD_POST = gql`
   mutation addPost($profileId: ID!, $postText: String!) {
     addPost(profileId: $profileId, postText: $postText) {
       _id
-      userId
       postText
       postAuthor
       createdAt
-      userId
+      userId {
+        _id
+        name
+        profilePic
+      }
       comments {
         _id
         userId
@@ -181,6 +184,11 @@ export const ADD_POST = gql`
         commentAuthor
         createdAt
       }
+        likes
+        likedBy {
+          _id
+          name
+        }
     }
   }
 `;

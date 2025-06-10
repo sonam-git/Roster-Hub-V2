@@ -189,7 +189,7 @@ const typeDefs = gql`
     # Confirm a pending game (only the creator)
     confirmGame(gameId: ID!, note: String): Game
     # Cancel a pending game (only the creator)
-     cancelGame(gameId: ID!, note: String): Game
+    cancelGame(gameId: ID!, note: String): Game
     # Remove the current user's vote on a game
     unvoteGame(gameId: ID!): Game!
     deleteGame(gameId: ID!): Game!

@@ -2,7 +2,6 @@ import React from "react";
 import Auth from "../../utils/auth";
 
 const UserListModal = ({ show, onClose, profiles, onSelectUser, isDarkMode }) => {
-  console.log(isDarkMode)
   if (!show) return null;
 
   const loggedInUserId = Auth.loggedIn() ? Auth.getProfile().data._id : null;

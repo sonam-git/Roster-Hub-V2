@@ -8,7 +8,6 @@ const PAGE_SIZE = 3; // Number of posts per page
 
 const PostsList = ({ profileId }) => {
   const { loading, data, error } = useQuery(GET_POSTS);
-  console.log(error)
   const loggedInUserId = Auth.getProfile().data._id;
   
   const [currentPage, setCurrentPage] = useState(1); // Current page number
@@ -25,13 +24,13 @@ const PostsList = ({ profileId }) => {
     return <h3 className='text-sm lg:text-lg font-bold'>No posts yet </h3>;
   }
 
-  const userPost = data.posts.filter(post => post.userId === profileId);
-  const myPost = data.posts.filter(post => post.userId === loggedInUserId);
+  const userPost = data.posts.filter(post => post.userId._id === profileId);
+  const myPost = data.posts.filter(post => post.userId._id === loggedInUserId);
 
   // Determine posts to display based on profileId
   const postsToDisplay = profileId
     ? userPost
-    : [...myPost, ...data.posts.filter(post => post.userId !== loggedInUserId)];
+    : [...myPost, ...data.posts.filter(post => post.userId._id !== loggedInUserId)];
 
     if (postsToDisplay.length === 0) {
       return (

@@ -8,6 +8,7 @@ import { CHAT_SUBSCRIPTION } from '../../utils/subscription';
 import ChatMessage from '../ChatMessage';
 import { FaPaperPlane } from 'react-icons/fa';
 import ProfileAvatar from "../../assets/images/profile-avatar.png";
+import chatBox from "../../assets/images/iconizer-message.png"; // Assuming you have a chat box icon
 
 const ChatPopup = ({ currentUser, isDarkMode }) => {
   const [chatPopupOpen, setChatPopupOpen] = useState(false);
@@ -115,11 +116,15 @@ const ChatPopup = ({ currentUser, isDarkMode }) => {
   return (
     <div className={`fixed bottom-0 right-2 w-80 bg-white border border-gray-300 rounded-t-lg shadow-lg`}>
       <div
-        className={`font-semibold ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-blue-600 text-white'} p-2 cursor-pointer rounded-t-lg flex justify-between items-center`}
+        className={`font-semibold ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-600 text-white'} p-2 cursor-pointer rounded-t-lg flex justify-between items-center`}
         onClick={() => setChatPopupOpen(!chatPopupOpen)}
       >
        <span className="flex items-center gap-2">
-  Chat Box
+       <img
+            src={chatBox}
+            alt="profile"
+            className="h-6 w-6 rounded-full object-cover mr-2 "
+          /> ChatBox
   {totalNotifications > 0 && (
     <span className="bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
       {totalNotifications}
