@@ -10,7 +10,6 @@ const SkillsList = ({
   isLoggedInUser = false,
   isDarkMode,
 }) => {
-  console.log(isDarkMode)
   const [removeSkill, { error }] = useMutation(REMOVE_SKILL, {
     update(cache, { data: { removeSkill } }) {
       try {

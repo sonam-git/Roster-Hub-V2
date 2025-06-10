@@ -128,7 +128,7 @@ const GameDetails = ({ gameId }) => {
         {isCreator ? (
           <div className="mb-4">
             <label className="block mb-2 font-bold">
-              Update Note (reason for confirm/cancel):
+              Update Note (reason for confirm / cancel):
             </label>
             <textarea
               value={updatedNote}

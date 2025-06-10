@@ -3,7 +3,7 @@ import { ThemeContext } from "../ThemeContext";
 
 const PlayersList = ({ yesVoters, noVoters }) => {
   const { isDarkMode } = useContext(ThemeContext);
-  const bgColor = isDarkMode ? "bg-gray-700" : "bg-white";
+  const bgColor = isDarkMode ? "bg-gray-700" : "bg-gray-300";
   const textColor = isDarkMode ? "text-gray-200" : "text-gray-800";
 
   return (

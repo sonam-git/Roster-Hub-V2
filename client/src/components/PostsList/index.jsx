@@ -8,6 +8,7 @@ const PAGE_SIZE = 3; // Number of posts per page
 
 const PostsList = ({ profileId }) => {
   const { loading, data, error } = useQuery(GET_POSTS);
+  console.log(error)
   const loggedInUserId = Auth.getProfile().data._id;
   
   const [currentPage, setCurrentPage] = useState(1); // Current page number

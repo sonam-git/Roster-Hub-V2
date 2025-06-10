@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { useQuery } from "@apollo/client";
-import { QUERY_ME } from "../../utils/queries";
+import { QUERY_ME,QUERY_GAMES } from "../../utils/queries";
 
 import { Link, useNavigate, Outlet, useLocation } from "react-router-dom";
 import Auth from "../../utils/auth";
@@ -30,6 +30,14 @@ const Header = () => {
   const { data } = useQuery(QUERY_ME);
   const messageCount = data?.me?.receivedMessages?.length || 0;
 
+  // pending games count
+  const { data: gamesData } = useQuery(QUERY_GAMES, {
+    variables: { status: "PENDING" },
+    fetchPolicy: "network-only",
+  });
+  const pendingCount = gamesData?.games?.length || 0;
+
+
   // handle logout
   const handleLogout = () => {
     navigate("/", {
@@ -45,8 +53,8 @@ const Header = () => {
         { title: "My Profile", src: userImage, path: "/me" },
         { title: "Roster", src: rosterImage, path: "/roster" },
         { title: "Skill - List", src: skillImage, path: "/skill" },
-        { title: "Message", src: chatImage, path: "/message" },
-        { title: "Game - Schedule", src: calenderImage, path: "/game-schedule" },
+        { title: "Message", src: chatImage, path: "/message", badge: messageCount },
+        { title: "Game - Schedule", src: calenderImage, path: "/game-schedule",badge: pendingCount },
         { title: "Logout", src: logoutImage, action: handleLogout },
       ]
     : [
@@ -152,18 +160,19 @@ const Header = () => {
                       alt={Menu.title}
                       className="w-8 md:w-8 lg:w-10 mr-2 p-1  dark:hover:text-red hover:bg-gray-800 rounded-full transition-all duration-300"
                     />
-                    <span
-                      className={`${
-                        !open && "hidden"
-                      } origin-left duration-200 md:text-base lg:text-lg flex items-center gap-2 hover:text-red-600 dark:hover:text-red-400 dark:text-white text-lg font-bold`}
-                    >
-                      {Menu.title}
-                      {Menu.title === "Message" && messageCount > 0 && (
-                        <span className="bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5 ml-1">
-                          {messageCount}
-                        </span>
-                      )}
-                    </span>
+               <span
+  className={`${
+    !open && "hidden"
+  } origin-left duration-200 md:text-base lg:text-lg flex items-center gap-2 hover:text-red-600 dark:hover:text-red-400 dark:text-white text-lg font-bold`}
+>
+  {Menu.title}
+  {Menu.badge > 0 && (
+    <span className="bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5 ml-1">
+      {Menu.badge}
+    </span>
+  )}
+</span>
+
                   </div>
                 </Link>
               ) : (

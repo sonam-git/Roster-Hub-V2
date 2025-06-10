@@ -122,7 +122,8 @@ const resolvers = {
         const posts = await Post.find()
           .sort({ createdAt: -1 })
           .populate("comments")
-          .populate("likedBy");
+          .populate("likedBy")
+          .populate("userId");
         return posts;
       } catch (err) {
         throw new Error(err);
@@ -133,7 +134,8 @@ const resolvers = {
       try {
         const post = await Post.findById(postId)
           .populate("comments")
-          .populate("likedBy");
+          .populate("likedBy")
+          .populate("userId");
         if (post) {
           return post;
         } else {
@@ -241,7 +243,9 @@ const resolvers = {
     // ──────── Fetch a single game by ID ────────
     game: async (_, { gameId }, context) => {
       if (!context.user) {
-        throw new AuthenticationError("You need to be logged in to view a game");
+        throw new AuthenticationError(
+          "You need to be logged in to view a game"
+        );
       }
       return Game.findById(gameId)
         .populate("creator")
@@ -874,7 +878,9 @@ const resolvers = {
     // Create a new Game poll
     createGame: async (_, { input }, context) => {
       if (!context.user) {
-        throw new AuthenticationError("You need to be logged in to create a game");
+        throw new AuthenticationError(
+          "You need to be logged in to create a game"
+        );
       }
       const { date, time, venue, notes } = input;
       if (!date || !time || !venue) {
@@ -909,6 +915,7 @@ const resolvers = {
         r.user.equals(context.user._id)
       );
       if (existingIndex !== -1) {
+        // update existing vote
         game.responses[existingIndex].isAvailable = isAvailable;
       } else {
         game.responses.push({
@@ -917,13 +924,17 @@ const resolvers = {
         });
       }
       await game.save();
-      return Game.findById(gameId).populate("creator").populate("responses.user");
+      return Game.findById(gameId)
+        .populate("creator")
+        .populate("responses.user");
     },
 
     // ──────── Confirm a game (only creator) ────────
     confirmGame: async (_, { gameId, note }, context) => {
       if (!context.user) {
-        throw new AuthenticationError("You need to be logged in to confirm a game");
+        throw new AuthenticationError(
+          "You need to be logged in to confirm a game"
+        );
       }
       const game = await Game.findById(gameId);
       if (!game) {
@@ -948,7 +959,9 @@ const resolvers = {
     // ──────── Cancel a game (only creator) ────────
     cancelGame: async (_, { gameId, note }, context) => {
       if (!context.user) {
-        throw new AuthenticationError("You need to be logged in to cancel a game");
+        throw new AuthenticationError(
+          "You need to be logged in to cancel a game"
+        );
       }
       const game = await Game.findById(gameId);
       if (!game) {

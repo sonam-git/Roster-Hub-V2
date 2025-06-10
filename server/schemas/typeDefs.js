@@ -37,7 +37,7 @@ const typeDefs = gql`
     postAuthor: String!
     createdAt: String!
     comments: [Comment]
-    userId: ID!
+    userId: Profile!
     likes: Int
     likedBy: [Profile]
   }

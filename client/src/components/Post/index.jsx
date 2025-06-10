@@ -120,11 +120,11 @@ const Post = ({ post }) => {
   );
 
   return (
-    <div className="relative bg-gray-100 dark:bg-gray-800 shadow-md rounded-lg p-4 mb-4">
+    <div className="relative bg-gray-300 dark:bg-gray-800 shadow-md rounded-lg p-4 mb-4">
       <div className="flex justify-between items-center">
         <Link
           className="flex items-center hover:no-underline hover:text-dark dark:hover:text-white"
-          to={`/profiles/${post.userId}`}
+          to={`/profiles/${post.userId._id}`}
         >
           <img
             src={post?.userId?.profilePic || ProfileAvatar}
@@ -132,7 +132,7 @@ const Post = ({ post }) => {
             className="w-8 h-8 rounded-full object-cover mr-2"
           />
           <h3 className="text-sm md:text-md lg:text-lg xl:text-xl">
-            {post?.postAuthor}
+            {post?.userId?.name || "Anonymous"}
           </h3>
         </Link>
         {Auth.loggedIn() && Auth.getProfile().data._id === post.userId && (
