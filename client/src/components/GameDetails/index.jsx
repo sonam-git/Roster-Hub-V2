@@ -115,7 +115,7 @@ const GameDetails = ({ gameId }) => {
         </button>
 
         <div className="mb-2 flex justify-between items-center">
-          <h3 className="text-2xl font-semibold">
+          <h3 className="text-xl font-semibold">
             <span className="font-bold">Date:</span> {humanDate} &nbsp;|&nbsp;
             <span className="font-bold">Time:</span> {game.time}
           </h3>

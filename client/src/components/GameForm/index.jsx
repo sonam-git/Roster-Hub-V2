@@ -6,6 +6,7 @@ import { useMutation } from "@apollo/client";
 import { CREATE_GAME } from "../../utils/mutations";
 import { QUERY_GAMES } from "../../utils/queries";
 import { ThemeContext } from "../ThemeContext";
+import Auth from "../../utils/auth";
 
 const GameForm = () => {
   const navigate = useNavigate();
@@ -18,34 +19,50 @@ const GameForm = () => {
     notes: "",
   });
 
+  // Mutation with cache update + optimisticResponse
   const [createGame, { loading, error }] = useMutation(CREATE_GAME, {
+    // 1) Write the new game into the all-games list in cache
     update(cache, { data: { createGame } }) {
       try {
-        const existing = cache.readQuery({
+        const existing = cache.readQuery({ query: QUERY_GAMES }) || { games: [] };
+        cache.writeQuery({
           query: QUERY_GAMES,
-          variables: { status: "PENDING" },
+          data: { games: [createGame, ...existing.games] },
         });
-        if (existing) {
-          cache.writeQuery({
-            query: QUERY_GAMES,
-            variables: { status: "PENDING" },
-            data: {
-              games: [createGame, ...existing.games],
-            },
-          });
-        }
-      } catch {
-        console.error("Error updating cache after creating game");
+      } catch (e) {
+        console.error("Error updating cache after creating game", e);
       }
     },
+    // 2) Optimistically render the new game immediately
+    optimisticResponse: ({ input }) => {
+      const user = Auth.getProfile().data;
+      return {
+        createGame: {
+          __typename: "Game",
+          _id: `temp-${Math.random().toString(36).substr(2, 9)}`,
+          creator: {
+            __typename: "Profile",
+            _id: user._id,
+            name: user.name,
+          },
+          date: input.date,
+          time: input.time,
+          venue: input.venue,
+          notes: input.notes,
+          status: "PENDING",
+          availableCount: 0,
+          unavailableCount: 0,
+        },
+      };
+    },
+    // 3) Also refetch from server to reconcile
+    refetchQueries: [{ query: QUERY_GAMES }],
+    awaitRefetchQueries: true,
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormState((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -56,13 +73,11 @@ const GameForm = () => {
     }
     try {
       const { data } = await createGame({
-        variables: {
-          input: { date, time, venue, notes },
-        },
+        variables: { input: { date, time, venue, notes } },
       });
       navigate(`/game-schedule/${data.createGame._id}`);
     } catch (err) {
-      console.error(err);
+      console.error("Create game failed", err);
     }
   };
 
@@ -80,11 +95,8 @@ const GameForm = () => {
         Schedule a Game
       </h2>
       <form onSubmit={handleSubmit}>
-        <label
-          className={`block mb-2 ${
-            isDarkMode ? "text-gray-300" : "text-gray-700"
-          }`}
-        >
+        {/* Date */}
+        <label className={`block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
           Date
           <input
             type="date"
@@ -99,11 +111,9 @@ const GameForm = () => {
             required
           />
         </label>
-        <label
-          className={`block mb-2 ${
-            isDarkMode ? "text-gray-300" : "text-gray-700"
-          }`}
-        >
+
+        {/* Time */}
+        <label className={`block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
           Time
           <input
             type="time"
@@ -118,11 +128,9 @@ const GameForm = () => {
             required
           />
         </label>
-        <label
-          className={`block mb-2 ${
-            isDarkMode ? "text-gray-300" : "text-gray-700"
-          }`}
-        >
+
+        {/* Venue */}
+        <label className={`block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
           Venue
           <input
             type="text"
@@ -138,11 +146,9 @@ const GameForm = () => {
             required
           />
         </label>
-        <label
-          className={`block mb-2 ${
-            isDarkMode ? "text-gray-300" : "text-gray-700"
-          }`}
-        >
+
+        {/* Notes */}
+        <label className={`block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
           Special Notes
           <textarea
             name="notes"
@@ -157,6 +163,8 @@ const GameForm = () => {
             rows={3}
           />
         </label>
+
+        {/* Submit */}
         <button
           type="submit"
           disabled={loading}
@@ -168,10 +176,9 @@ const GameForm = () => {
         >
           {loading ? "Scheduling…" : "Schedule Game"}
         </button>
+
         {error && (
-          <p className="text-red-600 mt-2">
-            Error: {error.message}
-          </p>
+          <p className="text-red-600 mt-2">Error: {error.message}</p>
         )}
       </form>
     </div>

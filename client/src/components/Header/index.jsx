@@ -1,12 +1,15 @@
+// src/components/Header.jsx
+
 import React, { useContext } from "react";
 import { useQuery } from "@apollo/client";
-import { QUERY_ME,QUERY_GAMES } from "../../utils/queries";
+import { QUERY_ME, QUERY_GAMES } from "../../utils/queries";
 
 import { Link, useNavigate, Outlet, useLocation } from "react-router-dom";
 import Auth from "../../utils/auth";
 import { ThemeContext } from "../ThemeContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
+
 import controlImage from "../../assets/images/iconizer-arrow-left.png";
 import lightLogo from "../../assets/images/roster-hub-logo.png";
 import darkLogo from "../../assets/images/dark-logo.png";
@@ -26,17 +29,24 @@ const Header = () => {
   const location = useLocation();
   const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
 
-  // calculate message count
-  const { data } = useQuery(QUERY_ME);
-  const messageCount = data?.me?.receivedMessages?.length || 0;
-
-  // pending games count
-  const { data: gamesData } = useQuery(QUERY_GAMES, {
-    variables: { status: "PENDING" },
-    fetchPolicy: "network-only",
+  // 1) live message count
+  const { data: meData } = useQuery(QUERY_ME, {
+    pollInterval: 5000,
   });
-  const pendingCount = gamesData?.games?.length || 0;
+  const messageCount = meData?.me?.receivedMessages?.length || 0;
 
+  // 2) fetch all games to compute badges
+const { data: allGamesData } = useQuery(QUERY_GAMES, {
+  fetchPolicy: "network-only",
+});
+const allGames = allGamesData?.games || [];
+
+// count pending and confirmed
+const pendingCount   = allGames.filter(g => g.status === "PENDING").length;
+const confirmedCount = allGames.filter(g => g.status === "CONFIRMED").length;
+
+// total of those two
+const gameBadgeCount = pendingCount + confirmedCount;
 
   // handle logout
   const handleLogout = () => {
@@ -53,8 +63,18 @@ const Header = () => {
         { title: "My Profile", src: userImage, path: "/me" },
         { title: "Roster", src: rosterImage, path: "/roster" },
         { title: "Skill - List", src: skillImage, path: "/skill" },
-        { title: "Message", src: chatImage, path: "/message", badge: messageCount },
-        { title: "Game - Schedule", src: calenderImage, path: "/game-schedule",badge: pendingCount },
+        {
+          title: "Message",
+          src: chatImage,
+          path: "/message",
+          badge: messageCount,
+        },
+        {
+          title: "Game - Schedule",
+          src: calenderImage,
+          path: "/game-schedule",
+          badge: gameBadgeCount,
+        },
         { title: "Logout", src: logoutImage, action: handleLogout },
       ]
     : [
@@ -101,7 +121,7 @@ const Header = () => {
                 alt="logo"
               />
               <h1
-                className={`dark:text-white origin-left mt-5 font-medium text-sm lg:text-2xl duration-200 ${
+                className={`dark:text-white origin-left mt-5 font-bold text-sm lg:text-3xl duration-200 ${
                   !open && "scale-0"
                 }`}
               >
@@ -142,9 +162,7 @@ const Header = () => {
         location.pathname === Menu.path
           ? "bg-gray-800 text-white dark:bg-gray-600"
           : " text-black  dark:text-white"
-      } // 
-      
-       
+      }
     `}
               onClick={Menu.action ? Menu.action : undefined}
             >
@@ -160,19 +178,18 @@ const Header = () => {
                       alt={Menu.title}
                       className="w-8 md:w-8 lg:w-10 mr-2 p-1  dark:hover:text-red hover:bg-gray-800 rounded-full transition-all duration-300"
                     />
-               <span
-  className={`${
-    !open && "hidden"
-  } origin-left duration-200 md:text-base lg:text-lg flex items-center gap-2 hover:text-red-600 dark:hover:text-red-400 dark:text-white text-lg font-bold`}
->
-  {Menu.title}
-  {Menu.badge > 0 && (
-    <span className="bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5 ml-1">
-      {Menu.badge}
-    </span>
-  )}
-</span>
-
+                    <span
+                      className={`${
+                        !open && "hidden"
+                      } origin-left duration-200 md:text-base lg:text-lg flex items-center gap-2 hover:text-red-600 dark:hover:text-red-400 dark:text-white text-lg font-bold`}
+                    >
+                      {Menu.title}
+                      {Menu.badge > 0 && (
+                        <span className="bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5 ml-1">
+                          {Menu.badge}
+                        </span>
+                      )}
+                    </span>
                   </div>
                 </Link>
               ) : (
@@ -203,7 +220,6 @@ const Header = () => {
         </ul>
       </div>
       <div className="flex-1">
-        <div></div>
         <button
           className={`fixed justify-center top-4 left-6 lg:hidden p-2 rounded-md border border-black ${
             isDarkMode

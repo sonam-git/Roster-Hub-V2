@@ -18,6 +18,7 @@ import Auth from "../../utils/auth";
 const GameList = () => {
   const { isDarkMode } = useContext(ThemeContext);
   const { loading, error, data } = useQuery(QUERY_GAMES, {
+  
     pollInterval: 10000,
   });
 
@@ -52,7 +53,7 @@ const GameList = () => {
   const totalPages = Math.ceil(games.length / itemsPerPage);
 
   if (!games.length) {
-    return <div className="text-center mt-4">No games scheduled yet.</div>;
+    return <div className="text-center mt-4 text-xl font-bold">No games scheduled yet.</div>;
   }
 
   const pagedGames = games.slice(
@@ -176,7 +177,7 @@ const GameList = () => {
                     ⚠️
                   </span>
                   <span className="text-yellow-800 italic">
-                    Response cannot be changed once the game is confirmed.
+                    Response cannot be changed once the game is confirmed. Vote Now
                   </span>
                 </p>
               </Link>
