@@ -19,12 +19,17 @@ const MyProfile = () => {
   const [socialMediaLink, setSocialMediaLink] = useState("");
   const [saveSocialMediaLink] = useMutation(SAVE_SOCIAL_MEDIA_LINK);
   const [selectedView, setSelectedView] = useState("posts"); // New state for selected view
+  const [error, setError] = useState(false);
 
   if (loading) return <div>Loading...</div>;
 
   const me = data?.me;
 
   const saveLink = async () => {
+    if (socialMediaLink.trim() === "") {
+      setError(true);
+      return;
+    }
     try {
       await saveSocialMediaLink({
         variables: {
@@ -35,10 +40,15 @@ const MyProfile = () => {
       });
       setSelectedSocialMedia(null);
       setSocialMediaLink("");
+      setError(false);
     } catch (error) {
       console.error("Error saving social media link:", error);
     }
   };
+
+  const label =
+  selectedSocialMedia?.charAt(0).toUpperCase() +
+  selectedSocialMedia?.slice(1);
 
   return (
     <>
@@ -197,21 +207,30 @@ const MyProfile = () => {
           <div className="bg-gray-900 bg-opacity-50 absolute inset-0"></div>
           <div className="relative bg-white rounded-lg shadow-md p-6">
             <label className="block text-lg font-semibold mb-2 dark:text-gray-800">
-              Insert{" "}
-              {selectedSocialMedia.charAt(0).toUpperCase() +
-                selectedSocialMedia.slice(1)}{" "}
-              Link:
+              Insert {label} Link:
             </label>
+
             <input
               type="text"
               value={socialMediaLink}
-              onChange={(e) => setSocialMediaLink(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md mb-4"
-              placeholder={`Enter your ${
-                selectedSocialMedia.charAt(0).toUpperCase() +
-                selectedSocialMedia.slice(1)
-              } link`}
+              onChange={(e) => {
+                setSocialMediaLink(e.target.value);
+                if (error && e.target.value.trim() !== "") {
+                  setError(false);
+                }
+              }}
+              className={`w-full p-2 border rounded-md mb-1 focus:outline-none ${
+                error ? "border-red-500" : "border-gray-300"
+              }`}
+              placeholder={`Enter your ${label} link`}
             />
+
+            {error && (
+              <p className="text-sm text-red-500 mb-4">
+                Enter the URL of {label}.
+              </p>
+            )}
+
             <div className="flex justify-end">
               <button
                 className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-800 mr-2"
@@ -221,7 +240,11 @@ const MyProfile = () => {
               </button>
               <button
                 className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400"
-                onClick={() => setSelectedSocialMedia(null)}
+                onClick={() => {
+                  setSelectedSocialMedia(null);
+                  setSocialMediaLink("");
+                  setError(false);
+                }}
               >
                 Cancel
               </button>
