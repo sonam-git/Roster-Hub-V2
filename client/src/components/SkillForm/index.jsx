@@ -1,6 +1,7 @@
-"use client"; // important if using Next.js or React Server Components
+// src/components/SkillForm.jsx
+"use client";
 
-import React, { useOptimistic, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { ADD_SKILL } from "../../utils/mutations";
@@ -14,23 +15,30 @@ const SkillForm = ({ profileId, teamMate }) => {
     refetchQueries: [
       {
         query: profileId ? QUERY_SINGLE_PROFILE : QUERY_ME,
-        variables: { profileId: profileId },
+        variables: { profileId },
       },
     ],
   });
 
   const inputRef = useRef(null);
-  const [optimisticSkills, addOptimisticSkill] = useOptimistic([], (state, newSkill) => [
-    ...state,
-    { id: "optimistic-" + Date.now(), text: newSkill },
-  ]);
+  const [optimisticSkills, addOptimisticSkill] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function handleSubmit(formData) {
-    const skillText = formData.get("skill");
+    const skillText = formData.get("skill")?.trim() || "";
 
-    if (!skillText) return;
+    // Validate
+    if (!skillText) {
+      setErrorMessage("Please enter a skill to endorse.");
+      return;
+    }
+    setErrorMessage("");
 
-    addOptimisticSkill(skillText);
+    // Optimistic UI
+    addOptimisticSkill(prev => [
+      ...prev,
+      { id: "optimistic-" + Date.now(), text: skillText },
+    ]);
 
     try {
       await addSkill({
@@ -40,45 +48,63 @@ const SkillForm = ({ profileId, teamMate }) => {
       console.error("Submission error:", err.message);
     }
 
-    inputRef.current.value = ""; // clear field
+    // Clear input
+    inputRef.current.value = "";
   }
 
   return (
     <div className="rounded-md bg-gray-100 dark:bg-gray-600 p-5 w-full">
       <h4 className="text-base md:text-lg lg:text-xl font-bold mb-3">
-        {profileId !== authProfileId ? `Endorse ${teamMate}` : "Endorse Yourself"}
+        {profileId !== authProfileId
+          ? `Endorse ${teamMate}`
+          : "Endorse Yourself"}
       </h4>
 
       {Auth.loggedIn() ? (
-        <form action={handleSubmit} className="flex flex-col md:flex-row gap-4">
-          <input
-            ref={inputRef}
-            type="text"
-            name="skill"
-            placeholder="Endorse your teammate..."
-            className="flex-1 rounded-md border-0 px-4 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
-          />
-          <button
-            type="submit"
-            className="rounded-md bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus:outline focus:ring-2 focus:ring-indigo-600 w-full md:w-auto"
+        <>
+          <form
+            action={handleSubmit}
+            className="flex flex-col md:flex-row gap-4"
           >
-            Endorse
-          </button>
-        </form>
+            <input
+              ref={inputRef}
+              type="text"
+              name="skill"
+              placeholder="Endorse your teammate..."
+              className="flex-1 rounded-md border-0 px-4 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+              onChange={() => setErrorMessage("")}
+            />
+            <button
+              type="submit"
+              className="rounded-md bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-full md:w-auto"
+            >
+              Endorse
+            </button>
+          </form>
+
+          {errorMessage && (
+            <p className="mt-2 text-red-600 italic">{errorMessage}</p>
+          )}
+
+          {optimisticSkills.length > 0 && (
+            <ul className="mt-4 list-disc list-inside text-sm text-green-700">
+              {optimisticSkills.map((skill, index) => (
+                <li key={skill.id || index}>{skill.text || skill}</li>
+              ))}
+            </ul>
+          )}
+        </>
       ) : (
         <p className="mt-2 text-sm">
           You need to be logged in to add information. Please{" "}
-          <Link to="/login" className="text-blue-600 underline">Login</Link> or{" "}
-          <Link to="/signup" className="text-blue-600 underline">Signup</Link>.
+          <Link to="/login" className="text-blue-600 underline">
+            Login
+          </Link>{" "}
+          or{" "}
+          <Link to="/signup" className="text-blue-600 underline">
+            Signup
+          </Link>.
         </p>
-      )}
-
-      {optimisticSkills.length > 0 && (
-        <ul className="mt-4 list-disc list-inside text-sm text-green-700">
-          {optimisticSkills.map((skill, index) => (
-            <li key={index}>{skill.text || skill}</li>
-          ))}
-        </ul>
       )}
     </div>
   );

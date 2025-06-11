@@ -71,10 +71,10 @@ const GameUpdate = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-300 bg-opacity-50">
       <div
         className={`p-6 rounded-lg shadow-lg w-11/12 max-w-md ${
-          isDarkMode ? "bg-gray-800 text-dark" : "bg-white text-gray-800"
+          isDarkMode ? "bg-gray-300 text-dark" : "bg-white text-gray-800"
         }`}
       >
-        <h2 className="text-xl font-bold mb-4 dark:text-white">Update Game</h2>
+        <h2 className="text-xl font-bold mb-4 bg-green-200 p-3 dark:bg-gray-200">Update Game Info </h2>
         <form onSubmit={handleSubmit}>
           <label className="block mb-2">
             <span className="font-bold">Date</span>
@@ -129,7 +129,7 @@ const GameUpdate = ({
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-900 disabled:opacity-50"
             >
               {loading ? "Updating…" : "Update Game"}
             </button>
