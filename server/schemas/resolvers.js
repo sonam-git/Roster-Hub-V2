@@ -1031,6 +1031,34 @@ const resolvers = {
       }
       return deleted; // <-- must be a full Game, so Game._id isn’t null
     },
+    // ──────── Update a game (only creator) ────────
+    updateGame: async (_, { gameId, input }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You must be logged in");
+      }
+      // load the game
+      const game = await Game.findById(gameId);
+      if (!game) {
+        throw new UserInputError("Game not found");
+      }
+      // only creator can edit
+      if (game.creator.toString() !== context.user._id) {
+        throw new AuthenticationError("Not authorized");
+      }
+
+      // update only the provided fields
+      if (input.date !== undefined)  game.date  = input.date;
+      if (input.time !== undefined)  game.time  = input.time;
+      if (input.venue !== undefined) game.venue = input.venue;
+      if (input.notes !== undefined) game.notes = input.notes;
+
+      await game.save();
+
+      // return with populated creator and responses
+      return await Game.findById(gameId)
+        .populate("creator", "name")
+        .populate("responses.user", "name");
+    },
   },
   Subscription: {
     chatCreated: {

@@ -114,6 +114,13 @@ const typeDefs = gql`
     notes: String
   }
 
+  input UpdateGameInput {
+   date: String
+   time: String
+   venue: String
+   notes: String
+ }
+
   input RespondToGameInput {
     gameId: ID!
     isAvailable: Boolean!
@@ -193,6 +200,7 @@ const typeDefs = gql`
     # Remove the current user's vote on a game
     unvoteGame(gameId: ID!): Game!
     deleteGame(gameId: ID!): Game!
+    updateGame(gameId: ID!, input: UpdateGameInput!): Game!
   }
   type Subscription {
     chatCreated: Chat

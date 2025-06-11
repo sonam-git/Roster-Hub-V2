@@ -1,5 +1,3 @@
-// src/components/GameForm.jsx
-
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
@@ -19,9 +17,7 @@ const GameForm = () => {
     notes: "",
   });
 
-  // Mutation with cache update + optimisticResponse
   const [createGame, { loading, error }] = useMutation(CREATE_GAME, {
-    // 1) Write the new game into the all-games list in cache
     update(cache, { data: { createGame } }) {
       try {
         const existing = cache.readQuery({ query: QUERY_GAMES }) || { games: [] };
@@ -33,7 +29,6 @@ const GameForm = () => {
         console.error("Error updating cache after creating game", e);
       }
     },
-    // 2) Optimistically render the new game immediately
     optimisticResponse: ({ input }) => {
       const user = Auth.getProfile().data;
       return {
@@ -55,7 +50,6 @@ const GameForm = () => {
         },
       };
     },
-    // 3) Also refetch from server to reconcile
     refetchQueries: [{ query: QUERY_GAMES }],
     awaitRefetchQueries: true,
   });
@@ -96,7 +90,11 @@ const GameForm = () => {
       </h2>
       <form onSubmit={handleSubmit}>
         {/* Date */}
-        <label className={`block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+        <label
+          className={`block mb-2 ${
+            isDarkMode ? "text-gray-300" : "text-gray-700"
+          }`}
+        >
           Date
           <input
             type="date"
@@ -113,7 +111,11 @@ const GameForm = () => {
         </label>
 
         {/* Time */}
-        <label className={`block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+        <label
+          className={`block mb-2 ${
+            isDarkMode ? "text-gray-300" : "text-gray-700"
+          }`}
+        >
           Time
           <input
             type="time"
@@ -130,7 +132,11 @@ const GameForm = () => {
         </label>
 
         {/* Venue */}
-        <label className={`block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+        <label
+          className={`block mb-2 ${
+            isDarkMode ? "text-gray-300" : "text-gray-700"
+          }`}
+        >
           Venue
           <input
             type="text"
@@ -148,7 +154,11 @@ const GameForm = () => {
         </label>
 
         {/* Notes */}
-        <label className={`block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+        <label
+          className={`block mb-2 ${
+            isDarkMode ? "text-gray-300" : "text-gray-700"
+          }`}
+        >
           Special Notes
           <textarea
             name="notes"
@@ -176,7 +186,6 @@ const GameForm = () => {
         >
           {loading ? "Scheduling…" : "Schedule Game"}
         </button>
-
         {error && (
           <p className="text-red-600 mt-2">Error: {error.message}</p>
         )}
