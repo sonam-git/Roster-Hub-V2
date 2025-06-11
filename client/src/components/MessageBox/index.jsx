@@ -7,13 +7,17 @@ import { QUERY_ME } from "../../utils/queries";
 
 const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode }) => {
   const [message, setMessage] = useState("");
+  const [error, setError] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [messageSent, setMessageSent] = useState(false);
   const [sendMessage] = useMutation(SEND_MESSAGE);
   const { data } = useQuery(QUERY_ME);
 
   const handleSendMessage = async () => {
-    if (message.trim() === "") return;
+    if (message.trim() === "") {
+      setError(true);
+      return;
+    }
 
     try {
       await sendMessage({
@@ -27,6 +31,7 @@ const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode }) =>
       setMessage("");
       setMessageSent(true);
       setShowModal(true);
+      setError(false);
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -91,15 +96,30 @@ const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode }) =>
 
               <textarea
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={(e) => {
+                  setMessage(e.target.value);
+                  if (error && e.target.value.trim() !== "") {
+                    setError(false);
+                  }
+                }}
                 placeholder="Type your message..."
                 rows={3}
-                className={`w-full p-2 rounded-md border focus:outline-none mb-4 ${
+                className={`w-full p-2 rounded-md border focus:outline-none mb-1 ${
                   isDarkMode
-                    ? "bg-gray-700 text-white border-gray-600 placeholder-gray-400"
-                    : "bg-white text-black border-gray-300 placeholder-gray-500"
+                    ? `bg-gray-700 text-white placeholder-gray-400 ${
+                        error ? "border-red-500" : "border-gray-600"
+                      }`
+                    : `bg-white text-black placeholder-gray-500 ${
+                        error ? "border-red-500" : "border-gray-300"
+                      }`
                 }`}
               />
+
+              {error && (
+                <p className="text-sm text-red-500 mb-4">
+                  Write your message first.
+                </p>
+              )}
 
               <div className="flex justify-end gap-2">
                 <button

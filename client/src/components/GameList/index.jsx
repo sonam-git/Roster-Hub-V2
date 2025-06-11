@@ -18,7 +18,7 @@ import Auth from "../../utils/auth";
 const GameList = () => {
   const { isDarkMode } = useContext(ThemeContext);
   const { loading, error, data } = useQuery(QUERY_GAMES, {
-  
+    // Fetch games every 10 seconds to keep the list updated
     pollInterval: 10000,
   });
 
@@ -50,6 +50,7 @@ const GameList = () => {
     );
 
   const games = data.games || [];
+  // Calculate total pages based on items per page
   const totalPages = Math.ceil(games.length / itemsPerPage);
 
   if (!games.length) {

@@ -6,7 +6,7 @@ import { MailIcon, PlusIcon } from "@heroicons/react/solid";
 import MessageBox from "../MessageBox";
 import UserListModal from "../UserListModal";
 import MessageCard from "../MessageCard";
-import { getDateFromObjectId } from "../messageUtils";
+import { getDateFromObjectId } from "../MessageUtils";
 
 const MessageList = ({ isLoggedInUser = false, isDarkMode }) => {
   const { data: userData } = useQuery(QUERY_ME);

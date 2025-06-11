@@ -1,5 +1,5 @@
 import React from "react";
-import { relativeTime, getDateFromObjectId } from "../messageUtils";
+import { relativeTime, getDateFromObjectId } from "../MessageUtils";
 import { AiOutlineDelete } from "react-icons/ai";
 import ProfileAvatar from "../../assets/images/profile-avatar.png";
 

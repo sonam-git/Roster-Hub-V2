@@ -29,7 +29,7 @@ const GameSchema = new Schema(
       required: true,
     },
     time: {
-      type: String,         // e.g. "18:30"
+      type: String,         
       required: true,
     },
     venue: {
