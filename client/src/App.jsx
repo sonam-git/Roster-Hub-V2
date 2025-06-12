@@ -1,3 +1,5 @@
+// src/App.jsx
+
 import React, { useContext } from "react";
 import {
   ApolloClient,
@@ -12,6 +14,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
@@ -31,15 +34,11 @@ import { QUERY_ME } from "./utils/queries";
 import Auth from "./utils/auth";
 import MainHeader from "./components/MainHeader";
 
-
 // --- Apollo Setup ---
 
-// Define HTTP and WebSocket URIs based on environment
 const httpUri = "http://localhost:3001/graphql";
+const wsUri   = "ws://localhost:3001/graphql";
 
-const wsUri = "ws://localhost:3001/graphql";
-
-// Auth middleware for HTTP requests
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem("id_token");
   return {
@@ -50,10 +49,8 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-// HTTP Link
 const httpLink = createHttpLink({ uri: httpUri });
 
-// WebSocket Link for subscriptions
 const wsLink = new GraphQLWsLink(
   createClient({
     url: wsUri,
@@ -63,20 +60,15 @@ const wsLink = new GraphQLWsLink(
   })
 );
 
-// Split Link to route queries/mutations vs subscriptions
 const splitLink = split(
   ({ query }) => {
-    const definition = getMainDefinition(query);
-    return (
-      definition.kind === "OperationDefinition" &&
-      definition.operation === "subscription"
-    );
+    const def = getMainDefinition(query);
+    return def.kind === "OperationDefinition" && def.operation === "subscription";
   },
   wsLink,
   authLink.concat(httpLink)
 );
 
-// Apollo Client instance
 const client = new ApolloClient({
   link: splitLink,
   cache: new InMemoryCache(),
@@ -101,19 +93,34 @@ function AppContent() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/roster" element={<Roster />} />
-            <Route path="/message" element={<Message isDarkMode={isDarkMode} />} />
-            <Route path="/skill" element={<Skill isDarkMode={isDarkMode}  />} />
+            <Route
+              path="/message"
+              element={<Message isDarkMode={isDarkMode} />}
+            />
+            <Route
+              path="/skill"
+              element={<Skill isDarkMode={isDarkMode} />}
+            />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/me" element={<Profile />} />
             <Route path="/profiles/:profileId" element={<Profile />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password/:token" element={<PasswordReset />} />
+            <Route
+              path="/reset-password/:token"
+              element={<PasswordReset />}
+            />
             <Route path="/game-schedule" element={<Game />} />
-            <Route path="/game-schedule/:gameId" element={<Game isDarkMode={isDarkMode} />} />
+            <Route
+              path="/game-schedule/:gameId"
+              element={<Game isDarkMode={isDarkMode} />}
+            />
           </Routes>
           {Auth.loggedIn() && currentUser && (
-            <ChatPopup currentUser={currentUser} isDarkMode={isDarkMode} />
+            <ChatPopup
+              currentUser={currentUser}
+              isDarkMode={isDarkMode}
+            />
           )}
         </div>
       </div>
@@ -126,14 +133,16 @@ function AppContent() {
 
 function App() {
   return (
-    <ApolloProvider client={client}>
-      <ThemeProvider>
-        <Router>
-          <MainHeader/>
-          <AppContent />
-        </Router>
-      </ThemeProvider>
-    </ApolloProvider>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <ApolloProvider client={client}>
+        <ThemeProvider>
+          <Router>
+            <MainHeader />
+            <AppContent />
+          </Router>
+        </ThemeProvider>
+      </ApolloProvider>
+    </GoogleOAuthProvider>
   );
 }
 

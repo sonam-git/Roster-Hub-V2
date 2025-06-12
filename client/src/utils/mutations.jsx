@@ -430,3 +430,17 @@ export const UPDATE_GAME = gql`
     }
   }
 `;
+// Login with Google mutation
+export const LOGIN_WITH_GOOGLE = gql`
+  mutation loginWithGoogle($idToken: String!) {
+    loginWithGoogle(idToken: $idToken) {
+      token
+      profile {
+        _id
+        name
+        email
+        profilePic
+      }
+    }
+  }
+`;

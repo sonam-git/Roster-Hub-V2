@@ -19,8 +19,10 @@ const {
 const { signToken } = require("../utils/auth");
 const cloudinary = require("../utils/cloudinary");
 const secret = process.env.JWT_SECRET;
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-const pubsub = new PubSub();
+const pubsub = new PubSub(); // Ensure this instance is used in the resolvers
 
 const resolvers = {
   // ############ QUERIES ########## //
@@ -123,7 +125,7 @@ const resolvers = {
           .sort({ createdAt: -1 })
           .populate("comments")
           .populate("likedBy")
-          .populate("userId","name profilePic");
+          .populate("userId", "name profilePic");
         return posts;
       } catch (err) {
         throw new Error(err);
@@ -135,7 +137,7 @@ const resolvers = {
         const post = await Post.findById(postId)
           .populate("comments")
           .populate("likedBy")
-          .populate("userId","name profilePic");
+          .populate("userId", "name profilePic");
         if (post) {
           return post;
         } else {
@@ -275,6 +277,35 @@ const resolvers = {
         throw new AuthenticationError("Incorrect password!");
       }
 
+      const token = signToken(profile);
+      return { token, profile };
+    },
+    // ************************** LOGIN WITH GOOGLE  *******************************************//
+    loginWithGoogle: async (parent, { idToken }) => {
+      // Verify Google ID token
+      const ticket = await client.verifyIdToken({
+        idToken,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      const {
+        email,
+        name,
+        picture: profilePic,
+        sub: googleId,
+      } = ticket.getPayload();
+
+      // Find or create user
+      let profile = await Profile.findOne({ email });
+      if (!profile) {
+        profile = await Profile.create({
+          name,
+          email,
+          password: googleId,
+          profilePic,
+        });
+      }
+
+      // Sign JWT
       const token = signToken(profile);
       return { token, profile };
     },
@@ -619,11 +650,11 @@ const resolvers = {
           { $addToSet: { posts: post._id } }
         );
         const populated = await Post.findById(post._id)
-      .populate("userId", "name profilePic")
-      .populate("comments")
-      .populate("likedBy");
+          .populate("userId", "name profilePic")
+          .populate("comments")
+          .populate("likedBy");
 
-    return populated;
+        return populated;
       } catch (err) {
         console.error("Error creating post:", err);
         throw new Error("Error creating post");
@@ -1047,8 +1078,8 @@ const resolvers = {
       }
 
       // update only the provided fields
-      if (input.date !== undefined)  game.date  = input.date;
-      if (input.time !== undefined)  game.time  = input.time;
+      if (input.date !== undefined) game.date = input.date;
+      if (input.time !== undefined) game.time = input.time;
       if (input.venue !== undefined) game.venue = input.venue;
       if (input.notes !== undefined) game.notes = input.notes;
 
@@ -1065,7 +1096,7 @@ const resolvers = {
       subscribe: () => pubsub.asyncIterator(["CHAT_CREATED"]),
     },
   },
-
+  // ──────── Type‐level resolvers for Chat ────────
   Chat: {
     from: async (chat) => {
       return await Profile.findById(chat.from);

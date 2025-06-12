@@ -159,6 +159,7 @@ const typeDefs = gql`
   type Mutation {
     addProfile(name: String!, email: String!, password: String!): Auth
     login(email: String!, password: String!): Auth
+    loginWithGoogle(idToken: String!): Auth
     addInfo(
       profileId: ID!
       jerseyNumber: Int!
