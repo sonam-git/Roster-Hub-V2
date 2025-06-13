@@ -1,78 +1,102 @@
-import React, { useState } from 'react';
-import { useQuery } from '@apollo/client';
-import { GET_POSTS } from '../../utils/queries';
-import Post from '../Post';
-import Auth from '../../utils/auth';
+import React, { useState, useEffect } from "react";
+import { useQuery } from "@apollo/client";
+import { GET_POSTS } from "../../utils/queries";
+import {
+  POST_ADDED_SUBSCRIPTION,
+  POST_UPDATED_SUBSCRIPTION,
+  POST_DELETED_SUBSCRIPTION,
+} from "../../utils/subscription";
+import Post from "../Post";
+import Auth from "../../utils/auth";
 
-const PAGE_SIZE = 3; // Number of posts per page
+const PAGE_SIZE = 3;
 
 const PostsList = ({ profileId }) => {
+  const { loading, data, error, subscribeToMore } = useQuery(GET_POSTS);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const { loading, data, error } = useQuery(GET_POSTS);
+  // Wire up all three subscriptions
+  useEffect(() => {
+    const unsubAdd = subscribeToMore({
+      document: POST_ADDED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        const newPost = subscriptionData.data?.postAdded;
+        if (!newPost || prev.posts.some((p) => p._id === newPost._id)) {
+          return prev;
+        }
+        return { posts: [newPost, ...prev.posts] };
+      },
+    });
 
-  const loggedInUserId = Auth.getProfile().data._id;
+    const unsubUpdate = subscribeToMore({
+      document: POST_UPDATED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        const updated = subscriptionData.data?.postUpdated;
+        if (!updated) return prev;
+        return {
+          posts: prev.posts.map((p) =>
+            p._id === updated._id ? updated : p
+          ),
+        };
+      },
+    });
 
+    const unsubDelete = subscribeToMore({
+      document: POST_DELETED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        const deletedId = subscriptionData.data?.postDeleted;
+        if (!deletedId) return prev;
+        return {
+          posts: prev.posts.filter((p) => p._id !== deletedId),
+        };
+      },
+    });
+
+    return () => {
+      unsubAdd();
+      unsubUpdate();
+      unsubDelete();
+    };
+  }, [subscribeToMore]);
+
+  if (loading) return <div>Loading posts...</div>;
+  if (error) return <div>Error loading posts.</div>;
   
-  const [currentPage, setCurrentPage] = useState(1); // Current page number
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error loading posts</div>;
-  }
-
   if (!data || !data?.posts || !data?.posts.length) {
     return <h3 className='text-sm lg:text-lg font-bold'>No posts yet </h3>;
   }
 
-  const userPost = data.posts.filter(post => post.userId._id === profileId);
-  const myPost = data.posts.filter(post => post.userId._id === loggedInUserId);
 
-  // Determine posts to display based on profileId
+  // Filter by profile if needed
+  const allPosts = data.posts;
   const postsToDisplay = profileId
-    ? userPost
-    : [...myPost, ...data.posts.filter(post => post.userId._id !== loggedInUserId)];
+    ? allPosts.filter((p) => p.userId._id === profileId)
+    : allPosts;
 
-    if (postsToDisplay.length === 0) {
-      return (
-        <div className="">
-          <h3 className="text-center font-bold text-sm md:text-lg lg:text-lg xl:text-2xl">
-            No posts yet
-          </h3>
-        </div>
-      );
-    }
-
-  // Calculate total number of pages
+  // Pagination
   const totalPages = Math.ceil(postsToDisplay.length / PAGE_SIZE);
-
-  // Slice the posts based on current page
-  const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const endIndex = startIndex + PAGE_SIZE;
-  const paginatedPosts = postsToDisplay.slice(startIndex, endIndex);
-
-  // Function to handle page navigation
-  const goToPage = (page) => {
-    setCurrentPage(page);
-  };
+  const paginated = postsToDisplay.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
 
   return (
-    <div className="space-y-4">
-      {paginatedPosts.map((post) => (
+    <div className="space-y-6">
+      {paginated.map((post) => (
         <Post key={post._id} post={post} />
       ))}
       <div className="flex justify-center mt-4">
-        {Array.from({ length: totalPages }, (_, index) => (
+        {Array.from({ length: totalPages }, (_, i) => (
           <button
-            key={index + 1}
+            key={i}
             className={`px-3 py-1 mx-1 ${
-              currentPage === index + 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'
+              currentPage === i + 1
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700"
             } rounded`}
-            onClick={() => goToPage(index + 1)}
+            onClick={() => setCurrentPage(i + 1)}
           >
-            {index + 1}
+            {i + 1}
           </button>
         ))}
       </div>

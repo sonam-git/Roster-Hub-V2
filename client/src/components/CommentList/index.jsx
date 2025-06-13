@@ -3,156 +3,91 @@ import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { PencilAltIcon, TrashIcon } from "@heroicons/react/solid";
 import { REMOVE_COMMENT, UPDATE_COMMENT } from "../../utils/mutations";
-import { GET_POSTS } from "../../utils/queries";
-import Auth from "../../utils/auth";
 
-const CommentList = ({ post, comments }) => {
-  console.log('line 10',post)
+export default function CommentList({
+  postId,
+  comments,
+  currentUserId,
+}) {
   const [editingCommentId, setEditingCommentId] = useState(null);
-  const [commentText, setCommentText] = useState("");
-  const [deleteSuccessMessage, setDeleteSuccessMessage] = useState("");
-  const [updateSuccessMessage, setUpdateSuccessMessage] = useState("");
+  const [text, setText] = useState("");
 
-  const postId = post._id;
+  const [removeComment] = useMutation(REMOVE_COMMENT);
+  const [updateComment] = useMutation(UPDATE_COMMENT);
 
-  const [removeComment] = useMutation(REMOVE_COMMENT, {
-    update(cache, { data: { removeComment } }) {
-      try {
-        const { posts } = cache.readQuery({ query: GET_POSTS });
-        cache.writeQuery({
-          qyery: GET_POSTS,
-          data: { posts: [...posts, removeComment] },
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    },
-  });
-
-  const [updateComment] = useMutation(UPDATE_COMMENT, {
-    update(cache, { data: { updateComment } }) {
-      try {
-        const { posts } = cache.readQuery({ query: GET_POSTS });
-        const updatedPosts = posts.map((p) => {
-          if (p._id === post._id) {
-            return {
-              ...p,
-              comments: p.comments.map((comment) =>
-                comment._id === updateComment._id ? updateComment : comment
-              ),
-            };
-          }
-          return p;
-        });
-        cache.writeQuery({
-          query: GET_POSTS,
-          data: { posts: updatedPosts },
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    },
-  });
-
-  const handleDeleteComment = async (postId, commentId) => {
-    try {
-      await removeComment({ variables: { postId, commentId } });
-      setDeleteSuccessMessage("Comment deleted successfully");
-      setTimeout(() => {
-        setDeleteSuccessMessage("");
-      }, 3000);
-    } catch (err) {
-      console.error("Error deleting comment:", err);
-    }
+  const handleDelete = async (commentId) => {
+    await removeComment({
+      variables: { postId, commentId },
+    });
+    // Post.jsx subscription will remove it from UI
   };
 
-  const handleUpdateComment = async (commentId) => {
-    try {
-      await updateComment({ variables: { commentId, commentText } });
-      setEditingCommentId(null);
-      setCommentText("");
-      setUpdateSuccessMessage("Comment updated successfully");
-      setTimeout(() => {
-        setUpdateSuccessMessage("");
-      }, 3000);
-    } catch (err) {
-      console.error("Error updating comment:", err);
-    }
+  const handleSave = async (commentId) => {
+    await updateComment({
+      variables: { commentId, commentText: text },
+    });
+    setEditingCommentId(null);
+    // Post.jsx subscription will update it in UI
   };
 
   return (
-    
-    <div className="mt-4 border-t pt-4">
-      {deleteSuccessMessage && (
-        <p className="text-red-500">{deleteSuccessMessage}</p>
-      )}
-      {updateSuccessMessage && (
-        <p className="text-green-500">{updateSuccessMessage}</p>
-      )}
-      {comments?.length > 0 ? (
-        comments.map((comment) => (
+    <div className="space-y-3">
+      {comments.length > 0 ? (
+        comments.map((c) => (
           <div
-            key={comment._id}
-            className="bg-gray-50 dark:bg-gray-700 shadow-sm rounded-lg p-3 mb-3"
+            key={c._id}
+            className="bg-gray-50 dark:bg-gray-700 p-3 rounded shadow-sm"
           >
-            {editingCommentId === comment._id ? (
-              <div>
+            {editingCommentId === c._id ? (
+              <>
                 <textarea
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
                   className="w-full p-2 mt-2 border rounded dark:text-black"
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
                 />
-                <button
-                  onClick={() => handleUpdateComment(comment._id)}
-                  className="px-3 py-1 bg-blue-500 text-white rounded mt-2"
-                >
-                  Save
-                </button>
-                <button
-                  onClick={() => setEditingCommentId(null)}
-                  className="px-3 py-1 bg-gray-500 text-white rounded mt-2 ml-2"
-                >
-                  Cancel
-                </button>
-              </div>
+                <div className="mt-2 flex space-x-2">
+                  <button
+                    onClick={() => handleSave(c._id)}
+                    className="px-3 py-1 bg-blue-500 text-white rounded"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => setEditingCommentId(null)}
+                    className="px-3 py-1 bg-gray-500 text-white rounded"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
             ) : (
               <>
                 <Link
-                className="flex items-center hover:no-underline dark:hover:text-white"
-                to={`/profiles/${comment.userId}`}
-              >
-               
-                <h4 className="text-sm font-semibold text-left">
-                  {comment.commentAuthor}
-                </h4>
+                  to={`/profiles/${c.userId}`}
+                  className="font-semibold hover:underline"
+                >
+                  {c.commentAuthor}
                 </Link>
-                <p className="text-gray-600 dark:text-gray-300 mt-1 text-left text-sm sm:text-base">
-                  {comment.commentText}
-                </p>
-                <div className="flex justify-between items-center mt-2">
-                  <div className="text-gray-500 text-xs sm:text-sm">
-                    {new Date(parseInt(comment.createdAt)).toLocaleString()}
-                  </div>
-                  {Auth.loggedIn() &&
-                    Auth.getProfile().data._id === comment.userId && (
-                      <div className="flex space-x-2">
-                        <PencilAltIcon
-                          className="h-5 w-5 text-blue-500 cursor-pointer"
-                          title="Update"
-                          onClick={() => {
-                            setEditingCommentId(comment._id);
-                            setCommentText(comment.commentText);
-                          }}
-                        />
-                        <TrashIcon
-                          className="h-5 w-5 text-red-500 cursor-pointer"
-                          title="Delete"
-                          onClick={() =>
-                            handleDeleteComment(postId, comment._id)
-                          }
-                        />
-                      </div>
-                    )}
+                <p className="mt-1">{c.commentText}</p>
+                <div className="flex justify-between items-center text-xs mt-2">
+                  <span className="text-gray-500">
+                    {new Date(parseInt(c.createdAt)).toLocaleString()}
+                  </span>
+                  {currentUserId === c.userId && (
+                    <div className="flex space-x-2">
+                      <PencilAltIcon
+                        className="h-5 w-5 text-blue-500 cursor-pointer"
+                        onClick={() => {
+                          setEditingCommentId(c._id);
+                          setText(c.commentText);
+                        }}
+                      />
+                      <TrashIcon
+                        className="h-5 w-5 text-red-500 cursor-pointer"
+                        onClick={() => handleDelete(c._id)}
+                      />
+                    </div>
+                  )}
                 </div>
               </>
             )}
@@ -163,6 +98,4 @@ const CommentList = ({ post, comments }) => {
       )}
     </div>
   );
-};
-
-export default CommentList;
+}

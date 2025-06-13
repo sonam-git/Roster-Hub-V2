@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { PubSub } = require("graphql-subscriptions");
+const { PubSub, withFilter } = require("graphql-subscriptions");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const {
@@ -21,6 +21,14 @@ const cloudinary = require("../utils/cloudinary");
 const secret = process.env.JWT_SECRET;
 const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+// Subscription event names
+const POST_ADDED = "POST_ADDED";
+const COMMENT_ADDED = "COMMENT_ADDED";
+const POST_LIKED = "POST_LIKED";
+const POST_UPDATED = "POST_UPDATED";
+const POST_DELETED = "POST_DELETED";
+const COMMENT_UPDATED = "COMMENT_UPDATED";
+const COMMENT_DELETED = "COMMENT_DELETED";
 
 const pubsub = new PubSub(); // Ensure this instance is used in the resolvers
 
@@ -653,7 +661,7 @@ const resolvers = {
           .populate("userId", "name profilePic")
           .populate("comments")
           .populate("likedBy");
-
+        pubsub.publish(POST_ADDED, { postAdded: populated });
         return populated;
       } catch (err) {
         console.error("Error creating post:", err);
@@ -687,7 +695,14 @@ const resolvers = {
         // Save the updated post
         await post.save();
 
-        return post;
+        const populated = await Post.findById(postId)
+          .populate("userId", "name profilePic")
+          .populate("comments")
+          .populate("likedBy");
+
+        pubsub.publish(POST_UPDATED, { postUpdated: populated });
+
+        return populated;
       } catch (error) {
         throw new Error("Failed to update the post.");
       }
@@ -699,7 +714,12 @@ const resolvers = {
         throw new AuthenticationError("You need to be logged in!");
       }
       try {
-        return Post.findOneAndDelete({ _id: postId });
+        const deletedPost = await Post.findOneAndDelete({ _id: postId });
+        if (deletedPost) {
+          pubsub.publish(POST_DELETED, { postDeleted: postId });
+        }
+
+        return deletedPost;
       } catch (error) {
         console.error("Error deleting post:", error);
         throw new Error("Error deleting post.");
@@ -727,7 +747,7 @@ const resolvers = {
 
         await post.save();
         await post.populate("likedBy"); // Populate the likedBy field
-
+        pubsub.publish(POST_LIKED, { postLiked: post });
         return post;
       }
 
@@ -735,27 +755,38 @@ const resolvers = {
     },
     // ************************** ADD COMMENT *******************************************//
     addComment: async (parent, { postId, commentText }, context) => {
-      if (context.user) {
-        try {
-          const newComment = await Comment.create({
-            commentText,
-            commentAuthor: context.user.name,
-            userId: context.user._id,
-          });
-
-          const updatedPost = await Post.findByIdAndUpdate(
-            postId,
-            { $push: { comments: newComment._id } },
-            { new: true }
-          ).populate("comments");
-
-          return updatedPost;
-        } catch (err) {
-          console.error(err);
-          throw new Error("Error adding comment");
-        }
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in!");
       }
-      throw new AuthenticationError("Not logged in");
+      try {
+        // 1️⃣ create the comment
+        const newComment = await Comment.create({
+          commentText,
+          commentAuthor: context.user.name,
+          userId: context.user._id,
+        });
+    
+        // 2️⃣ push its _id into the Post.comments array
+        const updatedPost = await Post.findByIdAndUpdate(
+          postId,
+          { $addToSet: { comments: newComment._id } },
+          { new: true }
+        )
+        // only populate the comments array itself—not the nested userId
+        .populate("comments");
+    
+        // 3️⃣ broadcast the raw comment (with userId:ObjectId) to all watchers
+        pubsub.publish(COMMENT_ADDED, {
+          commentAdded: newComment,
+          postId: postId.toString(),
+        });
+    
+        // 4️⃣ return the updated post
+        return updatedPost;
+      } catch (err) {
+        console.error("Error adding comment:", err);
+        throw new Error("Error adding comment");
+      }
     },
 
     // ************************** UPDATE COMMENT *******************************************//
@@ -772,6 +803,8 @@ const resolvers = {
             throw new Error("Comment not found or not authorized");
           }
 
+          pubsub.publish(COMMENT_UPDATED, { commentUpdated: updatedComment });
+
           return updatedComment;
         } catch (err) {
           console.error(err);
@@ -783,6 +816,8 @@ const resolvers = {
 
     // ************************** REMOVE COMMENT *******************************************//
     removeComment: async (parent, { postId, commentId }, context) => {
+      if (!context.user)
+        throw new AuthenticationError("You need to be logged in!");
       if (context.user) {
         try {
           const deletedComment = await Comment.findOneAndDelete({
@@ -794,13 +829,13 @@ const resolvers = {
             throw new Error("Comment not found or not authorized");
           }
 
-          const updatedPost = await Post.findByIdAndUpdate(
-            postId,
-            { $pull: { comments: commentId } },
-            { new: true }
-          ).populate("comments");
+          await Post.findByIdAndUpdate(postId, {
+            $pull: { comments: commentId },
+          });
 
-          return updatedPost;
+          pubsub.publish(COMMENT_DELETED, { commentDeleted: commentId });
+
+          return commentId;
         } catch (err) {
           console.error(err);
           throw new Error("Error removing comment");
@@ -808,6 +843,32 @@ const resolvers = {
       }
       throw new AuthenticationError("You need to be logged in!");
     },
+    // removeComment: async (parent, { postId, commentId }, context) => {
+    //   if (context.user) {
+    //     try {
+    //       const deletedComment = await Comment.findOneAndDelete({
+    //         _id: commentId,
+    //         userId: context.user._id,
+    //       });
+
+    //       if (!deletedComment) {
+    //         throw new Error("Comment not found or not authorized");
+    //       }
+
+    //       const updatedPost = await Post.findByIdAndUpdate(
+    //         postId,
+    //         { $pull: { comments: commentId } },
+    //         { new: true }
+    //       ).populate("comments");
+
+    //       return updatedPost;
+    //     } catch (err) {
+    //       console.error(err);
+    //       throw new Error("Error removing comment");
+    //     }
+    //   }
+    //   throw new AuthenticationError("You need to be logged in!");
+    // },
     // ************************** DELETE PROFILE *******************************************//
     deleteProfile: async (_, { profileId }, context) => {
       if (!context.user) {
@@ -1094,6 +1155,36 @@ const resolvers = {
   Subscription: {
     chatCreated: {
       subscribe: () => pubsub.asyncIterator(["CHAT_CREATED"]),
+    },
+    postAdded: {
+      subscribe: () => pubsub.asyncIterator([POST_ADDED]),
+    },
+    postLiked: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator(POST_LIKED),
+        (payload, variables) =>
+          payload.postLiked._id.toString() === variables.postId
+      ),
+    },
+    postUpdated: {
+      subscribe: () => pubsub.asyncIterator(POST_UPDATED),
+    },
+    postDeleted: {
+      subscribe: () => pubsub.asyncIterator(POST_DELETED),
+    },
+    commentAdded: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator([COMMENT_ADDED]),
+        (payload, variables) =>
+          payload.postId === variables.postId
+      ),
+      resolve: (payload) => payload.commentAdded,
+    },
+    commentUpdated: {
+      subscribe: () => pubsub.asyncIterator(COMMENT_UPDATED),
+    },
+    commentDeleted: {
+      subscribe: () => pubsub.asyncIterator(COMMENT_DELETED),
     },
   },
   // ──────── Type‐level resolvers for Chat ────────

@@ -1,6 +1,3 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { useMutation, useQuery } from "@apollo/client";
 import {
   PencilAltIcon,
   TrashIcon,
@@ -8,173 +5,216 @@ import {
   XIcon,
   HeartIcon,
 } from "@heroicons/react/solid";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { useMutation, useSubscription } from "@apollo/client";
 import {
   REMOVE_POST,
   UPDATE_POST,
   ADD_COMMENT,
   LIKE_POST,
 } from "../../utils/mutations";
-import { GET_POSTS } from "../../utils/queries";
+import {
+  POST_LIKED_SUBSCRIPTION,
+  COMMENT_ADDED_SUBSCRIPTION,
+  COMMENT_UPDATED_SUBSCRIPTION,
+  COMMENT_DELETED_SUBSCRIPTION,
+  POST_UPDATED_SUBSCRIPTION,
+  POST_DELETED_SUBSCRIPTION,
+} from "../../utils/subscription";
 import Auth from "../../utils/auth";
 import CommentList from "../CommentList";
-import ProfileAvatar from "../../assets/images/profile-avatar.png"; //
+import ProfileAvatar from "../../assets/images/profile-avatar.png";
 
-const Post = ({ post }) => {
-  const { refetch } = useQuery(GET_POSTS);
+export default function Post({ post }) {
+  // UI State
   const [isEditing, setIsEditing] = useState(false);
   const [postText, setPostText] = useState(post.postText);
   const [isEdited, setIsEdited] = useState(false);
   const [isCommenting, setIsCommenting] = useState(false);
-  const [commentText, setCommentText] = useState("");
   const [showComments, setShowComments] = useState(false);
+  const [commentText, setCommentText] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [likes, setLikes] = useState(post.likes);
   const [likedBy, setLikedBy] = useState(post.likedBy || []);
+  const [comments, setComments] = useState(post.comments || []);
+  const [deleted, setDeleted] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
 
-  const [removePost] = useMutation(REMOVE_POST, {
-    refetchQueries: [{ query: GET_POSTS }],
-  });
+  const currentUserId = Auth.getProfile().data._id;
 
-  const [updatePost] = useMutation(UPDATE_POST, {
-    refetchQueries: [{ query: GET_POSTS }],
-  });
+  // GraphQL Mutations
+  const [removePost] = useMutation(REMOVE_POST);
+  const [updatePost] = useMutation(UPDATE_POST);
+  const [addComment] = useMutation(ADD_COMMENT);
+  const [likePost] = useMutation(LIKE_POST);
 
-  const [addComment] = useMutation(ADD_COMMENT, {
-    refetchQueries: [{ query: GET_POSTS }],
-    onCompleted: () => {
-      setShowComments(true);
+  // Subscriptions
+
+  // 1️⃣ Likes
+  useSubscription(POST_LIKED_SUBSCRIPTION, {
+    variables: { postId: post._id },
+    onSubscriptionData: ({ subscriptionData }) => {
+      const liked = subscriptionData.data?.postLiked;
+      if (liked) {
+        setLikes(liked.likes);
+        setLikedBy(liked.likedBy);
+      }
     },
   });
 
-  const [likePost] = useMutation(LIKE_POST, {
-    onCompleted: async (data) => {
-      setLikes(data.likePost.likes);
-      setLikedBy(data.likePost.likedBy);
-      await refetch(); // Refetch the posts to get the updated likedBy data
-    },
-    onError: (err) => {
-      console.error("Error liking post:", err);
+  // 2️⃣ New comments
+  useSubscription(COMMENT_ADDED_SUBSCRIPTION, {
+    variables: { postId: post._id },
+    onSubscriptionData: ({ subscriptionData }) => {
+      const newComment = subscriptionData.data?.commentAdded;
+      if (!newComment) return;
+      setComments((prev) =>
+        prev.some((c) => c._id === newComment._id)
+          ? prev
+          : [...prev, newComment]
+      );
     },
   });
 
-  const handleDelete = async () => {
-    try {
-      await removePost({ variables: { postId: post._id } });
-    } catch (err) {
-      console.error(err);
-    }
+  // 3️⃣ Comment updates
+  useSubscription(COMMENT_UPDATED_SUBSCRIPTION, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const updated = subscriptionData.data?.commentUpdated;
+      if (!updated) return;
+      setComments((prev) =>
+        prev.map((c) => (c._id === updated._id ? updated : c))
+      );
+    },
+  });
+
+  // 4️⃣ Comment deletions
+  useSubscription(COMMENT_DELETED_SUBSCRIPTION, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const deletedId = subscriptionData.data?.commentDeleted;
+      if (!deletedId) return;
+      setComments((prev) => prev.filter((c) => c._id !== deletedId));
+    },
+  });
+
+  // 5️⃣ Post updates
+  useSubscription(POST_UPDATED_SUBSCRIPTION, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const updated = subscriptionData.data?.postUpdated;
+      if (updated && updated._id === post._id) {
+        setPostText(updated.postText);
+        setIsEdited(true);
+        setLikes(updated.likes);
+        setLikedBy(updated.likedBy);
+        setComments(updated.comments);
+      }
+    },
+  });
+
+  // 6️⃣ Post deletions
+  useSubscription(POST_DELETED_SUBSCRIPTION, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      if (subscriptionData.data?.postDeleted === post._id) {
+        setDeleted(true);
+      }
+    },
+  });
+
+  // Handlers
+
+  const handleDeletePost = async () => {
+    await removePost({ variables: { postId: post._id } });
   };
 
-  const handleUpdate = async () => {
-    try {
-      const { data } = await updatePost({
-        variables: { postId: post._id, postText },
-      });
-      setIsEditing(false);
-      setIsEdited(true);
-      setPostText(data.updatePost.postText);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleAddComment = async () => {
-    if (!commentText) {
-      setErrorMessage("Please write a comment.");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 2000);
-      return;
-    }
-    try {
-      await addComment({ variables: { postId: post._id, commentText } });
-      setIsCommenting(false);
-      setCommentText("");
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleComment = () => {
-    setIsCommenting(true);
-    setShowComments(true);
-  };
-
-  const toggleComments = () => {
-    setShowComments(!showComments);
+  const handleUpdatePost = async () => {
+    const { data } = await updatePost({
+      variables: { postId: post._id, postText },
+    });
+    setIsEditing(false);
+    setIsEdited(true);
+    setPostText(data.updatePost.postText);
   };
 
   const handleLike = async () => {
+    await likePost({ variables: { postId: post._id } });
+  };
+
+  const handleAddComment = async () => {
+    if (!commentText.trim()) {
+      setErrorMessage("Please write a comment.");
+      return setTimeout(() => setErrorMessage(""), 2000);
+    }
     try {
-      await likePost({ variables: { postId: post._id } });
-    } catch (err) {
-      console.error("Error liking post:", err);
+      const { data } = await addComment({
+        variables: { postId: post._id, commentText },
+      });
+      // use the server's returned comments (which now include userId)
+      setComments(data.addComment.comments);
+      // make sure the list is visible immediately
+      setShowComments(true);
+      setIsCommenting(false);
+      setCommentText("");
+    } catch (e) {
+      console.error(e);
     }
   };
 
-  const sortedComments = [...post.comments].reverse();
+  if (deleted) return null;
 
-  const isLikedByCurrentUser = likedBy.some(
-    (user) => user._id === Auth.getProfile().data._id
-  );
+  const isLikedByCurrentUser = likedBy.some((u) => u._id === currentUserId);
 
   return (
     <div className="relative bg-gray-100 dark:bg-gray-800 shadow-md rounded-lg p-4 mb-4">
+      {/* Header */}
       <div className="flex justify-between items-center">
-        <Link
-          className="flex items-center hover:no-underline hover:text-dark dark:hover:text-white"
-          to={`/profiles/${post.userId._id}`}
-        >
+        <Link to={`/profiles/${post.userId._id}`} className="flex items-center">
           <img
-            src={post?.userId?.profilePic || ProfileAvatar}
-            alt="profile"
-            className="w-8 h-8 rounded-full object-cover mr-2"
+            src={post.userId.profilePic || ProfileAvatar}
+            alt=""
+            className="w-8 h-8 rounded-full mr-2"
           />
-          <h3 className="text-sm md:text-md lg:text-lg xl:text-xl">
-            {post?.userId?.name || "Anonymous"}
-          </h3>
+          <h3 className="text-lg">{post.userId.name}</h3>
         </Link>
-        {Auth.loggedIn() && Auth.getProfile().data._id === post.userId._id && (
-          <div className="absolute top-3 right-3 flex space-x-2">
+        {currentUserId === post.userId._id && (
+          <div className="flex space-x-2">
             <PencilAltIcon
               className="h-5 w-5 text-blue-500 cursor-pointer"
-              title="Update"
               onClick={() => setIsEditing(true)}
             />
             <TrashIcon
               className="h-5 w-5 text-red-500 cursor-pointer"
-              title="Delete"
-              onClick={handleDelete}
+              onClick={handleDeletePost}
             />
           </div>
         )}
       </div>
+
+      {/* Edit vs View */}
       {isEditing ? (
-        <div>
+        <>
           <textarea
             value={postText}
             onChange={(e) => setPostText(e.target.value)}
-            className="w-full p-2 mt-2 border rounded dark:text-black"
+            className="w-full p-2 mt-2 border rounded"
           />
-          <button
-            onClick={handleUpdate}
-            className="px-3 py-1 bg-blue-500 text-white rounded mt-2"
-          >
-            Save
-          </button>
-          <button
-            onClick={() => setIsEditing(false)}
-            className="px-3 py-1 bg-gray-500 text-white rounded mt-2 ml-2"
-          >
-            Cancel
-          </button>
-        </div>
+          <div className="mt-2 flex space-x-2">
+            <button
+              onClick={handleUpdatePost}
+              className="bg-blue-500 text-white px-3 py-1 rounded"
+            >
+              Save
+            </button>
+            <button
+              onClick={() => setIsEditing(false)}
+              className="bg-gray-500 text-white px-3 py-1 rounded"
+            >
+              Cancel
+            </button>
+          </div>
+        </>
       ) : (
         <>
-          <p className="text-gray-700 dark:text-white text-sm md:text-sm lg:text-md xl:text-lg mt-2">
-            {post?.postText}
-          </p>
+          <p className="mt-2">{postText}</p>
           {isEdited && (
             <small className="text-gray-500">
               Edited: {new Date().toLocaleString()}
@@ -182,91 +222,81 @@ const Post = ({ post }) => {
           )}
         </>
       )}
-      <div className="flex justify-between items-center mt-2">
-        {post.createdAt && (
-          <small className="text-gray-500">
-            {isEdited ? "Originally posted: " : ""}
-            {new Date(parseInt(post.createdAt)).toLocaleString()}
-          </small>
-        )}
 
-        <div className="flex space-x-2 items-center">
-          <div className="relative flex items-center">
+      {/* Footer */}
+      <div className="flex justify-between items-center mt-4">
+        <small className="text-gray-500">
+          {new Date(parseInt(post.createdAt)).toLocaleString()}
+        </small>
+        <div className="flex items-center space-x-4">
+          {/* Like */}
+          <div className="relative">
             <HeartIcon
               className={`h-5 w-5 cursor-pointer ${
-                isLikedByCurrentUser ? "text-green-500" : "text-red-500"
+                isLikedByCurrentUser ? "text-green-500" : "text-gray-400"
               }`}
-              title={isLikedByCurrentUser ? "Dislike" : "Like"}
               onClick={handleLike}
               onMouseEnter={() => setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
             />
-            {showTooltip && likedBy.length > 0 && (
-              <div className="absolute top-0 left-full ml-2 w-max bg-green-200 text-black text-sm rounded p-2 z-10">
-                {likedBy.map((user) => (
-                  <li key={user._id}>{user.name}</li>
+            {showTooltip && (
+              <div className="absolute left-full ml-2 p-2 bg-white dark:bg-gray-700 rounded shadow">
+                {likedBy.map((u) => (
+                  <div key={u._id}>{u.name}</div>
                 ))}
               </div>
             )}
           </div>
-          <span className="text-gray-700 dark:text-white">{likes}</span>
+          <span>{likes}</span>
 
-          <ChatAltIcon
-            className="h-5 w-5 text-green-500 cursor-pointer"
-            title="Comment"
-            onClick={handleComment}
-          />
-
-          {!showComments ? (
-            <>
-              <ChatAltIcon
-                className="h-5 w-5 text-blue-500 cursor-pointer"
-                title="Show Comments"
-                onClick={toggleComments}
-              />
-              <span className="text-gray-700 dark:text-white">
-                {sortedComments.length}
-              </span>
-            </>
-          ) : (
+          {/* Comment toggle */}
+          {showComments ? (
             <XIcon
               className="h-5 w-5 text-blue-500 cursor-pointer"
-              title="Close Comments"
-              onClick={toggleComments}
+              onClick={() => setShowComments(false)}
+            />
+          ) : (
+            <ChatAltIcon
+              className="h-5 w-5 text-blue-500 cursor-pointer"
+              onClick={() => {
+                setIsCommenting(true);
+                setShowComments(true);
+              }}
             />
           )}
+          <span>{comments.length}</span>
         </div>
       </div>
-      {errorMessage && <div className="text-red-500 p-2">{errorMessage}</div>}
+
+      {/* New Comment */}
       {isCommenting && (
-        <div>
+        <div className="mt-2">
           <textarea
-            className="w-full p-2 mt-2 border rounded dark:text-black"
-            placeholder="Add your comment..."
+            className="w-full p-2 border rounded"
+            placeholder="Write a comment..."
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
           />
           <button
-            onClick={() => setIsCommenting(false)}
-            className="px-3 py-1 bg-gray-500 text-white rounded mt-2"
-          >
-            Cancel
-          </button>
-          <button
             onClick={handleAddComment}
-            className="px-3 py-1 bg-blue-500 text-white rounded mt-2 ml-2"
+            className="mt-2 bg-blue-500 text-white px-3 py-1 rounded"
           >
-            Add Comment
+            Post Comment
           </button>
+          {errorMessage && <p className="text-red-500 mt-1">{errorMessage}</p>}
         </div>
       )}
+
+      {/* Comment List */}
       {showComments && (
         <div className="mt-4">
-          <CommentList comments={sortedComments} post={post} />
+          <CommentList
+            postId={post._id}
+            comments={comments}
+            currentUserId={currentUserId}
+          />
         </div>
       )}
     </div>
   );
-};
-
-export default Post;
+}

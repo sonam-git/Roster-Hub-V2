@@ -115,11 +115,11 @@ const typeDefs = gql`
   }
 
   input UpdateGameInput {
-   date: String
-   time: String
-   venue: String
-   notes: String
- }
+    date: String
+    time: String
+    venue: String
+    notes: String
+  }
 
   input RespondToGameInput {
     gameId: ID!
@@ -184,7 +184,7 @@ const typeDefs = gql`
     removePost(postId: ID!): Post
     addComment(postId: ID!, commentText: String!): Post
     updateComment(commentId: ID!, commentText: String!): Comment
-    removeComment(postId: ID!, commentId: ID!): Post
+    removeComment(postId: ID!, commentId: ID!): ID!
     sendResetPasswordEmail(email: String!): ResponseMessage!
     resetPassword(token: String!, newPassword: String!): ResponseMessage!
     likePost(postId: ID!): Post
@@ -205,6 +205,13 @@ const typeDefs = gql`
   }
   type Subscription {
     chatCreated: Chat
+    postAdded: Post
+    postLiked(postId: ID!): Post
+    postUpdated: Post
+    postDeleted: ID
+    commentAdded(postId: ID!): Comment
+    commentUpdated: Comment
+    commentDeleted: ID
   }
 `;
 

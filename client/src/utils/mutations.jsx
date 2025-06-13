@@ -223,6 +223,7 @@ export const ADD_COMMENT = gql`
         commentText
         commentAuthor
         createdAt
+         userId 
       }
     }
   }
@@ -242,17 +243,7 @@ export const UPDATE_COMMENT = gql`
 // Mutation to remove a comment from a post
 export const REMOVE_COMMENT = gql`
   mutation removeComment($postId: ID!, $commentId: ID!) {
-    removeComment(postId: $postId, commentId: $commentId) {
-      _id
-      postText
-      postAuthor
-      createdAt
-      comments {
-        commentText
-        commentAuthor
-        createdAt
-      }
-    }
+    removeComment(postId: $postId, commentId: $commentId)
   }
 `;
 // like post mutation
