@@ -167,13 +167,13 @@ export default function Post({ post }) {
     <div className="relative bg-gray-100 dark:bg-gray-800 shadow-md rounded-lg p-4 mb-4">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <Link to={`/profiles/${post.userId._id}`} className="flex items-center">
+        <Link to={`/profiles/${post.userId._id}`} className="flex items-center hover:no-underline">
           <img
             src={post.userId.profilePic || ProfileAvatar}
             alt=""
             className="w-8 h-8 rounded-full mr-2"
           />
-          <h3 className="text-lg">{post.userId.name}</h3>
+          <h3 className="text-lg dark:hover:text-yellow-300">{post.userId.name}</h3>
         </Link>
         {currentUserId === post.userId._id && (
           <div className="flex space-x-2">
@@ -232,7 +232,7 @@ export default function Post({ post }) {
           {/* Like */}
           <div className="relative">
             <HeartIcon
-              className={`h-5 w-5 cursor-pointer ${
+              className={`h-5 w-5 cursor-pointer  ${
                 isLikedByCurrentUser ? "text-green-500" : "text-gray-400"
               }`}
               onClick={handleLike}
@@ -240,7 +240,7 @@ export default function Post({ post }) {
               onMouseLeave={() => setShowTooltip(false)}
             />
             {showTooltip && (
-              <div className="absolute left-full ml-2 p-2 bg-white dark:bg-gray-700 rounded shadow">
+              <div className="absolute top-0 left-full ml-2 w-max bg-white dark:bg-gray-700 text-black dark:text-white text-sm rounded p-2 shadow z-10">
                 {likedBy.map((u) => (
                   <div key={u._id}>{u.name}</div>
                 ))}

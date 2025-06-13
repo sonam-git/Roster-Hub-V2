@@ -15,10 +15,10 @@ export const QUERY_PROFILES = gql`
         postText
         postAuthor
         createdAt
-        userId{
-        _id
-        name
-        profilePic
+        userId {
+          _id
+          name
+          profilePic
         }
         comments {
           _id
@@ -26,6 +26,11 @@ export const QUERY_PROFILES = gql`
           commentAuthor
           createdAt
           userId
+          likes
+          likedBy {
+            _id
+            name
+          }
         }
       }
       socialMediaLinks {
@@ -72,10 +77,10 @@ export const QUERY_SINGLE_PROFILE = gql`
         postText
         postAuthor
         createdAt
-        userId{
-        _id
-        name
-        profilePic
+        userId {
+          _id
+          name
+          profilePic
         }
         comments {
           _id
@@ -83,6 +88,11 @@ export const QUERY_SINGLE_PROFILE = gql`
           commentAuthor
           createdAt
           userId
+          likes
+          likedBy {
+            _id
+            name
+          }
         }
       }
       socialMediaLinks {
@@ -142,10 +152,10 @@ export const QUERY_ME = gql`
         postText
         postAuthor
         createdAt
-        userId{
-        _id
-        name
-        profilePic
+        userId {
+          _id
+          name
+          profilePic
         }
         comments {
           _id
@@ -153,6 +163,11 @@ export const QUERY_ME = gql`
           commentAuthor
           createdAt
           userId
+          likes
+          likedBy {
+            _id
+            name
+          }
         }
       }
       receivedMessages {
@@ -207,10 +222,10 @@ export const GET_POSTS = gql`
   query Posts {
     posts {
       _id
-      userId{
+      userId {
         _id
         name
-        profilePic 
+        profilePic
       }
       postAuthor
       postText
@@ -221,6 +236,11 @@ export const GET_POSTS = gql`
         commentAuthor
         createdAt
         userId
+        likes
+        likedBy {
+          _id
+          name
+        }
       }
       likes
       likedBy {
@@ -235,7 +255,7 @@ export const GET_POST = gql`
   query Post($postId: ID!) {
     post(postId: $postId) {
       _id
-      userId{
+      userId {
         _id
         name
         profilePic
@@ -249,6 +269,11 @@ export const GET_POST = gql`
         commentAuthor
         createdAt
         userId
+        likes
+        likedBy {
+          _id
+          name
+        }
       }
       likes
       likedBy {
@@ -278,6 +303,11 @@ export const GET_COMMENTS = gql`
       commentAuthor
       createdAt
       userId
+      likes
+      likedBy {
+        _id
+        name
+      }
     }
   }
 `;
@@ -290,6 +320,11 @@ export const GET_COMMENT = gql`
       commentAuthor
       createdAt
       userId
+      likes
+      likedBy {
+        _id
+        name
+      }
     }
   }
 `;

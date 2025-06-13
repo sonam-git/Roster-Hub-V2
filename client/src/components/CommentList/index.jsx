@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { PencilAltIcon, TrashIcon } from "@heroicons/react/solid";
 import { REMOVE_COMMENT, UPDATE_COMMENT } from "../../utils/mutations";
+import CommentLike from "../CommentLike"; 
 
 export default function CommentList({
   postId,
@@ -30,6 +31,7 @@ export default function CommentList({
     // Post.jsx subscription will update it in UI
   };
 
+  
   return (
     <div className="space-y-3">
       {comments.length > 0 ? (
@@ -64,7 +66,7 @@ export default function CommentList({
               <>
                 <Link
                   to={`/profiles/${c.userId}`}
-                  className="font-semibold hover:underline"
+                  className="font-semibold hover:no-underline dark:hover:text-yellow-300"
                 >
                   {c.commentAuthor}
                 </Link>
@@ -73,6 +75,11 @@ export default function CommentList({
                   <span className="text-gray-500">
                     {new Date(parseInt(c.createdAt)).toLocaleString()}
                   </span>
+                  {/* ← comment-like button */}
+                  <CommentLike 
+                    comment={c} 
+                    currentUserId={currentUserId} 
+                  />
                   {currentUserId === c.userId && (
                     <div className="flex space-x-2">
                       <PencilAltIcon

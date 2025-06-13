@@ -185,6 +185,11 @@ export const ADD_POST = gql`
         commentText
         commentAuthor
         createdAt
+         likes
+          likedBy {
+            _id
+            name
+          }
       }
         likes
         likedBy {
@@ -224,6 +229,11 @@ export const ADD_COMMENT = gql`
         commentAuthor
         createdAt
          userId 
+        likes
+          likedBy {
+            _id
+            name
+          }
       }
     }
   }
@@ -237,6 +247,11 @@ export const UPDATE_COMMENT = gql`
       commentAuthor
       createdAt
       userId
+       likes
+          likedBy {
+            _id
+            name
+          }
     }
   }
 `;
@@ -256,6 +271,19 @@ export const LIKE_POST = gql`
         _id
         name
       }
+    }
+  }
+`;
+// like post mutation
+export const LIKE_COMMENT = gql`
+  mutation likeComment($commentId: ID!) {
+    likeComment(commentId: $commentId) {
+      _id
+      likes
+          likedBy {
+            _id
+            name
+          }
     }
   }
 `;

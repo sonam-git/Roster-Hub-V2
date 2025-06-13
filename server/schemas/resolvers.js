@@ -29,6 +29,7 @@ const POST_UPDATED = "POST_UPDATED";
 const POST_DELETED = "POST_DELETED";
 const COMMENT_UPDATED = "COMMENT_UPDATED";
 const COMMENT_DELETED = "COMMENT_DELETED";
+const COMMENT_LIKED = "COMMENT_LIKED";
 
 const pubsub = new PubSub(); // Ensure this instance is used in the resolvers
 
@@ -158,7 +159,7 @@ const resolvers = {
     // ************************** QUERY COMMENTS *******************************************//
     comments: async () => {
       try {
-        const comments = await Comment.find().sort({ createdAt: -1 });
+        const comments = await Comment.find().sort({ createdAt: -1 }).populate("likedBy");
 
         return comments;
       } catch (err) {
@@ -168,7 +169,7 @@ const resolvers = {
     // finds a comment by its commentId
     comment: async (parent, { commentId }) => {
       try {
-        const comment = await Comment.findById(commentId);
+        const comment = await Comment.findById(commentId).populate("likedBy");
         return comment;
       } catch (err) {
         throw new Error(err);
@@ -843,32 +844,35 @@ const resolvers = {
       }
       throw new AuthenticationError("You need to be logged in!");
     },
-    // removeComment: async (parent, { postId, commentId }, context) => {
-    //   if (context.user) {
-    //     try {
-    //       const deletedComment = await Comment.findOneAndDelete({
-    //         _id: commentId,
-    //         userId: context.user._id,
-    //       });
+    // ************************** LIKE COMMENT *******************************************//
+    likeComment: async (parent, { commentId }, context) => {
+      // Check if the user is authenticated
+      if (context.user) {
+        const comment = await Comment.findById(commentId);
+        const userId = context.user._id;
 
-    //       if (!deletedComment) {
-    //         throw new Error("Comment not found or not authorized");
-    //       }
+        if (!comment) {
+          throw new Error("Comment not found");
+        }
 
-    //       const updatedPost = await Post.findByIdAndUpdate(
-    //         postId,
-    //         { $pull: { comments: commentId } },
-    //         { new: true }
-    //       ).populate("comments");
+        const alreadyLiked = comment.likedBy.includes(userId);
 
-    //       return updatedPost;
-    //     } catch (err) {
-    //       console.error(err);
-    //       throw new Error("Error removing comment");
-    //     }
-    //   }
-    //   throw new AuthenticationError("You need to be logged in!");
-    // },
+        if (alreadyLiked) {
+         comment.likes -= 1;
+          comment.likedBy = comment.likedBy.filter((id) => id.toString() !== userId);
+        } else {
+          comment.likes += 1;
+          comment.likedBy.push(userId);
+        }
+
+        await comment.save();
+        await comment.populate("likedBy"); // Populate the likedBy field
+        pubsub.publish(COMMENT_LIKED, { commentLiked: comment });
+        return comment;
+      }
+
+      throw new AuthenticationError("Not logged in");
+    },
     // ************************** DELETE PROFILE *******************************************//
     deleteProfile: async (_, { profileId }, context) => {
       if (!context.user) {
@@ -1185,6 +1189,13 @@ const resolvers = {
     },
     commentDeleted: {
       subscribe: () => pubsub.asyncIterator(COMMENT_DELETED),
+    },
+    commentLiked: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator(COMMENT_LIKED),
+        (payload, variables) =>
+          payload.commentLiked._id.toString() === variables.commentId
+      ),
     },
   },
   // ──────── Type‐level resolvers for Chat ────────

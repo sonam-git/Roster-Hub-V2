@@ -102,5 +102,13 @@ export const COMMENT_DELETED_SUBSCRIPTION = gql`
   }
 `;
 
-
+export const COMMENT_LIKED_SUBSCRIPTION = gql`
+  subscription OnCommentLiked($commentId: ID!) {
+    commentLiked(commentId: $commentId) {
+      _id
+     likes
+ likedBy { _id name }
+    }
+  }
+`;
 

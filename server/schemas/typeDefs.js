@@ -48,6 +48,8 @@ const typeDefs = gql`
     commentAuthor: String!
     createdAt: String!
     userId: ID!
+    likes: Int
+    likedBy: [Profile]
   }
 
   type Message {
@@ -188,6 +190,7 @@ const typeDefs = gql`
     sendResetPasswordEmail(email: String!): ResponseMessage!
     resetPassword(token: String!, newPassword: String!): ResponseMessage!
     likePost(postId: ID!): Post
+    likeComment(commentId: ID!): Comment
     ratePlayer(profileId: ID!, ratingInput: RatingInput!): Profile
     createChat(from: ID!, to: ID!, content: String!): Chat
     # Create a new game poll (authenticated)
@@ -212,6 +215,7 @@ const typeDefs = gql`
     commentAdded(postId: ID!): Comment
     commentUpdated: Comment
     commentDeleted: ID
+    commentLiked(commentId: ID!): Comment
   }
 `;
 

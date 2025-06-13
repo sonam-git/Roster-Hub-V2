@@ -15,11 +15,22 @@ const commentSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  likes: {
+    type: Number,
+    default: 0,
+  },
+  likedBy: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Profile",
+      default: [],
+    },
+  ],
   userId: {
     type: Schema.Types.ObjectId,
     ref: "Profile",
     required: true,
-  }
+  },
 });
 
 const Comment = model("Comment", commentSchema);
