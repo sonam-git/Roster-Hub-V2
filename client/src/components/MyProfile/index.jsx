@@ -11,8 +11,12 @@ import "@fortawesome/fontawesome-free/css/all.css";
 import { ThemeContext } from "../ThemeContext";
 import PostForm from "../PostForm";
 import renderStars from "../../utils/renderStars";
+import PostsList from "../PostsList";
+import Auth from "../../utils/auth";
 
 const MyProfile = () => {
+  const userId = Auth.getProfile()?.data?._id;
+  
   const { isDarkMode } = useContext(ThemeContext);
   const { loading, data } = useQuery(QUERY_ME);
   const [selectedSocialMedia, setSelectedSocialMedia] = useState(null);
@@ -196,7 +200,10 @@ const MyProfile = () => {
         </div>
         <div className={`md:w-3/5 md:mb-0 p-2`}>
           {selectedView === "posts" ? (
-            <PostForm />
+            <>
+              <PostForm />
+              <PostsList profileId={userId} />
+            </>
           ) : (
             <ProfileManagement me={me} isDarkMode={isDarkMode} />
           )}

@@ -6,6 +6,7 @@ import Auth from "../utils/auth";
 import Welcome from "../components/Welcome";
 import PostsList from "../components/PostsList";
 import RecentSkillsList from "../components/RecentSkillsList";
+import PostForm from "../components/PostForm";
 
 const Home = () => {
   const { loading, data } = useQuery(QUERY_ME);
@@ -26,7 +27,12 @@ const Home = () => {
             </div>
             <div className="w-full flex flex-col lg:flex-row lg:space-x-4">
               <div className="w-full lg:w-3/4 mb-4 lg:mb-0">
-                <PostsList />
+                <>
+                  <div className="dark:bg-gray-700 bg-blue-200 shadow-md rounded-lg p-6 mb-4">
+                    <PostForm />
+                  </div>
+                  <PostsList />
+                </>
               </div>
               <div className="w-full lg:w-1/4">
                 <RecentSkillsList />

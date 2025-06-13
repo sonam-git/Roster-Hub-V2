@@ -3,7 +3,6 @@ import { useMutation } from "@apollo/client";
 import { ADD_POST } from "../../utils/mutations";
 import { useActionState } from "react";
 import Auth from "../../utils/auth";
-import PostsList from "../PostsList";
 import { Link } from "react-router-dom";
 
 const PostForm = () => {
@@ -58,7 +57,7 @@ const PostForm = () => {
               <button
                 type="submit"
                 disabled={isPending}
-                className="w-full rounded-md bg-indigo-600 px-3 py-2 text-white font-semibold shadow-sm hover:bg-indigo-500 disabled:opacity-50"
+                className="w-full rounded-md bg-indigo-600 mb-2 py-2 text-white font-semibold shadow-sm hover:bg-gray-600 disabled:opacity-50"
               >
                 {isPending ? "Posting…" : "Post Now"}
               </button>
@@ -69,14 +68,17 @@ const PostForm = () => {
               </div>
             )}
           </form>
-          <PostsList profileId={userId} />
         </>
       ) : (
         <p className="ml-3">
           Please{" "}
-          <Link to="/login" className="underline text-blue-600">Login</Link>{" "}
+          <Link to="/login" className="underline text-blue-600">
+            Login
+          </Link>{" "}
           or{" "}
-          <Link to="/signup" className="underline text-blue-600">Signup</Link>{" "}
+          <Link to="/signup" className="underline text-blue-600">
+            Signup
+          </Link>{" "}
           to post.
         </p>
       )}
