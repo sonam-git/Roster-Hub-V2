@@ -1,34 +1,68 @@
-import React, { useState, useTransition, useDeferredValue } from "react";
-import { useMutation } from "@apollo/client";
+import React, { useState, useEffect, useTransition, useDeferredValue } from "react";
+import { useMutation, useSubscription } from "@apollo/client";
 import { REMOVE_SKILL } from "../../utils/mutations";
 import { QUERY_ME } from "../../utils/queries";
 import { AiOutlineDelete } from "react-icons/ai";
+import {
+  SKILL_ADDED_SUBSCRIPTION,
+  SKILL_DELETED_SUBSCRIPTION,
+} from "../../utils/subscription";
 
 const SkillsList = ({
   profile,
-  skills,
+  skills: initialSkills,
   isLoggedInUser = false,
   isDarkMode,
 }) => {
+  // —— keep pagination state at the top
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isPending, startTransition] = useTransition();
+
+  // —— mirror incoming skills into local state for real-time updates
+  const [localSkills, setLocalSkills] = useState(initialSkills);
+  useEffect(() => {
+    setLocalSkills(initialSkills);
+  }, [initialSkills]);
+
+  // —— subscribe to new skills
+  useSubscription(SKILL_ADDED_SUBSCRIPTION, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const added = subscriptionData.data?.skillAdded;
+      if (added && !localSkills.some((s) => s._id === added._id)) {
+        setLocalSkills((prev) => [added, ...prev]);
+      }
+    },
+  });
+
+  // —— subscribe to deleted skills
+  useSubscription(SKILL_DELETED_SUBSCRIPTION, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const deletedId = subscriptionData.data?.skillDeleted;
+      if (deletedId) {
+        setLocalSkills((prev) => prev.filter((s) => s._id !== deletedId));
+      }
+    },
+  });
+
+  // —— mutation to remove skill
   const [removeSkill, { error }] = useMutation(REMOVE_SKILL, {
     update(cache, { data: { removeSkill } }) {
       try {
         const { me } = cache.readQuery({ query: QUERY_ME });
-        const updatedSkills = me?.skills.filter(
-          (skill) => skill._id !== removeSkill._id
-        );
+        const updated = me.skills.filter((s) => s._id !== removeSkill._id);
         cache.writeQuery({
           query: QUERY_ME,
-          data: { me: { ...me, skills: updatedSkills } },
+          data: { me: { ...me, skills: updated } },
         });
       } catch (e) {
         console.error(e);
       }
     },
+    onCompleted({ removeSkill }) {
+      // also remove locally
+      setLocalSkills((prev) => prev.filter((s) => s._id !== removeSkill._id));
+    },
   });
-
-  const [isPending, startTransition] = useTransition();
-  const [currentPage, setCurrentPage] = useState(1);
 
   const handleRemoveSkill = (skillId) => {
     startTransition(async () => {
@@ -40,16 +74,16 @@ const SkillsList = ({
     });
   };
 
+  // —— pagination
   const PAGE_SIZE = 4;
-  const totalPages = Math.ceil(skills.length / PAGE_SIZE);
+  const totalPages = Math.ceil(localSkills.length / PAGE_SIZE);
   const startIndex = (currentPage - 1) * PAGE_SIZE;
+  const paginated = localSkills.slice(startIndex, startIndex + PAGE_SIZE);
+  const deferredSkills = useDeferredValue(paginated);
 
-  const paginatedSkills = skills.slice(startIndex, startIndex + PAGE_SIZE);
-  const deferredSkills = useDeferredValue(paginatedSkills);
-
-  if (!skills.length) {
+  if (!localSkills.length) {
     return (
-      <h3 className="text-center font-bold text-sm md:text-lg">
+      <h3 className="text-center font-italic text-sm md:text-md">
         No endorsed Skill yet
       </h3>
     );
@@ -92,7 +126,7 @@ const SkillsList = ({
                 {isLoggedInUser && (
                   <button
                     aria-label="Delete skill"
-                    className="dark:text-red-500  hover:dark:text-white text-red-600 hover:text-red-800 transition disabled:opacity-50"
+                    className="dark:text-red-500 hover:dark:text-white text-red-600 hover:text-red-800 transition disabled:opacity-50"
                     onClick={() => handleRemoveSkill(skill._id)}
                     disabled={isPending}
                   >

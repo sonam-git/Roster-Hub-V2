@@ -158,6 +158,13 @@ export default function Post({ post }) {
       console.error(e);
     }
   };
+// Cancel comment input
+  const handleCancelComment = () => {
+    setIsCommenting(false);
+    setCommentText("");
+    setErrorMessage("");
+  };
+
 
   if (deleted) return null;
 
@@ -195,7 +202,7 @@ export default function Post({ post }) {
           <textarea
             value={postText}
             onChange={(e) => setPostText(e.target.value)}
-            className="w-full p-2 mt-2 border rounded"
+            className="w-full p-2 mt-2 border rounded dark:text-black"
           />
           <div className="mt-2 flex space-x-2">
             <button
@@ -272,7 +279,7 @@ export default function Post({ post }) {
       {isCommenting && (
         <div className="mt-2">
           <textarea
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded dark:bg-gray-700 dark:text-white"
             placeholder="Write a comment..."
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
@@ -283,6 +290,12 @@ export default function Post({ post }) {
           >
             Post Comment
           </button>
+          <button
+              onClick={handleCancelComment}
+              className="bg-gray-500 text-white px-3 py-1 rounded ml-2"
+            >
+              Cancel
+            </button>
           {errorMessage && <p className="text-red-500 mt-1">{errorMessage}</p>}
         </div>
       )}

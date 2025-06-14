@@ -24,11 +24,22 @@ export const POST_ADDED_SUBSCRIPTION = gql`
       postText
       createdAt
       postAuthor
-      userId { _id name profilePic }
+      userId {
+        _id
+        name
+        profilePic
+      }
       likes
-      likedBy { _id name }
+      likedBy {
+        _id
+        name
+      }
       comments {
-        _id commentText commentAuthor userId createdAt
+        _id
+        commentText
+        commentAuthor
+        userId
+        createdAt
       }
     }
   }
@@ -38,7 +49,10 @@ export const POST_LIKED_SUBSCRIPTION = gql`
     postLiked(postId: $postId) {
       _id
       likes
-      likedBy { _id name }
+      likedBy {
+        _id
+        name
+      }
     }
   }
 `;
@@ -101,14 +115,30 @@ export const COMMENT_DELETED_SUBSCRIPTION = gql`
     commentDeleted
   }
 `;
-
 export const COMMENT_LIKED_SUBSCRIPTION = gql`
   subscription OnCommentLiked($commentId: ID!) {
     commentLiked(commentId: $commentId) {
       _id
-     likes
- likedBy { _id name }
+      likes
+      likedBy {
+        _id
+        name
+      }
     }
   }
 `;
-
+export const SKILL_ADDED_SUBSCRIPTION = gql`
+  subscription {
+    skillAdded {
+      _id
+      skillText
+      skillAuthor
+      createdAt
+    }
+  }
+`;
+export const SKILL_DELETED_SUBSCRIPTION = gql`
+  subscription {
+    skillDeleted
+  }
+`;

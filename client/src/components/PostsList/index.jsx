@@ -7,7 +7,6 @@ import {
   POST_DELETED_SUBSCRIPTION,
 } from "../../utils/subscription";
 import Post from "../Post";
-import Auth from "../../utils/auth";
 
 const PAGE_SIZE = 3;
 
@@ -69,8 +68,10 @@ const PostsList = ({ profileId }) => {
 
   // Filter by profile if needed
   const allPosts = data.posts;
+  const loginPost = allPosts.filter((p) => p.userId._id === profileId)
+  if(loginPost.length === 0 && profileId) { return <h3 className='ml-5 text-sm lg:text-md font-italic'>You haven't posted anything yet. Post something now. </h3> }
   const postsToDisplay = profileId
-    ? allPosts.filter((p) => p.userId._id === profileId)
+    ? loginPost
     : allPosts;
 
   // Pagination

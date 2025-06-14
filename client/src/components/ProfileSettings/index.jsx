@@ -114,7 +114,7 @@ const ProfileSettings = ({ isDarkMode }) => {
         />
         <button
           onClick={handleNameUpdate}
-          className="w-full sm:w-auto text-sm sm:text-base bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 sm:ml-2 sm:mt-0 rounded-md"
+          className=" w-full sm:w-auto text-sm sm:text-base  bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 sm:ml-2 sm:mt-0 rounded-md"
         >
           Update
         </button>

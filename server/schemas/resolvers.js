@@ -20,6 +20,7 @@ const { signToken } = require("../utils/auth");
 const cloudinary = require("../utils/cloudinary");
 const secret = process.env.JWT_SECRET;
 const { OAuth2Client } = require("google-auth-library");
+const { subscribe } = require("diagnostics_channel");
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 // Subscription event names
 const POST_ADDED = "POST_ADDED";
@@ -30,6 +31,8 @@ const POST_DELETED = "POST_DELETED";
 const COMMENT_UPDATED = "COMMENT_UPDATED";
 const COMMENT_DELETED = "COMMENT_DELETED";
 const COMMENT_LIKED = "COMMENT_LIKED";
+const SKILL_ADDED = "SKILL_ADDED";
+const SKILL_DELETED = "SKILL_DELETED";
 
 const pubsub = new PubSub(); // Ensure this instance is used in the resolvers
 
@@ -159,7 +162,9 @@ const resolvers = {
     // ************************** QUERY COMMENTS *******************************************//
     comments: async () => {
       try {
-        const comments = await Comment.find().sort({ createdAt: -1 }).populate("likedBy");
+        const comments = await Comment.find()
+          .sort({ createdAt: -1 })
+          .populate("likedBy");
 
         return comments;
       } catch (err) {
@@ -441,6 +446,7 @@ const resolvers = {
           { $addToSet: { skills: skill._id } }
         );
 
+        pubsub.publish(SKILL_ADDED, { skillAdded: skill });
         return skill;
       }
       throw new AuthenticationError("You need to be logged in!");
@@ -452,7 +458,11 @@ const resolvers = {
         throw new AuthenticationError("You need to be logged in!");
       }
       try {
-        return Skill.findOneAndDelete({ _id: skillId });
+        const deleteSkill = await Skill.findOneAndDelete({ _id: skillId });
+        if (deleteSkill) {
+          pubsub.publish(SKILL_DELETED, { skillDeleted: skillId });
+        }
+        return deleteSkill;
       } catch (error) {
         console.error("Error deleting skill:", error);
         throw new Error("Error deleting Skill.");
@@ -766,22 +776,22 @@ const resolvers = {
           commentAuthor: context.user.name,
           userId: context.user._id,
         });
-    
+
         // 2️⃣ push its _id into the Post.comments array
         const updatedPost = await Post.findByIdAndUpdate(
           postId,
           { $addToSet: { comments: newComment._id } },
           { new: true }
         )
-        // only populate the comments array itself—not the nested userId
-        .populate("comments");
-    
+          // only populate the comments array itself—not the nested userId
+          .populate("comments");
+
         // 3️⃣ broadcast the raw comment (with userId:ObjectId) to all watchers
         pubsub.publish(COMMENT_ADDED, {
           commentAdded: newComment,
           postId: postId.toString(),
         });
-    
+
         // 4️⃣ return the updated post
         return updatedPost;
       } catch (err) {
@@ -858,8 +868,10 @@ const resolvers = {
         const alreadyLiked = comment.likedBy.includes(userId);
 
         if (alreadyLiked) {
-         comment.likes -= 1;
-          comment.likedBy = comment.likedBy.filter((id) => id.toString() !== userId);
+          comment.likes -= 1;
+          comment.likedBy = comment.likedBy.filter(
+            (id) => id.toString() !== userId
+          );
         } else {
           comment.likes += 1;
           comment.likedBy.push(userId);
@@ -1160,6 +1172,12 @@ const resolvers = {
     chatCreated: {
       subscribe: () => pubsub.asyncIterator(["CHAT_CREATED"]),
     },
+    skillAdded: {
+      subscribe: () => pubsub.asyncIterator(SKILL_ADDED),
+    },
+    skillDeleted: {
+      subscribe: () => pubsub.asyncIterator(SKILL_DELETED),
+    },
     postAdded: {
       subscribe: () => pubsub.asyncIterator([POST_ADDED]),
     },
@@ -1179,8 +1197,7 @@ const resolvers = {
     commentAdded: {
       subscribe: withFilter(
         () => pubsub.asyncIterator([COMMENT_ADDED]),
-        (payload, variables) =>
-          payload.postId === variables.postId
+        (payload, variables) => payload.postId === variables.postId
       ),
       resolve: (payload) => payload.commentAdded,
     },

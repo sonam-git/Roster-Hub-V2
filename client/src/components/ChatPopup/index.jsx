@@ -227,7 +227,7 @@ const ChatPopup = ({ currentUser }) => {
               rows={2}
               value={text}
               onChange={e => { setText(e.target.value); setErrorMessage(""); }}
-              className="flex-1 p-2 border rounded-lg resize-none"
+              className="flex-1 p-2 border rounded-lg resize-none dark:text-black"
               placeholder={
                 isLoggedIn
                   ? (selectedUserId ? "Type a message..." : "Select a user to chat")

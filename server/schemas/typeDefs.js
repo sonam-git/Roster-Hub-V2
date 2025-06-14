@@ -193,21 +193,18 @@ const typeDefs = gql`
     likeComment(commentId: ID!): Comment
     ratePlayer(profileId: ID!, ratingInput: RatingInput!): Profile
     createChat(from: ID!, to: ID!, content: String!): Chat
-    # Create a new game poll (authenticated)
     createGame(input: CreateGameInput!): Game!
-    # Cast or update a vote (Yes/No)
     respondToGame(input: RespondToGameInput!): Game!
-    # Confirm a pending game (only the creator)
     confirmGame(gameId: ID!, note: String): Game
-    # Cancel a pending game (only the creator)
     cancelGame(gameId: ID!, note: String): Game
-    # Remove the current user's vote on a game
     unvoteGame(gameId: ID!): Game!
     deleteGame(gameId: ID!): Game!
     updateGame(gameId: ID!, input: UpdateGameInput!): Game!
   }
   type Subscription {
     chatCreated: Chat
+    skillAdded: Skill
+    skillDeleted: ID
     postAdded: Post
     postLiked(postId: ID!): Post
     postUpdated: Post
