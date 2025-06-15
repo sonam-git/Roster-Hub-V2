@@ -1,18 +1,24 @@
 import React, { useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_ME, QUERY_PROFILES } from "../../utils/queries";
-import { REMOVE_MESSAGE, SEND_MESSAGE } from "../../utils/mutations";
+import { REMOVE_MESSAGE, SEND_MESSAGE ,DELETE_CONVERSATION,} from "../../utils/mutations";
 import { MailIcon, PlusIcon } from "@heroicons/react/solid";
 import MessageBox from "../MessageBox";
 import UserListModal from "../UserListModal";
 import MessageCard from "../MessageCard";
-import { getDateFromObjectId } from "../MessageUtils";
+import { getDateFromObjectId } from "../../utils/MessageUtils";
 
 const MessageList = ({ isLoggedInUser = false, isDarkMode }) => {
   const { data: userData } = useQuery(QUERY_ME);
   const { data: profileData } = useQuery(QUERY_PROFILES);
   const [removeMessage] = useMutation(REMOVE_MESSAGE);
   const [sendMessage] = useMutation(SEND_MESSAGE);
+  const [deleteConversation] = useMutation(DELETE_CONVERSATION, {
+    refetchQueries: [{ query: QUERY_ME }],
+    onError: (error) => {
+      console.error("Error deleting conversation:", error);
+    },
+  });
 
   const loggedInUser = userData?.me || {};
   const profiles = profileData?.profiles || [];
@@ -97,6 +103,9 @@ const MessageList = ({ isLoggedInUser = false, isDarkMode }) => {
             }
             onSend={handleSendMessage}
             onDelete={(id) => removeMessage({ variables: { messageId: id } })}
+            onDeleteConversation={(userId) =>
+              deleteConversation({ variables: { userId } })
+            }  // bulk-convo delete
             onReply={(user, msg) => {
               setSelectedRecipient(user);
               setSelectedMessage(msg);

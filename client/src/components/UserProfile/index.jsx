@@ -20,9 +20,9 @@ const UserProfile = ({ profile }) => {
 
       {/* Right Side */}
       <div className="md:w-3/5 p-2">
-        <div className={`w-full h-full rounded-lg shadow-md ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+        <div className={`w-full h-full rounded-lg shadow-md ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
           {/* Buttons row */}
-          <div className="flex w-full">
+          <div className="flex w-full p-2">
             <button
               className={`w-1/2 px-4 py-2 rounded-l-lg font-bold text-sm transition duration-300 ${
                 activeTab === 'posts'

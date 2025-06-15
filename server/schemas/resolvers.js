@@ -529,7 +529,21 @@ const resolvers = {
         throw new Error("Error deleting Message.");
       }
     },
-
+    // ************************** DELETE CONVERSATION HISTORY *******************************************//
+    deleteConversation: async (_, { userId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You must be logged in");
+      }
+      const me = context.user._id;
+      // remove every message where from↔to is this pair
+      await Message.deleteMany({
+        $or: [
+          { sender: me, recipient: userId },
+          { sender: userId, recipient: me },
+        ],
+      });
+      return true;
+    },
     // ************************** CREATE CHAT AND SEND CHAT  *******************************************//
     createChat: async (parent, { from, to, content }, context) => {
       if (!context.user) {

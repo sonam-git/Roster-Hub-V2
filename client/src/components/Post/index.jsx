@@ -231,7 +231,7 @@ export default function Post({ post }) {
       )}
 
       {/* Footer */}
-      <div className="flex justify-between items-center mt-4">
+      <div className="flex justify-between items-center mt-4 ">
         <small className="text-gray-500">
           {new Date(parseInt(post.createdAt)).toLocaleString()}
         </small>

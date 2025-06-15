@@ -91,6 +91,12 @@ export const REMOVE_MESSAGE = gql`
     }
   }
 `;
+// Mutation to delete a conversation history
+export const DELETE_CONVERSATION = gql`
+  mutation deleteConversation($userId: ID!) {
+    deleteConversation(userId: $userId)
+  }
+`;
 // Mutation to send a message
 export const SEND_MESSAGE = gql`
   mutation SendMessage($recipientId: ID!, $text: String!) {

@@ -173,6 +173,7 @@ const typeDefs = gql`
     sendMessage(recipientId: ID!, text: String!): Message!
     removeSkill(skillId: ID!): Skill
     removeMessage(messageId: ID!): Message
+    deleteConversation(userId: ID!): Boolean!
     saveSocialMediaLink(
       userId: ID!
       type: String!

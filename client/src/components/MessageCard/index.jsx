@@ -1,7 +1,9 @@
-import React from "react";
+import React ,{useState} from "react";
 import MessageBubble from "../MessageBubble";
 import MessageInput from "../MessageInput";
-import { getDateFromObjectId, formatDate } from "../messageUtils";
+import { getDateFromObjectId, formatDate } from "../../utils/MessageUtils";
+import { TrashIcon } from "@heroicons/react/solid";
+
 
 const MessageCard = ({
   conv,
@@ -11,12 +13,16 @@ const MessageCard = ({
   onInputChange,
   onSend,
   onDelete,
+  onDeleteConversation,
   onReply,
   isDarkMode,
 }) => {
+
+  const [showConfirm, setShowConfirm] = useState(false);
   let lastDateLabel = null;
 
   return (
+    <>
     <div
       key={conv.user._id}
       className={`rounded-xl shadow-md border ${
@@ -33,9 +39,18 @@ const MessageCard = ({
             : "bg-white border-gray-200 text-gray-800"
         }`}
       >
-        <h2 className="text-sm font-bold truncate">
-          Conversation with {conv.user.name}
-        </h2>
+    <div className="flex justify-between items-center">
+            <h2 className="text-sm font-bold truncate">
+              Conversation with {conv.user.name}
+            </h2>
+            <button
+              onClick={() => setShowConfirm(true)}
+              title="Delete entire conversation"
+              className="p-1 text-red-500 hover:text-red-700"
+            >
+              <TrashIcon className="h-5 w-5" />
+            </button>
+          </div>
       </div>
 
       {/* Message History */}
@@ -101,6 +116,38 @@ const MessageCard = ({
         />
       </div>
     </div>
+         {/* Confirmation Modal */}
+         {showConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-200 bg-opacity-50">
+          <div
+            className={`p-6 rounded-lg shadow-lg w-11/12 max-w-sm ${
+              isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-800"
+            }`}
+          >
+            <p className="mb-4">
+              Are you sure you want to delete the entire conversation?
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                 onDeleteConversation(conv.user._id);
+                  setShowConfirm(false);
+                }}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
