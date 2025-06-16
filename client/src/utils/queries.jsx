@@ -398,12 +398,14 @@ export const QUERY_GAMES = gql`
       venue
       notes
       status
+      score
+      opponent
+      result
       availableCount
       unavailableCount
     }
   }
 `;
-
 //Fetch a single game by ID (with votes and counts)
 export const QUERY_GAME = gql`
   query Game($gameId: ID!) {
@@ -413,6 +415,9 @@ export const QUERY_GAME = gql`
       time
       venue
       notes
+      score
+      opponent
+      result
       status
       creator {
         _id

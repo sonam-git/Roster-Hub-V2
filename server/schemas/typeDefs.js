@@ -84,7 +84,15 @@ const typeDefs = gql`
   enum GameStatus {
     PENDING
     CONFIRMED
+    COMPLETED
     CANCELLED
+  }
+
+  enum GameResult {
+    HOME_WIN
+    AWAY_WIN
+    DRAW
+    NOT_PLAYED
   }
 
   type Response {
@@ -99,6 +107,9 @@ const typeDefs = gql`
     time: String! # e.g. "18:30"
     venue: String!
     notes: String
+    opponent: String!
+    score: String # e.g. "2 - 1"
+    result: GameResult!
     status: GameStatus!
     responses: [Response!]!
     availableCount: Int! # computed
@@ -124,6 +135,7 @@ const typeDefs = gql`
     time: String! # e.g. "18:30"
     venue: String!
     notes: String
+    opponent: String!
   }
 
   input UpdateGameInput {
@@ -131,6 +143,7 @@ const typeDefs = gql`
     time: String
     venue: String
     notes: String
+    opponent: String
   }
 
   input RespondToGameInput {
@@ -166,12 +179,12 @@ const typeDefs = gql`
     getChatsBetweenUsers(userId1: ID!, userId2: ID!): [Chat]
     games(status: GameStatus): [Game!]!
     game(gameId: ID!): Game
-soccerMatches(
-    competitionCode: String!
-    status: String!
-    dateFrom: String
-    dateTo: String
-  ): [SoccerScore!]!
+    soccerMatches(
+      competitionCode: String!
+      status: String!
+      dateFrom: String
+      dateTo: String
+    ): [SoccerScore!]!
   }
 
   type Mutation {
@@ -214,6 +227,7 @@ soccerMatches(
     respondToGame(input: RespondToGameInput!): Game!
     confirmGame(gameId: ID!, note: String): Game
     cancelGame(gameId: ID!, note: String): Game
+    completeGame(gameId: ID!, score: String!, result:GameResult! ): Game!
     unvoteGame(gameId: ID!): Game!
     deleteGame(gameId: ID!): Game!
     updateGame(gameId: ID!, input: UpdateGameInput!): Game!

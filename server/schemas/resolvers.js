@@ -1035,9 +1035,9 @@ const resolvers = {
           "You need to be logged in to create a game"
         );
       }
-      const { date, time, venue, notes } = input;
-      if (!date || !time || !venue) {
-        throw new UserInputError("Date, time, and venue are required");
+      const { date, time, venue, notes, opponent } = input;
+      if (!date || !time || !venue || !opponent) {
+        throw new UserInputError("Date, time, opponent and venue are required");
       }
       const newGame = await Game.create({
         creator: context.user._id,
@@ -1045,6 +1045,7 @@ const resolvers = {
         time,
         venue,
         notes: notes || "",
+        opponent,
         status: "PENDING",
         responses: [],
       });
@@ -1108,7 +1109,25 @@ const resolvers = {
         .populate("creator")
         .populate("responses.user");
     },
-
+    // ──────── Complete a game (only creator) ────────
+    completeGame: async (_, { gameId, score, result }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You must be logged in");
+      }
+      const game = await Game.findById(gameId);
+      if (!game) {
+        throw new Error("Game not found");
+      }
+      // only creator can complete
+      if (game.creator.toString() !== context.user._id) {
+        throw new AuthenticationError("Not authorized");
+      }
+      game.score = score;
+      game.result = result;
+      game.status = "COMPLETED";
+      await game.save();
+      return game;
+    },
     // ──────── Cancel a game (only creator) ────────
     cancelGame: async (_, { gameId, note }, context) => {
       if (!context.user) {
@@ -1199,6 +1218,7 @@ const resolvers = {
       if (input.time !== undefined) game.time = input.time;
       if (input.venue !== undefined) game.venue = input.venue;
       if (input.notes !== undefined) game.notes = input.notes;
+      if (input.opponent !== undefined) game.opponent = input.opponent;
 
       await game.save();
 

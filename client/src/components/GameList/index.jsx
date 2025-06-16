@@ -1,3 +1,4 @@
+// src/components/GameList.jsx
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/client";
@@ -9,6 +10,7 @@ import {
   faTimes,
   faClock,
   faTrash,
+  faCheckCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { ThemeContext } from "../ThemeContext";
 import Auth from "../../utils/auth";
@@ -66,8 +68,14 @@ const GameList = () => {
           const humanDate = isNaN(dateObj) ? game.date : dateObj.toLocaleDateString();
           const isCreator = game.creator._id === userId;
 
+          // Determine status display, now including COMPLETED
           let statusIcon, statusText, statusColor, borderColor;
-          if (game.status === "CONFIRMED") {
+          if (game.status === "COMPLETED") {
+            statusIcon = <FontAwesomeIcon icon={faCheckCircle} />;
+            statusText = "Completed";
+            statusColor = "text-green-600";
+            borderColor = "border-green-600";
+          } else if (game.status === "CONFIRMED") {
             statusIcon = <FontAwesomeIcon icon={faCheck} />;
             statusText = "Confirmed";
             statusColor = "text-green-600";
@@ -111,15 +119,22 @@ const GameList = () => {
                   </div>
                 </div>
                 <p className="mb-1"><span className="font-bold">Venue:</span> {game.venue}</p>
-                <p className="text-sm mb-2"><span className="font-bold">Note:</span> {game.notes || "No notes provided"}</p>
+                <p className="text-sm mb-2">
+                  <span className="font-bold">Note:</span> {game.notes || "No notes provided"}
+                </p>
                 <div className="flex justify-between text-sm">
                   <span><span className="font-bold">By:</span> {game.creator.name}</span>
-                  <span><span className="font-bold">👍</span> {game.availableCount} | <span className="font-bold">👎</span> {game.unavailableCount}</span>
+                  <span>
+                    <span className="font-bold">👍</span> {game.availableCount} |{" "}
+                    <span className="font-bold">👎</span> {game.unavailableCount}
+                  </span>
                 </div>
-                <p className="mt-3 flex items-center text-yellow-800 italic">
-                  <span role="img" aria-label="attention" className="mr-2">⚠️</span>
-                  Response cannot be changed once confirmed.
-                </p>
+                {game.status !== "PENDING" && (
+                  <p className="mt-3 flex items-center text-yellow-800 italic">
+                    <span role="img" aria-label="attention" className="mr-2">⚠️</span>
+                    Response cannot be changed once confirmed.
+                  </p>
+                )}
               </Link>
 
               {isCreator && (
@@ -137,18 +152,44 @@ const GameList = () => {
       </div>
 
       <div className="flex justify-center space-x-4 mt-6">
-        <button onClick={handlePrev} disabled={page===0} className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50">Prev</button>
-        <button onClick={handleNext} disabled={page>=totalPages-1} className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50">Next</button>
+        <button
+          onClick={handlePrev}
+          disabled={page === 0}
+          className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50"
+        >
+          Prev
+        </button>
+        <button
+          onClick={handleNext}
+          disabled={page >= totalPages - 1}
+          className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50"
+        >
+          Next
+        </button>
       </div>
 
       {showDeleteModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-300 bg-opacity-50 z-50">
-          <div className={`p-6 rounded-lg shadow-lg w-11/12 max-w-md ${isDarkMode?"bg-gray-700 text-gray-200":"bg-white text-gray-800"}`}>
+          <div className={`p-6 rounded-lg shadow-lg w-11/12 max-w-md ${
+            isDarkMode ? "bg-gray-700 text-gray-200" : "bg-white text-gray-800"
+          }`}>
             <h2 className="text-xl font-bold mb-4">Delete Game?</h2>
             <p className="mb-6">Are you sure? This cannot be undone.</p>
             <div className="flex justify-end space-x-4">
-              <button onClick={closeDeleteModal} className={`px-4 py-2 rounded ${isDarkMode?"bg-gray-600 text-gray-200 hover:bg-gray-500":"bg-gray-200 text-gray-800 hover:bg-gray-300"}`}>Cancel</button>
-              <button onClick={confirmDelete} className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Delete</button>
+              <button
+                onClick={closeDeleteModal}
+                className={`px-4 py-2 rounded ${
+                  isDarkMode ? "bg-gray-600 text-gray-200 hover:bg-gray-500" : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                }`}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Delete
+              </button>
             </div>
           </div>
         </div>

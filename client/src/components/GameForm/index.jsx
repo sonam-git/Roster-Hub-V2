@@ -15,6 +15,7 @@ const GameForm = () => {
     time: "",
     venue: "",
     notes: "",
+    opponent: "",
   });
 
   const [createGame, { loading, error }] = useMutation(CREATE_GAME, {
@@ -44,6 +45,9 @@ const GameForm = () => {
           time: input.time,
           venue: input.venue,
           notes: input.notes,
+          opponent: input.opponent,
+          score: "0 - 0",
+          result: "NOT_PLAYED",
           status: "PENDING",
           availableCount: 0,
           unavailableCount: 0,
@@ -56,18 +60,18 @@ const GameForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormState((prev) => ({ ...prev, [name]: value }));
+    setFormState(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { date, time, venue, notes } = formState;
-    if (!date || !time || !venue) {
-      return alert("Date, time, and venue are required");
+    const { date, time, venue, notes, opponent } = formState;
+    if (!date || !time || !venue || !opponent) {
+      return alert("Date, time, venue and opponent are required");
     }
     try {
       const { data } = await createGame({
-        variables: { input: { date, time, venue, notes } },
+        variables: { input: { date, time, venue, notes, opponent } },
       });
       navigate(`/game-schedule/${data.createGame._id}`);
     } catch (err) {
@@ -81,20 +85,12 @@ const GameForm = () => {
         isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-800"
       }`}
     >
-      <h2
-        className={`text-2xl font-bold mb-4 ${
-          isDarkMode ? "text-gray-200" : "text-gray-800"
-        }`}
-      >
+      <h2 className={`text-2xl font-bold mb-4 ${isDarkMode ? "text-gray-200" : "text-gray-800"}`}>
         Schedule a Game
       </h2>
       <form onSubmit={handleSubmit}>
         {/* Date */}
-        <label
-          className={`block mb-2 ${
-            isDarkMode ? "text-gray-300" : "text-gray-700"
-          }`}
-        >
+        <label className={`block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
           Date
           <input
             type="date"
@@ -102,20 +98,14 @@ const GameForm = () => {
             value={formState.date}
             onChange={handleChange}
             className={`mt-1 block w-full px-3 py-2 border rounded ${
-              isDarkMode
-                ? "dark:bg-gray-700 dark:text-gray-200 border-gray-600"
-                : "bg-white text-gray-800 border-gray-300"
+              isDarkMode ? "dark:bg-gray-700 dark:text-gray-200 border-gray-600" : "bg-white border-gray-300"
             }`}
             required
           />
         </label>
 
         {/* Time */}
-        <label
-          className={`block mb-2 ${
-            isDarkMode ? "text-gray-300" : "text-gray-700"
-          }`}
-        >
+        <label className={`block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
           Time
           <input
             type="time"
@@ -123,20 +113,14 @@ const GameForm = () => {
             value={formState.time}
             onChange={handleChange}
             className={`mt-1 block w-full px-3 py-2 border rounded ${
-              isDarkMode
-                ? "dark:bg-gray-700 dark:text-gray-200 border-gray-600"
-                : "bg-white text-gray-800 border-gray-300"
+              isDarkMode ? "dark:bg-gray-700 dark:text-gray-200 border-gray-600" : "bg-white border-gray-300"
             }`}
             required
           />
         </label>
 
         {/* Venue */}
-        <label
-          className={`block mb-2 ${
-            isDarkMode ? "text-gray-300" : "text-gray-700"
-          }`}
-        >
+        <label className={`block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
           Venue
           <input
             type="text"
@@ -144,30 +128,38 @@ const GameForm = () => {
             value={formState.venue}
             onChange={handleChange}
             className={`mt-1 block w-full px-3 py-2 border rounded ${
-              isDarkMode
-                ? "dark:bg-gray-700 dark:text-gray-200 border-gray-600"
-                : "bg-white text-gray-800 border-gray-300"
+              isDarkMode ? "dark:bg-gray-700 dark:text-gray-200 border-gray-600" : "bg-white border-gray-300"
             }`}
             placeholder="e.g. Central Park Field #3"
             required
           />
         </label>
 
+        {/* Opponent */}
+        <label className={`block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+          Opponent
+          <input
+            type="text"
+            name="opponent"
+            value={formState.opponent}
+            onChange={handleChange}
+            className={`mt-1 block w-full px-3 py-2 border rounded ${
+              isDarkMode ? "dark:bg-gray-700 dark:text-gray-200 border-gray-600" : "bg-white border-gray-300"
+            }`}
+            placeholder="e.g. Rockets FC"
+            required
+          />
+        </label>
+
         {/* Notes */}
-        <label
-          className={`block mb-2 ${
-            isDarkMode ? "text-gray-300" : "text-gray-700"
-          }`}
-        >
+        <label className={`block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
           Special Notes
           <textarea
             name="notes"
             value={formState.notes}
             onChange={handleChange}
             className={`mt-1 block w-full px-3 py-2 border rounded ${
-              isDarkMode
-                ? "dark:bg-gray-700 dark:text-gray-200 border-gray-600"
-                : "bg-white text-gray-800 border-gray-300"
+              isDarkMode ? "dark:bg-gray-700 dark:text-gray-200 border-gray-600" : "bg-white border-gray-300"
             }`}
             placeholder="Any additional details…"
             rows={3}
@@ -179,16 +171,12 @@ const GameForm = () => {
           type="submit"
           disabled={loading}
           className={`mt-4 w-full py-2 rounded hover:opacity-90 disabled:opacity-50 ${
-            isDarkMode
-              ? "bg-blue-500 text-white"
-              : "bg-blue-600 text-white hover:bg-blue-700"
+            isDarkMode ? "bg-blue-500 text-white" : "bg-blue-600 text-white hover:bg-blue-700"
           }`}
         >
           {loading ? "Scheduling…" : "Schedule Game"}
         </button>
-        {error && (
-          <p className="text-red-600 mt-2">Error: {error.message}</p>
-        )}
+        {error && <p className="text-red-600 mt-2">Error: {error.message}</p>}
       </form>
     </div>
   );

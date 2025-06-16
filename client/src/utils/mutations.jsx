@@ -337,13 +337,32 @@ export const CREATE_GAME = gql`
       time
       venue
       notes
+      opponent
+      score
+      result
       status
       availableCount
       unavailableCount
     }
   }
 `;
-
+//update game date, time, venue, notes, and status
+export const UPDATE_GAME = gql`
+  mutation UpdateGame($gameId: ID!, $input: UpdateGameInput!) {
+    updateGame(gameId: $gameId, input: $input) {
+      _id
+      date
+      time
+      venue
+      notes
+      status
+      opponent
+      availableCount
+      unavailableCount
+      creator { _id name }
+    }
+  }
+`;
 //Respond (Yes/No) to a game
 export const RESPOND_TO_GAME = gql`
   mutation RespondToGame($input: RespondToGameInput!) {
@@ -370,6 +389,7 @@ export const CONFIRM_GAME = gql`
       _id
       status
       notes
+      opponent
       availableCount
       unavailableCount
       creator {
@@ -386,7 +406,6 @@ export const CONFIRM_GAME = gql`
     }
   }
 `;
-
 //Cancel a pending game (only creator), now with an optional `note` argument
 export const CANCEL_GAME = gql`
   mutation CancelGame($gameId: ID!, $note: String) {
@@ -410,7 +429,33 @@ export const CANCEL_GAME = gql`
     }
   }
 `;
-
+//complete a game (only creator),
+export const COMPLETE_GAME = gql`
+  mutation CompleteGame(
+    $gameId: ID!
+    $score: String!
+    $result: GameResult!
+  ) {
+    completeGame(
+      gameId: $gameId
+      score: $score
+      result: $result
+    ) {
+      _id
+      status
+      score
+      result
+      opponent
+      availableCount
+      unavailableCount
+      creator { _id name }
+      responses {
+        user { _id name }
+        isAvailable
+      }
+    }
+  }
+`;
 //Unvote or change response to a game
 export const UNVOTE_GAME = gql`
   mutation UnvoteGame($gameId: ID!) {
@@ -435,23 +480,6 @@ export const DELETE_GAME = gql`
   mutation DeleteGame($gameId: ID!) {
     deleteGame(gameId: $gameId) {
       _id
-    }
-  }
-`;
-
-//update game date, time, venue, notes, and status
-export const UPDATE_GAME = gql`
-  mutation UpdateGame($gameId: ID!, $input: UpdateGameInput!) {
-    updateGame(gameId: $gameId, input: $input) {
-      _id
-      date
-      time
-      venue
-      notes
-      status
-      availableCount
-      unavailableCount
-      creator { _id name }
     }
   }
 `;

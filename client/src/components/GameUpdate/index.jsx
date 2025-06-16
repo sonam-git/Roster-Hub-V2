@@ -1,8 +1,7 @@
-import React, { useState, useEffect,  } from "react";
+import React, { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { UPDATE_GAME } from "../../utils/mutations";
 import { QUERY_GAME, QUERY_GAMES } from "../../utils/queries";
-
 
 const GameUpdate = ({
   gameId,
@@ -10,6 +9,7 @@ const GameUpdate = ({
   initialTime,
   initialVenue,
   initialNotes,
+  initialOpponent,
   onClose,
   isDarkMode,
 }) => {
@@ -18,16 +18,16 @@ const GameUpdate = ({
     time: initialTime || "",
     venue: initialVenue || "",
     notes: initialNotes || "",
+    opponent: initialOpponent || "",
   });
 
   const [updateGame, { loading, error }] = useMutation(UPDATE_GAME, {
     refetchQueries: [
-      { query: QUERY_GAME, variables: { gameId } },
+      { query: QUERY_GAME,  variables: { gameId } },
       { query: QUERY_GAMES, variables: { status: "PENDING" } },
     ],
     awaitRefetchQueries: true,
     onCompleted: () => {
-      // clear the notes field
       setFormState(prev => ({ ...prev, notes: "" }));
       onClose();
     },
@@ -39,8 +39,9 @@ const GameUpdate = ({
       time: initialTime || "",
       venue: initialVenue || "",
       notes: initialNotes || "",
+      opponent: initialOpponent || "",
     });
-  }, [initialDate, initialTime, initialVenue, initialNotes]);
+  }, [initialDate, initialTime, initialVenue, initialNotes, initialOpponent]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,10 +51,11 @@ const GameUpdate = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     const input = {};
-    if (formState.date !== initialDate)   input.date  = formState.date;
-    if (formState.time !== initialTime)   input.time  = formState.time;
-    if (formState.venue !== initialVenue) input.venue = formState.venue;
-    if (formState.notes !== initialNotes) input.notes = formState.notes;
+    if (formState.date     !== initialDate)    input.date     = formState.date;
+    if (formState.time     !== initialTime)    input.time     = formState.time;
+    if (formState.venue    !== initialVenue)   input.venue    = formState.venue;
+    if (formState.notes    !== initialNotes)   input.notes    = formState.notes;
+    if (formState.opponent !== initialOpponent)input.opponent = formState.opponent;
 
     if (!Object.keys(input).length) {
       onClose();
@@ -71,10 +73,10 @@ const GameUpdate = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-300 bg-opacity-50">
       <div
         className={`p-6 rounded-lg shadow-lg w-11/12 max-w-md ${
-          isDarkMode ? "bg-gray-300 text-dark" : "bg-white text-gray-800"
+          isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-800"
         }`}
       >
-        <h2 className="text-xl font-bold mb-4 bg-green-200 p-3 dark:bg-gray-200">Update Game Info </h2>
+        <h2 className="text-xl font-bold mb-4">Update Game Info</h2>
         <form onSubmit={handleSubmit}>
           <label className="block mb-2">
             <span className="font-bold">Date</span>
@@ -107,6 +109,17 @@ const GameUpdate = ({
               placeholder="e.g. Central Park Field #3"
             />
           </label>
+          <label className="block mb-2">
+            <span className="font-bold">Opponent</span>
+            <input
+              type="text"
+              name="opponent"
+              value={formState.opponent}
+              onChange={handleChange}
+              className="mt-1 block w-full px-3 py-2 border rounded"
+              placeholder="e.g. Rockets FC"
+            />
+          </label>
           <label className="block mb-4">
             <span className="font-bold">Notes</span>
             <textarea
@@ -129,7 +142,7 @@ const GameUpdate = ({
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-900 disabled:opacity-50"
+              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
             >
               {loading ? "Updating…" : "Update Game"}
             </button>

@@ -42,9 +42,24 @@ const GameSchema = new Schema(
       trim: true,
       default: "",
     },
+    opponent: {
+      type: String,
+      trim: true,
+      required: true,
+    },
+    score:{
+      type: String,
+      trim: true,
+      default: "0 - 0", // default score
+    },
+    result: {
+      type: String,
+      enum: ["HOME_WIN", "AWAY_WIN", "DRAW", "NOT_PLAYED"],
+      default: "NOT_PLAYED",
+    },
     status: {
       type: String,
-      enum: ["PENDING", "CONFIRMED", "CANCELLED"],
+      enum: ["PENDING", "CONFIRMED", "COMPLETED","CANCELLED"],
       default: "PENDING",
     },
     responses: [ResponseSchema],  // array of { user, isAvailable }
