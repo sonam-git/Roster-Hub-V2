@@ -43,7 +43,7 @@ export default function Scoreboard({ competitionCode, title }) {
             onClick={() => setView(s)}
             className={
               (view === s
-                ? "bg-blue-600 text-white"
+                ? "bg-blue-600 dark:bg-gray-600 text-white"
                 : "bg-gray-200 text-gray-700 hover:bg-gray-300") +
               " px-3 py-1 rounded"
             }

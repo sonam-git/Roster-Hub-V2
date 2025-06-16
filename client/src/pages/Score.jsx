@@ -10,7 +10,7 @@ const ALL_LEAGUES = [
   { code: "CL", name: "Champions League" },
   { code: "EL", name: "Europa League" },
   { code: "BL1", name: "Bundesliga" },
-  { code: "MLS", name: "MLS (USA)" },
+  { code: "FL1", name: "Ligue 1" },
 ];
 
 export default function Score() {
@@ -40,7 +40,7 @@ export default function Score() {
   return (
     <div className="container mx-auto px-4 py-6 space-y-8 ">
       {/* My Favorites */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4  ">
+      <div className="bg-gray-100 dark:bg-gray-800 rounded-lg shadow p-4  ">
         <h2 className="font-bold text-lg mb-2 ">My Favorite Leagues</h2>
         {favorites.length ? (
           <div className="grid grid-cols-1 gap-4">
@@ -61,8 +61,8 @@ export default function Score() {
       </div>
 
       {/* All Leagues List with Add/Remove buttons */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-        <h2 className="font-bold text-lg mb-2">All Leagues</h2>
+      <div className="bg-gray-100 dark:bg-gray-500 rounded-lg shadow p-4">
+        <h2 className="font-bold text-lg mb-2">League Lists</h2>
         <ul className="space-y-2">
           {ALL_LEAGUES.map(({ code, name }) => {
             const isFav = favorites.includes(code);
@@ -77,7 +77,7 @@ export default function Score() {
                   className={
                     (isFav
                       ? "bg-red-500 hover:bg-red-600"
-                      : "bg-blue-500 hover:bg-blue-600") +
+                      : "bg-blue-500 dark:bg-gray-600 hover:bg-blue-600") +
                     " text-white px-3 py-1 rounded"
                   }
                 >
