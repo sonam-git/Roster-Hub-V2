@@ -1,4 +1,5 @@
 require("dotenv").config();
+const axios = require('axios');
 const { PubSub, withFilter } = require("graphql-subscriptions");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
@@ -35,6 +36,9 @@ const SKILL_ADDED = "SKILL_ADDED";
 const SKILL_DELETED = "SKILL_DELETED";
 
 const pubsub = new PubSub(); // Ensure this instance is used in the resolvers
+const FOOTBALL_API = "https://api.football-data.org/v4";
+
+
 
 const resolvers = {
   // ############ QUERIES ########## //
@@ -267,6 +271,28 @@ const resolvers = {
         .populate("creator")
         .populate("responses.user");
     },
+    // ************************** QUERY SOCCER SCORES *******************************************//
+    soccerMatches: async (_, { competitionCode, status, dateFrom, dateTo }) => {
+      let url = `${FOOTBALL_API}/competitions/${competitionCode}/matches?status=${status}`;
+      if (dateFrom) url += `&dateFrom=${dateFrom}`;
+      if (dateTo)   url += `&dateTo=${dateTo}`;
+
+      const res = await axios.get(url, {
+        headers: { "X-Auth-Token": process.env.FOOTBALL_DATA_KEY },
+      });
+
+      return res.data.matches.map((m) => ({
+        homeTeam:  m.homeTeam.name,
+        awayTeam:  m.awayTeam.name,
+        homeGoals: m.score.fullTime.home,
+        awayGoals: m.score.fullTime.away,
+        status:    m.status,
+        matchday:  m.matchday,
+        utcDate:   m.utcDate,
+      }));
+    },
+    
+    
   },
   // ########## MUTAIIONS ########### //
   Mutation: {

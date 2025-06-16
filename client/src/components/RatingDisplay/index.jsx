@@ -26,7 +26,7 @@ export default function RatingDisplay({ limit = 5 }) {
         return (
           <div key={p._id} className="flex flex-col items-center">
                <Link
-                className={` hover:no-underline   `}
+                className={` hover:no-underline hover:text-blue-500   `}
                 to={`/profiles/${p._id}`}
               >
             <img
@@ -39,7 +39,7 @@ export default function RatingDisplay({ limit = 5 }) {
             <div className="flex mt-1">
               {Array.from({ length: 5 }).map((_, i) =>
                 i < stars ? (
-                  <SolidStar key={i} className="h-5 w-5 text-yellow-800" />
+                  <SolidStar key={i} className="h-5 w-5 text-yellow-600" />
                 ) : (
                   <OutlineStar key={i} className="h-5 w-5 text-gray-300" />
                 )

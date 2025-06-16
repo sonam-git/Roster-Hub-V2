@@ -107,6 +107,16 @@ const typeDefs = gql`
     updatedAt: String!
   }
 
+  type SoccerScore {
+    homeTeam: String!
+    awayTeam: String!
+    homeGoals: Int
+    awayGoals: Int
+    status: String
+    matchday: Int
+    utcDate: String!
+  }
+
   ########## INPUT TYPES ##########
 
   input CreateGameInput {
@@ -156,6 +166,12 @@ const typeDefs = gql`
     getChatsBetweenUsers(userId1: ID!, userId2: ID!): [Chat]
     games(status: GameStatus): [Game!]!
     game(gameId: ID!): Game
+soccerMatches(
+    competitionCode: String!
+    status: String!
+    dateFrom: String
+    dateTo: String
+  ): [SoccerScore!]!
   }
 
   type Mutation {

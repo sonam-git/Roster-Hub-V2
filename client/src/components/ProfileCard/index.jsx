@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import ProfileAvatar from "../../assets/images/profile-avatar.png";
-import { FaUser, FaPhone, FaRegCommentDots } from "react-icons/fa";
+import { FaUser, FaPhone, FaRegCommentDots,FaTwitter,
+  FaFacebookF,
+  FaLinkedinIn,
+  } from "react-icons/fa";
 import { RiTShirt2Line } from "react-icons/ri";
 import renderStars from "../../utils/renderStars";
 import MessageBox from "../MessageBox"; 
@@ -16,43 +19,37 @@ const ProfileCard = ({ profile, isDarkMode }) => {
     setShowMessageModal(false);
   };
 
-  const renderSocialMediaIcons = () => {
-    return profile.socialMediaLinks.map((socialMedia) => {
-      let iconClassName = "";
-      let link = "";
-
-      switch (socialMedia.type) {
+  const renderSocialMediaIcons = () =>
+    profile.socialMediaLinks.map((social) => {
+      let IconComponent;
+      switch (social.type) {
         case "twitter":
-          iconClassName = "fa-brands fa-twitter";
-          link = socialMedia.link;
+          IconComponent = FaTwitter;
           break;
         case "facebook":
-          iconClassName = "fa-brands fa-facebook";
-          link = socialMedia.link;
+          IconComponent = FaFacebookF;
           break;
         case "linkedin":
-          iconClassName = "fa-brands fa-linkedin-in";
-          link = socialMedia.link;
+          IconComponent = FaLinkedinIn;
           break;
         default:
-          break;
+          return null;
       }
-
+  
       return (
         <a
-          key={socialMedia._id}
-          href={link}
+          key={social._id}
+          href={social.link}
           target="_blank"
           rel="noopener noreferrer"
           className={`mx-2 w-[40px] h-[40px] rounded-full flex items-center justify-center hover:bg-indigo-800 ${
             isDarkMode ? "bg-gray-600" : "bg-[#1DA1F2]"
           }`}
         >
-          <i className={iconClassName + " text-white"}></i>
+          <IconComponent className="text-white" size={20} />
         </a>
       );
     });
-  };
 
   return (
     <div

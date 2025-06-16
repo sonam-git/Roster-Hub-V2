@@ -26,6 +26,7 @@ import Roster from "./pages/Roster";
 import Message from "./pages/Message";
 import Skill from "./pages/Skill";
 import Game from "./pages/Game";
+import Score from "./pages/Score";
 import ForgotPassword from "./pages/ForgetPassword";
 import PasswordReset from "./pages/PasswordReset";
 import { ThemeProvider, ThemeContext } from "./components/ThemeContext";
@@ -115,6 +116,7 @@ function AppContent() {
               path="/game-schedule/:gameId"
               element={<Game isDarkMode={isDarkMode} />}
             />
+                  <Route path="/scoreboard" element={<Score />} />
           </Routes>
           {Auth.loggedIn() && currentUser && (
             <ChatPopup

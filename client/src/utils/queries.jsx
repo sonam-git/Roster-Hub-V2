@@ -384,7 +384,7 @@ export const GET_CHAT_BY_USER = gql`
     }
   }
 `;
-// 1. Fetch all games (optionally filter by status)
+//Fetch all games (optionally filter by status)
 export const QUERY_GAMES = gql`
   query Games($status: GameStatus) {
     games(status: $status) {
@@ -404,7 +404,7 @@ export const QUERY_GAMES = gql`
   }
 `;
 
-// 2. Fetch a single game by ID (with votes and counts)
+//Fetch a single game by ID (with votes and counts)
 export const QUERY_GAME = gql`
   query Game($gameId: ID!) {
     game(gameId: $gameId) {
@@ -430,3 +430,23 @@ export const QUERY_GAME = gql`
     }
   }
 `;
+// Fetch soccer matches
+export const GET_MATCHES = gql`
+  query getMatches(
+    $code: String!
+    $status: String!
+    $dateFrom: String
+    $dateTo: String
+  ) {
+    soccerMatches(
+      competitionCode: $code
+      status: $status
+      dateFrom: $dateFrom
+      dateTo: $dateTo
+    ) {
+      homeTeam awayTeam homeGoals awayGoals status utcDate
+    }
+  }
+`;
+
+

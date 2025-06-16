@@ -75,6 +75,7 @@ const gameBadgeCount = pendingCount + confirmedCount;
           path: "/game-schedule",
           badge: gameBadgeCount,
         },
+        { title: "ScoreBoard", src: skillImage, path: "/scoreboard" },
         { title: "Logout", src: logoutImage, action: handleLogout },
       ]
     : [
