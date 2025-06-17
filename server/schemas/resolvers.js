@@ -257,6 +257,7 @@ const resolvers = {
       return Game.find(filter)
         .populate("creator")
         .populate("responses.user")
+        .populate("feedbacks.user") 
         .sort({ date: 1, time: 1 });
     },
 
@@ -269,7 +270,8 @@ const resolvers = {
       }
       return Game.findById(gameId)
         .populate("creator")
-        .populate("responses.user");
+        .populate("responses.user")
+        .populate("feedbacks.user");
     },
     // ************************** QUERY SOCCER SCORES *******************************************//
     soccerMatches: async (_, { competitionCode, status, dateFrom, dateTo }) => {

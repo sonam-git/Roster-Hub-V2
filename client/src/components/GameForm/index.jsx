@@ -89,36 +89,41 @@ const GameForm = () => {
         Schedule a Game
       </h2>
       <form onSubmit={handleSubmit}>
-        {/* Date */}
-        <label className={`block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-          Date
-          <input
-            type="date"
-            name="date"
-            value={formState.date}
-            onChange={handleChange}
-            className={`mt-1 block w-full px-3 py-2 border rounded ${
-              isDarkMode ? "dark:bg-gray-700 dark:text-gray-200 border-gray-600" : "bg-white border-gray-300"
-            }`}
-            required
-          />
-        </label>
+      <div className="grid grid-cols-2 gap-4 mb-2">
+  {/* Date */}
+  <label className={`block ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+    Date
+    <input
+      type="date"
+      name="date"
+      value={formState.date}
+      onChange={handleChange}
+      className={`mt-1 block w-full px-3 py-2 border rounded ${
+        isDarkMode
+          ? "dark:bg-gray-700 dark:text-gray-200 border-gray-600"
+          : "bg-white border-gray-300"
+      }`}
+      required
+    />
+  </label>
 
-        {/* Time */}
-        <label className={`block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-          Time
-          <input
-            type="time"
-            name="time"
-            value={formState.time}
-            onChange={handleChange}
-            className={`mt-1 block w-full px-3 py-2 border rounded ${
-              isDarkMode ? "dark:bg-gray-700 dark:text-gray-200 border-gray-600" : "bg-white border-gray-300"
-            }`}
-            required
-          />
-        </label>
-
+  {/* Time */}
+  <label className={`block ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+    Time
+    <input
+      type="time"
+      name="time"
+      value={formState.time}
+      onChange={handleChange}
+      className={`mt-1 block w-full px-3 py-2 border rounded ${
+        isDarkMode
+          ? "dark:bg-gray-700 dark:text-gray-200 border-gray-600"
+          : "bg-white border-gray-300"
+      }`}
+      required
+    />
+  </label>
+</div>
         {/* Venue */}
         <label className={`block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
           Venue

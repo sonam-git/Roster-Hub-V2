@@ -51,74 +51,76 @@ export default function Post({ post }) {
 
   // Subscriptions
 
-  // 1️⃣ Likes
-  useSubscription(POST_LIKED_SUBSCRIPTION, {
-    variables: { postId: post._id },
-    onSubscriptionData: ({ subscriptionData }) => {
-      const liked = subscriptionData.data?.postLiked;
-      if (liked) {
-        setLikes(liked.likes);
-        setLikedBy(liked.likedBy);
-      }
-    },
-  });
+// 1️⃣ Likes
+useSubscription(POST_LIKED_SUBSCRIPTION, {
+  variables: { postId: post._id },
+  onData: ({ data }) => {
+    const liked = data?.data?.postLiked;
+    if (liked) {
+      setLikes(liked.likes);
+      setLikedBy(liked.likedBy);
+    }
+  },
+});
 
-  // 2️⃣ New comments
-  useSubscription(COMMENT_ADDED_SUBSCRIPTION, {
-    variables: { postId: post._id },
-    onSubscriptionData: ({ subscriptionData }) => {
-      const newComment = subscriptionData.data?.commentAdded;
-      if (!newComment) return;
-      setComments((prev) =>
-        prev.some((c) => c._id === newComment._id)
-          ? prev
-          : [...prev, newComment]
-      );
-    },
-  });
 
-  // 3️⃣ Comment updates
-  useSubscription(COMMENT_UPDATED_SUBSCRIPTION, {
-    onSubscriptionData: ({ subscriptionData }) => {
-      const updated = subscriptionData.data?.commentUpdated;
-      if (!updated) return;
-      setComments((prev) =>
-        prev.map((c) => (c._id === updated._id ? updated : c))
-      );
-    },
-  });
+// 2️⃣ New comments
+useSubscription(COMMENT_ADDED_SUBSCRIPTION, {
+  variables: { postId: post._id },
+  onData: ({ data }) => {
+    const newComment = data?.data?.commentAdded;
+    if (!newComment) return;
+    setComments(prev =>
+      prev.some(c => c._id === newComment._id) ? prev : [...prev, newComment]
+    );
+  },
+});
 
-  // 4️⃣ Comment deletions
-  useSubscription(COMMENT_DELETED_SUBSCRIPTION, {
-    onSubscriptionData: ({ subscriptionData }) => {
-      const deletedId = subscriptionData.data?.commentDeleted;
-      if (!deletedId) return;
-      setComments((prev) => prev.filter((c) => c._id !== deletedId));
-    },
-  });
+// 3️⃣ Comment updates
+useSubscription(COMMENT_UPDATED_SUBSCRIPTION, {
+  onData: ({ data }) => {
+    const updated = data?.data?.commentUpdated;
+    if (!updated) return;
+    setComments(prev =>
+      prev.map(c => (c._id === updated._id ? updated : c))
+    );
+  },
+});
 
-  // 5️⃣ Post updates
-  useSubscription(POST_UPDATED_SUBSCRIPTION, {
-    onSubscriptionData: ({ subscriptionData }) => {
-      const updated = subscriptionData.data?.postUpdated;
-      if (updated && updated._id === post._id) {
-        setPostText(updated.postText);
-        setIsEdited(true);
-        setLikes(updated.likes);
-        setLikedBy(updated.likedBy);
-        setComments(updated.comments);
-      }
-    },
-  });
+// 4️⃣ Comment deletions
+useSubscription(COMMENT_DELETED_SUBSCRIPTION, {
+  onData: ({ data }) => {
+    const deletedId = data?.data?.commentDeleted;
+    if (!deletedId) return;
+    setComments(prev => prev.filter(c => c._id !== deletedId));
+  },
+});
 
-  // 6️⃣ Post deletions
-  useSubscription(POST_DELETED_SUBSCRIPTION, {
-    onSubscriptionData: ({ subscriptionData }) => {
-      if (subscriptionData.data?.postDeleted === post._id) {
-        setDeleted(true);
-      }
-    },
-  });
+
+// 5️⃣ Post updates
+useSubscription(POST_UPDATED_SUBSCRIPTION, {
+  onData: ({ data }) => {
+    const updated = data?.data?.postUpdated;
+    if (updated && updated._id === post._id) {
+      setPostText(updated.postText);
+      setIsEdited(true);
+      setLikes(updated.likes);
+      setLikedBy(updated.likedBy);
+      setComments(updated.comments);
+    }
+  },
+});
+
+
+// 6️⃣ Post deletions
+useSubscription(POST_DELETED_SUBSCRIPTION, {
+  onData: ({ data }) => {
+    if (data?.postDeleted === post._id) {
+      setDeleted(true);
+    }
+  },
+});
+
 
   // Handlers
 

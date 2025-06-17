@@ -5,6 +5,7 @@ const UserListModal = ({ show, onClose, profiles, onSelectUser, isDarkMode }) =>
   if (!show) return null;
 
   const loggedInUserId = Auth.loggedIn() ? Auth.getProfile().data._id : null;
+  console.log("Logged in user ID:", loggedInUserId);
   const filteredProfiles = profiles.filter((user) => user._id !== loggedInUserId);
 
   return (

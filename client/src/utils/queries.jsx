@@ -405,7 +405,10 @@ export const QUERY_GAMES = gql`
       unavailableCount
       feedbacks {
         _id
-        user { _id name }
+        user {
+          _id
+          name
+        }
         comment
         rating
         createdAt
@@ -442,7 +445,10 @@ export const QUERY_GAME = gql`
       unavailableCount
       feedbacks {
         _id
-        user { _id name }
+        user {
+          _id
+          name
+        }
         comment
         rating
         createdAt
@@ -465,9 +471,12 @@ export const GET_MATCHES = gql`
       dateFrom: $dateFrom
       dateTo: $dateTo
     ) {
-      homeTeam awayTeam homeGoals awayGoals status utcDate
+      homeTeam
+      awayTeam
+      homeGoals
+      awayGoals
+      status
+      utcDate
     }
   }
 `;
-
-

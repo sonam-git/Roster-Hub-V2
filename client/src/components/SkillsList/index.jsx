@@ -24,25 +24,27 @@ const SkillsList = ({
     setLocalSkills(initialSkills);
   }, [initialSkills]);
 
-  // —— subscribe to new skills
-  useSubscription(SKILL_ADDED_SUBSCRIPTION, {
-    onSubscriptionData: ({ subscriptionData }) => {
-      const added = subscriptionData.data?.skillAdded;
-      if (added && !localSkills.some((s) => s._id === added._id)) {
-        setLocalSkills((prev) => [added, ...prev]);
-      }
-    },
-  });
+// —— subscribe to new skills
+useSubscription(SKILL_ADDED_SUBSCRIPTION, {
+  onData: ({ data }) => {
+    const added = data?.skillAdded;
+    if (added && !localSkills.some((s) => s._id === added._id)) {
+      setLocalSkills((prev) => [added, ...prev]);
+    }
+  },
+});
 
-  // —— subscribe to deleted skills
-  useSubscription(SKILL_DELETED_SUBSCRIPTION, {
-    onSubscriptionData: ({ subscriptionData }) => {
-      const deletedId = subscriptionData.data?.skillDeleted;
-      if (deletedId) {
-        setLocalSkills((prev) => prev.filter((s) => s._id !== deletedId));
-      }
-    },
-  });
+
+// —— subscribe to deleted skills
+useSubscription(SKILL_DELETED_SUBSCRIPTION, {
+  onData: ({ data }) => {
+    const deletedId = data?.skillDeleted;
+    if (deletedId) {
+      setLocalSkills(prev => prev.filter(s => s._id !== deletedId));
+    }
+  },
+});
+
 
   // —— mutation to remove skill
   const [removeSkill, { error }] = useMutation(REMOVE_SKILL, {

@@ -103,7 +103,7 @@ const GameList = () => {
                   no-underline hover:no-underline
                   block p-4 rounded-lg shadow transition
                   border-2 ${borderColor}
-                  hover:ring-2 ${isDarkMode ? "hover:ring-blue-200" : "hover:ring-blue-600"}
+                  hover:ring-2 ${isDarkMode ? "hover:ring-blue-200 text-white"  : "hover:ring-blue-600"}
                   ${bgColor} ${textColor}
                 `}
               >
@@ -123,16 +123,16 @@ const GameList = () => {
                   <span className="font-bold">Note:</span> {game.notes || "No notes provided"}
                 </p>
                 <div className="flex justify-between text-sm">
-                  <span><span className="font-bold">By:</span> {game.creator.name}</span>
+                  <span><span className="font-bold">By:</span> {game.creator?.name}</span>
                   <span>
                     <span className="font-bold">👍</span> {game.availableCount} |{" "}
                     <span className="font-bold">👎</span> {game.unavailableCount}
                   </span>
                 </div>
-                {game.status !== "PENDING" && (
+                {game.status === "PENDING" && (
                   <p className="mt-3 flex items-center text-yellow-800 italic">
                     <span role="img" aria-label="attention" className="mr-2">⚠️</span>
-                    Response cannot be changed once confirmed.
+                    Response cannot be changed once the game is confirmed.
                   </p>
                 )}
               </Link>

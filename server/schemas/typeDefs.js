@@ -75,7 +75,25 @@ const typeDefs = gql`
     type: String!
     link: String!
   }
-
+  type Game {
+    _id: ID!
+    creator: Profile!
+    date: String! # ISO-formatted Date
+    time: String! # e.g. "18:30"
+    venue: String!
+    notes: String
+    opponent: String!
+    score: String # e.g. "2 - 1"
+    result: GameResult!
+    status: GameStatus!
+    responses: [Response!]!
+    availableCount: Int! # computed
+    unavailableCount: Int! # computed
+    createdAt: String!
+    updatedAt: String!
+    feedbacks: [Feedback!]!
+    averageRating: Float!
+  }
   type ResponseMessage {
     message: String!
   }
@@ -109,25 +127,7 @@ const typeDefs = gql`
     createdAt: String!
   }
     
-  type Game {
-    _id: ID!
-    creator: Profile!
-    date: String! # ISO-formatted Date
-    time: String! # e.g. "18:30"
-    venue: String!
-    notes: String
-    opponent: String!
-    score: String # e.g. "2 - 1"
-    result: GameResult!
-    status: GameStatus!
-    responses: [Response!]!
-    availableCount: Int! # computed
-    unavailableCount: Int! # computed
-    createdAt: String!
-    updatedAt: String!
-    feedbacks: [Feedback!]!
-    averageRating: Float!
-  }
+
 
   type SoccerScore {
     homeTeam: String!

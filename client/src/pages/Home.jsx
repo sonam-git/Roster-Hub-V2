@@ -8,6 +8,7 @@ import PostsList from "../components/PostsList";
 import RecentSkillsList from "../components/RecentSkillsList";
 import PostForm from "../components/PostForm";
 import RatingDisplay from "../components/RatingDisplay";
+import ComingGames from "../components/ComingGames";
 
 const Home = ({ isDarkMode }) => {
   const { loading, data } = useQuery(QUERY_ME);
@@ -37,7 +38,7 @@ const Home = ({ isDarkMode }) => {
                   <div className="flex items-start mt-8">
                     {/* vertical heading */}
                     <div
-                      className="text-sm font-bold uppercase mr-4"
+                      className="text-xs font-bold uppercase mr-4"
                       style={{
                         writingMode: "vertical-rl",
                         textOrientation: "upright",
@@ -53,9 +54,12 @@ const Home = ({ isDarkMode }) => {
               </div>
               <div className="w-full lg:w-1/4">
                 <RecentSkillsList />
+                <ComingGames />
                
               </div>
+              
             </div>
+            
           </>
         ) : (
           <Hero />

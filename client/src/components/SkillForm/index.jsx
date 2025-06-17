@@ -21,7 +21,7 @@ const SkillForm = ({ profileId, teamMate }) => {
   });
 
   const inputRef = useRef(null);
-  const [optimisticSkills, addOptimisticSkill] = useState([]);
+  const [, addOptimisticSkill] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
 
   async function handleSubmit(formData) {
@@ -86,13 +86,6 @@ const SkillForm = ({ profileId, teamMate }) => {
             <p className="mt-2 text-red-600 italic">{errorMessage}</p>
           )}
 
-          {optimisticSkills.length > 0 && (
-            <ul className="mt-4 list-disc list-inside text-sm text-green-700">
-              {optimisticSkills.map((skill, index) => (
-                <li key={skill.id || index}>{skill.text || skill}</li>
-              ))}
-            </ul>
-          )}
         </>
       ) : (
         <p className="mt-2 text-sm">

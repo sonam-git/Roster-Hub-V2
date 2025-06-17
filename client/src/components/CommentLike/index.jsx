@@ -15,14 +15,15 @@ export default function CommentLike({ comment, currentUserId }) {
   // 1️⃣ Subscribe to real-time like changes
   useSubscription(COMMENT_LIKED_SUBSCRIPTION, {
     variables: { commentId: comment._id },
-    onSubscriptionData: ({ subscriptionData }) => {
-      const updated = subscriptionData.data?.commentLiked;
+    onData: ({ data }) => {
+      const updated = data.data?.commentLiked;
       if (updated) {
         setLikes(updated.likes);
         setLikedBy(updated.likedBy);
       }
     },
   });
+  
 
   // 2️⃣ Fire the mutation
   const [likeComment] = useMutation(LIKE_COMMENT, {
