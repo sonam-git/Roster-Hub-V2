@@ -403,6 +403,14 @@ export const QUERY_GAMES = gql`
       result
       availableCount
       unavailableCount
+      feedbacks {
+        _id
+        user { _id name }
+        comment
+        rating
+        createdAt
+      }
+      averageRating
     }
   }
 `;
@@ -432,6 +440,14 @@ export const QUERY_GAME = gql`
       }
       availableCount
       unavailableCount
+      feedbacks {
+        _id
+        user { _id name }
+        comment
+        rating
+        createdAt
+      }
+      averageRating
     }
   }
 `;

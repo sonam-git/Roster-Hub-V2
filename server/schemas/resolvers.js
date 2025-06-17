@@ -1051,7 +1051,6 @@ const resolvers = {
       });
       return newGame.populate("creator");
     },
-
     // ──────── Respond (Yes/No) to a game ────────
     respondToGame: async (_, { input }, context) => {
       if (!context.user) {
@@ -1082,7 +1081,6 @@ const resolvers = {
         .populate("creator")
         .populate("responses.user");
     },
-
     // ──────── Confirm a game (only creator) ────────
     confirmGame: async (_, { gameId, note }, context) => {
       if (!context.user) {
@@ -1110,7 +1108,7 @@ const resolvers = {
         .populate("responses.user");
     },
     // ──────── Complete a game (only creator) ────────
-    completeGame: async (_, { gameId, score, result }, context) => {
+    completeGame: async (_, { gameId, score, result, note }, context) => {
       if (!context.user) {
         throw new AuthenticationError("You must be logged in");
       }
@@ -1122,9 +1120,13 @@ const resolvers = {
       if (game.creator.toString() !== context.user._id) {
         throw new AuthenticationError("Not authorized");
       }
+
+      game.status = "COMPLETED"; 
+      if (typeof note === "string") {
+        game.notes = note;
+      }
       game.score = score;
       game.result = result;
-      game.status = "COMPLETED";
       await game.save();
       return game;
     },
@@ -1227,6 +1229,39 @@ const resolvers = {
         .populate("creator", "name")
         .populate("responses.user", "name");
     },
+    // ──────── Add feedback to a completed game ────────
+    addFeedback: async (_, { gameId, comment, rating }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("Must be logged in");
+      }
+
+      const game = await Game.findById(gameId).populate("feedbacks.user");
+      if (!game) {
+        throw new Error("Game not found");
+      }
+      if (game.status !== "COMPLETED") {
+        throw new Error("Can only leave feedback on completed games");
+      }
+
+      // **NEW CHECK**: has this user already left feedback?  
+      if (game.feedbacks.some(f => f.user._id.toString() === context.user._id)) {
+        throw new Error("You have already left feedback for this game");
+      }
+
+      // push new feedback
+      game.feedbacks.push({
+        user: context.user._id,
+        comment,
+        rating
+      });
+
+      // recalc average
+      const sum = game.feedbacks.reduce((sum, f) => sum + f.rating, 0);
+      game.averageRating = sum / game.feedbacks.length;
+
+      await game.save();
+      return game;
+    },
   },
   Subscription: {
     chatCreated: {
@@ -1294,6 +1329,11 @@ const resolvers = {
     },
     creator: (parent) => parent.creator,
     responses: (parent) => parent.responses,
+    averageRating(game) {
+      return typeof game.averageRating === "number"
+        ? game.averageRating
+        : 0;
+    },
   },
 };
 

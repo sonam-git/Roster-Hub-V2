@@ -8,7 +8,7 @@ import ProfileAvatar from "../../assets/images/profile-avatar.png";
 
 import { QUERY_PROFILES } from "../../utils/queries";
 
-export default function RatingDisplay({ limit = 5 }) {
+export default function RatingDisplay({ limit = 8 }) {
   const { data, loading, error } = useQuery(QUERY_PROFILES);
   if (loading) return <div>Loading top ratings…</div>;
   if (error)   return <div>Error!</div>;

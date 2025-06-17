@@ -32,7 +32,7 @@ const GameList = () => {
 
   const userId = Auth.getProfile()?.data?._id || null;
   const [page, setPage] = useState(0);
-  const itemsPerPage = 2;
+  const itemsPerPage = 3;
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [gameToDelete, setGameToDelete] = useState(null);
@@ -60,7 +60,7 @@ const GameList = () => {
 
   return (
     <>
-      <h2 className="text-2xl font-bold mb-4">{games.length} Upcoming Games</h2>
+
 
       <div className="flex flex-col space-y-4">
         {pagedGames.map(game => {

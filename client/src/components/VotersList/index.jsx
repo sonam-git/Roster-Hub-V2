@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import { ThemeContext } from "../ThemeContext";
 
-const PlayersList = ({ yesVoters, noVoters }) => {
+const  VotersList = ({ yesVoters, noVoters }) => {
   const { isDarkMode } = useContext(ThemeContext);
-  const bgColor = isDarkMode ? "bg-gray-700" : "bg-gray-300";
+  const bgColor   = isDarkMode ? "bg-gray-700" : "bg-gray-300";
   const textColor = isDarkMode ? "text-gray-200" : "text-gray-800";
 
   return (
@@ -15,8 +15,8 @@ const PlayersList = ({ yesVoters, noVoters }) => {
         </h4>
         {yesVoters.length > 0 ? (
           <ul className="list-disc list-inside space-y-1">
-            {yesVoters.map((name) => (
-              <li key={name}>{name}</li>
+            {yesVoters.map((name, idx) => (
+              <li key={idx}>{name}</li>
             ))}
           </ul>
         ) : (
@@ -31,8 +31,8 @@ const PlayersList = ({ yesVoters, noVoters }) => {
         </h4>
         {noVoters.length > 0 ? (
           <ul className="list-disc list-inside space-y-1">
-            {noVoters.map((name) => (
-              <li key={name}>{name}</li>
+            {noVoters.map((name, idx) => (
+              <li key={idx}>{name}</li>
             ))}
           </ul>
         ) : (
@@ -43,4 +43,4 @@ const PlayersList = ({ yesVoters, noVoters }) => {
   );
 };
 
-export default PlayersList;
+export default VotersList;

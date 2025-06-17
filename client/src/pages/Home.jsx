@@ -19,7 +19,7 @@ const Home = ({ isDarkMode }) => {
   }
 
   return (
-    <main className="container mx-auto px-4 mt-5">
+    <main className="mx-auto max-w-5xl px-2 mt-5">
       <div className="flex flex-col items-center">
         {isLoggedIn ? (
           <>
@@ -53,6 +53,7 @@ const Home = ({ isDarkMode }) => {
               </div>
               <div className="w-full lg:w-1/4">
                 <RecentSkillsList />
+               
               </div>
             </div>
           </>

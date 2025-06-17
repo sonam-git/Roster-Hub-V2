@@ -95,11 +95,20 @@ const typeDefs = gql`
     NOT_PLAYED
   }
 
+  
   type Response {
     user: Profile!
     isAvailable: Boolean!
   }
 
+  type Feedback {
+    _id: ID!
+    user: Profile!
+    comment: String
+    rating: Int!
+    createdAt: String!
+  }
+    
   type Game {
     _id: ID!
     creator: Profile!
@@ -116,6 +125,8 @@ const typeDefs = gql`
     unavailableCount: Int! # computed
     createdAt: String!
     updatedAt: String!
+    feedbacks: [Feedback!]!
+    averageRating: Float!
   }
 
   type SoccerScore {
@@ -227,10 +238,11 @@ const typeDefs = gql`
     respondToGame(input: RespondToGameInput!): Game!
     confirmGame(gameId: ID!, note: String): Game
     cancelGame(gameId: ID!, note: String): Game
-    completeGame(gameId: ID!, score: String!, result:GameResult! ): Game!
+    completeGame(gameId: ID!, score: String!, note: String, result: GameResult!): Game!
     unvoteGame(gameId: ID!): Game!
     deleteGame(gameId: ID!): Game!
     updateGame(gameId: ID!, input: UpdateGameInput!): Game!
+    addFeedback(gameId: ID!, comment: String, rating: Int!): Game!
   }
   type Subscription {
     chatCreated: Chat

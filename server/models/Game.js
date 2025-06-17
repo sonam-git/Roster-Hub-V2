@@ -2,6 +2,7 @@
 
 const { Schema, model } = require("mongoose");
 
+// Schema for responses to the game poll
 const ResponseSchema = new Schema(
   {
     user: {
@@ -16,6 +17,14 @@ const ResponseSchema = new Schema(
   },
   { _id: false }
 );
+
+// feedback schema for game
+const FeedbackSchema = new Schema({
+  user: { type: Schema.Types.ObjectId, ref: "Profile", required: true },
+  comment: { type: String, trim: true },
+  rating: { type: Number, min: 0, max: 10, required: true },
+  createdAt: { type: Date, default: Date.now }
+});
 
 const GameSchema = new Schema(
   {
@@ -62,7 +71,12 @@ const GameSchema = new Schema(
       enum: ["PENDING", "CONFIRMED", "COMPLETED","CANCELLED"],
       default: "PENDING",
     },
+    averageRating: {
+      type: Number,
+      default: 0
+    },
     responses: [ResponseSchema],  // array of { user, isAvailable }
+    feedbacks: [FeedbackSchema], // array of feedbacks
   },
   { timestamps: true }
 );

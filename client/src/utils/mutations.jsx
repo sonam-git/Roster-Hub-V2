@@ -435,17 +435,20 @@ export const COMPLETE_GAME = gql`
     $gameId: ID!
     $score: String!
     $result: GameResult!
+    $note: String
   ) {
     completeGame(
       gameId: $gameId
       score: $score
       result: $result
+      note: $note
     ) {
       _id
       status
       score
       result
       opponent
+      notes 
       availableCount
       unavailableCount
       creator { _id name }
@@ -494,6 +497,21 @@ export const LOGIN_WITH_GOOGLE = gql`
         email
         profilePic
       }
+    }
+  }
+`;
+// Mutation to add feedback for a game
+export const ADD_FEEDBACK = gql`
+  mutation AddFeedback($gameId: ID!, $comment: String, $rating: Int!) {
+    addFeedback(gameId: $gameId, comment: $comment, rating: $rating) {
+      _id
+      feedbacks {
+        _id
+        user { _id name }
+        comment
+        rating
+      }
+      averageRating
     }
   }
 `;
