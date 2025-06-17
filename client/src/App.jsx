@@ -8,8 +8,13 @@ import {
   split,
   useQuery,
 } from "@apollo/client";
+
 import { setContext } from "@apollo/client/link/context";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+} from "react-router-dom";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
@@ -34,8 +39,9 @@ import { QUERY_ME } from "./utils/queries";
 import Auth from "./utils/auth";
 import MainHeader from "./components/MainHeader";
 
-// --- Apollo Setup ---
 
+
+// ─── Apollo Setup ───
 const httpUri = "http://localhost:3001/graphql";
 const wsUri   = "ws://localhost:3001/graphql";
 
@@ -63,7 +69,10 @@ const wsLink = new GraphQLWsLink(
 const splitLink = split(
   ({ query }) => {
     const def = getMainDefinition(query);
-    return def.kind === "OperationDefinition" && def.operation === "subscription";
+    return (
+      def.kind === "OperationDefinition" &&
+      def.operation === "subscription"
+    );
   },
   wsLink,
   authLink.concat(httpLink)
@@ -74,8 +83,7 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-// --- App Content with Routing ---
-
+// ─── App Content ───
 function AppContent() {
   const { isDarkMode } = useContext(ThemeContext);
   const { data } = useQuery(QUERY_ME);
@@ -115,13 +123,10 @@ function AppContent() {
               path="/game-schedule/:gameId"
               element={<Game isDarkMode={isDarkMode} />}
             />
-                  <Route path="/scoreboard" element={<Score />} />
+            <Route path="/scoreboard" element={<Score />} />
           </Routes>
           {Auth.loggedIn() && currentUser && (
-            <ChatPopup
-              currentUser={currentUser}
-              isDarkMode={isDarkMode}
-            />
+            <ChatPopup currentUser={currentUser} isDarkMode={isDarkMode} />
           )}
         </div>
       </div>
@@ -130,14 +135,18 @@ function AppContent() {
   );
 }
 
-// --- Main App ---
-
+// ─── Main App ───
 function App() {
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <ApolloProvider client={client}>
         <ThemeProvider>
-          <Router>
+          <Router
+            future={{
+              v7_startTransition: true,
+              v7_relativeSplatPath: true,
+            }}
+          >
             <MainHeader />
             <AppContent />
           </Router>
