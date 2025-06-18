@@ -41,7 +41,7 @@ const GameComplete = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-200 bg-opacity-50">
       <div
         className={`w-full max-w-md p-6 rounded-lg shadow-lg ${
           isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-800"
