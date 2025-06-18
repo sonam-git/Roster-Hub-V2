@@ -52,12 +52,16 @@ const Home = ({ isDarkMode }) => {
         </div>
 
         {/* ─── RIGHT (1 col): Recent Skills + Coming Games ─── */}
-        <div className="space-y-6">
+        <div className="space-y-6 ">
           <RecentSkillsList />
-          <div className="mb-4">
-            <h2 className="text-2xl font-bold mb-4 text-center">Game Schedule</h2>
-            <ComingGames />
+          <div
+            className={`bg-gray-100 dark:bg-gray-800 top-0 mb-2 shadow-md p-2 rounded-md z-10`}
+          >
+            <h2 className="text-center font-bold mb-2 text-sm md:text-xl lg:text-2xl xl:text-2xl">
+              Game Schedule
+            </h2>
           </div>
+          <ComingGames />
         </div>
       </div>
     </main>

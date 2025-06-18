@@ -41,9 +41,6 @@ const RecentSkillsList = () => {
   }, [subscribeToMore]);
 
   if (loading) return <div>Loading...</div>;
-  if (!data?.skills?.length) return   <h3 className="text-center font-semi-bold mb-2 text-sm md:text-xl lg:text-2xl xl:text-2xl">
-  No Skills available
-</h3>;
 
   // show the top 5 by createdAt
   const sorted = [...data.skills].sort(
@@ -59,8 +56,8 @@ const RecentSkillsList = () => {
         }`}
       >
         <h3 className="text-center font-bold mb-2 text-sm md:text-xl lg:text-2xl xl:text-2xl">
-          Latest Skills
-        </h3>
+        {data?.skills?.length === 0 ? "No Skills available" : "Latest Skills"}
+      </h3>
       </div>
 
       <div className="w-full overflow-y-auto" style={{ height: "450px" }}>
@@ -72,7 +69,7 @@ const RecentSkillsList = () => {
                   isDarkMode ? "bg-gray-700 text-white" : "bg-white text-black"
                 }`}
               >
-                <div className="p-2 font-bold border-b border-gray-300 dark:border-gray-600">
+                <div className="p-2 font-semibold border-b border-gray-300 dark:border-gray-600">
                   {skill.skillText[0].toUpperCase() + skill.skillText.slice(1)}
                 </div>
                 <div className="flex justify-between items-center px-2 py-1 text-xs">

@@ -78,17 +78,17 @@ const typeDefs = gql`
   type Game {
     _id: ID!
     creator: Profile!
-    date: String! # ISO-formatted Date
-    time: String! # e.g. "18:30"
+    date: String! 
+    time: String! 
     venue: String!
     notes: String
     opponent: String!
-    score: String # e.g. "2 - 1"
+    score: String 
     result: GameResult!
     status: GameStatus!
     responses: [Response!]!
-    availableCount: Int! # computed
-    unavailableCount: Int! # computed
+    availableCount: Int! 
+    unavailableCount: Int! 
     createdAt: String!
     updatedAt: String!
     feedbacks: [Feedback!]!
@@ -256,6 +256,12 @@ const typeDefs = gql`
     commentUpdated: Comment
     commentDeleted: ID
     commentLiked(commentId: ID!): Comment
+    gameCreated: Game
+    gameConfirmed: Game
+    gameCompleted: Game
+    gameCancelled: Game
+    gameDeleted: ID
+    gameUpdated: Game
   }
 `;
 

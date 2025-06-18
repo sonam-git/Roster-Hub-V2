@@ -30,6 +30,7 @@ const SkillForm = ({ profileId, teamMate }) => {
     // Validate
     if (!skillText) {
       setErrorMessage("Please enter a skill to endorse.");
+      setTimeout(() => setErrorMessage(""), 3000);
       return;
     }
     setErrorMessage("");

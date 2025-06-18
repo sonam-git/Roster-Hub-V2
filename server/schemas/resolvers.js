@@ -1,5 +1,5 @@
 require("dotenv").config();
-const axios = require('axios');
+const axios = require("axios");
 const { PubSub, withFilter } = require("graphql-subscriptions");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
@@ -34,11 +34,15 @@ const COMMENT_DELETED = "COMMENT_DELETED";
 const COMMENT_LIKED = "COMMENT_LIKED";
 const SKILL_ADDED = "SKILL_ADDED";
 const SKILL_DELETED = "SKILL_DELETED";
+const GAME_CREATED = "GAME_CREATED";
+const GAME_CONFIRMED = "GAME_CONFIRMED";
+const GAME_COMPLETED = "GAME_COMPLETED";
+const GAME_CANCELLED = "GAME_CANCELLED";
+const GAME_DELETED = "GAME_DELETED";
+const GAME_UPDATED = "GAME_UPDATED";
 
 const pubsub = new PubSub(); // Ensure this instance is used in the resolvers
 const FOOTBALL_API = "https://api.football-data.org/v4";
-
-
 
 const resolvers = {
   // ############ QUERIES ########## //
@@ -257,7 +261,7 @@ const resolvers = {
       return Game.find(filter)
         .populate("creator")
         .populate("responses.user")
-        .populate("feedbacks.user") 
+        .populate("feedbacks.user")
         .sort({ date: 1, time: 1 });
     },
 
@@ -277,24 +281,22 @@ const resolvers = {
     soccerMatches: async (_, { competitionCode, status, dateFrom, dateTo }) => {
       let url = `${FOOTBALL_API}/competitions/${competitionCode}/matches?status=${status}`;
       if (dateFrom) url += `&dateFrom=${dateFrom}`;
-      if (dateTo)   url += `&dateTo=${dateTo}`;
+      if (dateTo) url += `&dateTo=${dateTo}`;
 
       const res = await axios.get(url, {
         headers: { "X-Auth-Token": process.env.FOOTBALL_DATA_KEY },
       });
 
       return res.data.matches.map((m) => ({
-        homeTeam:  m.homeTeam.name,
-        awayTeam:  m.awayTeam.name,
+        homeTeam: m.homeTeam.name,
+        awayTeam: m.awayTeam.name,
         homeGoals: m.score.fullTime.home,
         awayGoals: m.score.fullTime.away,
-        status:    m.status,
-        matchday:  m.matchday,
-        utcDate:   m.utcDate,
+        status: m.status,
+        matchday: m.matchday,
+        utcDate: m.utcDate,
       }));
     },
-    
-    
   },
   // ########## MUTAIIONS ########### //
   Mutation: {
@@ -1051,7 +1053,12 @@ const resolvers = {
         status: "PENDING",
         responses: [],
       });
-      return newGame.populate("creator");
+      const populated = await newGame.populate("creator");
+
+      // publish creation
+      pubsub.publish(GAME_CREATED, { gameCreated: populated });
+
+      return populated;
     },
     // ──────── Respond (Yes/No) to a game ────────
     respondToGame: async (_, { input }, context) => {
@@ -1091,47 +1098,46 @@ const resolvers = {
         );
       }
       const game = await Game.findById(gameId);
-      if (!game) {
-        throw new UserInputError("Game not found");
-      }
+      if (!game) throw new UserInputError("Game not found");
       if (!game.creator.equals(context.user._id)) {
-        throw new AuthenticationError("You are not the creator of this game");
+        throw new AuthenticationError("Not authorized");
       }
       if (game.status === "CONFIRMED") {
         throw new UserInputError("Game is already confirmed");
       }
+
       game.status = "CONFIRMED";
-      if (note !== undefined) {
-        game.notes = note;
-      }
+      if (note !== undefined) game.notes = note;
       await game.save();
-      return Game.findById(gameId)
+      const updated = await Game.findById(gameId)
         .populate("creator")
         .populate("responses.user");
+
+      pubsub.publish(GAME_CONFIRMED, { gameConfirmed: updated });
+      return updated;
     },
     // ──────── Complete a game (only creator) ────────
     completeGame: async (_, { gameId, score, result, note }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError("You must be logged in");
-      }
+      if (!context.user) throw new AuthenticationError("You must be logged in");
       const game = await Game.findById(gameId);
-      if (!game) {
-        throw new Error("Game not found");
-      }
-      // only creator can complete
-      if (game.creator.toString() !== context.user._id) {
+      if (!game) throw new Error("Game not found");
+      if (!game.creator.equals(context.user._id)) {
         throw new AuthenticationError("Not authorized");
       }
 
-      game.status = "COMPLETED"; 
-      if (typeof note === "string") {
-        game.notes = note;
-      }
+      game.status = "COMPLETED";
+      if (typeof note === "string") game.notes = note;
       game.score = score;
       game.result = result;
       await game.save();
-      return game;
+      const updated = await Game.findById(gameId)
+        .populate("creator")
+        .populate("responses.user");
+
+      pubsub.publish(GAME_COMPLETED, { gameCompleted: updated });
+      return updated;
     },
+
     // ──────── Cancel a game (only creator) ────────
     cancelGame: async (_, { gameId, note }, context) => {
       if (!context.user) {
@@ -1140,23 +1146,23 @@ const resolvers = {
         );
       }
       const game = await Game.findById(gameId);
-      if (!game) {
-        throw new UserInputError("Game not found");
-      }
+      if (!game) throw new UserInputError("Game not found");
       if (!game.creator.equals(context.user._id)) {
-        throw new AuthenticationError("You are not the creator of this game");
+        throw new AuthenticationError("Not authorized");
       }
       if (game.status === "CANCELLED") {
         throw new UserInputError("Game is already cancelled");
       }
+
       game.status = "CANCELLED";
-      if (note !== undefined) {
-        game.notes = note;
-      }
+      if (note !== undefined) game.notes = note;
       await game.save();
-      return Game.findById(gameId)
+      const updated = await Game.findById(gameId)
         .populate("creator")
         .populate("responses.user");
+
+      pubsub.publish(GAME_CANCELLED, { gameCancelled: updated });
+      return updated;
     },
     // ──────── Unvote a game (remove response) ────────
     unvoteGame: async (_, { gameId }, context) => {
@@ -1184,23 +1190,16 @@ const resolvers = {
       if (!context.user) {
         throw new AuthenticationError("You must be logged in to delete games");
       }
-
-      // fetch the game
       const game = await Game.findById(gameId);
-      if (!game) {
-        throw new Error("Game not found");
-      }
-      // only creator can delete
-      if (game.creator.toString() !== context.user._id) {
+      if (!game) throw new Error("Game not found");
+      if (!game.creator.equals(context.user._id)) {
         throw new AuthenticationError("Not authorized");
       }
 
-      // delete and return the deleted doc
-      const deleted = await Game.findByIdAndDelete(gameId);
-      if (!deleted) {
-        throw new Error("Failed to delete");
-      }
-      return deleted; // <-- must be a full Game, so Game._id isn’t null
+      await Game.findByIdAndDelete(gameId);
+      // publish only the ID
+      pubsub.publish(GAME_DELETED, { gameDeleted: gameId });
+      return game;
     },
     // ──────── Update a game (only creator) ────────
     updateGame: async (_, { gameId, input }, context) => {
@@ -1227,9 +1226,11 @@ const resolvers = {
       await game.save();
 
       // return with populated creator and responses
-      return await Game.findById(gameId)
+      await Game.findById(gameId)
         .populate("creator", "name")
         .populate("responses.user", "name");
+      pubsub.publish(GAME_UPDATED, { gameUpdated: game });
+      return game;
     },
     // ──────── Add feedback to a completed game ────────
     addFeedback: async (_, { gameId, comment, rating }, context) => {
@@ -1245,8 +1246,10 @@ const resolvers = {
         throw new Error("Can only leave feedback on completed games");
       }
 
-      // **NEW CHECK**: has this user already left feedback?  
-      if (game.feedbacks.some(f => f.user._id.toString() === context.user._id)) {
+      // **NEW CHECK**: has this user already left feedback?
+      if (
+        game.feedbacks.some((f) => f.user._id.toString() === context.user._id)
+      ) {
         throw new Error("You have already left feedback for this game");
       }
 
@@ -1254,7 +1257,7 @@ const resolvers = {
       game.feedbacks.push({
         user: context.user._id,
         comment,
-        rating
+        rating,
       });
 
       // recalc average
@@ -1311,6 +1314,24 @@ const resolvers = {
           payload.commentLiked._id.toString() === variables.commentId
       ),
     },
+    gameCreated: {
+      subscribe: () => pubsub.asyncIterator(GAME_CREATED),
+    },
+    gameConfirmed: {
+      subscribe: () => pubsub.asyncIterator(GAME_CONFIRMED),
+    },
+    gameCompleted: {
+      subscribe: () => pubsub.asyncIterator(GAME_COMPLETED),
+    },
+    gameCancelled: {
+      subscribe: () => pubsub.asyncIterator(GAME_CANCELLED),
+    },
+    gameDeleted: {
+      subscribe: () => pubsub.asyncIterator(GAME_DELETED),
+    },
+    gameUpdated: {
+      subscribe: () => pubsub.asyncIterator(GAME_UPDATED),
+    },
   },
   // ──────── Type‐level resolvers for Chat ────────
   Chat: {
@@ -1332,9 +1353,7 @@ const resolvers = {
     creator: (parent) => parent.creator,
     responses: (parent) => parent.responses,
     averageRating(game) {
-      return typeof game.averageRating === "number"
-        ? game.averageRating
-        : 0;
+      return typeof game.averageRating === "number" ? game.averageRating : 0;
     },
   },
 };

@@ -1,15 +1,19 @@
 // src/components/ComingGames.jsx
 import React, { useContext, useState, useMemo } from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery, useSubscription, useApolloClient } from "@apollo/client";
 import { Link } from "react-router-dom";
 import { QUERY_GAMES } from "../../utils/queries";
+import {
+  GAME_CREATED_SUBSCRIPTION,
+  GAME_UPDATED_SUBSCRIPTION,
+  GAME_CONFIRMED_SUBSCRIPTION,
+  GAME_CANCELLED_SUBSCRIPTION,
+  GAME_DELETED_SUBSCRIPTION,
+  GAME_COMPLETED_SUBSCRIPTION
+} from "../../utils/subscription";
 import { ThemeContext } from "../ThemeContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCheck,
-  faTimes,
-  faClock,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faTimes, faClock } from "@fortawesome/free-solid-svg-icons";
 
 const STATUS_FILTERS = [
   { key: "PENDING",   label: <FontAwesomeIcon icon={faClock}   /> },
@@ -19,17 +23,43 @@ const STATUS_FILTERS = [
 
 export default function ComingGames() {
   const { isDarkMode } = useContext(ThemeContext);
+  const client = useApolloClient();
+
+  // 1️⃣ base query
   const { loading, error, data } = useQuery(QUERY_GAMES);
+
+  // 2️⃣ subscribe to changes; whenever any fires, refetch QUERY_GAMES
+  useSubscription(GAME_CREATED_SUBSCRIPTION, {
+    onData: () => client.refetchQueries({ include: [QUERY_GAMES] }),
+  });
+  useSubscription(GAME_UPDATED_SUBSCRIPTION, {
+    onData: () => client.refetchQueries({ include: [QUERY_GAMES] }),
+  });
+  useSubscription(GAME_CONFIRMED_SUBSCRIPTION, {
+    onData: () => client.refetchQueries({ include: [QUERY_GAMES] }),
+  });
+  useSubscription(GAME_CANCELLED_SUBSCRIPTION, {
+    onData: () => client.refetchQueries({ include: [QUERY_GAMES] }),
+  });
+  useSubscription(GAME_DELETED_SUBSCRIPTION, {
+    onData: () => client.refetchQueries({ include: [QUERY_GAMES] }),
+  });
+  useSubscription(GAME_COMPLETED_SUBSCRIPTION, {
+    onData: () => client.refetchQueries({ include: [QUERY_GAMES] }),
+  });
+  
+  
 
   const [filter, setFilter] = useState("PENDING");
 
-  // midnight today
+  // “midnight today” to filter out past games
   const today = useMemo(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
     return d;
   }, []);
 
+  // pull upcoming out of data.games
   const upcoming = useMemo(() => {
     if (!data?.games) return [];
     return data.games
@@ -38,6 +68,7 @@ export default function ComingGames() {
       .sort((a, b) => a.dateObj - b.dateObj);
   }, [data, today]);
 
+  // then filter by selected status
   const byStatus = useMemo(
     () => upcoming.filter(g => g.status === filter),
     [upcoming, filter]
@@ -51,9 +82,10 @@ export default function ComingGames() {
     <div className={`p-4 rounded-lg shadow-md ${
       isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-800"
     }`}>
-      {/* <h3 className="text-lg font-bold mb-2">Game Schedule</h3> */}
+      <p className="text-xs text-center mb-2">Select the button to see the game status.</p>
 
-      <div className="flex justify-between mb-4 bg-gray-200 p-2">
+      {/* status filter bar */}
+      <div className="flex justify-between mb-4 bg-gray-200 p-2 rounded">
         {STATUS_FILTERS.map(opt => {
           const active = opt.key === filter;
           const base = active
@@ -77,23 +109,24 @@ export default function ComingGames() {
         })}
       </div>
 
+      {/* list */}
       {byStatus.length === 0 ? (
         <p className="italic">No {filter.toLowerCase()} games.</p>
       ) : (
         <ul className="space-y-3">
           {byStatus.map(game => {
-            const { _id, opponent, dateObj, status } = game;
+            const { _id, opponent, dateObj, status, time } = game;
+
+            // format date and time
             const monthDay = dateObj.toLocaleDateString(undefined, {
               month: "long",
               day: "numeric",
             });
-        // parse HH:mm from game.time
-        const [h, m] = game.time.split(":").map(s => parseInt(s, 10));
-        const hour12    = ((h + 11) % 12) + 1;
-        const ampm      = h >= 12 ? "PM" : "AM";
-        const timeStr   = `${hour12}:${m.toString().padStart(2, "0")} ${ampm}`;
+            const [h, m] = time.split(":").map(n => parseInt(n, 10));
+            const hour12 = ((h + 11) % 12) + 1;
+            const ampm = h >= 12 ? "PM" : "AM";
+            const timeStr = `${hour12}:${m.toString().padStart(2, "0")} ${ampm}`;
 
-  
             return (
               <li key={_id}>
                 <Link
@@ -106,15 +139,13 @@ export default function ComingGames() {
                       {timeStr} vs. {opponent}
                     </p>
                   </div>
-                  <span className={`px-2 py-0.5 rounded-full text-xs
-                    ${
-                      status === "PENDING"
-                        ? "bg-yellow-100 text-yellow-800"
+                  <span className={`px-2 py-0.5 rounded-full text-xs ${
+                    status === "PENDING"
+                      ? "bg-yellow-100 text-yellow-800"
                       : status === "CONFIRMED"
                         ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
-                    }
-                  `}>
+                        : "bg-red-100 text-red-800"
+                  }`}>
                     {status[0] + status.slice(1).toLowerCase()}
                   </span>
                 </Link>

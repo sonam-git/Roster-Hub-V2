@@ -142,3 +142,96 @@ export const SKILL_DELETED_SUBSCRIPTION = gql`
     skillDeleted
   }
 `;
+export const GAME_CREATED_SUBSCRIPTION = gql`
+  subscription OnGameCreated {
+    gameCreated {
+      _id
+      creator { _id name }
+      date
+      time
+      venue
+      notes
+      opponent
+      score
+      result
+      status
+      responses {
+        user { _id name }
+        isAvailable
+      }
+      availableCount
+      unavailableCount
+      feedbacks {
+        _id
+        user { _id name }
+        comment
+        rating
+        createdAt
+      }
+      averageRating
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GAME_CONFIRMED_SUBSCRIPTION = gql`
+  subscription OnGameConfirmed {
+    gameConfirmed {
+      _id
+      status
+      notes
+      date
+      time
+      venue
+      opponent
+    }
+  }
+`;
+export const GAME_UPDATED_SUBSCRIPTION = gql`
+  subscription OnGameConfirmed {
+    gameUpdated {
+      _id
+      status
+      notes
+      date
+      time
+      venue
+      opponent
+    }
+  }
+`;
+
+export const GAME_COMPLETED_SUBSCRIPTION = gql`
+  subscription OnGameCompleted {
+    gameCompleted {
+      _id
+      status
+      score
+      result
+      notes
+      date
+      time
+    }
+  }
+`;
+
+export const GAME_CANCELLED_SUBSCRIPTION = gql`
+  subscription OnGameCancelled {
+    gameCancelled {
+      _id
+      status
+      notes
+      date
+      time
+      venue
+      opponent
+    }
+  }
+`;
+
+export const GAME_DELETED_SUBSCRIPTION = gql`
+  subscription OnGameDeleted {
+    gameDeleted
+  }
+`;
