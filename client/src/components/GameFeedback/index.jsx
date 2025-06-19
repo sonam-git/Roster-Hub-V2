@@ -43,8 +43,8 @@ const GameFeedback = ({ gameId, isDarkMode, onFeedback }) => {
       <h4 className="text-lg font-bold mb-2">What did you think of today’s game?</h4>
       <form onSubmit={handleSubmit} className="space-y-4">
         <textarea
-          className="w-full p-2 border rounded dark:bg-gray-800"
-          placeholder="Your thoughts…"
+          className="w-full p-2 border rounded dark:bg-gray-800 text-sm"
+          placeholder="Your thoughts and feedback on today's game..."
           value={comment}
           onChange={e => setComment(e.target.value)}
           rows={3}

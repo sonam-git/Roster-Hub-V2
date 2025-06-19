@@ -126,6 +126,12 @@ const GameDetails = ({ gameId }) => {
     .filter(r => !r.isAvailable && r.user?.name)
     .map(r => r.user.name);
 
+          
+          // Format time to 12-hour format with AM/PM
+          const [h, m] = game.time.split(":").map(n => parseInt(n, 10));
+            const hour12 = ((h + 11) % 12) + 1;
+            const ampm = h >= 12 ? "PM" : "AM";
+            const gameTime = `${hour12}:${m.toString().padStart(2, "0")} ${ampm}`;
   return (
     <>
       <div className={`max-w-4xl mx-auto p-6 rounded-lg shadow-md grid grid-cols-1 lg:grid-cols-2 gap-8 ${
@@ -143,12 +149,12 @@ const GameDetails = ({ gameId }) => {
           <div className="mb-2 flex justify-between items-center">
             <h3 className="text-xl font-semibold">
               <span className="font-bold">Date:</span> {humanDate} &nbsp;|&nbsp;
-              <span className="font-bold">Time:</span> {game.time}
+              <span className="font-bold">Time:</span> {gameTime}
             </h3>
           </div>
 
-          <p className="mb-1"><span className="font-bold">Venue:</span> {game.venue}</p>
-          <p className="mb-4"><span className="font-bold">Opponent:</span> {game.opponent}</p>
+          <p className="mb-1"><span className="font-bold">Venue :</span> {game.venue}</p>
+          <p className="mb-4"><span className="font-bold">Opponent :</span> {game.opponent}</p>
 
           {isCreator ? (
             <div className="mb-4">
@@ -165,11 +171,11 @@ const GameDetails = ({ gameId }) => {
             </div>
           ) : (
             <p className="mb-4">
-              <span className="font-bold">Note:</span> {game.notes || "No notes provided"}
+              <span className="font-bold">Note :</span> {game.notes || "No notes provided"}
             </p>
           )}
 
-          <p className="mb-4"><span className="font-bold">Created By:</span> {game.creator.name}</p>
+          <p className="mb-4"><span className="font-bold">Created By :</span> {game.creator.name}</p>
 
           {/* PENDING state: voting UI */}
           {game.status === "PENDING" && (
@@ -223,9 +229,9 @@ const GameDetails = ({ gameId }) => {
           {/* COMPLETED: show score, result, average */}
           {game.status === "COMPLETED" && (
             <div className="mb-6">
-              <p className="mb-1"><span className="font-bold">Score:</span> {game.score}</p>
+              <p className="mb-1"><span className="font-bold">Score :</span> {game.score}</p>
               <p className="mb-2 mt-2">
-                <span className="font-bold">Result:</span>{" "}
+                <span className="font-bold">Result :</span>{" "}
                 {{
                   HOME_WIN: "Home Win",
                   AWAY_WIN: "Away Win",
@@ -233,8 +239,8 @@ const GameDetails = ({ gameId }) => {
                   NOT_PLAYED:"Not Played"
                 }[game.result]}
               </p>
-              <p className="mb-2 mt-2 bg-yellow-300 dark:bg-gray-500 p-2">
-                <span className="font-bold">Average Rating for this game:</span>{" "}
+              <p className="mb-2 mt-2 bg-yellow-300 dark:bg-gray-500 p-2 rounded-md text-center ">
+                <span className="font-bold ">Average Rating for this game :</span>{" "}
                 {game.averageRating.toFixed(1)} / 10
               </p>
             </div>

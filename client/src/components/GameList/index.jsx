@@ -94,6 +94,12 @@ const GameList = () => {
 
           const bgColor = isDarkMode ? "bg-gray-700" : "bg-white";
           const textColor = isDarkMode ? "text-gray-200" : "text-gray-800";
+          
+          // Format time to 12-hour format with AM/PM
+          const [h, m] = game.time.split(":").map(n => parseInt(n, 10));
+            const hour12 = ((h + 11) % 12) + 1;
+            const ampm = h >= 12 ? "PM" : "AM";
+            const gameTime = `${hour12}:${m.toString().padStart(2, "0")} ${ampm}`;
 
           return (
             <div key={game._id} className="relative">
@@ -111,7 +117,7 @@ const GameList = () => {
                   <h3 className="text-xl font-semibold">
                     <span className="font-bold">Date:</span> {humanDate}{" "}
                     &nbsp;|&nbsp;
-                    <span className="font-bold">Time:</span> {game.time}
+                    <span className="font-bold">Time:</span> {gameTime}
                   </h3>
                   <div className="flex items-center space-x-1">
                     <span className={statusColor}>{statusIcon}</span>
