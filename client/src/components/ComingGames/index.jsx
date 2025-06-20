@@ -113,7 +113,7 @@ export default function ComingGames() {
       {byStatus.length === 0 ? (
         <p className="italic">No {filter.toLowerCase()} games.</p>
       ) : (
-        <ul className="space-y-3">
+        <ul  className="overflow-y-auto max-h-40 space-y-3">
           {byStatus.map(game => {
             const { _id, opponent, dateObj, status, time } = game;
 

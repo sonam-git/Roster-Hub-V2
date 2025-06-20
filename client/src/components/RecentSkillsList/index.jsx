@@ -60,7 +60,7 @@ const RecentSkillsList = () => {
       </h3>
       </div>
 
-      <div className="w-full overflow-y-auto" style={{ height: "450px" }}>
+      <div className="w-full overflow-y-auto" style={{ height: "250px" }}>
         <ul>
           {topFive.map((skill) => (
             <li key={skill._id} className="mb-2">

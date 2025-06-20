@@ -37,31 +37,29 @@ const Home = ({ isDarkMode }) => {
 
       {/* ─── Main 4-col layout ─── */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* ─── LEFT (3 cols): PostForm, PostsList, Top Ratings ─── */}
+        {/* Left (3 cols): PostForm + PostsList */}
         <div className="col-span-1 lg:col-span-3 space-y-6">
           <PostForm />
-
-          {/* Your feed + pagination */}
           <PostsList isDarkMode={isDarkMode} />
-
-          {/* Top Ratings, right under PostsList */}
-          <div className="mb-4">
-            <h2 className="text-2xl font-bold mb-4 text-center">Top Ratings</h2>
-            <RatingDisplay limit={10} />
-          </div>
         </div>
 
-        {/* ─── RIGHT (1 col): Recent Skills + Coming Games ─── */}
-        <div className="space-y-6 ">
+        {/* Right (1 col): RecentSkillsList + ComingGames */}
+        <div className="space-y-6">
           <RecentSkillsList />
-          <div
-            className={`bg-gray-100 dark:bg-gray-800 top-0 mb-2 shadow-md p-2 rounded-md z-10`}
-          >
-            <h2 className="text-center font-bold mb-2 text-sm md:text-xl lg:text-2xl xl:text-2xl">
+          <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-md shadow-md">
+            <h2 className="text-center font-bold mb-2 text-sm md:text-xl lg:text-2xl">
               Game Schedule
             </h2>
           </div>
           <ComingGames />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6  mb-10">
+        {/* Ratings: spans 3 of 4 columns */}
+        <div className="col-span-1 lg:col-span-4 space-y-4">
+          <h2 className="text-2xl font-bold text-center">Top Ratings</h2>
+          <RatingDisplay limit={10} />
         </div>
       </div>
     </main>
