@@ -62,7 +62,7 @@ const PostsList = ({ profileId }) => {
   if (error) return <div>Error loading posts.</div>;
   
   if (!data || !data?.posts || !data?.posts.length) {
-    return <h3 className='text-sm lg:text-lg font-bold'>No posts yet </h3>;
+    return <h3 className=' ml-3 text-left text-sm lg:text-md '>No post yet, create your first post. </h3>;
   }
 
 

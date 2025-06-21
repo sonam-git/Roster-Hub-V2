@@ -131,8 +131,8 @@ const GameList = () => {
                 <div className="flex justify-between text-sm">
                   <span><span className="font-bold">By:</span> {game.creator?.name}</span>
                   <span>
-                    <span className="font-bold">👍</span> {game.availableCount} |{" "}
-                    <span className="font-bold">👎</span> {game.unavailableCount}
+                    <span className="font-bold"> Available 👍 </span> {game.availableCount} |{" "}
+                    <span className="font-bold">Not Available ❌ </span> {game.unavailableCount}
                   </span>
                 </div>
                 {game.status === "PENDING" && (

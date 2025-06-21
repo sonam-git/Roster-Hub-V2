@@ -239,10 +239,11 @@ const GameDetails = ({ gameId }) => {
                   NOT_PLAYED:"Not Played"
                 }[game.result]}
               </p>
-              <p className="mb-2 mt-2 bg-yellow-300 dark:bg-gray-500 p-2 rounded-md text-center ">
-                <span className="font-bold ">Average Rating for this game :</span>{" "}
-                {game.averageRating.toFixed(1)} / 10
-              </p>
+              <p className="mb-2 mt-2 bg-yellow-300 dark:bg-gray-500 p-2 rounded-md w-80 text-sm sm:text-base">
+  <span className="font-bold">Average Rating for this game:</span>{" "}
+  {game.averageRating.toFixed(1)} / 10
+</p>
+
             </div>
           )}
 
@@ -279,10 +280,10 @@ const GameDetails = ({ gameId }) => {
           {/* VOTE COUNTS */}
           <div className="flex space-x-6 mb-6">
             <div className="flex items-center">
-              <span className="text-green-600 mr-1">👍</span>{game.availableCount}
+              <span className="text-green-600 mr-1">Available 👍</span>{game.availableCount}
             </div>
             <div className="flex items-center">
-              <span className="text-red-600 mr-1">👎</span>{game.unavailableCount}
+              <span className="text-red-600 mr-1"> Not Available ❌</span>{game.unavailableCount}
             </div>
           </div>
         </div>
