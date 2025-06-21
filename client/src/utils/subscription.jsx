@@ -134,6 +134,10 @@ export const SKILL_ADDED_SUBSCRIPTION = gql`
       skillText
       skillAuthor
       createdAt
+      recipient {
+        _id
+        name
+      }
     }
   }
 `;
@@ -174,7 +178,6 @@ export const GAME_CREATED_SUBSCRIPTION = gql`
     }
   }
 `;
-
 export const GAME_CONFIRMED_SUBSCRIPTION = gql`
   subscription OnGameConfirmed {
     gameConfirmed {
@@ -201,7 +204,6 @@ export const GAME_UPDATED_SUBSCRIPTION = gql`
     }
   }
 `;
-
 export const GAME_COMPLETED_SUBSCRIPTION = gql`
   subscription OnGameCompleted {
     gameCompleted {
@@ -215,7 +217,6 @@ export const GAME_COMPLETED_SUBSCRIPTION = gql`
     }
   }
 `;
-
 export const GAME_CANCELLED_SUBSCRIPTION = gql`
   subscription OnGameCancelled {
     gameCancelled {
@@ -229,7 +230,6 @@ export const GAME_CANCELLED_SUBSCRIPTION = gql`
     }
   }
 `;
-
 export const GAME_DELETED_SUBSCRIPTION = gql`
   subscription OnGameDeleted {
     gameDeleted

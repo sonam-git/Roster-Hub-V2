@@ -1,3 +1,4 @@
+// src/components/RecentSkillsList.jsx
 import React, { useContext, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_SKILLS } from "../../utils/queries";
@@ -56,8 +57,8 @@ const RecentSkillsList = () => {
         }`}
       >
         <h3 className="text-center font-bold mb-2 text-sm md:text-xl lg:text-2xl xl:text-2xl">
-        {data?.skills?.length === 0 ? "No Skills available" : "Latest Skills"}
-      </h3>
+          {data.skills.length === 0 ? "No Skills available" : "Latest Skills"}
+        </h3>
       </div>
 
       <div className="w-full overflow-y-auto" style={{ height: "250px" }}>
@@ -69,15 +70,32 @@ const RecentSkillsList = () => {
                   isDarkMode ? "bg-gray-700 text-white" : "bg-white text-black"
                 }`}
               >
+                {/* date row */}
+                <div
+                  className={`flex justify-between items-center px-2 py-2 text-xs ${
+                    isDarkMode ? "bg-gray-800" : "bg-green-700 text-white"
+                  }`}
+                >
+                  <span>Date: {skill.createdAt}</span>
+                </div>
+
+                {/* skill text */}
                 <div className="p-2 font-semibold border-b border-gray-300 dark:border-gray-600">
                   {skill.skillText[0].toUpperCase() + skill.skillText.slice(1)}
                 </div>
-                <div className="flex justify-between items-center px-2 py-1 text-xs">
+
+                {/* author → recipient row */}
+                <div
+                  className={`flex justify-between items-center px-2 py-2 text-xs ${
+                    isDarkMode ? "bg-gray-800" : "bg-yellow-700 text-white"
+                  }`}
+                >
                   <span>
-                    By:{" "}
-                    {skill.skillAuthor[0].toUpperCase() +
-                      skill.skillAuthor.slice(1)}{" "}
-                    on {skill.createdAt}
+                    {skill.skillAuthor[0].toUpperCase() + skill.skillAuthor.slice(1)}{" "}
+                    endorsed{" "}
+                    <strong>
+                      {skill.recipient?.name || "—"}
+                    </strong>
                   </span>
                 </div>
               </div>

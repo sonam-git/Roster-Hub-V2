@@ -44,6 +44,10 @@ export const QUERY_PROFILES = gql`
         skillText
         skillAuthor
         createdAt
+        recipient {
+          _id
+          name
+        }
       }
       receivedMessages {
         _id
@@ -106,6 +110,10 @@ export const QUERY_SINGLE_PROFILE = gql`
         skillText
         skillAuthor
         createdAt
+        recipient {
+          _id
+          name
+        }
       }
 
       receivedMessages {
@@ -146,6 +154,10 @@ export const QUERY_ME = gql`
         skillText
         skillAuthor
         createdAt
+        recipient {
+          _id
+          name
+        }
       }
       posts {
         _id
@@ -291,6 +303,10 @@ export const GET_SKILLS = gql`
       skillText
       skillAuthor
       createdAt
+      recipient {
+        _id
+        name
+      }
     }
   }
 `;

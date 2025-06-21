@@ -191,8 +191,10 @@ const resolvers = {
     // ************************** QUERY SKILLS *******************************************//
     skills: async () => {
       try {
-        const skills = await Skill.find().sort({ createdAt: -1 });
-        return skills;
+        return await Skill
+          .find()
+          .sort({ createdAt: -1 })
+          .populate('recipient',"name");      
       } catch (err) {
         throw new Error(err);
       }
@@ -461,29 +463,37 @@ const resolvers = {
     },
     // ************************** ADD SKILL  *******************************************//
     addSkill: async (parent, { profileId, skillText }, context) => {
-      if (context.user) {
-        if (skillText.trim() === "") {
-          throw new Error("skilltext must not be empty");
-        }
-        const skill = await Skill.create({
-          skillText,
-          skillAuthor: context.user.name,
-          createdAt: new Date().toISOString(),
-        });
-
-        await Profile.findOneAndUpdate(
-          { _id: profileId },
-          { $addToSet: { skills: skill._id } }
-        );
-
-        pubsub.publish(SKILL_ADDED, { skillAdded: skill });
-        return skill;
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in!");
       }
-      throw new AuthenticationError("You need to be logged in!");
+      if (skillText.trim() === "") {
+        throw new Error("skillText must not be empty");
+      }
+
+      // create the raw skill
+      const skill = await Skill.create({
+        skillText,
+        skillAuthor: context.user.name,
+        recipient: profileId,
+        createdAt: new Date().toISOString(),
+      });
+
+      // attach to the profile
+      await Profile.findByIdAndUpdate(profileId, {
+        $addToSet: { skills: skill._id },
+      });
+
+      // now populate the recipient on the new document
+      const fullSkill = await Skill.findById(skill._id)
+        .populate('recipient', 'name');
+
+      // publish the populated version
+      pubsub.publish(SKILL_ADDED, { skillAdded: fullSkill });
+
+      return fullSkill;
     },
     // ************************** REMOVE SKILL *******************************************//
     removeSkill: async (parent, { skillId }, context) => {
-      // console.log('line143',context.user)
       if (!context.user._id) {
         throw new AuthenticationError("You need to be logged in!");
       }

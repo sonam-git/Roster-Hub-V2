@@ -28,6 +28,7 @@ const typeDefs = gql`
     _id: ID!
     skillText: String
     skillAuthor: String
+    recipient: Profile!
     createdAt: String!
   }
 

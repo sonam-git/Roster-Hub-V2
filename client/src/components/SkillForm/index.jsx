@@ -1,7 +1,5 @@
 // src/components/SkillForm.jsx
-"use client";
-
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { ADD_SKILL } from "../../utils/mutations";
@@ -10,94 +8,71 @@ import Auth from "../../utils/auth";
 
 const SkillForm = ({ profileId, teamMate }) => {
   const authProfileId = Auth.getProfile().data._id;
+  const [skillText, setSkillText] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [addSkill] = useMutation(ADD_SKILL, {
     refetchQueries: [
       {
         query: profileId ? QUERY_SINGLE_PROFILE : QUERY_ME,
-        variables: { profileId },
+        variables: profileId ? { profileId } : undefined,
       },
     ],
   });
 
-  const inputRef = useRef(null);
-  const [, addOptimisticSkill] = useState([]);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  async function handleSubmit(formData) {
-    const skillText = formData.get("skill")?.trim() || "";
-
-    // Validate
-    if (!skillText) {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const text = skillText.trim();
+    if (!text) {
       setErrorMessage("Please enter a skill to endorse.");
       setTimeout(() => setErrorMessage(""), 3000);
       return;
     }
     setErrorMessage("");
-
-    // Optimistic UI
-    addOptimisticSkill(prev => [
-      ...prev,
-      { id: "optimistic-" + Date.now(), text: skillText },
-    ]);
-
     try {
-      await addSkill({
-        variables: { profileId, skillText },
-      });
+      await addSkill({ variables: { profileId, skillText: text } });
+      setSkillText("");
     } catch (err) {
-      console.error("Submission error:", err.message);
+      console.error("Submission error:", err);
     }
-
-    // Clear input
-    inputRef.current.value = "";
-  }
+  };
 
   return (
     <div className="rounded-md bg-gray-100 dark:bg-gray-600 p-5 w-full">
       <h4 className="text-base md:text-lg lg:text-xl font-bold mb-3">
-        {profileId !== authProfileId
-          ? `Endorse ${teamMate}`
-          : "Endorse Yourself"}
+        {profileId !== authProfileId ? `Endorse ${teamMate}` : "Endorse Yourself"}
       </h4>
 
       {Auth.loggedIn() ? (
         <>
-          <form
-            action={handleSubmit}
-            className="flex flex-col md:flex-row gap-4"
-          >
+          <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-4">
             <input
-              ref={inputRef}
               type="text"
               name="skill"
               placeholder="Endorse your teammate..."
+              value={skillText}
+              onChange={(e) => {
+                setSkillText(e.target.value);
+                if (errorMessage) setErrorMessage("");
+              }}
               className="flex-1 rounded-md border-0 px-4 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
-              onChange={() => setErrorMessage("")}
             />
             <button
               type="submit"
-              className="rounded-md bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-full md:w-auto"
+              className="rounded-md bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 w-full md:w-auto"
             >
               Endorse
             </button>
           </form>
-
           {errorMessage && (
             <p className="mt-2 text-red-600 italic">{errorMessage}</p>
           )}
-
         </>
       ) : (
         <p className="mt-2 text-sm">
           You need to be logged in to add information. Please{" "}
-          <Link to="/login" className="text-blue-600 underline">
-            Login
-          </Link>{" "}
-          or{" "}
-          <Link to="/signup" className="text-blue-600 underline">
-            Signup
-          </Link>.
+          <Link to="/login" className="text-blue-600 underline">Login</Link> or{" "}
+          <Link to="/signup" className="text-blue-600 underline">Signup</Link>.
         </p>
       )}
     </div>

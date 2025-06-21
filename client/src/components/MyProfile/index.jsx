@@ -23,6 +23,7 @@ const MyProfile = () => {
   const { loading, data } = useQuery(QUERY_ME);
   const me = data?.me || {};
 
+
   const [selectedSocialMedia, setSelectedSocialMedia] = useState(null);
   const [socialMediaLink, setSocialMediaLink]           = useState("");
   const [error, setError]                               = useState(false);

@@ -58,7 +58,7 @@ const Home = ({ isDarkMode }) => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6  mb-10">
         {/* Ratings: spans 3 of 4 columns */}
         <div className="col-span-1 lg:col-span-4 space-y-4">
-          <h2 className="text-2xl font-bold text-center">Top Ratings</h2>
+          <h2 className="text-2xl font-bold text-left mt-4">Top Ratings</h2>
           <RatingDisplay limit={10} />
         </div>
       </div>

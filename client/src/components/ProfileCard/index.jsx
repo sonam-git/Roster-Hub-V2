@@ -70,7 +70,7 @@ const ProfileCard = ({ profile, isDarkMode }) => {
         {/* Name / Position / Jersey / Stars */}
         <div className="py-10 px-6 grid grid-cols-1 gap-6">
           <div className="flex flex-col items-center">
-            <h3 className={`md:text-md lg:text-lg xl:text-xl font-semibold ${
+            <h3 className={`md:text-md lg:text-lg xl:text-xl font-semibold mb-2 ${
                 isDarkMode ? "text-white" : "text-black-700"
               }`}
             >

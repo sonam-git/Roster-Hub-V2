@@ -68,9 +68,10 @@ const ProfilePicUploader = ({ profileId, profilePicUrl, isDarkMode }) => {
 
   return (
     <div className="flex items-center justify-center">
-      <div className="flex flex-col items-center justify-center space-y-4">
+      <div className="flex flex-col items-center justify-center space-y-4 ">
         <label htmlFor="profilePicInput" className="cursor-pointer">
-          <AiOutlineUpload size={24} className="text-dark-800" />
+          <AiOutlineUpload size={24} className="text-dark-800 ml-6" /> 
+          <span className="text-xs justify-center">choose image</span>
         </label>
         <input
           id="profilePicInput"
@@ -99,7 +100,7 @@ const ProfilePicUploader = ({ profileId, profilePicUrl, isDarkMode }) => {
           {profilePicUrl ? "Change Image" : "Upload"}
         </button>
         <div className="mt-2">
-          <SyncLoader color="#000" loading={loading} size={10} />
+          <SyncLoader color="#000" loading={loading} size={10} /> 
         </div>
       </div>
     </div>

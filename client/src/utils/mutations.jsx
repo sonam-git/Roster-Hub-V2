@@ -56,6 +56,10 @@ export const ADD_SKILL = gql`
       skillText
       skillAuthor
       createdAt
+      recipient {
+        _id
+        name
+      }
     }
   }
 `;
@@ -76,9 +80,6 @@ export const REMOVE_SKILL = gql`
   mutation removeSkill($skillId: ID!) {
     removeSkill(skillId: $skillId) {
       _id
-      skillText
-      skillAuthor
-      createdAt
     }
   }
 `;
