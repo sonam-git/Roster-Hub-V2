@@ -16,6 +16,7 @@ const {
   Comment,
   Chat,
   Game,
+  Formation,
 } = require("../models");
 const { signToken } = require("../utils/auth");
 const cloudinary = require("../utils/cloudinary");
@@ -40,6 +41,9 @@ const GAME_COMPLETED = "GAME_COMPLETED";
 const GAME_CANCELLED = "GAME_CANCELLED";
 const GAME_DELETED = "GAME_DELETED";
 const GAME_UPDATED = "GAME_UPDATED";
+const FORMATION_CREATED = "FORMATION_CREATED";
+const FORMATION_UPDATED = "FORMATION_UPDATED";
+const FORMATION_DELETED = "FORMATION_DELETED";
 
 const pubsub = new PubSub(); // Ensure this instance is used in the resolvers
 const FOOTBALL_API = "https://api.football-data.org/v4";
@@ -298,6 +302,11 @@ const resolvers = {
         matchday: m.matchday,
         utcDate: m.utcDate,
       }));
+    },
+    // ************************** QUERY FORMATION *******************************************//
+    formation: async (_, { gameId }, context) => {
+      if (!context.user) throw new AuthenticationError("Not logged in");
+      return Formation.findOne({ game: gameId }).populate("game").populate("positions.player");
     },
   },
   // ########## MUTAIIONS ########### //
@@ -1277,6 +1286,91 @@ const resolvers = {
       await game.save();
       return game;
     },
+// ──────── Create a formation ────────
+createFormation: async (_, { gameId, formationType }, context) => {
+  if (!context.user) throw new AuthenticationError("Not logged in");
+
+  const game = await Game.findById(gameId);
+  if (!game) throw new UserInputError("Game not found");
+
+  if (game.creator.toString() !== context.user._id)
+    throw new AuthenticationError("Only creator can make formation");
+
+  const existing = await Formation.findOne({ game: gameId });
+  if (existing) throw new UserInputError("Formation already exists");
+
+  const formation = await Formation.create({
+    game: gameId,
+    formationType,
+    positions: [],
+  });
+
+  const full = await Formation.findById(formation._id)
+    .populate("game")
+    .populate("positions.player");
+
+  pubsub.publish("FORMATION_CREATED", {
+    formationCreated: full,
+    gameId: gameId.toString(),
+  });
+
+  return full;
+},
+
+// ──────── Update a formation ────────
+updateFormation: async (_, { gameId, positions }, context) => {
+  if (!context.user) throw new AuthenticationError("Not logged in");
+
+  const formation = await Formation.findOne({ game: gameId });
+  if (!formation) throw new UserInputError("No formation to update");
+
+  const game = await Game.findById(gameId);
+  if (!game) throw new UserInputError("Game not found");
+
+  if (game.creator.toString() !== context.user._id)
+    throw new AuthenticationError("Only creator can update");
+
+  formation.positions = positions.map((p) => ({
+    slot: p.slot,
+    player: p.playerId || null,
+  }));
+  await formation.save();
+
+  const full = await Formation.findById(formation._id)
+    .populate("game")
+    .populate("positions.player");
+
+  pubsub.publish("FORMATION_UPDATED", {
+    formationUpdated: full,
+    gameId: gameId.toString(),
+  });
+
+  return full;
+},
+
+
+// ──────── Delete a formation ────────
+deleteFormation: async (_, { gameId }, context) => {
+  if (!context.user) throw new AuthenticationError("Not logged in");
+
+  const formation = await Formation.findOne({ game: gameId });
+  if (!formation) return false;
+
+  const game = await Game.findById(gameId);
+  if (!game) throw new UserInputError("Game not found");
+
+  if (game.creator.toString() !== context.user._id)
+    throw new AuthenticationError("Only creator can delete");
+
+  await Formation.deleteOne({ game: gameId });
+
+  pubsub.publish("FORMATION_DELETED", {
+    formationDeleted: gameId,
+    gameId,
+  });
+
+  return true;
+},
   },
   Subscription: {
     chatCreated: {
@@ -1342,6 +1436,35 @@ const resolvers = {
     gameUpdated: {
       subscribe: () => pubsub.asyncIterator(GAME_UPDATED),
     },
+
+formationCreated: {
+  subscribe: withFilter(
+    () => pubsub.asyncIterator(["FORMATION_CREATED"]),
+    (payload, variables) =>
+      payload?.formationCreated?.game?._id.toString() ===
+      variables?.gameId?.toString()
+  ),
+  resolve: (payload) => payload.formationCreated,
+},
+
+formationUpdated: {
+  subscribe: withFilter(
+    () => pubsub.asyncIterator(["FORMATION_UPDATED"]),
+    (payload, variables) =>
+      payload?.formationUpdated?.game?._id.toString() ===
+      variables?.gameId?.toString()
+  ),
+  resolve: (payload) => payload.formationUpdated,
+},
+
+formationDeleted: {
+  subscribe: withFilter(
+    () => pubsub.asyncIterator(["FORMATION_DELETED"]),
+    (payload, variables) => payload.gameId === variables.gameId
+  ),
+  resolve: (payload) => payload.formationDeleted,
+},
+  
   },
   // ──────── Type‐level resolvers for Chat ────────
   Chat: {

@@ -235,3 +235,26 @@ export const GAME_DELETED_SUBSCRIPTION = gql`
     gameDeleted
   }
 `;
+  export const FORMATION_CREATED_SUBSCRIPTION = gql`
+    subscription formationCreated($gameId: ID!) {
+      formationCreated(gameId: $gameId) {
+        _id
+        formationType
+        positions { slot player { _id name } }
+      }
+    }
+  `;
+  export const FORMATION_UPDATED_SUBSCRIPTION = gql`
+    subscription formationUpdated($gameId: ID!) {
+      formationUpdated(gameId: $gameId) {
+        _id
+        formationType
+        positions { slot player { _id name } }
+      }
+    }
+  `;
+  export const FORMATION_DELETED_SUBSCRIPTION = gql`
+    subscription formationDeleted($gameId: ID!) {
+      formationDeleted(gameId: $gameId)
+    }
+  `;

@@ -79,22 +79,37 @@ const typeDefs = gql`
   type Game {
     _id: ID!
     creator: Profile!
-    date: String! 
-    time: String! 
+    date: String!
+    time: String!
     venue: String!
     notes: String
     opponent: String!
-    score: String 
+    score: String
     result: GameResult!
     status: GameStatus!
     responses: [Response!]!
-    availableCount: Int! 
-    unavailableCount: Int! 
+    availableCount: Int!
+    unavailableCount: Int!
     createdAt: String!
     updatedAt: String!
     feedbacks: [Feedback!]!
     averageRating: Float!
   }
+
+type Position {
+  slot: Int!
+  player: Profile
+}
+
+type Formation {
+  _id: ID!
+  game: Game!
+  formationType: String!
+  positions: [Position!]!
+  createdAt: String!
+  updatedAt: String!
+}
+
   type ResponseMessage {
     message: String!
   }
@@ -114,7 +129,6 @@ const typeDefs = gql`
     NOT_PLAYED
   }
 
-  
   type Response {
     user: Profile!
     isAvailable: Boolean!
@@ -127,8 +141,6 @@ const typeDefs = gql`
     rating: Int!
     createdAt: String!
   }
-    
-
 
   type SoccerScore {
     homeTeam: String!
@@ -168,6 +180,11 @@ const typeDefs = gql`
     rating: Int!
   }
 
+input PositionInput {
+  slot: Int!
+  playerId: ID
+}
+
   type Auth {
     token: ID!
     profile: Profile
@@ -197,6 +214,7 @@ const typeDefs = gql`
       dateFrom: String
       dateTo: String
     ): [SoccerScore!]!
+    formation(gameId: ID!): Formation
   }
 
   type Mutation {
@@ -239,11 +257,19 @@ const typeDefs = gql`
     respondToGame(input: RespondToGameInput!): Game!
     confirmGame(gameId: ID!, note: String): Game
     cancelGame(gameId: ID!, note: String): Game
-    completeGame(gameId: ID!, score: String!, note: String, result: GameResult!): Game!
+    completeGame(
+      gameId: ID!
+      score: String!
+      note: String
+      result: GameResult!
+    ): Game!
     unvoteGame(gameId: ID!): Game!
     deleteGame(gameId: ID!): Game!
     updateGame(gameId: ID!, input: UpdateGameInput!): Game!
     addFeedback(gameId: ID!, comment: String, rating: Int!): Game!
+    createFormation(gameId: ID!, formationType: String!): Formation!
+  updateFormation(gameId: ID!, positions: [PositionInput!]!): Formation!
+  deleteFormation(gameId: ID!): Boolean! 
   }
   type Subscription {
     chatCreated: Chat
@@ -263,6 +289,9 @@ const typeDefs = gql`
     gameCancelled: Game
     gameDeleted: ID
     gameUpdated: Game
+    formationCreated(gameId: ID!): Formation
+  formationUpdated(gameId: ID!): Formation
+  formationDeleted(gameId: ID!): ID
   }
 `;
 

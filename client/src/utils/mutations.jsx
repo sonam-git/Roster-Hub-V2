@@ -516,3 +516,30 @@ export const ADD_FEEDBACK = gql`
     }
   }
 `;
+
+export const CREATE_FORMATION = gql`
+  mutation createFormation($gameId: ID!, $formationType: String!) {
+    createFormation(gameId: $gameId, formationType: $formationType) {
+      _id
+      formationType
+      positions { slot player { _id name } }
+    }
+  }
+`;
+
+export const UPDATE_FORMATION = gql`
+  mutation updateFormation($gameId: ID!, $positions: [PositionInput!]!) {
+    updateFormation(gameId: $gameId, positions: $positions) {
+      _id
+      formationType
+      positions { slot player { _id name } }
+    }
+  }
+`;
+
+export const DELETE_FORMATION = gql`
+  mutation deleteFormation($gameId: ID!) {
+    deleteFormation(gameId: $gameId)
+  }
+`;
+

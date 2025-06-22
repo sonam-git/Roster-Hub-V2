@@ -496,3 +496,18 @@ export const GET_MATCHES = gql`
     }
   }
 `;
+export const QUERY_FORMATION = gql`
+  query formation($gameId: ID!) {
+    formation(gameId: $gameId) {
+      _id
+      formationType
+      positions {
+        slot
+        player {
+          _id
+          name
+        }
+      }
+    }
+  }
+`;
