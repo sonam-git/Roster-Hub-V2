@@ -4,6 +4,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragOverlay,
 } from "@dnd-kit/core";
 import AvailablePlayersList from "../AvailablePlayersList";
 import FormationBoard from "../Formationboard";
@@ -33,6 +34,7 @@ export default function FormationSection({
   const [updateFormation] = useMutation(UPDATE_FORMATION);
   const [deleteFormation] = useMutation(DELETE_FORMATION);
   const [selectedFormation, setSelectedFormation] = useState("");
+  const [draggingPlayer, setDraggingPlayer] = useState(null); // 👈 For overlay
 
   const isFormed = !!formation;
 
@@ -41,7 +43,6 @@ export default function FormationSection({
     .map((r) => r.user);
 
   const formationType = formation?.formationType || selectedFormation;
-  
 
   const rows = formationType
     ? formationType.split("-").map((n, idx) => ({
@@ -52,7 +53,6 @@ export default function FormationSection({
 
   const [assignments, setAssignments] = useState({});
 
-  // Update assignments from formation prop
   useEffect(() => {
     if (formation?.positions) {
       const fresh = {};
@@ -65,13 +65,19 @@ export default function FormationSection({
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 5,
-      },
+      activationConstraint: { distance: 5 },
     })
   );
 
+  const handleDragStart = (event) => {
+    const playerId = event.active.id;
+    const player = availablePlayers.find((p) => p._id === playerId);
+    setDraggingPlayer(player || null);
+  };
+
   const handleDragEnd = ({ active, over }) => {
+    setDraggingPlayer(null);
+
     if (!isCreator || !over) return;
 
     const player = availablePlayers.find((u) => u._id === active.id);
@@ -135,29 +141,48 @@ export default function FormationSection({
     }
   };
 
-
   return (
     <div className="space-y-6">
-      {!isFormed && isCreator && (
-        <div className="space-y-2">
-          <label className="block text-sm font-bold">Choose Formation:</label>
-          <select
-            value={selectedFormation}
-            onChange={(e) => setSelectedFormation(e.target.value)}
-            className="p-2 rounded border dark:bg-gray-600"
-          >
-            <option value="">-- Select --</option>
-            {FORMATION_TYPES.map((ft) => (
-              <option key={ft} value={ft}>
-                {ft}
-              </option>
-            ))}
-          </select>
-        </div>
+  {!isFormed && isCreator && (
+  <div className="space-y-2">
+    <label className="block text-sm font-bold">Choose Formation:</label>
+    <div className="flex items-center space-x-4">
+      <select
+        value={selectedFormation}
+        onChange={(e) => setSelectedFormation(e.target.value)}
+        className="p-2 rounded border dark:bg-gray-600"
+      >
+        <option value="">-- Select --</option>
+        {FORMATION_TYPES.map((ft) => (
+          <option key={ft} value={ft}>
+            {ft}
+          </option>
+        ))}
+      </select>
+
+      {/* 🚫 Cancel button */}
+      {selectedFormation && (
+        <button
+          onClick={() => {
+            setSelectedFormation("");
+            setAssignments({});
+          }}
+          className="text-sm text-red-600 border border-red-600 px-3 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900"
+        >
+          Cancel
+        </button>
       )}
+    </div>
+  </div>
+)}
+
 
       {formationType && (
-        <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+        <DndContext
+          sensors={sensors}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
           {isCreator && (
             <AvailablePlayersList
               players={availablePlayers}
@@ -166,6 +191,14 @@ export default function FormationSection({
           )}
 
           <FormationBoard rows={rows} assignments={assignments} />
+
+          <DragOverlay zIndex={50}>
+            {draggingPlayer && (
+              <div className="p-2 bg-white rounded shadow text-sm font-semibold">
+                {draggingPlayer.name}
+              </div>
+            )}
+          </DragOverlay>
 
           {isCreator && (
             <div className="space-x-2 mt-4">

@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation, useSubscription } from "@apollo/client";
+import { useNavigate } from "react-router-dom"; 
 import GameList from "../components/GameList";
 import GameForm from "../components/GameForm";
 import GameDetails from "../components/GameDetails";
@@ -22,6 +23,7 @@ const Game = () => {
   const { gameId } = useParams();
   const { isDarkMode } = useContext(ThemeContext);
   const [formation, setFormation] = useState(null);
+  const navigate = useNavigate(); 
 
   const {
     loading: loadingGame,
@@ -104,9 +106,27 @@ const Game = () => {
     );
   }
 
-  const game = gameData.game;
-  const currentUserId = Auth.getProfile()?.data?._id;
-  const isCreator = game.creator._id === currentUserId;
+  const game = gameData?.game;
+
+  if (!game) {
+    return (
+      <div className="text-center p-6">
+        <p className="text-lg text-gray-600 mb-4">
+          This game no longer exists or has been deleted.
+        </p>
+        <button
+          onClick={() => navigate("/game-schedule")}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+        >
+          Back to Game List
+        </button>
+      </div>
+    );
+  }
+
+const currentUserId = Auth.getProfile()?.data?._id;
+const isCreator = game.creator?._id === currentUserId;
+
 
   return (
     <div className="container mx-auto mt-5 p-4">
