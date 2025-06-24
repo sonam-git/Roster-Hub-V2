@@ -94,6 +94,7 @@ const typeDefs = gql`
     updatedAt: String!
     feedbacks: [Feedback!]!
     averageRating: Float!
+    formation: Formation 
   }
 
 type Position {

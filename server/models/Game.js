@@ -2,6 +2,7 @@
 
 const { Schema, model } = require("mongoose");
 
+
 // Schema for responses to the game poll
 const ResponseSchema = new Schema(
   {

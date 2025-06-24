@@ -1,8 +1,9 @@
 // src/components/GameDetails.jsx
-import React, { useState, useEffect, useContext } from "react";
-import { useQuery, useMutation } from "@apollo/client";
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { useQuery, useMutation, useSubscription } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
-import { QUERY_GAME, QUERY_GAMES } from "../../utils/queries";
+
+import { QUERY_GAME, QUERY_GAMES, QUERY_FORMATION } from "../../utils/queries";
 import {
   RESPOND_TO_GAME,
   UNVOTE_GAME,
@@ -10,6 +11,11 @@ import {
   CANCEL_GAME,
   COMPLETE_GAME,
 } from "../../utils/mutations";
+import {
+  FORMATION_CREATED_SUBSCRIPTION,
+  FORMATION_UPDATED_SUBSCRIPTION,
+  FORMATION_DELETED_SUBSCRIPTION,
+} from "../../utils/subscription";
 
 import Auth from "../../utils/auth";
 import { ThemeContext } from "../ThemeContext";
@@ -18,25 +24,86 @@ import GameUpdate from "../GameUpdate";
 import GameComplete from "../GameComplete";
 import GameFeedback from "../GameFeedback";
 import GameFeedbackList from "../GameFeedbackList";
+import FormationSection from "../FormationSection";
+import AvailablePlayersList from "../AvailablePlayersList";
 
-
-const GameDetails = ({ gameId }) => {
+export default function GameDetails({ gameId }) {
   const navigate = useNavigate();
   const { isDarkMode } = useContext(ThemeContext);
   const userId = Auth.getProfile()?.data?._id;
 
+  // keep track of mounted state
+  const isMounted = useRef(false);
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
   // ─── FETCH GAME ─────────────────────────────────────────────────────────
-  const { loading, error, data, refetch } = useQuery(QUERY_GAME, {
+  const {
+    loading: loadingGame,
+    error: gameError,
+    data: gameData,
+    refetch: refetchGame,
+  } = useQuery(QUERY_GAME, {
     variables: { gameId },
+    skip: !gameId,
     pollInterval: 5000,
   });
 
-  // ─── MUTATIONS ───────────────────────────────────────────────────────────
+  // ─── FETCH FORMATION ───────────────────────────────────────────────────
+  const [formation, setFormation] = useState(null);
+  const {
+    loading: loadingForm,
+    error: formError,
+    refetch: refetchFormation,
+  } = useQuery(QUERY_FORMATION, {
+    variables: { gameId },
+    skip: !gameId,
+    fetchPolicy: "network-only",
+    onCompleted: (d) => {
+      if (isMounted.current) {
+        setFormation(d?.formation || null);
+      }
+    },
+  });
+
+  // ─── REAL-TIME FORMATION ───────────────────────────────────────────────
+  useSubscription(FORMATION_CREATED_SUBSCRIPTION, {
+    variables: { gameId },
+    onData: ({ data }) => {
+      const created = data.data?.formationCreated;
+      if (created && isMounted.current) {
+        setFormation(created);
+      }
+    },
+  });
+  useSubscription(FORMATION_UPDATED_SUBSCRIPTION, {
+    variables: { gameId },
+    onData: ({ data }) => {
+      const updated = data.data?.formationUpdated;
+      if (updated && isMounted.current) {
+        setFormation(updated);
+      }
+    },
+  });
+  useSubscription(FORMATION_DELETED_SUBSCRIPTION, {
+    variables: { gameId },
+    onData: ({ data }) => {
+      if (data.data?.formationDeleted === gameId && isMounted.current) {
+        setFormation(null);
+      }
+    },
+  });
+
+  // ─── GAME MUTATIONS ─────────────────────────────────────────────────────
   const [respondToGame] = useMutation(RESPOND_TO_GAME, {
-    onCompleted: () => refetch(),
+    onCompleted: () => refetchGame(),
   });
   const [unvoteGame] = useMutation(UNVOTE_GAME, {
-    onCompleted: () => refetch(),
+    onCompleted: () => refetchGame(),
   });
   const [confirmGame] = useMutation(CONFIRM_GAME, {
     refetchQueries: [
@@ -61,349 +128,304 @@ const GameDetails = ({ gameId }) => {
   });
 
   // ─── LOCAL STATE ────────────────────────────────────────────────────────
-  // track this user's vote
   const [currentVote, setCurrentVote] = useState(null);
   useEffect(() => {
-    if (!loading && data?.game) {
-      const r = data.game.responses.find((r) => r.user._id === userId);
+    if (!loadingGame && gameData?.game) {
+      const r = gameData.game.responses.find((r) => r.user._id === userId);
       setCurrentVote(r ? r.isAvailable : null);
     }
-  }, [loading, data, userId]);
+  }, [loadingGame, gameData, userId]);
 
-  // single note field for confirm/cancel/complete
   const [updatedNote, setUpdatedNote] = useState("");
   useEffect(() => {
-    if (!loading && data?.game) {
-      setUpdatedNote(data.game.notes || "");
+    if (!loadingGame && gameData?.game) {
+      setUpdatedNote(gameData.game.notes || "");
     }
-  }, [loading, data]);
+  }, [loadingGame, gameData]);
 
-  // modals
+  // feedback UI
   const [showUpdate, setShowUpdate] = useState(false);
   const [showComplete, setShowComplete] = useState(false);
-
-  // feedback flow flags
   const [showThankYou, setShowThankYou] = useState(false);
   const [feedbackGiven, setFeedbackGiven] = useState(false);
-
-  // mark feedbackGiven if already in game.feedbacks
   useEffect(() => {
-    if (!loading && data?.game) {
-      const done = data.game.feedbacks.some((f) => f.user._id === userId);
+    if (!loadingGame && gameData?.game) {
+      const done = gameData.game.feedbacks.some((f) => f.user._id === userId);
       setFeedbackGiven(done);
     }
-  }, [loading, data, userId]);
-
-  // callback from child when feedback is submitted
+  }, [loadingGame, gameData, userId]);
   const handleFeedback = () => {
     setShowThankYou(true);
-    setTimeout(() => {
-      setShowThankYou(false);
-      setFeedbackGiven(true);
-    }, 3000);
+    setTimeout(() => setShowThankYou(false), 3000);
+    setFeedbackGiven(true);
   };
 
-  if (loading) return <div className="text-center mt-4">Loading game…</div>;
-  if (error)
+  if (loadingGame || loadingForm)
+    return <div className="text-center mt-4">Loading…</div>;
+  if (gameError || formError)
     return (
-      <div className="text-center mt-4 text-red-600">
-        Error: {error.message}
-      </div>
+      <div className="text-center mt-4 text-red-600">Error loading data</div>
     );
-  if (!data?.game)
+  if (!gameData?.game)
     return <div className="text-center mt-4 text-red-600">Game not found.</div>;
 
-  const game = data.game;
+  const game = gameData.game;
   const isCreator = game.creator._id === userId;
   const dateObj = new Date(Number(game.date));
   const humanDate = isNaN(dateObj) ? game.date : dateObj.toLocaleDateString();
-
-  // ─── HANDLERS ───────────────────────────────────────────────────────────
-  const handleVote = (avail) =>
-    respondToGame({ variables: { input: { gameId, isAvailable: avail } } });
-  const handleUnvote = () => unvoteGame({ variables: { gameId } });
-  const handleConfirm = () =>
-    confirmGame({ variables: { gameId, note: updatedNote } });
-  const handleCancel = () =>
-    cancelGame({ variables: { gameId, note: updatedNote } });
-  const handleComplete = (score, result) =>
-    completeGame({ variables: { gameId, score, result, note: updatedNote } });
-
-  // only include voters with a name
-  const yesVoters = game.responses
-    .filter((r) => r.isAvailable && r.user?.name)
-    .map((r) => r.user.name);
-  const noVoters = game.responses
-    .filter((r) => !r.isAvailable && r.user?.name)
-    .map((r) => r.user.name);
-
-  // Format time to 12-hour format with AM/PM
-  const [h, m] = game.time.split(":").map((n) => parseInt(n, 10));
+  const [h, m] = game.time.split(":").map(Number);
   const hour12 = ((h + 11) % 12) + 1;
   const ampm = h >= 12 ? "PM" : "AM";
   const gameTime = `${hour12}:${m.toString().padStart(2, "0")} ${ampm}`;
+
+  const yesVoters = game.responses
+    .filter((r) => r.isAvailable)
+    .map((r) => r.user.name);
+  const noVoters = game.responses
+    .filter((r) => !r.isAvailable)
+    .map((r) => r.user.name);
+
   return (
-    <>
-      <div
-        className={`max-w-4xl mx-auto p-6 rounded-lg shadow-md grid grid-cols-1 lg:grid-cols-2 gap-8 ${
-          isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-800"
-        }`}
-      >
-        {/* ─── LEFT COLUMN ─────────────────────────────────────────────── */}
-        <div>
-          <button
-            onClick={() => navigate("/game-schedule")}
-            className={`mb-4 px-4 py-2 rounded ${
-              isDarkMode
-                ? "bg-gray-500 text-white hover:bg-gray-900"
-                : "bg-indigo-600 text-white hover:bg-gray-800"
-            }`}
-          >
-            ← Back to Game List
-          </button>
+    <div
+      className={`max-w-screen mx-auto p-6 rounded-lg shadow-md
+      grid grid-cols-1 lg:grid-cols-2 gap-8
+      ${isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-800"}`}
+    >
+      {/* ─── LEFT COLUMN: Info, Voting & Voters ─────────────────────────── */}
+      <div>
+        <button
+          onClick={() => navigate("/game-schedule")}
+          className={`mb-4 px-4 py-2 rounded ${
+            isDarkMode ? "bg-gray-500 text-white" : "bg-indigo-600 text-white"
+          }`}
+        >
+          ← Back to Game List
+        </button>
 
-          <div className="mb-2 flex justify-between items-center">
-            <h3 className="text-xl font-semibold">
-              <span className="font-bold">Date:</span> {humanDate} &nbsp;|&nbsp;
-              <span className="font-bold">Time:</span> {gameTime}
-            </h3>
+        <h3 className="text-xl font-semibold mb-4">
+          <strong>Date:</strong> {humanDate} &nbsp;|&nbsp;
+          <strong>Time:</strong> {gameTime}
+        </h3>
+
+        <p className="mb-2">
+          <strong>Venue:</strong> {game.venue}
+        </p>
+        <p className="mb-4">
+          <strong>Opponent:</strong> {game.opponent}
+        </p>
+
+        {isCreator ? (
+          <textarea
+            value={updatedNote}
+            onChange={(e) => setUpdatedNote(e.target.value)}
+            rows={3}
+            className="w-full mb-4 p-2 border rounded dark:bg-gray-700"
+            placeholder="Update note…"
+          />
+        ) : (
+          <p className="mb-4">
+            <strong>Note:</strong> {game.notes || "No notes"}
+          </p>
+        )}
+
+        {game.status === "PENDING" && (
+          <div className="mb-6 space-x-4">
+            {currentVote === null ? (
+              <>
+                <button
+                  onClick={() =>
+                    respondToGame({
+                      variables: { input: { gameId, isAvailable: true } },
+                    })
+                  }
+                  className="px-4 py-2 bg-green-600 text-white rounded"
+                >
+                  Yes
+                </button>
+                <button
+                  onClick={() =>
+                    respondToGame({
+                      variables: { input: { gameId, isAvailable: false } },
+                    })
+                  }
+                  className="px-4 py-2 bg-red-600 text-white rounded"
+                >
+                  No
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() =>
+                    respondToGame({
+                      variables: {
+                        input: { gameId, isAvailable: !currentVote },
+                      },
+                    })
+                  }
+                  className="px-4 py-2 bg-yellow-600 text-white rounded"
+                >
+                  Change to {currentVote ? "No" : "Yes"}
+                </button>
+                <button
+                  onClick={() => unvoteGame({ variables: { gameId } })}
+                  className="px-4 py-2 bg-gray-500 text-white rounded"
+                >
+                  Unvote
+                </button>
+              </>
+            )}
           </div>
+        )}
 
-          <p className="mb-1">
-            <span className="font-bold">Venue :</span> {game.venue}
-          </p>
+        {game.status !== "PENDING" && (
           <p className="mb-4">
-            <span className="font-bold">Opponent :</span> {game.opponent}
+            <strong>Status:</strong>{" "}
+            <span
+              className={
+                game.status === "CONFIRMED"
+                  ? "text-green-600"
+                  : game.status === "COMPLETED"
+                  ? "text-green-400"
+                  : "text-red-600"
+              }
+            >
+              {game.status}
+            </span>
           </p>
+        )}
 
-          {isCreator ? (
-            <div className="mb-4">
-              <label className="block mb-2 font-bold">
-                Update Note (any status change):
-              </label>
-              <textarea
-                value={updatedNote}
-                onChange={(e) => setUpdatedNote(e.target.value)}
-                rows={3}
-                className={`w-full px-3 py-2 border rounded ${
-                  isDarkMode
-                    ? "dark:bg-gray-700 dark:text-gray-200 border-gray-600"
-                    : "bg-white border-gray-300"
-                }`}
-                placeholder="Add or update note here…"
-              />
-            </div>
-          ) : (
-            <p className="mb-4">
-              <span className="font-bold">Note :</span>{" "}
-              {game.notes || "No notes provided"}
+        {game.status === "COMPLETED" && (
+          <div className="mb-6">
+            <p className="mb-2">
+              <strong >Score:</strong> {game.score}
             </p>
-          )}
-
-          <p className="mb-4">
-            <span className="font-bold">Created By :</span> {game.creator.name}
-          </p>
-
-          {/* PENDING state: voting UI */}
-          {game.status === "PENDING" && (
-            <div className="mb-6">
-              {currentVote === null ? (
-                <>
-                  <p className="mb-2 font-medium">Are you available to play?</p>
-                  <div className="flex space-x-4">
-                    <button
-                      onClick={() => handleVote(true)}
-                      className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleVote(false)}
-                      className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                    >
-                      No
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <p className="mb-2">
-                    You responded:{" "}
-                    <span className="font-semibold">
-                      {currentVote ? "Available" : "Not Available"}
-                    </span>
-                  </p>
-                  <div className="flex space-x-4">
-                    <button
-                      onClick={() => handleVote(!currentVote)}
-                      className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700"
-                    >
-                      Change to {currentVote ? "No" : "Yes"}
-                    </button>
-                    <button
-                      onClick={handleUnvote}
-                      className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-                    >
-                      Unvote
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-          )}
-
-          {/* STATUS display (non‐PENDING) */}
-          {game.status !== "PENDING" && (
-            <p className="mb-4">
-              <strong>Status:</strong>{" "}
-              <span
-                className={
-                  game.status === "CONFIRMED"
-                    ? "text-green-600"
-                    : game.status === "COMPLETED"
-                    ? "text-green-400"
-                    : "text-red-600"
-                }
-              >
-                {game.status}
-              </span>
+            <p className="mb-2">
+              <strong>Result:</strong> {game.result.replace("_", " ")}
             </p>
-          )}
-          {/* COMPLETED: show score, result, average */}
-          {game.status === "COMPLETED" && (
-            <div className="mb-6">
-              <p className="mb-1">
-                <span className="font-bold">Score :</span> {game.score}
-              </p>
-              <p className="mb-2 mt-2">
-                <span className="font-bold">Result :</span>{" "}
-                {
-                  {
-                    HOME_WIN: "Home Win",
-                    AWAY_WIN: "Away Win",
-                    DRAW: "Draw",
-                    NOT_PLAYED: "Not Played",
-                  }[game.result]
-                }
-              </p>
-              <p className="mb-2 mt-2 bg-yellow-300 dark:bg-gray-500 p-2 rounded-md w-80 text-sm sm:text-base">
-                <span className="font-bold">Average Rating for this game:</span>{" "}
-                {game.averageRating.toFixed(1)} / 10
-              </p>
-            </div>
-          )}
+            <p className="mt-2 p-2  bg-yellow-300 dark:bg-gray-500 rounded">
+              <strong>Avg Rating:</strong> {game.averageRating.toFixed(1)} / 10
+            </p>
+          </div>
+        )}
 
-          {/* CREATOR CONTROLS */}
-          {isCreator && game.status === "PENDING" && (
-            <div className="flex space-x-4 mb-6">
-              <button
-                onClick={handleConfirm}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                Confirm Game
-              </button>
-              <button
-                onClick={() => setShowUpdate(true)}
-                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-              >
-                Update Game
-              </button>
-              <button
-                onClick={handleCancel}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-              >
-                Cancel Game
-              </button>
-            </div>
-          )}
-          {isCreator && game.status === "CONFIRMED" && (
-            <div className="flex space-x-4 mb-6">
-              <button
-                onClick={() => setShowComplete(true)}
-                className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
-              >
-                Complete Game
-              </button>
-              <button
-                onClick={handleCancel}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-              >
-                Cancel Game
-              </button>
-            </div>
-          )}
-          {isCreator && game.status === "CANCELLED" && (
+        {isCreator && game.status === "PENDING" && (
+          <div className="space-x-4 mb-6">
             <button
-              onClick={handleConfirm}
-              className="mb-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              onClick={() =>
+                confirmGame({ variables: { gameId, note: updatedNote } })
+              }
+              className="px-4 py-2 bg-blue-600 text-white rounded"
             >
-              Re-Confirm Game
+              Confirm
             </button>
-          )}
-
-          {/* VOTE COUNTS */}
-          <div className="flex space-x-6 mb-6">
-            <div className="flex items-center">
-              <span className="text-green-600 mr-1">Available 👍</span>
-              {game.availableCount}
-            </div>
-            <div className="flex items-center">
-              <span className="text-red-600 mr-1"> Not Available ❌</span>
-              {game.unavailableCount}
-            </div>
-          </div>
-        </div>
-
-        {/* ─── RIGHT COLUMN ─────────────────────────────────────────────── */}
-        <div>
-          {game.status !== "COMPLETED" ? (
-            <VotersList yesVoters={yesVoters} noVoters={noVoters} />
-          ) : showThankYou ? (
-            <div
-              className={`mt-8 p-4 rounded text-center ${
-                isDarkMode
-                  ? "bg-green-800 text-green-200"
-                  : "bg-green-100 text-green-800"
-              }`}
+            <button
+              onClick={() => setShowUpdate(true)}
+              className="px-4 py-2 bg-green-600 text-white rounded"
             >
-              <p className="italic">Thank you for your feedback.</p>
-            </div>
-          ) : !feedbackGiven ? (
-            <GameFeedback
-              gameId={gameId}
-              isDarkMode={isDarkMode}
-              onFeedback={handleFeedback}
-            />
-          ) : (
-            <GameFeedbackList gameId={gameId} isDarkMode={isDarkMode} />
-          )}
+              Update
+            </button>
+            <button
+              onClick={() =>
+                cancelGame({ variables: { gameId, note: updatedNote } })
+              }
+              className="px-4 py-2 bg-red-600 text-white rounded"
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+
+        {isCreator && game.status === "CONFIRMED" && (
+          <div className="space-x-4 mb-6">
+            <button
+              onClick={() => setShowComplete(true)}
+              className="px-4 py-2 bg-purple-600 text-white rounded"
+            >
+              Complete
+            </button>
+            <button
+              onClick={() =>
+                cancelGame({ variables: { gameId, note: updatedNote } })
+              }
+              className="px-4 py-2 bg-red-600 text-white rounded"
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+
+        <div className="flex space-x-4 mb-6">
+          <div>👍 {yesVoters.length}</div>
+          <div>❌ {noVoters.length}</div>
         </div>
 
-        {/* ─── MODALS ─────────────────────────────────────────────────────── */}
-        {isCreator && showUpdate && (
-          <GameUpdate
-            gameId={gameId}
-            initialDate={game.date}
-            initialTime={game.time}
-            initialVenue={game.venue}
-            initialNotes={game.notes}
-            initialOpponent={game.opponent}
-            isDarkMode={isDarkMode}
-            onClose={() => setShowUpdate(false)}
+        <VotersList yesVoters={yesVoters} noVoters={noVoters} />
+      </div>
+
+      {/* ─── RIGHT COLUMN: Formation or Feedback ───────────────────────── */}
+      <div>
+        {game.status === "CONFIRMED" && !formation && !isCreator && (
+          <p className="italic dark:text-white">
+            The formation will appear here once the creator sets it up.
+          </p>
+        )}
+
+        {game.status === "CONFIRMED" && (formation || isCreator) && (
+          <FormationSection
+            game={game}
+            formation={formation}
+            isCreator={isCreator}
+            setFormation={setFormation}
+            refetchFormation={refetchFormation}
           />
         )}
-        {isCreator && showComplete && (
-          <GameComplete
-            gameId={gameId}
-            isDarkMode={isDarkMode}
-            note={updatedNote}
-            onClose={() => setShowComplete(false)}
-            onComplete={handleComplete}
-          />
+
+        {game.status === "COMPLETED" && (
+          <>
+            {showThankYou ? (
+              <div className="p-4 bg-green-100 dark:bg-green-800 rounded text-center">
+                Thank you for your feedback!
+              </div>
+            ) : !feedbackGiven ? (
+              <GameFeedback
+                gameId={gameId}
+                isDarkMode={isDarkMode}
+                onFeedback={handleFeedback}
+              />
+            ) : (
+              <GameFeedbackList gameId={gameId} isDarkMode={isDarkMode} />
+            )}
+          </>
         )}
       </div>
-    </>
-  );
-};
 
-export default GameDetails;
+      {/* ─── MODALS ─────────────────────────────────────────────────────── */}
+      {isCreator && showUpdate && (
+        <GameUpdate
+          gameId={gameId}
+          initialDate={game.date}
+          initialTime={game.time}
+          initialVenue={game.venue}
+          initialNotes={game.notes}
+          initialOpponent={game.opponent}
+          isDarkMode={isDarkMode}
+          onClose={() => setShowUpdate(false)}
+        />
+      )}
+      {isCreator && showComplete && (
+        <GameComplete
+          gameId={gameId}
+          note={updatedNote}
+          isDarkMode={isDarkMode}
+          onComplete={(score, result) =>
+            completeGame({
+              variables: { gameId, score, result, note: updatedNote },
+            })
+          }
+          onClose={() => setShowComplete(false)}
+        />
+      )}
+    </div>
+  );
+}

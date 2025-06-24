@@ -1488,6 +1488,9 @@ formationDeleted: {
     averageRating(game) {
       return typeof game.averageRating === "number" ? game.averageRating : 0;
     },
+    formation: async (parent) => {
+      return await Formation.findOne({ game: parent._id }).populate("positions.player");
+    },
   },
 };
 

@@ -180,7 +180,7 @@ const GameList = () => {
             isDarkMode ? "bg-gray-700 text-gray-200" : "bg-white text-gray-800"
           }`}>
             <h2 className="text-xl font-bold mb-4">Delete Game?</h2>
-            <p className="mb-6">Are you sure? This cannot be undone.</p>
+            <p className="mb-6 italic">Are you sure? This cannot be undone.</p>
             <div className="flex justify-end space-x-4">
               <button
                 onClick={closeDeleteModal}

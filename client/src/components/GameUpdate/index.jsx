@@ -85,7 +85,7 @@ const GameUpdate = ({
               name="date"
               value={formState.date}
               onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border rounded"
+              className="mt-1 block w-full px-3 py-2 border rounded text-black"
             />
           </label>
           <label className="block mb-2">
@@ -95,7 +95,7 @@ const GameUpdate = ({
               name="time"
               value={formState.time}
               onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border rounded"
+              className="mt-1 block w-full px-3 py-2 border rounded text-black"
             />
           </label>
           <label className="block mb-2">
@@ -105,7 +105,7 @@ const GameUpdate = ({
               name="venue"
               value={formState.venue}
               onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border rounded"
+              className="mt-1 block w-full px-3 py-2 border rounded text-black"
               placeholder="e.g. Central Park Field #3"
             />
           </label>
@@ -116,7 +116,7 @@ const GameUpdate = ({
               name="opponent"
               value={formState.opponent}
               onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border rounded"
+              className="mt-1 block w-full px-3 py-2 border rounded text-black"
               placeholder="e.g. Rockets FC"
             />
           </label>
@@ -126,7 +126,7 @@ const GameUpdate = ({
               name="notes"
               value={formState.notes}
               onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border rounded"
+              className="mt-1 block w-full px-3 py-2 border rounded text-black"
               rows={3}
             />
           </label>

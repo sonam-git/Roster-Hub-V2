@@ -1,3 +1,4 @@
+// src/components/FormationSection.jsx
 import React, { useState, useEffect } from "react";
 import {
   DndContext,
@@ -6,14 +7,19 @@ import {
   useSensors,
   DragOverlay,
 } from "@dnd-kit/core";
-import AvailablePlayersList from "../AvailablePlayersList";
-import FormationBoard from "../Formationboard";
+import { useMutation, useSubscription } from "@apollo/client";
 import {
   CREATE_FORMATION,
   UPDATE_FORMATION,
   DELETE_FORMATION,
 } from "../../utils/mutations";
-import { useMutation } from "@apollo/client";
+import {
+  FORMATION_CREATED_SUBSCRIPTION,
+  FORMATION_UPDATED_SUBSCRIPTION,
+  FORMATION_DELETED_SUBSCRIPTION,
+} from "../../utils/subscription";
+import AvailablePlayersList from "../AvailablePlayersList";
+import FormationBoard from "../Formationboard";
 
 const FORMATION_TYPES = [
   "1-4-3-3",
@@ -33,10 +39,47 @@ export default function FormationSection({
   const [createFormation] = useMutation(CREATE_FORMATION);
   const [updateFormation] = useMutation(UPDATE_FORMATION);
   const [deleteFormation] = useMutation(DELETE_FORMATION);
+
   const [selectedFormation, setSelectedFormation] = useState("");
-  const [draggingPlayer, setDraggingPlayer] = useState(null); // 👈 For overlay
+  const [draggingPlayer, setDraggingPlayer] = useState(null); // for overlay
 
   const isFormed = !!formation;
+  const gameId = game._id;
+
+  // ─── Subscriptions ───────────────────────────────────────────────────────
+  useSubscription(FORMATION_CREATED_SUBSCRIPTION, {
+    variables: { gameId },
+    onData: ({ data }) => {
+      const created = data.data?.formationCreated;
+      if (created) {
+        setFormation(created);
+        refetchFormation?.();
+      }
+    },
+  });
+
+  useSubscription(FORMATION_UPDATED_SUBSCRIPTION, {
+    variables: { gameId },
+    onData: ({ data }) => {
+      const updated = data.data?.formationUpdated;
+      if (updated) {
+        setFormation(updated);
+        refetchFormation?.();
+      }
+    },
+  });
+
+  useSubscription(FORMATION_DELETED_SUBSCRIPTION, {
+    variables: { gameId },
+    onData: ({ data }) => {
+      const deleted = data.data?.formationDeleted;
+      if (deleted === gameId) {
+        setFormation(null);
+        refetchFormation?.();
+      }
+    },
+  });
+  // ─────────────────────────────────────────────────────────────────────────
 
   const availablePlayers = game.responses
     .filter((r) => r.isAvailable)
@@ -70,60 +113,41 @@ export default function FormationSection({
   );
 
   const handleDragStart = (event) => {
-    const playerId = event.active.id;
-    const player = availablePlayers.find((p) => p._id === playerId);
+    const player = availablePlayers.find((p) => p._id === event.active.id);
     setDraggingPlayer(player || null);
   };
 
   const handleDragEnd = ({ active, over }) => {
     setDraggingPlayer(null);
-
     if (!isCreator || !over) return;
 
     const player = availablePlayers.find((u) => u._id === active.id);
     if (!player) return;
 
-    const alreadyUsed = Object.entries(assignments).find(
-      ([, p]) => p && p._id === player._id
-    );
-
-    const updatedAssignments = { ...assignments };
-
-    if (alreadyUsed) {
-      const [slotId] = alreadyUsed;
-      delete updatedAssignments[slotId];
-    }
-
-    updatedAssignments[over.id] = player;
-    setAssignments(updatedAssignments);
+    const updated = { ...assignments };
+    // remove from old slot
+    Object.entries(updated).forEach(([slot, p]) => {
+      if (p?._id === player._id) delete updated[slot];
+    });
+    // add to new slot
+    updated[over.id] = player;
+    setAssignments(updated);
   };
 
   const handleSubmitFormation = async () => {
-    const positions = rows
-      .flatMap((r) => r.slotIds)
-      .map((slot) => ({
+    const positions = rows.flatMap((r) =>
+      r.slotIds.map((slot) => ({
         slot,
         playerId: assignments[slot]?._id || null,
-      }));
+      }))
+    );
 
     try {
       if (!isFormed) {
-        await createFormation({
-          variables: {
-            gameId: game._id,
-            formationType: selectedFormation,
-          },
-        });
+        await createFormation({ variables: { gameId, formationType: selectedFormation } });
       }
-
-      const updateRes = await updateFormation({
-        variables: {
-          gameId: game._id,
-          positions,
-        },
-      });
-
-      setFormation(updateRes.data.updateFormation);
+      const { data } = await updateFormation({ variables: { gameId, positions } });
+      setFormation(data.updateFormation);
       refetchFormation?.();
     } catch (err) {
       console.error("❌ Formation submit error:", err.message);
@@ -132,7 +156,7 @@ export default function FormationSection({
 
   const handleDelete = async () => {
     try {
-      await deleteFormation({ variables: { gameId: game._id } });
+      await deleteFormation({ variables: { gameId } });
       setFormation(null);
       setSelectedFormation("");
       setAssignments({});
@@ -143,39 +167,36 @@ export default function FormationSection({
 
   return (
     <div className="space-y-6">
-  {!isFormed && isCreator && (
-  <div className="space-y-2">
-    <label className="block text-sm font-bold">Choose Formation:</label>
-    <div className="flex items-center space-x-4">
-      <select
-        value={selectedFormation}
-        onChange={(e) => setSelectedFormation(e.target.value)}
-        className="p-2 rounded border dark:bg-gray-600"
-      >
-        <option value="">-- Select --</option>
-        {FORMATION_TYPES.map((ft) => (
-          <option key={ft} value={ft}>
-            {ft}
-          </option>
-        ))}
-      </select>
-
-      {/* 🚫 Cancel button */}
-      {selectedFormation && (
-        <button
-          onClick={() => {
-            setSelectedFormation("");
-            setAssignments({});
-          }}
-          className="text-sm text-red-600 border border-red-600 px-3 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900"
-        >
-          Cancel
-        </button>
+      {!isFormed && isCreator && (
+        <div className="space-y-2">
+          <label className="block text-sm font-bold">Choose Formation:</label>
+          <div className="flex items-center space-x-4">
+            <select
+              value={selectedFormation}
+              onChange={(e) => setSelectedFormation(e.target.value)}
+              className="p-2 rounded border dark:bg-gray-600"
+            >
+              <option value="">-- Select --</option>
+              {FORMATION_TYPES.map((ft) => (
+                <option key={ft} value={ft}>
+                  {ft}
+                </option>
+              ))}
+            </select>
+            {selectedFormation && (
+              <button
+                onClick={() => {
+                  setSelectedFormation("");
+                  setAssignments({});
+                }}
+                className="text-sm text-red-600 border border-red-600 px-3 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900"
+              >
+                Cancel
+              </button>
+            )}
+          </div>
+        </div>
       )}
-    </div>
-  </div>
-)}
-
 
       {formationType && (
         <DndContext
@@ -184,15 +205,12 @@ export default function FormationSection({
           onDragEnd={handleDragEnd}
         >
           {isCreator && (
-            <AvailablePlayersList
-              players={availablePlayers}
-              isCreator={isCreator}
-            />
+            <AvailablePlayersList players={availablePlayers} isCreator={isCreator} />
           )}
 
           <FormationBoard rows={rows} assignments={assignments} />
 
-          <DragOverlay zIndex={50}>
+          <DragOverlay>
             {draggingPlayer && (
               <div className="p-2 bg-white rounded shadow text-sm font-semibold">
                 {draggingPlayer.name}
@@ -204,14 +222,14 @@ export default function FormationSection({
             <div className="space-x-2 mt-4">
               <button
                 onClick={handleSubmitFormation}
-                className="bg-blue-600 text-white px-4 py-1 rounded"
+                className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-900"
               >
                 {isFormed ? "Update Formation" : "Create Formation"}
               </button>
               {isFormed && (
                 <button
                   onClick={handleDelete}
-                  className="bg-red-500 text-white px-4 py-1 rounded"
+                  className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-700"
                 >
                   Delete Formation
                 </button>

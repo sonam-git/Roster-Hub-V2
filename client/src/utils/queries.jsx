@@ -430,6 +430,17 @@ export const QUERY_GAMES = gql`
         createdAt
       }
       averageRating
+      formation {
+        _id
+        formationType
+        positions {
+          slot
+          player {
+            _id
+            name
+          }
+        }
+      }
     }
   }
 `;
@@ -470,6 +481,17 @@ export const QUERY_GAME = gql`
         createdAt
       }
       averageRating
+      formation {
+        _id
+        formationType
+        positions {
+          slot
+          player {
+            _id
+            name
+          }
+        }
+      }
     }
   }
 `;

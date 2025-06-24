@@ -51,7 +51,7 @@ const GameFeedbackList = ({ gameId, isDarkMode }) => {
           <div
             key={fb._id}
             className={`p-4 rounded shadow ${
-              isDarkMode ? "bg-gray-700 text-gray-200" : "bg-white text-gray-800"
+              isDarkMode ? "bg-gray-700 text-gray-200" : "bg-gray-200 text-gray-800"
             }`}
           >
             {/* top row: date left, rating right */}

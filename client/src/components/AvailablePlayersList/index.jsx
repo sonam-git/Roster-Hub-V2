@@ -6,7 +6,7 @@ export default function AvailablePlayersList({ players, isCreator }) {
   return (
     <div className="p-4 bg-gray-200 dark:bg-gray-800 rounded shadow">
       <h3 className="font-bold mb-2">Available Players</h3>
-      <ul className="space-y-2">
+      <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2">
         {players.map((player) =>
           isCreator ? (
             <DraggablePlayer key={player._id} player={player} />
