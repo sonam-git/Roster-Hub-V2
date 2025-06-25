@@ -33,7 +33,7 @@ const MessageInput = ({ userId, value, onChange, onSend }) => {
         />
         <button
           onClick={handleSend}
-          className="bg-blue-600 text-white px-4 py-2 rounded-r hover:bg-blue-700 text-sm ml-1"
+          className="bg-blue-600 text-white px-4 py-2 rounded-r hover:bg-blue-800 text-sm ml-1"
         >
           Send
         </button>

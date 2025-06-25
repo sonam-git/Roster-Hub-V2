@@ -124,7 +124,7 @@ const MessageCard = ({
               isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-800"
             }`}
           >
-            <p className="mb-4">
+            <p className="mb-4 text-sm italic">
               Are you sure you want to delete the entire conversation?
             </p>
             <div className="flex justify-end space-x-3">

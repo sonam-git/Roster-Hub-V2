@@ -6,7 +6,7 @@ export default function FormationBoard({ rows, assignments }) {
   
   return (
     <div className="relative p-4 bg-green-600 dark:bg-gray-800 rounded shadow">
-      <h3 className="font-bold mb-2 text-white">Formation Board</h3>
+      <h3 className="font-bold mb-4 text-white">Formation Board</h3>
 
       <div className="relative w-full h-[500px] mx-auto rounded-lg overflow-hidden bg-green-700 bg-[repeating-linear-gradient(to-bottom,_#006400_0px,_#006400_40px,_#228B22_40px,_#228B22_80px)] border-4 border-white dark:bg-gray-800">
 
@@ -27,7 +27,7 @@ export default function FormationBoard({ rows, assignments }) {
               className="flex justify-center space-x-6"
             >
               {slotIds.map((slotId) => (
-                <Slot key={slotId} slotId={slotId} player={assignments[slotId]} />
+                <Slot key={slotId} slotId={slotId} player={assignments[slotId]}  />
               ))}
             </div>
           ))}

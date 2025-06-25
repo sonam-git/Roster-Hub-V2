@@ -69,13 +69,13 @@ const RatingModal = ({ profile, onClose, isDarkMode }) => {
               setErrorMessage("");
               onClose();
             }}
-            className="px-4 py-2 bg-gray-500 text-white rounded mr-2"
+            className="px-4 py-2 bg-gray-500 text-white rounded mr-2 hover:bg-gray-800"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-blue-500 text-white rounded"
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-800"
           >
             Submit
           </button>
