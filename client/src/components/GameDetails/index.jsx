@@ -207,10 +207,9 @@ export default function GameDetails({ gameId }) {
           <strong>Time:</strong> {gameTime}
         </h3>
 
-        <p className="mb-2">
+        <p className="text-lg font-semibold mb-4">
           <strong>Venue:</strong> {game.venue}
-        </p>
-        <p className="mb-4">
+          &nbsp;|&nbsp;
           <strong>Opponent:</strong> {game.opponent}
         </p>
 
@@ -298,7 +297,7 @@ export default function GameDetails({ gameId }) {
         {game.status === "COMPLETED" && (
           <div className="mb-6">
             <p className="mb-2">
-              <strong >Score:</strong> {game.score}
+              <strong>Score:</strong> {game.score}
             </p>
             <p className="mb-2">
               <strong>Result:</strong> {game.result.replace("_", " ")}

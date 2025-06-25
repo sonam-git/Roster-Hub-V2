@@ -1,6 +1,5 @@
 // src/pages/Login.jsx
-
-import React, { useState, useContext, useTransition } from "react";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { GoogleLogin } from "@react-oauth/google";
@@ -10,13 +9,18 @@ import { ThemeContext } from "../components/ThemeContext";
 import heroImage from "../assets/images/dark-logo.png";
 import heroImageDark from "../assets/images/roster-hub-logo.png";
 
+// React 19 alpha form hook to detect form submission state:
+import { useFormStatus } from "react-dom";
+
 const Login = () => {
   const { isDarkMode } = useContext(ThemeContext);
   const [formState, setFormState] = useState({ email: "", password: "" });
   const [login] = useMutation(LOGIN_USER);
   const [loginWithGoogle] = useMutation(LOGIN_WITH_GOOGLE);
-  const [isPending, startTransition] = useTransition();
   const [error, setError] = useState(null);
+
+  // only useFormStatus—the pending flag tells us when the form is submitting
+  const { pending: isSubmitting } = useFormStatus();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,30 +29,32 @@ const Login = () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    startTransition(async () => {
-      try {
-        const { data } = await login({ variables: { ...formState } });
-        Auth.login(data.login.token);
-      } catch (err) {
-        console.error(err);
-        setError(err);
-      }
+    setError(null);
+
+    try {
+      const { data } = await login({
+        variables: { ...formState },
+      });
+      Auth.login(data.login.token);
       setFormState({ email: "", password: "" });
-    });
+    } catch (err) {
+      console.error(err);
+      setError(err);
+    }
   };
 
-  const handleGoogleSuccess = (credentialResponse) => {
-    startTransition(async () => {
-      try {
-        const { data } = await loginWithGoogle({
-          variables: { idToken: credentialResponse.credential },
-        });
-        Auth.login(data.loginWithGoogle.token);
-      } catch (err) {
-        console.error("Google login failed", err);
-        setError(err);
-      }
-    });
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setError(null);
+
+    try {
+      const { data } = await loginWithGoogle({
+        variables: { idToken: credentialResponse.credential },
+      });
+      Auth.login(data.loginWithGoogle.token);
+    } catch (err) {
+      console.error("Google login failed", err);
+      setError(err);
+    }
   };
 
   const handleGoogleError = () => {
@@ -77,7 +83,9 @@ const Login = () => {
               Login
             </h4>
 
+            {/* standard <form> so useFormStatus can track it */}
             <form onSubmit={handleFormSubmit} className="space-y-6">
+              {/* Email */}
               <div>
                 <label
                   htmlFor="email"
@@ -96,6 +104,8 @@ const Login = () => {
                   placeholder="you@example.com"
                 />
               </div>
+
+              {/* Password */}
               <div>
                 <label
                   htmlFor="password"
@@ -114,15 +124,19 @@ const Login = () => {
                   placeholder="••••••••"
                 />
               </div>
+
+              {/* Submit */}
               <div className="flex justify-between items-center">
                 <button
                   type="submit"
-                  disabled={isPending}
+                  disabled={isSubmitting}
                   className="bg-blue-500 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring focus:ring-blue-200 hover:bg-blue-800 disabled:opacity-50"
                 >
-                  {isPending ? "Logging in..." : "Submit"}
+                  {isSubmitting ? "Logging in..." : "Submit"}
                 </button>
               </div>
+
+              {/* Links */}
               <div className="flex justify-between mt-3 text-sm">
                 <Link
                   to="/signup"

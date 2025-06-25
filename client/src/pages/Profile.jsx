@@ -46,13 +46,13 @@ const Profile = () => {
   }
 
   return (
-    <>
+    <main className="container mx-auto px-4 mt-5">
       {profileId ? (
         <UserProfile profile={profile} />
       ) : (
         <MyProfile isLoggedInUser={!profileId && true}  />
       )}
-    </>
+    </main>
   );
 };
 

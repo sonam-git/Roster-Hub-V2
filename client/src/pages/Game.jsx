@@ -29,10 +29,10 @@ const Game = () => {
     return (
       <div className="container mx-auto mt-5 p-4">
         <div className="flex flex-col lg:flex-row lg:space-x-2">
-          <div className="lg:w-1/2 w-full mb-6 lg:mb-0">
+          <div className=" w-full mb-6 lg:mb-0">
             <GameForm />
           </div>
-          <div className="lg:w-1/2 w-full">
+          <div className=" w-full">
             <GameList />
           </div>
         </div>
