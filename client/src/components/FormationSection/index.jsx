@@ -201,6 +201,7 @@ export default function FormationSection({
       )}
 
       {formationType && (
+           <>
         <DndContext
           sensors={sensors}
           onDragStart={handleDragStart}
@@ -240,21 +241,27 @@ export default function FormationSection({
           )}
         </div>
         
-          )}
-                    {formation && (
-  <div className="mt-6 space-y-4">
-  <FormationLikeButton
+          )}         
+        </DndContext>
+        {formation && (
+          <div className="mt-6 space-y-4">
+      <FormationLikeButton
   formationId={formation._id}
   likes={formation.likes}
   likedBy={formation.likedBy}
-  onUpdate={(full) => setFormation(full)}
+  onUpdate={(partial) =>
+    setFormation((prev) => ({
+      ...prev,
+      ...partial,
+    }))
+  }
 />
-
-
-    <FormationCommentList gameId={gameId} />
-  </div>
-)}
-        </DndContext>
+        
+        
+            <FormationCommentList gameId={gameId} />
+          </div>
+        )}
+        </>
       )}
     </div>
   );
