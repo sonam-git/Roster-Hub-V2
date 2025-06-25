@@ -44,9 +44,15 @@ const GAME_UPDATED = "GAME_UPDATED";
 const FORMATION_CREATED = "FORMATION_CREATED";
 const FORMATION_UPDATED = "FORMATION_UPDATED";
 const FORMATION_DELETED = "FORMATION_DELETED";
+const FORMATION_COMMENT_ADDED = "FORMATION_COMMENT_ADDED";
+const FORMATION_COMMENT_UPDATED = "FORMATION_COMMENT_UPDATED";
+const FORMATION_COMMENT_DELETED = "FORMATION_COMMENT_DELETED";
+const FORMATION_LIKED = "FORMATION_LIKED";
+const FORMATION_COMMENT_LIKED = "FORMATION_COMMENT_LIKED";
 
 const pubsub = new PubSub(); // Ensure this instance is used in the resolvers
-const FOOTBALL_API = "https://api.football-data.org/v4";
+const FOOTBALL_API =
+  process.env.FOOTBALL_DATA_URL || "https://api.football-data.org/v4";
 
 const resolvers = {
   // ############ QUERIES ########## //
@@ -195,10 +201,9 @@ const resolvers = {
     // ************************** QUERY SKILLS *******************************************//
     skills: async () => {
       try {
-        return await Skill
-          .find()
+        return await Skill.find()
           .sort({ createdAt: -1 })
-          .populate('recipient',"name");      
+          .populate("recipient", "name");
       } catch (err) {
         throw new Error(err);
       }
@@ -306,7 +311,11 @@ const resolvers = {
     // ************************** QUERY FORMATION *******************************************//
     formation: async (_, { gameId }, context) => {
       if (!context.user) throw new AuthenticationError("Not logged in");
-      return Formation.findOne({ game: gameId }).populate("game").populate("positions.player");
+      return Formation.findOne({ game: gameId })
+        .populate("game")
+        .populate("positions.player")
+        .populate('likedBy')
+        .populate('comments.user');
     },
   },
   // ########## MUTAIIONS ########### //
@@ -493,8 +502,10 @@ const resolvers = {
       });
 
       // now populate the recipient on the new document
-      const fullSkill = await Skill.findById(skill._id)
-        .populate('recipient', 'name');
+      const fullSkill = await Skill.findById(skill._id).populate(
+        "recipient",
+        "name"
+      );
 
       // publish the populated version
       pubsub.publish(SKILL_ADDED, { skillAdded: fullSkill });
@@ -1286,92 +1297,223 @@ const resolvers = {
       await game.save();
       return game;
     },
-// ──────── Create a formation ────────
-createFormation: async (_, { gameId, formationType }, context) => {
-  if (!context.user) throw new AuthenticationError("Not logged in");
+    // ──────── Create a formation ────────
+    createFormation: async (_, { gameId, formationType }, context) => {
+      if (!context.user) throw new AuthenticationError("Not logged in");
 
-  const game = await Game.findById(gameId);
-  if (!game) throw new UserInputError("Game not found");
+      const game = await Game.findById(gameId);
+      if (!game) throw new UserInputError("Game not found");
 
-  if (game.creator.toString() !== context.user._id)
-    throw new AuthenticationError("Only creator can make formation");
+      if (game.creator.toString() !== context.user._id)
+        throw new AuthenticationError("Only creator can make formation");
 
-  const existing = await Formation.findOne({ game: gameId });
-  if (existing) throw new UserInputError("Formation already exists");
+      const existing = await Formation.findOne({ game: gameId });
+      if (existing) throw new UserInputError("Formation already exists");
 
-  const formation = await Formation.create({
-    game: gameId,
-    formationType,
-    positions: [],
-  });
+      const formation = await Formation.create({
+        game: gameId,
+        formationType,
+        positions: [],
+      });
 
-  const full = await Formation.findById(formation._id)
-    .populate("game")
-    .populate("positions.player");
+      const full = await Formation.findById(formation._id)
+        .populate("game")
+        .populate("positions.player");
 
-  pubsub.publish("FORMATION_CREATED", {
-    formationCreated: full,
-    gameId: gameId.toString(),
-  });
+      pubsub.publish("FORMATION_CREATED", {
+        formationCreated: full,
+        gameId: gameId.toString(),
+      });
 
-  return full;
-},
+      return full;
+    },
 
-// ──────── Update a formation ────────
-updateFormation: async (_, { gameId, positions }, context) => {
-  if (!context.user) throw new AuthenticationError("Not logged in");
+    // ──────── Update a formation ────────
+    updateFormation: async (_, { gameId, positions }, context) => {
+      if (!context.user) throw new AuthenticationError("Not logged in");
 
-  const formation = await Formation.findOne({ game: gameId });
-  if (!formation) throw new UserInputError("No formation to update");
+      const formation = await Formation.findOne({ game: gameId });
+      if (!formation) throw new UserInputError("No formation to update");
 
-  const game = await Game.findById(gameId);
-  if (!game) throw new UserInputError("Game not found");
+      const game = await Game.findById(gameId);
+      if (!game) throw new UserInputError("Game not found");
 
-  if (game.creator.toString() !== context.user._id)
-    throw new AuthenticationError("Only creator can update");
+      if (game.creator.toString() !== context.user._id)
+        throw new AuthenticationError("Only creator can update");
 
-  formation.positions = positions.map((p) => ({
-    slot: p.slot,
-    player: p.playerId || null,
-  }));
-  await formation.save();
+      formation.positions = positions.map((p) => ({
+        slot: p.slot,
+        player: p.playerId || null,
+      }));
+      await formation.save();
 
-  const full = await Formation.findById(formation._id)
-    .populate("game")
-    .populate("positions.player");
+      const full = await Formation.findById(formation._id)
+        .populate("game")
+        .populate("positions.player");
 
-  pubsub.publish("FORMATION_UPDATED", {
-    formationUpdated: full,
-    gameId: gameId.toString(),
-  });
+      pubsub.publish("FORMATION_UPDATED", {
+        formationUpdated: full,
+        gameId: gameId.toString(),
+      });
 
-  return full;
-},
+      return full;
+    },
 
+    // ──────── Delete a formation ────────
+    deleteFormation: async (_, { gameId }, context) => {
+      if (!context.user) throw new AuthenticationError("Not logged in");
 
-// ──────── Delete a formation ────────
-deleteFormation: async (_, { gameId }, context) => {
-  if (!context.user) throw new AuthenticationError("Not logged in");
+      const formation = await Formation.findOne({ game: gameId });
+      if (!formation) return false;
 
-  const formation = await Formation.findOne({ game: gameId });
-  if (!formation) return false;
+      const game = await Game.findById(gameId);
+      if (!game) throw new UserInputError("Game not found");
 
-  const game = await Game.findById(gameId);
-  if (!game) throw new UserInputError("Game not found");
+      if (game.creator.toString() !== context.user._id)
+        throw new AuthenticationError("Only creator can delete");
 
-  if (game.creator.toString() !== context.user._id)
-    throw new AuthenticationError("Only creator can delete");
+      await Formation.deleteOne({ game: gameId });
 
-  await Formation.deleteOne({ game: gameId });
+      pubsub.publish("FORMATION_DELETED", {
+        formationDeleted: gameId,
+        gameId,
+      });
 
-  pubsub.publish("FORMATION_DELETED", {
-    formationDeleted: gameId,
-    gameId,
-  });
+      return true;
+    },
+    //  ───────  add comment to a formation  ─────── 
+    addFormationComment: async (_, { formationId, commentText }, { user }) => {
+      if (!user) throw new AuthenticationError("Login required");
+      if (!commentText.trim()) throw new Error("Comment cannot be empty");
 
-  return true;
-},
+      const formation = await Formation.findById(formationId);
+      if (!formation) throw new Error("Formation not found");
+
+      const newComment = {
+        commentText,
+        commentAuthor: user.name,
+        user: user._id,
+      };
+      formation.comments.unshift(newComment); // newest first
+      await formation.save();
+
+      const added = formation.comments[0]; // just-pushed
+      pubsub.publish(FORMATION_COMMENT_ADDED, {
+        formationCommentAdded: added,
+        formationId,
+      });
+
+      return formation.populate("comments.user likedBy");
+    },
+    // ─────── updateFormationComment ───────
+    updateFormationComment: async (_, { commentId, commentText }, { user }) => {
+      if (!user) throw new AuthenticationError("You need to be logged in!");
+      if (!commentText.trim()) throw new Error("Comment cannot be empty");
+
+      // locate the parent formation containing this comment
+      const formation = await Formation.findOne({ "comments._id": commentId });
+      if (!formation) throw new Error("Comment not found");
+
+      // find the embedded comment
+      const comment = formation.comments.id(commentId);
+      if (!comment.user.equals(user._id))
+        throw new AuthenticationError("Not authorized");
+
+      comment.commentText = commentText;
+      await formation.save();
+
+      // publish the updated comment
+      pubsub.publish(FORMATION_COMMENT_UPDATED, {
+        formationCommentUpdated: comment,
+        formationId: formation._id.toString(),
+      });
+
+      return comment; // GraphQL returns the updated comment
+    },
+
+    // ─────── deleteFormationComment ───────
+    deleteFormationComment: async (_, { formationId, commentId }, { user }) => {
+      if (!user) throw new AuthenticationError('Login required');
+    
+      const formation = await Formation.findById(formationId);
+      if (!formation) throw new Error('Formation not found');
+    
+      const comment = formation.comments.id(commentId);
+      if (!comment) throw new Error('Comment not found');
+      if (!comment.user.equals(user._id))
+        throw new AuthenticationError('Not authorized');
+    
+      formation.comments.pull(commentId);   // remove
+      await formation.save();
+    
+      // broadcast the deleted ID
+      pubsub.publish(FORMATION_COMMENT_DELETED, {
+        formationCommentDeleted: commentId,
+        commentId,               // keep payload consistent
+      });
+    
+      return commentId;          // ✅ matches schema (ID)
+    },
+    // like / unlike a comment
+    likeFormationComment: async (_, { commentId }, { user }) => {
+      if (!user) throw new AuthenticationError("Login required");
+      const formation = await Formation.findOne({ "comments._id": commentId });
+      if (!formation) throw new Error("Comment not found");
+
+      const comment = formation.comments.id(commentId);
+      const already = comment.likedBy.includes(user._id);
+      if (already) {
+        comment.likes--;
+        comment.likedBy.pull(user._id);
+      } else {
+        comment.likes++;
+        comment.likedBy.push(user._id);
+      }
+      await formation.save();
+
+      pubsub.publish(FORMATION_COMMENT_LIKED, {
+        formationCommentLiked: comment,
+       formationId: formation._id.toString(),
+      });
+      return comment;
+    },
+        // like / unlike a formation
+    likeFormation: async (_, { formationId }, { user }) => {
+          if (!user) throw new AuthenticationError('Login required');
+      
+          const formation = await Formation.findById(formationId);
+          if (!formation) throw new Error('Formation not found');
+      
+          const alreadyLiked = formation.likedBy.includes(user._id);
+      
+          if (alreadyLiked) {
+            // UNLIKE
+            formation.likes = Math.max(0, formation.likes - 1);
+            formation.likedBy.pull(user._id);
+          } else {
+            // LIKE
+            formation.likes += 1;
+            formation.likedBy.push(user._id);
+          }
+      
+          await formation.save();
+      
+          const full = await Formation.findById(formationId)
+            .populate('game')
+            .populate('positions.player')
+            .populate('likedBy')
+            .populate('comments.user');
+      
+          pubsub.publish(FORMATION_LIKED, {
+            formationLiked: full,
+            formationId: formationId.toString(),
+          });
+      
+          return full;
+    },
   },
+
+  // ############ SUBSCRIPTION ############## //
   Subscription: {
     chatCreated: {
       subscribe: () => pubsub.asyncIterator(["CHAT_CREATED"]),
@@ -1437,34 +1579,71 @@ deleteFormation: async (_, { gameId }, context) => {
       subscribe: () => pubsub.asyncIterator(GAME_UPDATED),
     },
 
-formationCreated: {
-  subscribe: withFilter(
-    () => pubsub.asyncIterator(["FORMATION_CREATED"]),
-    (payload, variables) =>
-      payload?.formationCreated?.game?._id.toString() ===
-      variables?.gameId?.toString()
-  ),
-  resolve: (payload) => payload.formationCreated,
-},
+    formationCreated: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator([FORMATION_CREATED]),
+        (payload, variables) =>
+          payload?.formationCreated?.game?._id.toString() ===
+          variables?.gameId?.toString()
+      ),
+      resolve: (payload) => payload.formationCreated,
+    },
 
-formationUpdated: {
-  subscribe: withFilter(
-    () => pubsub.asyncIterator(["FORMATION_UPDATED"]),
-    (payload, variables) =>
-      payload?.formationUpdated?.game?._id.toString() ===
-      variables?.gameId?.toString()
-  ),
-  resolve: (payload) => payload.formationUpdated,
-},
+    formationUpdated: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator([FORMATION_UPDATED]),
+        (payload, variables) =>
+          payload?.formationUpdated?.game?._id.toString() ===
+          variables?.gameId?.toString()
+      ),
+      resolve: (payload) => payload.formationUpdated,
+    },
 
-formationDeleted: {
-  subscribe: withFilter(
-    () => pubsub.asyncIterator(["FORMATION_DELETED"]),
-    (payload, variables) => payload.gameId === variables.gameId
-  ),
-  resolve: (payload) => payload.formationDeleted,
-},
-  
+    formationDeleted: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator([FORMATION_DELETED]),
+        (payload, variables) => payload.gameId === variables.gameId
+      ),
+      resolve: (payload) => payload.formationDeleted,
+    },
+
+    formationCommentAdded: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator(FORMATION_COMMENT_ADDED),
+        (payload, vars) => payload.formationId === vars.formationId
+      ),
+    },
+    
+    formationCommentUpdated: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator(FORMATION_COMMENT_UPDATED),
+        (p,v) => p.formationId === v.formationId
+      ),
+      resolve: (payload) => payload.formationCommentUpdated,
+    },
+
+    formationCommentDeleted: {
+      subscribe: () => pubsub.asyncIterator([FORMATION_COMMENT_DELETED]),
+      resolve: (payload) => payload.formationCommentDeleted,
+    },
+
+    formationCommentLiked: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator(FORMATION_COMMENT_LIKED),
+      
+        (p,v) => p.formationId === v.formationId
+      ),
+      resolve: (payload) => payload.formationCommentLiked,
+    },
+    
+    formationLiked: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator([FORMATION_LIKED]),
+        (payload, variables) =>
+          payload.formationId === variables.formationId.toString()
+      ),
+      resolve: (payload) => payload.formationLiked,
+    },
   },
   // ──────── Type‐level resolvers for Chat ────────
   Chat: {
@@ -1489,7 +1668,9 @@ formationDeleted: {
       return typeof game.averageRating === "number" ? game.averageRating : 0;
     },
     formation: async (parent) => {
-      return await Formation.findOne({ game: parent._id }).populate("positions.player");
+      return await Formation.findOne({ game: parent._id }).populate(
+        "positions.player"
+      );
     },
   },
 };

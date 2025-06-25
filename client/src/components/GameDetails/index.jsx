@@ -1,47 +1,56 @@
 // src/components/GameDetails.jsx
-import React, { useState, useEffect, useContext, useRef } from "react";
-import { useQuery, useMutation, useSubscription } from "@apollo/client";
-import { useNavigate } from "react-router-dom";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useRef,
+  startTransition,
+} from 'react';
+import { useQuery, useMutation, useSubscription } from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
 
-import { QUERY_GAME, QUERY_GAMES, QUERY_FORMATION } from "../../utils/queries";
+import {
+  QUERY_GAME,
+  QUERY_GAMES,
+  QUERY_FORMATION,
+} from '../../utils/queries';
 import {
   RESPOND_TO_GAME,
   UNVOTE_GAME,
   CONFIRM_GAME,
   CANCEL_GAME,
   COMPLETE_GAME,
-} from "../../utils/mutations";
+} from '../../utils/mutations';
 import {
   FORMATION_CREATED_SUBSCRIPTION,
   FORMATION_UPDATED_SUBSCRIPTION,
   FORMATION_DELETED_SUBSCRIPTION,
-} from "../../utils/subscription";
+} from '../../utils/subscription';
 
-import Auth from "../../utils/auth";
-import { ThemeContext } from "../ThemeContext";
-import VotersList from "../VotersList";
-import GameUpdate from "../GameUpdate";
-import GameComplete from "../GameComplete";
-import GameFeedback from "../GameFeedback";
-import GameFeedbackList from "../GameFeedbackList";
-import FormationSection from "../FormationSection";
-import AvailablePlayersList from "../AvailablePlayersList";
+import Auth from '../../utils/auth';
+import { ThemeContext } from '../ThemeContext';
+import VotersList from '../VotersList';
+import GameUpdate from '../GameUpdate';
+import GameComplete from '../GameComplete';
+import GameFeedback from '../GameFeedback';
+import GameFeedbackList from '../GameFeedbackList';
+import FormationSection from '../FormationSection';
 
 export default function GameDetails({ gameId }) {
   const navigate = useNavigate();
   const { isDarkMode } = useContext(ThemeContext);
   const userId = Auth.getProfile()?.data?._id;
 
-  // keep track of mounted state
+  /* ──────────────────────────────────────────────────────────── */
+  /*  Local helpers                                               */
+  /* ──────────────────────────────────────────────────────────── */
   const isMounted = useRef(false);
   useEffect(() => {
     isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-    };
+    return () => (isMounted.current = false);
   }, []);
 
-  // ─── FETCH GAME ─────────────────────────────────────────────────────────
+  /* ─── GAME QUERY ───────────────────────────────────────────── */
   const {
     loading: loadingGame,
     error: gameError,
@@ -50,55 +59,42 @@ export default function GameDetails({ gameId }) {
   } = useQuery(QUERY_GAME, {
     variables: { gameId },
     skip: !gameId,
-    pollInterval: 5000,
+    pollInterval: 5_000,
   });
 
-  // ─── FETCH FORMATION ───────────────────────────────────────────────────
+  /* ─── FORMATION QUERY ──────────────────────────────────────── */
   const [formation, setFormation] = useState(null);
-  const {
-    loading: loadingForm,
-    error: formError,
-    refetch: refetchFormation,
-  } = useQuery(QUERY_FORMATION, {
+  useQuery(QUERY_FORMATION, {
     variables: { gameId },
     skip: !gameId,
-    fetchPolicy: "network-only",
-    onCompleted: (d) => {
-      if (isMounted.current) {
-        setFormation(d?.formation || null);
-      }
-    },
+    fetchPolicy: 'network-only',
+    onCompleted: (d) => isMounted.current && setFormation(d?.formation ?? null),
   });
 
-  // ─── REAL-TIME FORMATION ───────────────────────────────────────────────
+  /* ─── FORMATION SUBSCRIPTIONS ──────────────────────────────── */
   useSubscription(FORMATION_CREATED_SUBSCRIPTION, {
     variables: { gameId },
     onData: ({ data }) => {
       const created = data.data?.formationCreated;
-      if (created && isMounted.current) {
-        setFormation(created);
-      }
+      if (created && isMounted.current) setFormation(created);
     },
   });
   useSubscription(FORMATION_UPDATED_SUBSCRIPTION, {
     variables: { gameId },
     onData: ({ data }) => {
       const updated = data.data?.formationUpdated;
-      if (updated && isMounted.current) {
-        setFormation(updated);
-      }
+      if (updated && isMounted.current) setFormation(updated);
     },
   });
   useSubscription(FORMATION_DELETED_SUBSCRIPTION, {
     variables: { gameId },
     onData: ({ data }) => {
-      if (data.data?.formationDeleted === gameId && isMounted.current) {
-        setFormation(null);
-      }
+      const deletedId = data.data?.formationDeleted;
+      if (deletedId === gameId && isMounted.current) setFormation(null);
     },
   });
 
-  // ─── GAME MUTATIONS ─────────────────────────────────────────────────────
+  /* ─── GAME MUTATIONS ───────────────────────────────────────── */
   const [respondToGame] = useMutation(RESPOND_TO_GAME, {
     onCompleted: () => refetchGame(),
   });
@@ -108,76 +104,77 @@ export default function GameDetails({ gameId }) {
   const [confirmGame] = useMutation(CONFIRM_GAME, {
     refetchQueries: [
       { query: QUERY_GAME, variables: { gameId } },
-      { query: QUERY_GAMES, variables: { status: "PENDING" } },
+      { query: QUERY_GAMES, variables: { status: 'PENDING' } },
     ],
     awaitRefetchQueries: true,
   });
   const [cancelGame] = useMutation(CANCEL_GAME, {
     refetchQueries: [
       { query: QUERY_GAME, variables: { gameId } },
-      { query: QUERY_GAMES, variables: { status: "PENDING" } },
+      { query: QUERY_GAMES, variables: { status: 'PENDING' } },
     ],
     awaitRefetchQueries: true,
   });
   const [completeGame] = useMutation(COMPLETE_GAME, {
     refetchQueries: [
       { query: QUERY_GAME, variables: { gameId } },
-      { query: QUERY_GAMES, variables: { status: "PENDING" } },
+      { query: QUERY_GAMES, variables: { status: 'PENDING' } },
     ],
     awaitRefetchQueries: true,
   });
 
-  // ─── LOCAL STATE ────────────────────────────────────────────────────────
+  /* ─── LOCAL UI STATE ───────────────────────────────────────── */
   const [currentVote, setCurrentVote] = useState(null);
-  useEffect(() => {
-    if (!loadingGame && gameData?.game) {
-      const r = gameData.game.responses.find((r) => r.user._id === userId);
-      setCurrentVote(r ? r.isAvailable : null);
-    }
-  }, [loadingGame, gameData, userId]);
-
-  const [updatedNote, setUpdatedNote] = useState("");
-  useEffect(() => {
-    if (!loadingGame && gameData?.game) {
-      setUpdatedNote(gameData.game.notes || "");
-    }
-  }, [loadingGame, gameData]);
-
-  // feedback UI
+  const [updatedNote, setUpdatedNote] = useState('');
   const [showUpdate, setShowUpdate] = useState(false);
   const [showComplete, setShowComplete] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
   const [feedbackGiven, setFeedbackGiven] = useState(false);
+
+  /* sync misc states when game query resolves */
   useEffect(() => {
-    if (!loadingGame && gameData?.game) {
-      const done = gameData.game.feedbacks.some((f) => f.user._id === userId);
-      setFeedbackGiven(done);
-    }
+    if (loadingGame || !gameData?.game) return;
+
+    const g = gameData.game;
+
+    const r = g.responses.find((r) => r.user._id === userId);
+    setCurrentVote(r ? r.isAvailable : null);
+
+    setUpdatedNote(g.notes || '');
+
+    setFeedbackGiven(g.feedbacks.some((f) => f.user._id === userId));
   }, [loadingGame, gameData, userId]);
+
   const handleFeedback = () => {
     setShowThankYou(true);
-    setTimeout(() => setShowThankYou(false), 3000);
+    setTimeout(() => setShowThankYou(false), 3_000);
     setFeedbackGiven(true);
   };
 
-  if (loadingGame || loadingForm)
-    return <div className="text-center mt-4">Loading…</div>;
-  if (gameError || formError)
+  /* ─── LOADING / ERROR STATES ───────────────────────────────── */
+  if (loadingGame) return <p className="text-center mt-4">Loading…</p>;
+  if (gameError)
     return (
-      <div className="text-center mt-4 text-red-600">Error loading data</div>
+      <p className="text-center mt-4 text-red-600">
+        Error loading game details.
+      </p>
     );
   if (!gameData?.game)
-    return <div className="text-center mt-4 text-red-600">Game not found.</div>;
+    return (
+      <p className="text-center mt-4 text-red-600">Game not found.</p>
+    );
 
   const game = gameData.game;
   const isCreator = game.creator._id === userId;
-  const dateObj = new Date(Number(game.date));
-  const humanDate = isNaN(dateObj) ? game.date : dateObj.toLocaleDateString();
-  const [h, m] = game.time.split(":").map(Number);
-  const hour12 = ((h + 11) % 12) + 1;
-  const ampm = h >= 12 ? "PM" : "AM";
-  const gameTime = `${hour12}:${m.toString().padStart(2, "0")} ${ampm}`;
 
+  /* ─── Human-friendly date/time ─────────────────────────────── */
+  const humanDate = new Date(+game.date).toLocaleDateString();
+  const [h, m] = game.time.split(':').map(Number);
+  const hour12 = ((h + 11) % 12) + 1;
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const humanTime = `${hour12}:${m.toString().padStart(2, '0')} ${ampm}`;
+
+  /* voters list */
   const yesVoters = game.responses
     .filter((r) => r.isAvailable)
     .map((r) => r.user.name);
@@ -185,34 +182,38 @@ export default function GameDetails({ gameId }) {
     .filter((r) => !r.isAvailable)
     .map((r) => r.user.name);
 
+  /* ──────────────────────────────────────────────────────────── */
+  /*  JSX                                                         */
+  /* ──────────────────────────────────────────────────────────── */
   return (
     <div
-      className={`max-w-screen mx-auto p-6 rounded-lg shadow-md
-      grid grid-cols-1 lg:grid-cols-2 gap-8
-      ${isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-800"}`}
+      className={`max-w-screen mx-auto p-6 rounded-lg shadow-md grid grid-cols-1 lg:grid-cols-2 gap-8 ${
+        isDarkMode ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-800'
+      }`}
     >
-      {/* ─── LEFT COLUMN: Info, Voting & Voters ─────────────────────────── */}
+      {/* ───────────────── LEFT COLUMN ────────────────────────── */}
       <div>
         <button
-          onClick={() => navigate("/game-schedule")}
+          onClick={() => navigate('/game-schedule')}
           className={`mb-4 px-4 py-2 rounded ${
-            isDarkMode ? "bg-gray-500 text-white" : "bg-indigo-600 text-white"
+            isDarkMode ? 'bg-gray-500 text-white' : 'bg-indigo-600 text-white'
           }`}
         >
           ← Back to Game List
         </button>
 
+        {/* INFO */}
         <h3 className="text-xl font-semibold mb-4">
           <strong>Date:</strong> {humanDate} &nbsp;|&nbsp;
-          <strong>Time:</strong> {gameTime}
+          <strong>Time:</strong> {humanTime}
         </h3>
 
         <p className="text-lg font-semibold mb-4">
-          <strong>Venue: </strong> {game.venue}
-          &nbsp;|&nbsp;
+          <strong>Venue: </strong> {game.venue} &nbsp;|&nbsp;
           <strong>Opponent: </strong> {game.opponent}
         </p>
 
+        {/* NOTES */}
         {isCreator ? (
           <textarea
             value={updatedNote}
@@ -223,11 +224,12 @@ export default function GameDetails({ gameId }) {
           />
         ) : (
           <p className="mb-4">
-            <strong>Note:</strong> {game.notes || "No notes"}
+            <strong>Note:</strong> {game.notes || 'No notes'}
           </p>
         )}
 
-        {game.status === "PENDING" && (
+        {/* VOTING (PENDING only) */}
+        {game.status === 'PENDING' && (
           <div className="mb-6 space-x-4">
             {currentVote === null ? (
               <>
@@ -264,7 +266,7 @@ export default function GameDetails({ gameId }) {
                   }
                   className="px-4 py-2 bg-yellow-600 text-white rounded"
                 >
-                  Change to {currentVote ? "No" : "Yes"}
+                  Change to {currentVote ? 'No' : 'Yes'}
                 </button>
                 <button
                   onClick={() => unvoteGame({ variables: { gameId } })}
@@ -277,16 +279,19 @@ export default function GameDetails({ gameId }) {
           </div>
         )}
 
-        {game.status !== "PENDING" && (
+        {/* STATUS */}
+        {game.status !== 'PENDING' && (
           <p className="mb-4">
-            <strong>Status:</strong>{" "}
+            <strong>Status:</strong>{' '}
             <span
               className={
-                game.status === "CONFIRMED"
-                  ? "text-green-600"
-                  : game.status === "COMPLETED"
-                  ? "text-green-400"
-                  : "text-red-600"
+                game.status === 'CONFIRMED'
+                  ? 'text-green-600'
+                  : game.status === 'COMPLETED'
+                  ? 'text-green-400'
+                  : game.status === 'CANCELLED'
+                  ? 'text-red-600'
+                  : 'text-yellow-600'
               }
             >
               {game.status}
@@ -294,93 +299,106 @@ export default function GameDetails({ gameId }) {
           </p>
         )}
 
-        {game.status === "COMPLETED" && (
+        {/* SCORE / RESULT (COMPLETED) */}
+        {game.status === 'COMPLETED' && (
           <div className="mb-6">
             <p className="mb-2">
               <strong>Score:</strong> {game.score}
             </p>
             <p className="mb-2">
-              <strong>Result:</strong> {game.result.replace("_", " ")}
+              <strong>Result:</strong> {game.result.replace('_', ' ')}
             </p>
-            <p className="mt-2 p-2  bg-yellow-300 dark:bg-gray-500 rounded">
-              <strong>Avg Rating:</strong> {game.averageRating.toFixed(1)} / 10
+            <p className="mt-2 p-2 bg-yellow-300 dark:bg-gray-500 rounded">
+              <strong>Avg Rating:</strong>{' '}
+              {game.averageRating.toFixed(1)} / 10
             </p>
           </div>
         )}
 
-        {isCreator && game.status === "PENDING" && (
+        {/* CREATOR ACTIONS */}
+        {isCreator && (
           <div className="space-x-4 mb-6">
-            <button
-              onClick={() =>
-                confirmGame({ variables: { gameId, note: updatedNote } })
-              }
-              className="px-4 py-2 bg-blue-600 text-white rounded"
-            >
-              Confirm
-            </button>
-            <button
-              onClick={() => setShowUpdate(true)}
-              className="px-4 py-2 bg-green-600 text-white rounded"
-            >
-              Update
-            </button>
-            <button
-              onClick={() =>
-                cancelGame({ variables: { gameId, note: updatedNote } })
-              }
-              className="px-4 py-2 bg-red-600 text-white rounded"
-            >
-              Cancel
-            </button>
+            {/* PENDING or CANCELLED → Confirm */}
+            {(game.status === 'PENDING' || game.status === 'CANCELLED') && (
+              <button
+                onClick={() =>
+                  confirmGame({ variables: { gameId, note: updatedNote } })
+                }
+                className="px-4 py-2 bg-blue-600 text-white rounded"
+              >
+                Confirm
+              </button>
+            )}
+
+            {/* PENDING specific actions */}
+            {game.status === 'PENDING' && (
+              <>
+                <button
+                  onClick={() => setShowUpdate(true)}
+                  className="px-4 py-2 bg-green-600 text-white rounded"
+                >
+                  Update
+                </button>
+                <button
+                  onClick={() =>
+                    cancelGame({ variables: { gameId, note: updatedNote } })
+                  }
+                  className="px-4 py-2 bg-red-600 text-white rounded"
+                >
+                  Cancel
+                </button>
+              </>
+            )}
+
+            {/* CONFIRMED specific actions */}
+            {game.status === 'CONFIRMED' && (
+              <>
+                <button
+                  onClick={() => setShowComplete(true)}
+                  className="px-4 py-2 bg-purple-600 text-white rounded"
+                >
+                  Complete
+                </button>
+                <button
+                  onClick={() =>
+                    cancelGame({ variables: { gameId, note: updatedNote } })
+                  }
+                  className="px-4 py-2 bg-red-600 text-white rounded"
+                >
+                  Cancel
+                </button>
+              </>
+            )}
           </div>
         )}
 
-        {isCreator && game.status === "CONFIRMED" && (
-          <div className="space-x-4 mb-6">
-            <button
-              onClick={() => setShowComplete(true)}
-              className="px-4 py-2 bg-purple-600 text-white rounded"
-            >
-              Complete
-            </button>
-            <button
-              onClick={() =>
-                cancelGame({ variables: { gameId, note: updatedNote } })
-              }
-              className="px-4 py-2 bg-red-600 text-white rounded"
-            >
-              Cancel
-            </button>
-          </div>
-        )}
-
+        {/* Voters */}
         <div className="flex space-x-4 mb-6">
-          <div>👍 {yesVoters.length}</div>
-          <div>❌ {noVoters.length}</div>
+          <span>👍 {yesVoters.length}</span>
+          <span>❌ {noVoters.length}</span>
         </div>
-
         <VotersList yesVoters={yesVoters} noVoters={noVoters} />
       </div>
 
-      {/* ─── RIGHT COLUMN: Formation or Feedback ───────────────────────── */}
+      {/* ───────────────── RIGHT COLUMN ───────────────────────── */}
       <div>
-        {game.status === "CONFIRMED" && !formation && !isCreator && (
+        {game.status === 'CONFIRMED' && !formation && !isCreator && (
           <p className="italic dark:text-white">
             The formation will appear here once the creator sets it up.
           </p>
         )}
 
-        {game.status === "CONFIRMED" && (formation || isCreator) && (
+        {game.status === 'CONFIRMED' && (formation || isCreator) && (
           <FormationSection
             game={game}
             formation={formation}
             isCreator={isCreator}
             setFormation={setFormation}
-            refetchFormation={refetchFormation}
+            refetchFormation={() => startTransition(refetchGame)}
           />
         )}
 
-        {game.status === "COMPLETED" && (
+        {game.status === 'COMPLETED' && (
           <>
             {showThankYou ? (
               <div className="p-4 bg-green-100 dark:bg-green-800 rounded text-center">
@@ -399,7 +417,7 @@ export default function GameDetails({ gameId }) {
         )}
       </div>
 
-      {/* ─── MODALS ─────────────────────────────────────────────────────── */}
+      {/* ───────────────── MODALS ─────────────────────────────── */}
       {isCreator && showUpdate && (
         <GameUpdate
           gameId={gameId}
@@ -412,6 +430,7 @@ export default function GameDetails({ gameId }) {
           onClose={() => setShowUpdate(false)}
         />
       )}
+
       {isCreator && showComplete && (
         <GameComplete
           gameId={gameId}

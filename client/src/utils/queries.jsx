@@ -518,6 +518,7 @@ export const GET_MATCHES = gql`
     }
   }
 `;
+// Fetch formation by game ID
 export const QUERY_FORMATION = gql`
   query formation($gameId: ID!) {
     formation(gameId: $gameId) {
@@ -529,6 +530,46 @@ export const QUERY_FORMATION = gql`
           _id
           name
         }
+      }
+      likes
+      likedBy {
+        _id
+        name
+      }
+    }
+  }
+`;
+// Fetch formation comments for a specific game
+export const GET_FORMATION_COMMENTS = gql`
+  query GetFormation($gameId: ID!) {
+    formation(gameId: $gameId) {
+      _id
+      comments {
+        _id
+        commentText
+        commentAuthor
+        user {
+          _id
+          name
+        }
+        likes
+        likedBy {
+          _id
+        }
+        createdAt
+      }
+    }
+  }
+`;
+// Fetch formation likes for a specific game
+export const GET_FORMATION_LIKES = gql`
+  query GetFormationLikes($gameId: ID!) {
+    formation(gameId: $gameId) {
+      _id
+      likes
+      likedBy {
+        _id
+        name     
       }
     }
   }

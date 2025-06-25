@@ -94,22 +94,36 @@ const typeDefs = gql`
     updatedAt: String!
     feedbacks: [Feedback!]!
     averageRating: Float!
-    formation: Formation 
+    formation: Formation
   }
 
-type Position {
-  slot: Int!
-  player: Profile
-}
+  type Position {
+    slot: Int!
+    player: Profile
+  }
 
-type Formation {
-  _id: ID!
-  game: Game!
-  formationType: String!
-  positions: [Position!]!
-  createdAt: String!
-  updatedAt: String!
-}
+  type Formation {
+    _id: ID!
+    game: Game!
+    formationType: String!
+    positions: [Position!]!
+    comments: [FormationComment!]!
+    likes: Int!
+    likedBy: [Profile!]!
+    createdAt: String!
+    updatedAt: String!
+  }
+
+  type FormationComment {
+    _id: ID!
+    commentText: String!
+    commentAuthor: String!
+    user: Profile!
+    likes: Int!
+    likedBy: [Profile!]!
+    createdAt: String!
+    updatedAt: String!
+  }
 
   type ResponseMessage {
     message: String!
@@ -181,10 +195,10 @@ type Formation {
     rating: Int!
   }
 
-input PositionInput {
-  slot: Int!
-  playerId: ID
-}
+  input PositionInput {
+    slot: Int!
+    playerId: ID
+  }
 
   type Auth {
     token: ID!
@@ -269,8 +283,16 @@ input PositionInput {
     updateGame(gameId: ID!, input: UpdateGameInput!): Game!
     addFeedback(gameId: ID!, comment: String, rating: Int!): Game!
     createFormation(gameId: ID!, formationType: String!): Formation!
-  updateFormation(gameId: ID!, positions: [PositionInput!]!): Formation!
-  deleteFormation(gameId: ID!): Boolean! 
+    updateFormation(gameId: ID!, positions: [PositionInput!]!): Formation!
+    deleteFormation(gameId: ID!): Boolean!
+    addFormationComment(formationId: ID!, commentText: String!): Formation
+    updateFormationComment(
+      commentId: ID!
+      commentText: String!
+    ): FormationComment
+    deleteFormationComment(formationId: ID!, commentId: ID!): ID!
+    likeFormationComment(commentId: ID!): FormationComment
+    likeFormation(formationId: ID!): Formation
   }
   type Subscription {
     chatCreated: Chat
@@ -291,8 +313,13 @@ input PositionInput {
     gameDeleted: ID
     gameUpdated: Game
     formationCreated(gameId: ID!): Formation
-  formationUpdated(gameId: ID!): Formation
-  formationDeleted(gameId: ID!): ID
+    formationUpdated(gameId: ID!): Formation
+    formationDeleted(gameId: ID!): ID
+    formationLiked(formationId: ID!): Formation
+    formationCommentAdded(formationId: ID!): FormationComment
+    formationCommentUpdated(formationId: ID!): FormationComment
+    formationCommentDeleted: ID!
+    formationCommentLiked(formationId: ID!): FormationComment
   }
 `;
 

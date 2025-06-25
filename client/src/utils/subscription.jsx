@@ -258,3 +258,69 @@ export const GAME_DELETED_SUBSCRIPTION = gql`
       formationDeleted(gameId: $gameId)
     }
   `;
+
+  export const FORMATION_LIKED_SUBSCRIPTION = gql`
+  subscription OnFormationLiked($formationId: ID!) {
+    formationLiked(formationId: $formationId) {
+      _id
+      likes
+      likedBy {
+        _id
+        name
+      }
+    }
+  }
+`;
+
+  export const FORMATION_COMMENT_ADDED_SUBSCRIPTION = gql`
+  subscription OnFormationCommentAdded($formationId: ID!) {
+    formationCommentAdded(formationId: $formationId) {
+      _id commentText commentAuthor user { _id name } likes
+      createdAt
+    }
+  }
+`;
+
+export const FORMATION_COMMENT_UPDATED_SUBSCRIPTION = gql`
+  subscription OnFormationCommentUpdated($commentId: ID!) {
+    formationCommentUpdated(commentId: $commentId) {
+      _id commentText updatedAt
+    }
+  }
+`;
+
+export const FORMATION_COMMENT_DELETED_SUBSCRIPTION = gql`
+ subscription OnFormationCommentDeleted {
+    formationCommentDeleted     # returns deleted ID
+  }
+`;
+
+export const FORMATION_COMMENT_LIKED_SUBSCRIPTION = gql`
+  subscription OnFormationCommentLiked($commentId: ID!) {
+    formationCommentLiked(commentId: $commentId) {
+      _id likes likedBy { _id name }
+    }
+  }
+`;
+
+export const FORMATION_COMMENT_UPDATED_SUB = gql`
+  subscription OnFormationCommentUpdated($formationId: ID!) {
+    formationCommentUpdated(formationId: $formationId) {
+      _id
+      commentText
+      likes
+      likedBy { _id }
+      updatedAt
+    }
+  }
+`;
+
+export const FORMATION_COMMENT_LIKED_SUB = gql`
+  subscription OnFormationCommentLiked($formationId: ID!) {
+    formationCommentLiked(formationId: $formationId) {
+      _id
+      likes
+      likedBy { _id }
+    }
+  }
+`;

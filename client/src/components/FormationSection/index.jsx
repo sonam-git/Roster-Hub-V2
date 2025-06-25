@@ -19,7 +19,9 @@ import {
   FORMATION_DELETED_SUBSCRIPTION,
 } from "../../utils/subscription";
 import AvailablePlayersList from "../AvailablePlayersList";
-import FormationBoard from "../Formationboard";
+import FormationBoard from "../FormationBoard";
+import FormationLikeButton from '../FormationLikeButton';
+import FormationCommentList from '../FormationCommentList';
 
 const FORMATION_TYPES = [
   "1-4-3-3",
@@ -210,6 +212,7 @@ export default function FormationSection({
 
           <FormationBoard rows={rows} assignments={assignments} />
 
+
           <DragOverlay>
             {draggingPlayer && (
               <div className="p-2 bg-white rounded shadow text-sm font-semibold">
@@ -238,6 +241,19 @@ export default function FormationSection({
         </div>
         
           )}
+                    {formation && (
+  <div className="mt-6 space-y-4">
+  <FormationLikeButton
+  formationId={formation._id}
+  likes={formation.likes}
+  likedBy={formation.likedBy}
+  onUpdate={(full) => setFormation(full)}
+/>
+
+
+    <FormationCommentList gameId={gameId} />
+  </div>
+)}
         </DndContext>
       )}
     </div>

@@ -516,7 +516,7 @@ export const ADD_FEEDBACK = gql`
     }
   }
 `;
-
+// Mutation to create formation for a game
 export const CREATE_FORMATION = gql`
   mutation createFormation($gameId: ID!, $formationType: String!) {
     createFormation(gameId: $gameId, formationType: $formationType) {
@@ -526,7 +526,7 @@ export const CREATE_FORMATION = gql`
     }
   }
 `;
-
+// Mutation to add or update a player to a formation
 export const UPDATE_FORMATION = gql`
   mutation updateFormation($gameId: ID!, $positions: [PositionInput!]!) {
     updateFormation(gameId: $gameId, positions: $positions) {
@@ -536,10 +536,62 @@ export const UPDATE_FORMATION = gql`
     }
   }
 `;
-
+// Mutation to delete a formation for a game
 export const DELETE_FORMATION = gql`
   mutation deleteFormation($gameId: ID!) {
     deleteFormation(gameId: $gameId)
+  }
+`;
+// Mutation to like a formation
+export const LIKE_FORMATION = gql`
+  mutation LikeFormation($formationId: ID!) {
+    likeFormation(formationId: $formationId) {
+      _id
+      likes
+      likedBy {
+        _id
+        name
+      }
+    }
+  }
+`;
+// Mutation to add a comment to a formation
+export const ADD_FORMATION_COMMENT = gql`
+  mutation AddFormationComment($formationId: ID!, $commentText: String!) {
+    addFormationComment(formationId: $formationId, commentText: $commentText) {
+      _id
+      comments {
+        _id commentText commentAuthor user { _id name } likes
+      }
+    }
+  }
+`;
+// Mutation to update a formation comment
+export const UPDATE_FORMATION_COMMENT = gql`
+  mutation UpdateFormationComment($commentId: ID!, $commentText: String!) {
+    updateFormationComment(commentId: $commentId, commentText: $commentText) {
+      _id 
+      commentText
+      _id
+      commentText
+      likes
+      likedBy { _id }
+      updatedAt
+    }
+  }
+`;
+// Mutation to delete a formation comment
+export const DELETE_FORMATION_COMMENT = gql`
+  mutation DeleteFormationComment($formationId: ID!, $commentId: ID!) {
+    deleteFormationComment(formationId: $formationId, commentId: $commentId)
+  }
+`;
+// Mutation to like a formation comment
+export const LIKE_FORMATION_COMMENT = gql`
+  mutation LikeFormationComment($commentId: ID!) {
+    likeFormationComment(commentId: $commentId) {
+      _id likes likedBy { _id }
+    }
   }
 `;
 
