@@ -219,22 +219,24 @@ export default function FormationSection({
           </DragOverlay>
 
           {isCreator && (
-            <div className="space-x-2 mt-4">
-              <button
-                onClick={handleSubmitFormation}
-                className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-900"
-              >
-                {isFormed ? "Update Formation" : "Create Formation"}
-              </button>
-              {isFormed && (
-                <button
-                  onClick={handleDelete}
-                  className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-700"
-                >
-                  Delete Formation
-                </button>
-              )}
-            </div>
+          <div className="flex flex-col-2 lg:flex-row space-y-2 lg:space-y-0 lg:space-x-2 mt-4">
+          <button
+            onClick={handleSubmitFormation}
+            className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-900"
+          >
+            {isFormed ? "Update Formation" : "Create Formation"}
+          </button>
+        
+          {isFormed && (
+            <button
+              onClick={handleDelete}
+              className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-700"
+            >
+              Delete Formation
+            </button>
+          )}
+        </div>
+        
           )}
         </DndContext>
       )}

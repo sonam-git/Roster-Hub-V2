@@ -81,6 +81,7 @@ export default function ComingGames() {
   if (error) return <p className="text-red-500">Error: {error.message}</p>;
   if (upcoming.length === 0)
     return <p className="text-center italic">No upcoming games.</p>;
+  
 
   return (
     <div
@@ -91,7 +92,7 @@ export default function ComingGames() {
       <p className="text-xs text-center mb-2">
         Select the button to see the game status.
       </p>
-
+ 
       {/* Status filter */}
       <div className="flex justify-between mb-4 bg-gray-200 p-2 rounded">
         {STATUS_FILTERS.map((opt) => {
@@ -116,7 +117,9 @@ export default function ComingGames() {
           );
         })}
       </div>
-
+      
+      { byStatus.length === 0 &&
+        <p className="text-center italic text-sm">No {filter.toLowerCase()} games.</p>}
       <ul className="overflow-y-auto max-h-40 space-y-3">
         {byStatus.map((game) => {
           const { _id, opponent, dateObj, status, time, formation } = game;

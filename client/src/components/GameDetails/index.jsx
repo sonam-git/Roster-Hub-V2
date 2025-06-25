@@ -208,9 +208,9 @@ export default function GameDetails({ gameId }) {
         </h3>
 
         <p className="text-lg font-semibold mb-4">
-          <strong>Venue:</strong> {game.venue}
+          <strong>Venue: </strong> {game.venue}
           &nbsp;|&nbsp;
-          <strong>Opponent:</strong> {game.opponent}
+          <strong>Opponent: </strong> {game.opponent}
         </p>
 
         {isCreator ? (
