@@ -10,11 +10,14 @@ This project is a soccer team management system built using the MERN stack (Mong
 * GraphQL API for querying and mutating data
 * Players can create an account by signing up
 * Players can add their information such as name,profile photo,
-  jersey number, position, and phone number
+  jersey number, position, different social media link and phone number
 * Players can see other players' information and endorse their skills
-* Players can send Text | Message each others
+* Players can send Text | Message each others | Realtime
 * Players can post their thoughts and comment on it
 * Players can reset password word if they forgot their password 
+* Players can create game schedule poll to see how many players are available.
+* Players can create formation for upcoming game, and comment on it for suggestion
+* Players can give feedback after game is over
 
 ## Technologies Used
 
@@ -25,9 +28,10 @@ This project is a soccer team management system built using the MERN stack (Mong
 * GraphQL: GraphQL is used as the API query language to interact with the backend.
 * JWT (JSON Web Tokens): JWT is used for user authentication.
 * Tailwind CSS : Styling
+* Cloudinary : to save photo
 
 ## Setup Instructions
-1. Clone the repositiory :https://github.com/sonam-git/Roster---Hub.git
+1. Clone the repositiory :https://github.com/sonam-git/Roster-Hub-V2
 2. Navigate to the project directory: cd Roster---Hub
 3. Install dependencies for both the backend and frontend:
 cd backend

@@ -374,8 +374,8 @@ export default function GameDetails({ gameId }) {
 
         {/* Voters */}
         <div className="flex space-x-4 mb-6">
-          <span>👍 {yesVoters.length}</span>
-          <span>❌ {noVoters.length}</span>
+          <span> Available : 👍 {yesVoters.length}</span>
+          <span>Not Available : ❌ {noVoters.length}</span>
         </div>
         <VotersList yesVoters={yesVoters} noVoters={noVoters} />
       </div>
