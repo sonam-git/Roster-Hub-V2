@@ -74,6 +74,9 @@ const Login = () => {
             alt="Roster Hub Logo"
             className="w-64 h-64 animate-bounce mt-4"
           />
+             <h4 className="text-center text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white mb-6 bg-gradient-to-r from-green-500 via-blue-500 to-red-500 bg-clip-text text-transparent">
+            Elevate Your Game, On and Off the Field
+          </h4>
         </div>
 
         {/* Login Form Section */}

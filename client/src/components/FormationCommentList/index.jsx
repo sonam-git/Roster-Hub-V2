@@ -91,6 +91,9 @@ function CommentsPane({ gameId }) {
       );
     },
   });
+  const sorted = [...comments].sort(
+    (a, b) => parseInt(a.createdAt, 10) - parseInt(b.createdAt, 10)
+  );
 
   /* 4️⃣ Render */
   return (
@@ -101,7 +104,7 @@ function CommentsPane({ gameId }) {
       {comments.length === 0 ? (
         <p className="mt-2 italic">No comments yet for this Formation.</p>
       ) : (
-        comments.map((c) => (
+        sorted.map((c) => (
           <FormationCommentItem
             key={c._id}
             comment={c}
