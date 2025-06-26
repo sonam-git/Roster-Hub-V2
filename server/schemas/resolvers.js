@@ -161,7 +161,7 @@ const resolvers = {
         throw new Error(err);
       }
     },
-    // finds a post by its posttId
+    // ************************** QUERY SINGLE POST  *******************************************//
     post: async (parent, { postId }) => {
       try {
         const post = await Post.findById(postId)
@@ -189,7 +189,7 @@ const resolvers = {
         throw new Error(err);
       }
     },
-    // finds a comment by its commentId
+    // ************************** QUERY SINGLE COMMENT *******************************************//
     comment: async (parent, { commentId }) => {
       try {
         const comment = await Comment.findById(commentId).populate("likedBy");
@@ -220,11 +220,9 @@ const resolvers = {
       );
       return profile.ratings.length ? totalRatings / profile.ratings.length : 0;
     },
-
     // ************************** QUERY CHAT *******************************************//
     getChatByUser: async (parent, { to }, context) => {
       const userId = context.user._id;
-      // console.log(userId)
       // Check if user is authenticated
       if (!userId) {
         throw new AuthenticationError(
@@ -239,7 +237,7 @@ const resolvers = {
             { from: userId, to },
             { from: to, to: userId },
           ],
-        }).populate("from to"); // Assuming 'from' and 'to' are references to User model
+        }).populate("from to"); // 'from' and 'to' are references to User model
 
         return chat;
       } catch (error) {
@@ -247,10 +245,11 @@ const resolvers = {
         throw new Error("Failed to fetch chat");
       }
     },
-
+    // ************************** QUERY ALL CHATS *******************************************//
     getAllChats: async () => {
       return await Chat.find().populate("from to");
     },
+    // ************************** QUERY CHATS BETWEEN TWO USERS *******************************************//
     getChatsBetweenUsers: async (parent, { userId1, userId2 }) => {
       return await Chat.find({
         $or: [
@@ -259,8 +258,7 @@ const resolvers = {
         ],
       }).populate("from to");
     },
-    // ************************** QUERY GAME *******************************************//
-    // ──────── List all games (optionally by status) ────────
+    // ************************** QUERY GAMES *******************************************//
     games: async (_, { status }, context) => {
       if (!context.user) {
         throw new AuthenticationError("You need to be logged in to view games");
@@ -275,8 +273,7 @@ const resolvers = {
         .populate("feedbacks.user")
         .sort({ date: 1, time: 1 });
     },
-
-    // ──────── Fetch a single game by ID ────────
+    // ************************** QUERY SINGLE GAME *******************************************//
     game: async (_, { gameId }, context) => {
       if (!context.user) {
         throw new AuthenticationError(
@@ -314,10 +311,11 @@ const resolvers = {
       return Formation.findOne({ game: gameId })
         .populate("game")
         .populate("positions.player")
-        .populate('likedBy')
-        .populate('comments.user');
+        .populate("likedBy")
+        .populate("comments.user");
     },
   },
+
   // ########## MUTAIIONS ########### //
   Mutation: {
     // **************************  SIGN UP / ADD USER *******************************************//
@@ -433,7 +431,6 @@ const resolvers = {
       }
       throw new AuthenticationError("You need to be logged in!");
     },
-
     // ************************** UPLOAD PROFILE PIC USING CLOUDINARY  *******************************************//
     uploadProfilePic: async (_, { profileId, profilePic }, context) => {
       if (!context.user) {
@@ -637,7 +634,6 @@ const resolvers = {
         throw new Error("Failed to create chat");
       }
     },
-
     // ************************** SAVE SOCIAL MEDIA LINK  *******************************************//
     saveSocialMediaLink: async (_, { userId, type, link }) => {
       try {
@@ -687,7 +683,6 @@ const resolvers = {
         throw new Error("Failed to update name.");
       }
     },
-
     // ************************** UPDATE PASSWORD *******************************************//
     updatePassword: async (_, { currentPassword, newPassword }, context) => {
       // Check if the user is authenticated
@@ -717,7 +712,6 @@ const resolvers = {
         throw new Error("Failed to update password.");
       }
     },
-
     // ************************** ADD POST *******************************************//
     addPost: async (parent, { profileId, postText }, context) => {
       if (!context.user) {
@@ -753,7 +747,6 @@ const resolvers = {
         throw new Error("Error creating post");
       }
     },
-
     // ************************** UPDATE POST  *******************************************//
     updatePost: async (_, { postId, postText }, context) => {
       if (!context.user) {
@@ -792,7 +785,6 @@ const resolvers = {
         throw new Error("Failed to update the post.");
       }
     },
-
     // ************************** DELETE POST *******************************************//
     removePost: async (parent, { postId }, context) => {
       if (!context.user) {
@@ -873,7 +865,6 @@ const resolvers = {
         throw new Error("Error adding comment");
       }
     },
-
     // ************************** UPDATE COMMENT *******************************************//
     updateComment: async (parent, { commentId, commentText }, context) => {
       if (context.user) {
@@ -898,7 +889,6 @@ const resolvers = {
       }
       throw new AuthenticationError("You need to be logged in!");
     },
-
     // ************************** REMOVE COMMENT *******************************************//
     removeComment: async (parent, { postId, commentId }, context) => {
       if (!context.user)
@@ -987,7 +977,6 @@ const resolvers = {
         throw new Error("Failed to remove profile");
       }
     },
-
     // ************************** FORGOT PASSWORD FUNCTIONALITY *******************************************//
     sendResetPasswordEmail: async (_, { email }) => {
       try {
@@ -1062,7 +1051,6 @@ const resolvers = {
       }
     },
     // ************************** CREATE GAME *******************************************//
-    // Create a new Game poll
     createGame: async (_, { input }, context) => {
       if (!context.user) {
         throw new AuthenticationError(
@@ -1090,7 +1078,7 @@ const resolvers = {
 
       return populated;
     },
-    // ──────── Respond (Yes/No) to a game ────────
+    // ************************** RESPOND YES / NO TO GAME *******************************************//
     respondToGame: async (_, { input }, context) => {
       if (!context.user) {
         throw new AuthenticationError("You need to be logged in to vote");
@@ -1120,7 +1108,28 @@ const resolvers = {
         .populate("creator")
         .populate("responses.user");
     },
-    // ──────── Confirm a game (only creator) ────────
+    // ************************** UNVOTE GAME POLL *******************************************//
+    unvoteGame: async (_, { gameId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in to unvote");
+      }
+      const game = await Game.findById(gameId);
+      if (!game) {
+        throw new UserInputError("Game not found");
+      }
+      const beforeCount = game.responses.length;
+      game.responses = game.responses.filter(
+        (r) => !r.user.equals(context.user._id)
+      );
+      if (game.responses.length === beforeCount) {
+        throw new UserInputError("You have not voted on this game");
+      }
+      await game.save();
+      return Game.findById(gameId)
+        .populate("creator")
+        .populate("responses.user");
+    },
+    // ************************** CONFIRM A GAME | ONLY BY CREATOR *******************************************//
     confirmGame: async (_, { gameId, note }, context) => {
       if (!context.user) {
         throw new AuthenticationError(
@@ -1146,7 +1155,7 @@ const resolvers = {
       pubsub.publish(GAME_CONFIRMED, { gameConfirmed: updated });
       return updated;
     },
-    // ──────── Complete a game (only creator) ────────
+    // ************************** COMPLETE A GAME | ONLY BY CREATOR *******************************************//
     completeGame: async (_, { gameId, score, result, note }, context) => {
       if (!context.user) throw new AuthenticationError("You must be logged in");
       const game = await Game.findById(gameId);
@@ -1167,8 +1176,7 @@ const resolvers = {
       pubsub.publish(GAME_COMPLETED, { gameCompleted: updated });
       return updated;
     },
-
-    // ──────── Cancel a game (only creator) ────────
+    // ************************** CANCEL  A GAME | ONLY BY CREATOR *******************************************//
     cancelGame: async (_, { gameId, note }, context) => {
       if (!context.user) {
         throw new AuthenticationError(
@@ -1194,44 +1202,7 @@ const resolvers = {
       pubsub.publish(GAME_CANCELLED, { gameCancelled: updated });
       return updated;
     },
-    // ──────── Unvote a game (remove response) ────────
-    unvoteGame: async (_, { gameId }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError("You need to be logged in to unvote");
-      }
-      const game = await Game.findById(gameId);
-      if (!game) {
-        throw new UserInputError("Game not found");
-      }
-      const beforeCount = game.responses.length;
-      game.responses = game.responses.filter(
-        (r) => !r.user.equals(context.user._id)
-      );
-      if (game.responses.length === beforeCount) {
-        throw new UserInputError("You have not voted on this game");
-      }
-      await game.save();
-      return Game.findById(gameId)
-        .populate("creator")
-        .populate("responses.user");
-    },
-    // ──────── Delete a game (only creator) ────────
-    deleteGame: async (_, { gameId }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError("You must be logged in to delete games");
-      }
-      const game = await Game.findById(gameId);
-      if (!game) throw new Error("Game not found");
-      if (!game.creator.equals(context.user._id)) {
-        throw new AuthenticationError("Not authorized");
-      }
-
-      await Game.findByIdAndDelete(gameId);
-      // publish only the ID
-      pubsub.publish(GAME_DELETED, { gameDeleted: gameId });
-      return game;
-    },
-    // ──────── Update a game (only creator) ────────
+    // ************************** UPDATE A GAME | ONLY BY CREATOR *******************************************//
     updateGame: async (_, { gameId, input }, context) => {
       if (!context.user) {
         throw new AuthenticationError("You must be logged in");
@@ -1262,7 +1233,23 @@ const resolvers = {
       pubsub.publish(GAME_UPDATED, { gameUpdated: game });
       return game;
     },
-    // ──────── Add feedback to a completed game ────────
+    // ************************** DELETE A GAME | ONLY BY CREATOR *******************************************//
+    deleteGame: async (_, { gameId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You must be logged in to delete games");
+      }
+      const game = await Game.findById(gameId);
+      if (!game) throw new Error("Game not found");
+      if (!game.creator.equals(context.user._id)) {
+        throw new AuthenticationError("Not authorized");
+      }
+
+      await Game.findByIdAndDelete(gameId);
+      // publish only the ID
+      pubsub.publish(GAME_DELETED, { gameDeleted: gameId });
+      return game;
+    },
+    // ************************** ADD A FEEDBACK TO COMPLETED GAME *******************************************//
     addFeedback: async (_, { gameId, comment, rating }, context) => {
       if (!context.user) {
         throw new AuthenticationError("Must be logged in");
@@ -1297,7 +1284,7 @@ const resolvers = {
       await game.save();
       return game;
     },
-    // ──────── Create a formation ────────
+    // ************************** CREATE A FORMATION | ONLY BY CREATOR *******************************************//
     createFormation: async (_, { gameId, formationType }, context) => {
       if (!context.user) throw new AuthenticationError("Not logged in");
 
@@ -1327,8 +1314,7 @@ const resolvers = {
 
       return full;
     },
-
-    // ──────── Update a formation ────────
+    // ************************** UPDATE FORMATION | ONLY BY CREATOR *******************************************//
     updateFormation: async (_, { gameId, positions }, context) => {
       if (!context.user) throw new AuthenticationError("Not logged in");
 
@@ -1358,8 +1344,7 @@ const resolvers = {
 
       return full;
     },
-
-    // ──────── Delete a formation ────────
+    // ************************** DELETE A FORMATION | ONLY BY CREATOR *******************************************//
     deleteFormation: async (_, { gameId }, context) => {
       if (!context.user) throw new AuthenticationError("Not logged in");
 
@@ -1381,7 +1366,41 @@ const resolvers = {
 
       return true;
     },
-    //  ───────  add comment to a formation  ─────── 
+    // ************************** LIKE / UNLIKE FORMATION *******************************************//
+    likeFormation: async (_, { formationId }, { user }) => {
+      if (!user) throw new AuthenticationError("Login required");
+
+      const formation = await Formation.findById(formationId);
+      if (!formation) throw new Error("Formation not found");
+
+      const alreadyLiked = formation.likedBy.includes(user._id);
+
+      if (alreadyLiked) {
+        // UNLIKE
+        formation.likes = Math.max(0, formation.likes - 1);
+        formation.likedBy.pull(user._id);
+      } else {
+        // LIKE
+        formation.likes += 1;
+        formation.likedBy.push(user._id);
+      }
+
+      await formation.save();
+
+      const full = await Formation.findById(formationId)
+        .populate("game")
+        .populate("positions.player")
+        .populate("likedBy")
+        .populate("comments.user");
+
+      pubsub.publish(FORMATION_LIKED, {
+        formationLiked: full,
+        formationId: formationId.toString(),
+      });
+
+      return full;
+    },
+    // ************************** ADD FORMATION COMMENT *******************************************//
     addFormationComment: async (_, { formationId, commentText }, { user }) => {
       if (!user) throw new AuthenticationError("Login required");
       if (!commentText.trim()) throw new Error("Comment cannot be empty");
@@ -1405,7 +1424,7 @@ const resolvers = {
 
       return formation.populate("comments.user likedBy");
     },
-    // ─────── updateFormationComment ───────
+    // ************************** UPDATE FORMATION COMMENT *******************************************//
     updateFormationComment: async (_, { commentId, commentText }, { user }) => {
       if (!user) throw new AuthenticationError("You need to be logged in!");
       if (!commentText.trim()) throw new Error("Comment cannot be empty");
@@ -1430,31 +1449,30 @@ const resolvers = {
 
       return comment; // GraphQL returns the updated comment
     },
-
-    // ─────── deleteFormationComment ───────
+    // ************************** DELETE FORMATION COMMENT *******************************************//
     deleteFormationComment: async (_, { formationId, commentId }, { user }) => {
-      if (!user) throw new AuthenticationError('Login required');
-    
+      if (!user) throw new AuthenticationError("Login required");
+
       const formation = await Formation.findById(formationId);
-      if (!formation) throw new Error('Formation not found');
-    
+      if (!formation) throw new Error("Formation not found");
+
       const comment = formation.comments.id(commentId);
-      if (!comment) throw new Error('Comment not found');
+      if (!comment) throw new Error("Comment not found");
       if (!comment.user.equals(user._id))
-        throw new AuthenticationError('Not authorized');
-    
-      formation.comments.pull(commentId);   // remove
+        throw new AuthenticationError("Not authorized");
+
+      formation.comments.pull(commentId); // remove
       await formation.save();
-    
+
       // broadcast the deleted ID
       pubsub.publish(FORMATION_COMMENT_DELETED, {
         formationCommentDeleted: commentId,
-        commentId,               // keep payload consistent
+        formationId: formationId.toString()
       });
-    
-      return commentId;          // ✅ matches schema (ID)
+
+      return commentId; // ✅ matches schema (ID)
     },
-    // like / unlike a comment
+    // ************************** LIKE / UNLIKE FORMATION COMMENT *******************************************//
     likeFormationComment: async (_, { commentId }, { user }) => {
       if (!user) throw new AuthenticationError("Login required");
       const formation = await Formation.findOne({ "comments._id": commentId });
@@ -1473,57 +1491,26 @@ const resolvers = {
 
       pubsub.publish(FORMATION_COMMENT_LIKED, {
         formationCommentLiked: comment,
-       formationId: formation._id.toString(),
+        formationId: formation._id.toString(),
       });
       return comment;
-    },
-        // like / unlike a formation
-    likeFormation: async (_, { formationId }, { user }) => {
-          if (!user) throw new AuthenticationError('Login required');
-      
-          const formation = await Formation.findById(formationId);
-          if (!formation) throw new Error('Formation not found');
-      
-          const alreadyLiked = formation.likedBy.includes(user._id);
-      
-          if (alreadyLiked) {
-            // UNLIKE
-            formation.likes = Math.max(0, formation.likes - 1);
-            formation.likedBy.pull(user._id);
-          } else {
-            // LIKE
-            formation.likes += 1;
-            formation.likedBy.push(user._id);
-          }
-      
-          await formation.save();
-      
-          const full = await Formation.findById(formationId)
-            .populate('game')
-            .populate('positions.player')
-            .populate('likedBy')
-            .populate('comments.user');
-      
-          pubsub.publish(FORMATION_LIKED, {
-            formationLiked: full,
-            formationId: formationId.toString(),
-          });
-      
-          return full;
     },
   },
 
   // ############ SUBSCRIPTION ############## //
   Subscription: {
+    // chat related subscription
     chatCreated: {
       subscribe: () => pubsub.asyncIterator(["CHAT_CREATED"]),
     },
+    // skill related subscription
     skillAdded: {
       subscribe: () => pubsub.asyncIterator(SKILL_ADDED),
     },
     skillDeleted: {
       subscribe: () => pubsub.asyncIterator(SKILL_DELETED),
     },
+    // posts related subscription
     postAdded: {
       subscribe: () => pubsub.asyncIterator([POST_ADDED]),
     },
@@ -1540,6 +1527,7 @@ const resolvers = {
     postDeleted: {
       subscribe: () => pubsub.asyncIterator(POST_DELETED),
     },
+    // post's comment related subscriptions
     commentAdded: {
       subscribe: withFilter(
         () => pubsub.asyncIterator([COMMENT_ADDED]),
@@ -1560,6 +1548,7 @@ const resolvers = {
           payload.commentLiked._id.toString() === variables.commentId
       ),
     },
+    // game related subscriptions
     gameCreated: {
       subscribe: () => pubsub.asyncIterator(GAME_CREATED),
     },
@@ -1578,7 +1567,7 @@ const resolvers = {
     gameUpdated: {
       subscribe: () => pubsub.asyncIterator(GAME_UPDATED),
     },
-
+    // formation related subscription
     formationCreated: {
       subscribe: withFilter(
         () => pubsub.asyncIterator([FORMATION_CREATED]),
@@ -1607,35 +1596,6 @@ const resolvers = {
       resolve: (payload) => payload.formationDeleted,
     },
 
-    formationCommentAdded: {
-      subscribe: withFilter(
-        () => pubsub.asyncIterator(FORMATION_COMMENT_ADDED),
-        (payload, vars) => payload.formationId === vars.formationId
-      ),
-    },
-    
-    formationCommentUpdated: {
-      subscribe: withFilter(
-        () => pubsub.asyncIterator(FORMATION_COMMENT_UPDATED),
-        (p,v) => p.formationId === v.formationId
-      ),
-      resolve: (payload) => payload.formationCommentUpdated,
-    },
-
-    formationCommentDeleted: {
-      subscribe: () => pubsub.asyncIterator([FORMATION_COMMENT_DELETED]),
-      resolve: (payload) => payload.formationCommentDeleted,
-    },
-
-    formationCommentLiked: {
-      subscribe: withFilter(
-        () => pubsub.asyncIterator(FORMATION_COMMENT_LIKED),
-      
-        (p,v) => p.formationId === v.formationId
-      ),
-      resolve: (payload) => payload.formationCommentLiked,
-    },
-    
     formationLiked: {
       subscribe: withFilter(
         () => pubsub.asyncIterator([FORMATION_LIKED]),
@@ -1644,8 +1604,42 @@ const resolvers = {
       ),
       resolve: (payload) => payload.formationLiked,
     },
+    // formation comments related subscriptions
+    formationCommentAdded: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator(FORMATION_COMMENT_ADDED),
+        (payload, vars) => payload.formationId === vars.formationId
+      ),
+    },
+
+    formationCommentUpdated: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator(FORMATION_COMMENT_UPDATED),
+        (p, v) => p.formationId === v.formationId
+      ),
+      resolve: (payload) => payload.formationCommentUpdated,
+    },
+
+    formationCommentDeleted: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator('FORMATION_COMMENT_DELETED'),
+        // only push deletes for the matching formation
+        (payload, variables) =>
+          payload.formationId.toString() === variables.formationId
+      ),
+      resolve: payload => payload.formationCommentDeleted
+    },
+
+    formationCommentLiked: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator(FORMATION_COMMENT_LIKED),
+
+        (p, v) => p.formationId === v.formationId
+      ),
+      resolve: (payload) => payload.formationCommentLiked,
+    },
   },
-  // ──────── Type‐level resolvers for Chat ────────
+  // ############  Type‐level resolvers for Chat ############## //
   Chat: {
     from: async (chat) => {
       return await Profile.findById(chat.from);
@@ -1654,7 +1648,7 @@ const resolvers = {
       return await Profile.findById(chat.to);
     },
   },
-  // ──────── Type‐level resolvers for Game ────────
+  // ############  Type‐level resolvers for Game ############ //
   Game: {
     availableCount: (parent) => {
       return parent.responses.filter((r) => r.isAvailable).length;

@@ -150,7 +150,10 @@ export const GAME_CREATED_SUBSCRIPTION = gql`
   subscription OnGameCreated {
     gameCreated {
       _id
-      creator { _id name }
+      creator {
+        _id
+        name
+      }
       date
       time
       venue
@@ -160,14 +163,20 @@ export const GAME_CREATED_SUBSCRIPTION = gql`
       result
       status
       responses {
-        user { _id name }
+        user {
+          _id
+          name
+        }
         isAvailable
       }
       availableCount
       unavailableCount
       feedbacks {
         _id
-        user { _id name }
+        user {
+          _id
+          name
+        }
         comment
         rating
         createdAt
@@ -235,31 +244,43 @@ export const GAME_DELETED_SUBSCRIPTION = gql`
     gameDeleted
   }
 `;
-  export const FORMATION_CREATED_SUBSCRIPTION = gql`
-    subscription formationCreated($gameId: ID!) {
-      formationCreated(gameId: $gameId) {
-        _id
-        formationType
-        positions { slot player { _id name } }
+export const FORMATION_CREATED_SUBSCRIPTION = gql`
+  subscription formationCreated($gameId: ID!) {
+    formationCreated(gameId: $gameId) {
+      _id
+      formationType
+      positions {
+        slot
+        player {
+          _id
+          name
+        }
       }
     }
-  `;
-  export const FORMATION_UPDATED_SUBSCRIPTION = gql`
-    subscription formationUpdated($gameId: ID!) {
-      formationUpdated(gameId: $gameId) {
-        _id
-        formationType
-        positions { slot player { _id name } }
+  }
+`;
+export const FORMATION_UPDATED_SUBSCRIPTION = gql`
+  subscription formationUpdated($gameId: ID!) {
+    formationUpdated(gameId: $gameId) {
+      _id
+      formationType
+      positions {
+        slot
+        player {
+          _id
+          name
+        }
       }
     }
-  `;
-  export const FORMATION_DELETED_SUBSCRIPTION = gql`
-    subscription formationDeleted($gameId: ID!) {
-      formationDeleted(gameId: $gameId)
-    }
-  `;
+  }
+`;
+export const FORMATION_DELETED_SUBSCRIPTION = gql`
+  subscription formationDeleted($gameId: ID!) {
+    formationDeleted(gameId: $gameId)
+  }
+`;
 
-  export const FORMATION_LIKED_SUBSCRIPTION = gql`
+export const FORMATION_LIKED_SUBSCRIPTION = gql`
   subscription OnFormationLiked($formationId: ID!) {
     formationLiked(formationId: $formationId) {
       _id
@@ -272,55 +293,56 @@ export const GAME_DELETED_SUBSCRIPTION = gql`
   }
 `;
 
-  export const FORMATION_COMMENT_ADDED_SUBSCRIPTION = gql`
+export const FORMATION_COMMENT_ADDED_SUBSCRIPTION = gql`
   subscription OnFormationCommentAdded($formationId: ID!) {
     formationCommentAdded(formationId: $formationId) {
-      _id commentText commentAuthor user { _id name } likes
+      _id
+      commentText
+      commentAuthor
+      user {
+        _id
+        name
+      }
+      likes
+      likedBy {
+        _id
+        name
+      }
       createdAt
     }
   }
 `;
 
 export const FORMATION_COMMENT_UPDATED_SUBSCRIPTION = gql`
-  subscription OnFormationCommentUpdated($commentId: ID!) {
-    formationCommentUpdated(commentId: $commentId) {
-      _id commentText updatedAt
+  subscription OnFormationCommentUpdated($formationId: ID!) {
+    formationCommentUpdated(formationId: $formationId) {
+      _id
+      commentText
+      updatedAt
+      likes
+      likedBy {
+        _id
+        name
+      }
     }
   }
 `;
 
 export const FORMATION_COMMENT_DELETED_SUBSCRIPTION = gql`
- subscription OnFormationCommentDeleted {
-    formationCommentDeleted     # returns deleted ID
+  subscription OnFormationCommentDeleted($formationId: ID!) {
+    formationCommentDeleted(formationId: $formationId)
   }
 `;
 
 export const FORMATION_COMMENT_LIKED_SUBSCRIPTION = gql`
-  subscription OnFormationCommentLiked($commentId: ID!) {
-    formationCommentLiked(commentId: $commentId) {
-      _id likes likedBy { _id name }
-    }
-  }
-`;
-
-export const FORMATION_COMMENT_UPDATED_SUB = gql`
-  subscription OnFormationCommentUpdated($formationId: ID!) {
-    formationCommentUpdated(formationId: $formationId) {
-      _id
-      commentText
-      likes
-      likedBy { _id }
-      updatedAt
-    }
-  }
-`;
-
-export const FORMATION_COMMENT_LIKED_SUB = gql`
   subscription OnFormationCommentLiked($formationId: ID!) {
     formationCommentLiked(formationId: $formationId) {
       _id
       likes
-      likedBy { _id }
+      likedBy {
+        _id
+        name
+      }
     }
   }
 `;

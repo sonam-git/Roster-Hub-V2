@@ -54,6 +54,25 @@ export default function FormationCommentItem({ comment, formationId }) {
   /* ---- DELETE ------------------------------------------------------- */
   const [deleteComment] = useMutation(DELETE_FORMATION_COMMENT, {
     variables: { formationId, commentId: comment._id },
+    update(cache) {
+      // Identify the Formation in the cache...
+      const formationRef = cache.identify({
+        __typename: 'Formation',
+        _id: formationId
+      });
+  
+      // Remove this comment from its comments[] field
+      cache.modify({
+        id: formationRef,
+        fields: {
+          comments(existingRefs = [], { readField }) {
+            return existingRefs.filter(
+              ref => readField('_id', ref) !== comment._id
+            );
+          }
+        }
+      });
+    }
   });
   
   return (

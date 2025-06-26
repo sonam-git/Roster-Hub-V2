@@ -1,122 +1,117 @@
+// src/components/FormationCommentList.jsx
 import React, { useEffect, useState, startTransition, Suspense } from 'react';
 import { useQuery, useSubscription } from '@apollo/client';
 import {
   FORMATION_COMMENT_ADDED_SUBSCRIPTION,
   FORMATION_COMMENT_UPDATED_SUBSCRIPTION,
   FORMATION_COMMENT_DELETED_SUBSCRIPTION,
-  FORMATION_COMMENT_UPDATED_SUB,
-  FORMATION_COMMENT_LIKED_SUB,
+  FORMATION_COMMENT_LIKED_SUBSCRIPTION,
 } from '../../utils/subscription';
 import { GET_FORMATION_COMMENTS } from '../../utils/queries';
 import FormationCommentInput from '../FormationCommentInput';
-import FormationCommentItem  from '../FormationCommentItem';
+import FormationCommentItem from '../FormationCommentItem';
 
-/* ────────────────────────────────────────────────────────────────────────── */
 function CommentsPane({ gameId }) {
-  /* 1️⃣ Initial fetch (Suspense) */
+  // 1️⃣ Initial fetch
   const { data } = useQuery(GET_FORMATION_COMMENTS, {
     variables: { gameId },
     fetchPolicy: 'cache-and-network',
     suspense: true,
   });
 
-  /* Safeguard: if for any reason the query resolved with nulls */
-  const formation = data?.formation ?? { _id: '', comments: [] };
-  const formationId = formation._id;
+  // 2️⃣ Safely pull out formation & comments
+  const formation = data?.formation || { _id: '', comments: [] };
+  const formationId = formation?._id;
+  const initial = Array.isArray(formation?.comments) ? formation.comments : [];
+  const [comments, setComments] = useState(initial);
 
-  /* 2️⃣ Local state */
-  const [comments, setComments] = useState(() => formation.comments ?? []);
-
-  /* Keep fresh if cache pushes newer list */
+  // 3️⃣ Sync whenever the query updates
   useEffect(() => {
-    if (formation.comments) setComments(formation.comments);
-  }, [formation.comments]);
+    if (Array.isArray(formation?.comments)) {
+      setComments(formation.comments);
+    }
+  }, [formation?.comments]);
 
-  /* 3️⃣ Live subscriptions */
-
+  // 4️⃣ Live subscriptions
   useSubscription(FORMATION_COMMENT_ADDED_SUBSCRIPTION, {
     variables: { formationId },
     skip: !formationId,
     onData: ({ data }) => {
       const newC = data.data?.formationCommentAdded;
-      if (newC)
-        startTransition(() => setComments((prev) => [newC, ...prev]));
+      if (newC) {
+        startTransition(() => setComments(prev => [...prev, newC]));
+      }
     },
   });
 
-  useSubscription(FORMATION_COMMENT_UPDATED_SUB, {
+  useSubscription(FORMATION_COMMENT_UPDATED_SUBSCRIPTION, {
     variables: { formationId },
     skip: !formationId,
     onData: ({ data }) => {
       const upd = data.data?.formationCommentUpdated;
-      if (upd)
+      if (upd) {
         startTransition(() =>
-          setComments((prev) =>
-            prev.map(c =>
-                       c._id === upd._id
-                         ? { ...c, commentText: upd.commentText, updatedAt: upd.updatedAt }
-                         : c
-                     )
+          setComments(prev =>
+            prev.map(c => (c._id === upd._id ? { ...c, ...upd } : c))
           )
         );
+      }
     },
   });
 
   useSubscription(FORMATION_COMMENT_DELETED_SUBSCRIPTION, {
+    variables: { formationId },
+    skip: !formationId,
+    onData({ data }) {
+      const delId = data.data.formationCommentDeleted;
+      setComments(prev => prev.filter(c => c._id !== delId));
+    }
+  });
+
+  useSubscription(FORMATION_COMMENT_LIKED_SUBSCRIPTION, {
+    variables: { formationId },
     skip: !formationId,
     onData: ({ data }) => {
-      const delId = data.data?.formationCommentDeleted;
-      if (delId)
+      const liked = data.data?.formationCommentLiked;
+      if (liked) {
         startTransition(() =>
-          setComments((prev) => prev.filter((c) => c._id !== delId))
+          setComments(prev =>
+            prev.map(c => (c._id === liked._id ? { ...c, ...liked } : c))
+          )
         );
+      }
     },
   });
 
-  /* ---- new like subscription ---- */
-+useSubscription(FORMATION_COMMENT_LIKED_SUB, {
-    variables: { formationId },
-   skip: !formationId,
-    onData: ({ data }) => {
-      const liked = data.data?.formationCommentLiked;
-      if (!liked) return;
-      startTransition(() =>
-        setComments(prev =>
-          prev.map(c =>
-            c._id === liked._id
-              ? { ...c, likes: liked.likes, likedBy: liked.likedBy }
-              : c
-          )
-        )
-      );
-    },
-  });
+  // 5️⃣ Sort ascending: oldest first
   const sorted = [...comments].sort(
     (a, b) => parseInt(a.createdAt, 10) - parseInt(b.createdAt, 10)
   );
 
-  /* 4️⃣ Render */
   return (
-    <>
-      {/* Hide input if formation doesn't exist yet */}
+    <div className="flex flex-col">
+      {/* input at top */}
       {formationId && <FormationCommentInput formationId={formationId} />}
 
-      {comments.length === 0 ? (
+      {/* no comments fallback */}
+      {sorted.length === 0 ? (
         <p className="mt-2 italic">No comments yet for this Formation.</p>
       ) : (
-        sorted.map((c) => (
-          <FormationCommentItem
-            key={c._id}
-            comment={c}
-            formationId={formationId}
-          />
-        ))
+        // scrollable pane
+        <div className="mt-4 max-h-64 overflow-y-auto space-y-2">
+          {sorted.map(c => (
+            <FormationCommentItem
+              key={c._id}
+              comment={c}
+              formationId={formationId}
+            />
+          ))}
+        </div>
       )}
-    </>
+    </div>
   );
 }
 
-/* ────────────────────────────────────────────────────────────────────────── */
 export default function FormationCommentList({ gameId }) {
   return (
     <Suspense fallback={<p>Loading comments…</p>}>

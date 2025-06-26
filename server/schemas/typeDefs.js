@@ -170,8 +170,8 @@ const typeDefs = gql`
   ########## INPUT TYPES ##########
 
   input CreateGameInput {
-    date: String! # ISO string (e.g. "2025-06-15T00:00:00.000Z")
-    time: String! # e.g. "18:30"
+    date: String!
+    time: String!
     venue: String!
     notes: String
     opponent: String!
@@ -318,7 +318,7 @@ const typeDefs = gql`
     formationLiked(formationId: ID!): Formation
     formationCommentAdded(formationId: ID!): FormationComment
     formationCommentUpdated(formationId: ID!): FormationComment
-    formationCommentDeleted: ID!
+    formationCommentDeleted(formationId: ID!): ID!
     formationCommentLiked(formationId: ID!): FormationComment
   }
 `;
