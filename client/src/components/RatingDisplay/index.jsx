@@ -19,7 +19,7 @@ export default function RatingDisplay({ limit = 8 }) {
     .slice(0, limit);
 
   return (
-    <div className="flex space-x-8 overflow-x-auto px-6 bg-gray-200 dark:bg-gray-600 p-4 rounded-xl shadow-md">
+    <div className="flex space-x-8 overflow-x-auto px-6 bg-green-300 dark:bg-gray-600 p-4 rounded-xl shadow-md">
       {top.map((p) => {
         // round to nearest whole star
         const stars = Math.round(p.averageRating);

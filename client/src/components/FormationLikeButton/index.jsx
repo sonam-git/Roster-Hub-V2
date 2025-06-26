@@ -84,17 +84,23 @@ export default function FormationLikeButton({
       optimisticResponse: { likeFormation: optimistic },
     });
   };
+// build a hover‐tooltip string
+const hoverText = (state.likedBy || [])
+.map((u) => u.name)
+.join(", ");
 
   /* ---------- render ---------- */
   return (
     <button
-      type="button"
-      onClick={handleToggle}
-      className={`px-3 py-1 rounded transition
-        ${hasLiked ? 'bg-red-600 text-white' : 'bg-gray-200 text-black'}
-        hover:scale-105`}
-    >
-      ❤️ {state.likes} {state.likes === 1 ? 'Like' : 'Likes'}
-    </button>
+    type="button"
+    onClick={handleToggle}
+    // ← add title here
+    title={hoverText || "No likes yet"}
+    className={`px-3 py-1 rounded transition
+      ${hasLiked ? "bg-red-600 text-white" : "bg-gray-200 text-black"}
+      hover:scale-105`}
+  >
+    ❤️ {state.likes} {state.likes === 1 ? "Like" : "Likes"}
+  </button>
   );
 }

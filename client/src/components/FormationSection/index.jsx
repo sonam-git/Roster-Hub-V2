@@ -20,8 +20,8 @@ import {
 } from "../../utils/subscription";
 import AvailablePlayersList from "../AvailablePlayersList";
 import FormationBoard from "../FormationBoard";
-import FormationLikeButton from '../FormationLikeButton';
-import FormationCommentList from '../FormationCommentList';
+import FormationLikeButton from "../FormationLikeButton";
+import FormationCommentList from "../FormationCommentList";
 
 const FORMATION_TYPES = [
   "1-4-3-3",
@@ -146,9 +146,13 @@ export default function FormationSection({
 
     try {
       if (!isFormed) {
-        await createFormation({ variables: { gameId, formationType: selectedFormation } });
+        await createFormation({
+          variables: { gameId, formationType: selectedFormation },
+        });
       }
-      const { data } = await updateFormation({ variables: { gameId, positions } });
+      const { data } = await updateFormation({
+        variables: { gameId, positions },
+      });
       setFormation(data.updateFormation);
       refetchFormation?.();
     } catch (err) {
@@ -201,66 +205,66 @@ export default function FormationSection({
       )}
 
       {formationType && (
-           <>
-        <DndContext
-          sensors={sensors}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-        >
-          {isCreator && (
-            <AvailablePlayersList players={availablePlayers} isCreator={isCreator} />
-          )}
+        <>
+          <DndContext
+            sensors={sensors}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+          >
+            {isCreator && (
+              <AvailablePlayersList
+                players={availablePlayers}
+                isCreator={isCreator}
+              />
+            )}
 
-          <FormationBoard rows={rows} assignments={assignments} />
+            <FormationBoard rows={rows} assignments={assignments} />
 
+            <DragOverlay>
+              {draggingPlayer && (
+                <div className="p-2 bg-white rounded shadow text-sm font-semibold">
+                  {draggingPlayer.name}
+                </div>
+              )}
+            </DragOverlay>
 
-          <DragOverlay>
-            {draggingPlayer && (
-              <div className="p-2 bg-white rounded shadow text-sm font-semibold">
-                {draggingPlayer.name}
+            {isCreator && (
+              <div className="flex flex-col-2 lg:flex-row space-y-2 lg:space-y-0 lg:space-x-2 mt-4">
+                <button
+                  onClick={handleSubmitFormation}
+                  className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-900"
+                >
+                  {isFormed ? "Update Formation" : "Create Formation"}
+                </button>
+
+                {isFormed && (
+                  <button
+                    onClick={handleDelete}
+                    className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-700"
+                  >
+                    Delete Formation
+                  </button>
+                )}
               </div>
             )}
-          </DragOverlay>
+          </DndContext>
+          {formation && (
+            <div className="mt-6 space-y-4">
+              <FormationLikeButton
+                formationId={formation._id}
+                likes={formation.likes}
+                likedBy={formation.likedBy}
+                onUpdate={(partial) =>
+                  setFormation((prev) => ({
+                    ...prev,
+                    ...partial,
+                  }))
+                }
+              />
 
-          {isCreator && (
-          <div className="flex flex-col-2 lg:flex-row space-y-2 lg:space-y-0 lg:space-x-2 mt-4">
-          <button
-            onClick={handleSubmitFormation}
-            className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-900"
-          >
-            {isFormed ? "Update Formation" : "Create Formation"}
-          </button>
-        
-          {isFormed && (
-            <button
-              onClick={handleDelete}
-              className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-700"
-            >
-              Delete Formation
-            </button>
+              <FormationCommentList gameId={gameId} />
+            </div>
           )}
-        </div>
-        
-          )}         
-        </DndContext>
-        {formation && (
-          <div className="mt-6 space-y-4">
-      <FormationLikeButton
-  formationId={formation._id}
-  likes={formation.likes}
-  likedBy={formation.likedBy}
-  onUpdate={(partial) =>
-    setFormation((prev) => ({
-      ...prev,
-      ...partial,
-    }))
-  }
-/>
-        
-        
-            <FormationCommentList gameId={gameId} />
-          </div>
-        )}
         </>
       )}
     </div>

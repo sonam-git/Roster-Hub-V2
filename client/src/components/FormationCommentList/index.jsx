@@ -95,17 +95,24 @@ function CommentsPane({ gameId }) {
 
       {/* no comments fallback */}
       {sorted.length === 0 ? (
-        <p className="mt-2 italic">No comments yet for this Formation.</p>
+        <p className="mt-2 italic text-center">No comments yet for this Formation.</p>
       ) : (
-        // scrollable pane
-        <div className="mt-4 max-h-64 overflow-y-auto space-y-2">
-          {sorted.map(c => (
-            <FormationCommentItem
-              key={c._id}
-              comment={c}
-              formationId={formationId}
-            />
-          ))}
+        // scrollable pane with sticky header
+        <div className="mt-4 max-h-64 overflow-y-auto">
+          {/* sticky header */}
+          <div className="sticky top-0 italic text-center bg-yellow-200 dark:bg-gray-600 px-4 py-2 font-semibold z-10 border-b">
+            There are {sorted.length} Comment{sorted.length !== 1 ? "s" : ""} for this formation.
+          </div>
+          {/* comment list */}
+          <div className="space-y-2 px-4 py-2 bg-yellow-100 dark:bg-gray-700">
+            {sorted.map((c) => (
+              <FormationCommentItem
+                key={c._id}
+                comment={c}
+                formationId={formationId}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>

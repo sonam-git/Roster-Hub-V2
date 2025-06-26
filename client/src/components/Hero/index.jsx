@@ -18,17 +18,34 @@ const Hero = () => {
             alt="Roster Hub Logo"
             className="w-64 h-64 animate-bounce mt-4"
           />
-          <h4 className="text-center text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white mb-6 bg-gradient-to-r from-green-500 via-blue-500 to-red-500 bg-clip-text text-transparent">
-            Elevate Your Game, On and Off the Field
-          </h4>
+         <h4
+  className="
+    text-md        /* mobile first: small text */
+    sm:text-lg     /* from 640px up: larger */
+    md:text-xl     /* from 768px up: even larger */
+    lg:text-2xl    /* from 1024px up: biggest */
+    text-center 
+    font-extrabold 
+    tracking-tight 
+    text-gray-900 
+    dark:text-white 
+    mb-6 
+    bg-gradient-to-r from-green-500 via-blue-500 to-red-500 
+    bg-clip-text 
+    text-transparent
+  "
+>
+  Elevate Your Game, On and Off the Field
+</h4>
+
         </div>
 
         <div className="md:w-1/2 flex flex-col items-center">
-          <div className="bg-gray-200 shadow-xl  px-4 pt-6 pb-8 mb-4 dark:bg-gray-800 w-full max-w-lg rounded-xl">
+          <div className="bg-gray-200 shadow-xl  px-2 pt-6 pb-2 mb-4 dark:bg-gray-800 w-full max-w-lg rounded-xl">
             <h4 className="text-center text-2xl font-bold text-gray-900 mb-6 dark:text-white">
               Create Your Profile.
             </h4>
-            <p className="text-base md:text-md leading-relaxed text-gray-700 dark:text-gray-300 bg-gradient-to-br from-white/60 to-gray-100 dark:from-gray-800 dark:to-gray-900 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700">
+            <p className=" text-sm md:text-md leading-relaxed text-gray-700 dark:text-gray-300 bg-gradient-to-br from-white/60 to-gray-100 dark:from-gray-800 dark:to-gray-900 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700">
               <span className="font-semibold text-indigo-600 dark:text-indigo-400">
                 Our platform
               </span>{" "}
