@@ -42,10 +42,11 @@ npm install
 4. then npm run develop
 
 ## The following animation demonstrates the application functionality:
+* this is an clip from the version 1, the the link below is version 2 with more features added.
 ![Application Gif](./client/src/assets/videos/Roster-hub.gif)
 
-## Deployed Heroku URl : 
-(https://roster-hub-app-3c54f52bb1fb.herokuapp.com/)
+## Deployed Heroku URl Roster-Hub Version 2 : 
+(https://roster-hub-v2-240f2b371524.herokuapp.com//)
 
 
 ## License & Copyright ©

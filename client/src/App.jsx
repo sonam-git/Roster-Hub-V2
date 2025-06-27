@@ -44,7 +44,7 @@ import MainHeader from "./components/MainHeader";
 // Define HTTP and WebSocket URIs based on environment
 const httpUri =
   import.meta.env.MODE === "production"
-    ? "https://roster-hub-v2-240f2b371524.herokuapp.com//graphql"
+    ? "https://roster-hub-v2-240f2b371524.herokuapp.com/graphql"
     : "http://localhost:3001/graphql";
 
 const wsUri =
