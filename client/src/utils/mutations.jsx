@@ -557,40 +557,66 @@ export const LIKE_FORMATION = gql`
 `;
 // Mutation to add a comment to a formation
 export const ADD_FORMATION_COMMENT = gql`
-  mutation AddFormationComment($formationId: ID!, $commentText: String!) {
-    addFormationComment(formationId: $formationId, commentText: $commentText) {
+  mutation AddFormationComment(
+    $formationId: ID!
+    $commentText: String!
+  ) {
+    addFormationComment(
+      formationId: $formationId
+      commentText: $commentText
+    ) {
       _id
       comments {
-        _id commentText commentAuthor user { _id name } likes
+        _id
+        commentText
+        commentAuthor
+        createdAt
+        updatedAt
+        user { _id name }
+        likes
+        likedBy { _id name }
       }
     }
   }
 `;
 // Mutation to update a formation comment
 export const UPDATE_FORMATION_COMMENT = gql`
-  mutation UpdateFormationComment($commentId: ID!, $commentText: String!) {
-    updateFormationComment(commentId: $commentId, commentText: $commentText) {
-      _id 
-      commentText
+  mutation UpdateFormationComment(
+    $commentId: ID!
+    $commentText: String!
+  ) {
+    updateFormationComment(
+      commentId: $commentId
+      commentText: $commentText
+    ) {
       _id
       commentText
-      likes
-      likedBy { _id }
       updatedAt
+      likes
+      likedBy { _id name }
     }
   }
 `;
+
 // Mutation to delete a formation comment
 export const DELETE_FORMATION_COMMENT = gql`
-  mutation DeleteFormationComment($formationId: ID!, $commentId: ID!) {
-    deleteFormationComment(formationId: $formationId, commentId: $commentId)
+  mutation DeleteFormationComment(
+    $formationId: ID!
+    $commentId:   ID!
+  ) {
+    deleteFormationComment(
+      formationId: $formationId,
+      commentId:   $commentId
+    )
   }
 `;
 // Mutation to like a formation comment
 export const LIKE_FORMATION_COMMENT = gql`
   mutation LikeFormationComment($commentId: ID!) {
     likeFormationComment(commentId: $commentId) {
-      _id likes likedBy { _id }
+      _id
+      likes
+      likedBy { _id name }
     }
   }
 `;

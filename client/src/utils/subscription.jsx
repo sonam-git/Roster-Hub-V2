@@ -299,16 +299,11 @@ export const FORMATION_COMMENT_ADDED_SUBSCRIPTION = gql`
       _id
       commentText
       commentAuthor
-      user {
-        _id
-        name
-      }
-      likes
-      likedBy {
-        _id
-        name
-      }
       createdAt
+      updatedAt
+      user { _id name }
+      likes
+      likedBy { _id name }
     }
   }
 `;
@@ -320,14 +315,12 @@ export const FORMATION_COMMENT_UPDATED_SUBSCRIPTION = gql`
       commentText
       updatedAt
       likes
-      likedBy {
-        _id
-        name
-      }
+      likedBy { _id name }
     }
   }
 `;
 
+// This subscription is used to notify when a formation comment is deleted.
 export const FORMATION_COMMENT_DELETED_SUBSCRIPTION = gql`
   subscription OnFormationCommentDeleted($formationId: ID!) {
     formationCommentDeleted(formationId: $formationId)
@@ -339,10 +332,7 @@ export const FORMATION_COMMENT_LIKED_SUBSCRIPTION = gql`
     formationCommentLiked(formationId: $formationId) {
       _id
       likes
-      likedBy {
-        _id
-        name
-      }
+      likedBy { _id name }
     }
   }
 `;

@@ -1,4 +1,3 @@
-// src/components/FormationSection.jsx
 import React, { useState, useEffect } from "react";
 import {
   DndContext,
@@ -43,10 +42,10 @@ export default function FormationSection({
   const [deleteFormation] = useMutation(DELETE_FORMATION);
 
   const [selectedFormation, setSelectedFormation] = useState("");
-  const [draggingPlayer, setDraggingPlayer] = useState(null); // for overlay
+  const [draggingPlayer, setDraggingPlayer] = useState(null);
 
-  const isFormed = !!formation;
-  const gameId = game._id;
+  const gameId   = game._id;
+  const isFormed = Boolean(formation);
 
   // ─── Subscriptions ───────────────────────────────────────────────────────
   useSubscription(FORMATION_CREATED_SUBSCRIPTION, {
@@ -84,38 +83,34 @@ export default function FormationSection({
   // ─────────────────────────────────────────────────────────────────────────
 
   const availablePlayers = game.responses
-    .filter((r) => r.isAvailable)
-    .map((r) => r.user);
+    .filter(r => r.isAvailable)
+    .map(r => r.user);
 
   const formationType = formation?.formationType || selectedFormation;
-
   const rows = formationType
-    ? formationType.split("-").map((n, idx) => ({
-        rowIndex: idx,
-        slotIds: Array.from({ length: +n }, (_, i) => (idx + 1) * 10 + i),
-      }))
-    : [];
+    .split("-")
+    .map((n, idx) => ({
+      rowIndex: idx,
+      slotIds: Array.from({ length: +n }, (_, i) => (idx + 1) * 10 + i),
+    }));
 
   const [assignments, setAssignments] = useState({});
-
   useEffect(() => {
     if (formation?.positions) {
-      const fresh = {};
-      formation.positions.forEach((p) => {
-        fresh[p.slot] = p.player;
+      const map = {};
+      formation.positions.forEach(p => {
+        map[p.slot] = p.player;
       });
-      setAssignments(fresh);
+      setAssignments(map);
     }
   }, [formation]);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: { distance: 5 },
-    })
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
   );
 
-  const handleDragStart = (event) => {
-    const player = availablePlayers.find((p) => p._id === event.active.id);
+  const handleDragStart = event => {
+    const player = availablePlayers.find(p => p._id === event.active.id);
     setDraggingPlayer(player || null);
   };
 
@@ -123,36 +118,29 @@ export default function FormationSection({
     setDraggingPlayer(null);
     if (!isCreator || !over) return;
 
-    const player = availablePlayers.find((u) => u._id === active.id);
+    const player = availablePlayers.find(u => u._id === active.id);
     if (!player) return;
 
-    const updated = { ...assignments };
-    // remove from old slot
-    Object.entries(updated).forEach(([slot, p]) => {
-      if (p?._id === player._id) delete updated[slot];
+    const newMap = { ...assignments };
+    Object.entries(newMap).forEach(([slot, p]) => {
+      if (p?._id === player._id) delete newMap[slot];
     });
-    // add to new slot
-    updated[over.id] = player;
-    setAssignments(updated);
+    newMap[over.id] = player;
+    setAssignments(newMap);
   };
 
   const handleSubmitFormation = async () => {
-    const positions = rows.flatMap((r) =>
-      r.slotIds.map((slot) => ({
+    const positions = rows.flatMap(r =>
+      r.slotIds.map(slot => ({
         slot,
         playerId: assignments[slot]?._id || null,
       }))
     );
-
     try {
       if (!isFormed) {
-        await createFormation({
-          variables: { gameId, formationType: selectedFormation },
-        });
+        await createFormation({ variables: { gameId, formationType: selectedFormation } });
       }
-      const { data } = await updateFormation({
-        variables: { gameId, positions },
-      });
+      const { data } = await updateFormation({ variables: { gameId, positions } });
       setFormation(data.updateFormation);
       refetchFormation?.();
     } catch (err) {
@@ -179,22 +167,17 @@ export default function FormationSection({
           <div className="flex items-center space-x-4">
             <select
               value={selectedFormation}
-              onChange={(e) => setSelectedFormation(e.target.value)}
+              onChange={e => setSelectedFormation(e.target.value)}
               className="p-2 rounded border dark:bg-gray-600"
             >
               <option value="">-- Select --</option>
-              {FORMATION_TYPES.map((ft) => (
-                <option key={ft} value={ft}>
-                  {ft}
-                </option>
+              {FORMATION_TYPES.map(ft => (
+                <option key={ft} value={ft}>{ft}</option>
               ))}
             </select>
             {selectedFormation && (
               <button
-                onClick={() => {
-                  setSelectedFormation("");
-                  setAssignments({});
-                }}
+                onClick={() => { setSelectedFormation(""); setAssignments({}); }}
                 className="text-sm text-red-600 border border-red-600 px-3 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900"
               >
                 Cancel
@@ -229,14 +212,13 @@ export default function FormationSection({
             </DragOverlay>
 
             {isCreator && (
-              <div className="flex flex-col-2 lg:flex-row space-y-2 lg:space-y-0 lg:space-x-2 mt-4">
+              <div className="flex flex-col lg:flex-row mt-4 space-y-2 lg:space-y-0 lg:space-x-2">
                 <button
                   onClick={handleSubmitFormation}
                   className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-900"
                 >
                   {isFormed ? "Update Formation" : "Create Formation"}
                 </button>
-
                 {isFormed && (
                   <button
                     onClick={handleDelete}
@@ -248,17 +230,15 @@ export default function FormationSection({
               </div>
             )}
           </DndContext>
+
           {formation && (
             <div className="mt-6 space-y-4">
               <FormationLikeButton
                 formationId={formation._id}
                 likes={formation.likes}
                 likedBy={formation.likedBy}
-                onUpdate={(partial) =>
-                  setFormation((prev) => ({
-                    ...prev,
-                    ...partial,
-                  }))
+                onUpdate={partial =>
+                  setFormation(prev => ({ ...prev, ...partial }))
                 }
               />
 

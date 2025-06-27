@@ -2,10 +2,10 @@
 import React, { useContext } from "react";
 import { ThemeContext } from "../ThemeContext";
 
-const VotersList = ({ yesVoters, noVoters }) => {
+const VotersList = ({ yesVoters = [], noVoters = [] }) => {
   const { isDarkMode } = useContext(ThemeContext);
-  const bgColor   = isDarkMode ? "bg-gray-700" : "bg-gray-300";
-  const textColor = isDarkMode ? "text-gray-200" : "text-gray-800";
+  const bgColor     = isDarkMode ? "bg-gray-700"   : "bg-gray-300";
+  const textColor   = isDarkMode ? "text-gray-200" : "text-gray-800";
   const borderColor = isDarkMode ? "border-gray-600" : "border-gray-400";
 
   return (
@@ -24,22 +24,26 @@ const VotersList = ({ yesVoters, noVoters }) => {
           </thead>
           <tbody>
             <tr>
-              <td className="align-top px-3 py-2 border-r {borderColor}">
+              {/* Fixed interpolation here: */}
+              <td className={`align-top px-3 py-2 border-r ${borderColor}`}>
                 {yesVoters.length > 0 ? (
                   <ul className="list-disc list-inside space-y-1">
-                    {yesVoters.map((name, idx) => (
-                      <li key={idx}>{name}</li>
+                    {yesVoters.map((name) => (
+                      // Use the voter name as key if it's unique
+                      <li key={name}>{name}</li>
                     ))}
                   </ul>
                 ) : (
                   <p className="italic">No one has voted “Yes” yet.</p>
                 )}
               </td>
-              <td className="align-top px-3 py-2">
+
+              {/* You can add a left border for symmetry if you like */}
+              <td className={`align-top px-3 py-2 ${borderColor ? `border-l ${borderColor}` : ""}`}>
                 {noVoters.length > 0 ? (
                   <ul className="list-disc list-inside space-y-1">
-                    {noVoters.map((name, idx) => (
-                      <li key={idx}>{name}</li>
+                    {noVoters.map((name) => (
+                      <li key={name}>{name}</li>
                     ))}
                   </ul>
                 ) : (

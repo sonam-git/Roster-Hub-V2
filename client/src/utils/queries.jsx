@@ -520,57 +520,29 @@ export const GET_MATCHES = gql`
 `;
 // Fetch formation by game ID
 export const QUERY_FORMATION = gql`
-  query formation($gameId: ID!) {
+  query QUERY_FORMATION($gameId: ID!) {
     formation(gameId: $gameId) {
       _id
       formationType
       positions {
         slot
-        player {
-          _id
-          name
-        }
+        player { _id name }
       }
       likes
-      likedBy {
-        _id
-        name
-      }
-    }
-  }
-`;
-// Fetch formation comments for a specific game
-export const GET_FORMATION_COMMENTS = gql`
-  query GetFormation($gameId: ID!) {
-    formation(gameId: $gameId) {
-      _id
+      likedBy { _id name }
       comments {
         _id
         commentText
         commentAuthor
-        user {
-          _id
-          name
-        }
-        likes
-        likedBy {
-          _id
-        }
         createdAt
+        updatedAt
+        user { _id name }
+        likes
+        likedBy { _id name }
       }
+      createdAt
+      updatedAt
     }
   }
 `;
-// Fetch formation likes for a specific game
-export const GET_FORMATION_LIKES = gql`
-  query GetFormationLikes($gameId: ID!) {
-    formation(gameId: $gameId) {
-      _id
-      likes
-      likedBy {
-        _id
-        name     
-      }
-    }
-  }
-`;
+

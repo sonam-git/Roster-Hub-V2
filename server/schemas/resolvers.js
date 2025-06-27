@@ -1403,97 +1403,131 @@ const resolvers = {
     // ************************** ADD FORMATION COMMENT *******************************************//
     addFormationComment: async (_, { formationId, commentText }, { user }) => {
       if (!user) throw new AuthenticationError("Login required");
-      if (!commentText.trim()) throw new Error("Comment cannot be empty");
+      if (!commentText.trim()) throw new UserInputError("Comment cannot be empty");
 
-      const formation = await Formation.findById(formationId);
-      if (!formation) throw new Error("Formation not found");
-
+      // build the new subdoc
       const newComment = {
         commentText,
         commentAuthor: user.name,
         user: user._id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        likes: 0,
+        likedBy: [],
       };
-      formation.comments.unshift(newComment); // newest first
-      await formation.save();
 
-      const added = formation.comments[0]; // just-pushed
+      // push it onto the formation.comments array
+      const updatedFormation = await Formation.findByIdAndUpdate(
+        formationId,
+        { $push: { comments: newComment } },
+        { new: true }
+      ).populate("comments.user");
+
+      if (!updatedFormation) throw new Error("Formation not found");
+
+      // pull out the comment we just added
+      const added = updatedFormation.comments[updatedFormation.comments.length - 1];
+
+      // publish just that subdoc
       pubsub.publish(FORMATION_COMMENT_ADDED, {
         formationCommentAdded: added,
         formationId,
       });
 
-      return formation.populate("comments.user likedBy");
+      // return the full formation (with comments populated)
+      return updatedFormation;
     },
     // ************************** UPDATE FORMATION COMMENT *******************************************//
     updateFormationComment: async (_, { commentId, commentText }, { user }) => {
-      if (!user) throw new AuthenticationError("You need to be logged in!");
-      if (!commentText.trim()) throw new Error("Comment cannot be empty");
+      if (!user) throw new AuthenticationError("Login required");
+      if (!commentText.trim()) throw new UserInputError("Comment cannot be empty");
 
-      // locate the parent formation containing this comment
-      const formation = await Formation.findOne({ "comments._id": commentId });
-      if (!formation) throw new Error("Comment not found");
+      // atomically update the matching comment subdoc
+      const updatedFormation = await Formation.findOneAndUpdate(
+        { "comments._id": commentId, "comments.user": user._id },
+        {
+          $set: {
+            "comments.$.commentText": commentText,
+            "comments.$.updatedAt": new Date().toISOString(),
+          },
+        },
+        { new: true }
+      ).populate("comments.user");
 
-      // find the embedded comment
-      const comment = formation.comments.id(commentId);
-      if (!comment.user.equals(user._id))
-        throw new AuthenticationError("Not authorized");
+      if (!updatedFormation) throw new Error("Comment not found or not authorized");
 
-      comment.commentText = commentText;
-      await formation.save();
+      // pull out the updated subdoc
+      const updated = updatedFormation.comments.id(commentId);
 
-      // publish the updated comment
+      // publish just that subdoc
       pubsub.publish(FORMATION_COMMENT_UPDATED, {
-        formationCommentUpdated: comment,
-        formationId: formation._id.toString(),
+        formationCommentUpdated: updated,
+        formationId: updatedFormation._id.toString(),
       });
 
-      return comment; // GraphQL returns the updated comment
+      return updated;
     },
     // ************************** DELETE FORMATION COMMENT *******************************************//
     deleteFormationComment: async (_, { formationId, commentId }, { user }) => {
       if (!user) throw new AuthenticationError("Login required");
 
-      const formation = await Formation.findById(formationId);
-      if (!formation) throw new Error("Formation not found");
+      // pull it out of the array
+      const updatedFormation = await Formation.findByIdAndUpdate(
+        formationId,
+        { $pull: { comments: { _id: commentId, user: user._id } } },
+        { new: true }
+      );
 
-      const comment = formation.comments.id(commentId);
-      if (!comment) throw new Error("Comment not found");
-      if (!comment.user.equals(user._id))
-        throw new AuthenticationError("Not authorized");
+      if (!updatedFormation) throw new Error("Formation not found");
 
-      formation.comments.pull(commentId); // remove
-      await formation.save();
-
-      // broadcast the deleted ID
+      // publish the ID
       pubsub.publish(FORMATION_COMMENT_DELETED, {
         formationCommentDeleted: commentId,
-        formationId: formationId.toString()
+        formationId: formationId.toString(),
       });
 
-      return commentId; // ✅ matches schema (ID)
+      return commentId;
     },
     // ************************** LIKE / UNLIKE FORMATION COMMENT *******************************************//
     likeFormationComment: async (_, { commentId }, { user }) => {
       if (!user) throw new AuthenticationError("Login required");
+
+      // first, find which formation holds that comment
       const formation = await Formation.findOne({ "comments._id": commentId });
       if (!formation) throw new Error("Comment not found");
 
+      // find the comment subdoc
       const comment = formation.comments.id(commentId);
-      const already = comment.likedBy.includes(user._id);
-      if (already) {
-        comment.likes--;
-        comment.likedBy.pull(user._id);
-      } else {
-        comment.likes++;
-        comment.likedBy.push(user._id);
-      }
-      await formation.save();
+      const userId = user._id.toString();
 
+      // decide if we should like or unlike
+      const already = comment.likedBy.map(id => id.toString()).includes(userId);
+      const operator = already ? "$pull" : "$push";
+      const inc     = already ? -1 : +1;
+
+      // atomically update that one comment’s likes and likedBy
+      await Formation.findOneAndUpdate(
+        { "comments._id": commentId },
+        {
+          $inc:    { "comments.$.likes": inc },
+          [operator]: { "comments.$.likedBy": user._id },
+        },
+        { new: true }
+      );
+
+      // re-fetch and populate
+      const updatedFormation = await Formation.findOne({ "comments._id": commentId }).populate(
+        "comments.user"
+      );
+      const updatedComment = updatedFormation.comments.id(commentId);
+
+      // publish the new subdoc
       pubsub.publish(FORMATION_COMMENT_LIKED, {
-        formationCommentLiked: comment,
-        formationId: formation._id.toString(),
+        formationCommentLiked: updatedComment,
+        formationId: updatedFormation._id.toString(),
       });
-      return comment;
+
+      return updatedComment;
     },
   },
 
@@ -1622,10 +1656,8 @@ const resolvers = {
 
     formationCommentDeleted: {
       subscribe: withFilter(
-        () => pubsub.asyncIterator('FORMATION_COMMENT_DELETED'),
-        // only push deletes for the matching formation
-        (payload, variables) =>
-          payload.formationId.toString() === variables.formationId
+        () => pubsub.asyncIterator([FORMATION_COMMENT_DELETED]),
+        (payload, variables) => payload.formationId === variables.formationId
       ),
       resolve: payload => payload.formationCommentDeleted
     },

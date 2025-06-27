@@ -1,4 +1,3 @@
-// src/components/FormationCommentInput.jsx
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { ADD_FORMATION_COMMENT } from '../../utils/mutations';
