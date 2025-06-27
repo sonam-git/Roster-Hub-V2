@@ -85,8 +85,8 @@ const GameForm = () => {
         isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-800"
       }`}
     >
-      <h2 className={`text-2xl font-bold mb-4 ${isDarkMode ? "text-gray-200" : "text-gray-800"}`}>
-        Schedule a Game
+      <h2 className={`text-2xl text-center font-bold mb-4 ${isDarkMode ? "text-gray-200" : "text-gray-800"}`}>
+      ⚽️ Schedule a Game ⚽️
       </h2>
       <form onSubmit={handleSubmit}>
       <div className="grid grid-cols-2 gap-4 mb-2">

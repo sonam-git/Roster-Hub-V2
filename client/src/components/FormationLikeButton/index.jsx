@@ -1,28 +1,28 @@
-import React, { useEffect, useMemo, useState, startTransition } from 'react';
-import { useMutation, useSubscription } from '@apollo/client';
-import { LIKE_FORMATION }                    from '../../utils/mutations';
-import { FORMATION_LIKED_SUBSCRIPTION }      from '../../utils/subscription';
-import Auth                                   from '../../utils/auth';
+import React, { useEffect, useMemo, useState, startTransition } from "react";
+import { useMutation, useSubscription } from "@apollo/client";
+import { LIKE_FORMATION } from "../../utils/mutations";
+import { FORMATION_LIKED_SUBSCRIPTION } from "../../utils/subscription";
+import Auth from "../../utils/auth";
 
 export default function FormationLikeButton({
   formationId,
-  likes:   propLikes    = 0,
-  likedBy: propLikedBy  = [],
+  likes: propLikes = 0,
+  likedBy: propLikedBy = [],
   onUpdate,
 }) {
   /* ---------- constants ---------- */
-  const user   = Auth.loggedIn() ? Auth.getProfile().data : null;
+  const user = Auth.loggedIn() ? Auth.getProfile().data : null;
   const userId = user?._id ?? null;
 
   /* ---------- local reactive state ---------- */
   const [state, setState] = useState({
-    likes:   propLikes,
+    likes: propLikes,
     likedBy: Array.isArray(propLikedBy) ? propLikedBy : [],
   });
 
   /* keep state in-sync if parent sends new props */
   useEffect(() => {
-    setState(prev => {
+    setState((prev) => {
       const changed =
         prev.likes !== propLikes ||
         prev.likedBy.length !== propLikedBy.length ||
@@ -33,7 +33,7 @@ export default function FormationLikeButton({
   }, [propLikes, propLikedBy]);
 
   const hasLiked = useMemo(
-    () => !!userId && state.likedBy.some(u => u._id === userId),
+    () => !!userId && state.likedBy.some((u) => u._id === userId),
     [state.likedBy, userId]
   );
 
@@ -60,23 +60,26 @@ export default function FormationLikeButton({
   });
 
   /* ---------- handlers ---------- */
-  const handleToggle = e => {
+  const handleToggle = (e) => {
     e.preventDefault();
     e.stopPropagation();
 
     if (!userId) {
-      alert('Please log in to like this formation.');
+      alert("Please log in to like this formation.");
       return;
     }
 
     /* optimistic UI */
     const optimistic = {
-      __typename: 'Formation',
-      _id:   formationId,
+      __typename: "Formation",
+      _id: formationId,
       likes: hasLiked ? state.likes - 1 : state.likes + 1,
       likedBy: hasLiked
-        ? state.likedBy.filter(u => u._id !== userId)
-        : [...state.likedBy, { __typename: 'Profile', _id: userId, name: user.name }],
+        ? state.likedBy.filter((u) => u._id !== userId)
+        : [
+            ...state.likedBy,
+            { __typename: "Profile", _id: userId, name: user.name },
+          ],
     };
 
     runToggle({
@@ -84,23 +87,28 @@ export default function FormationLikeButton({
       optimisticResponse: { likeFormation: optimistic },
     });
   };
-// build a hover‐tooltip string
-const hoverText = (state.likedBy || [])
-.map((u) => u.name)
-.join(", ");
+  // build a hover‐tooltip string
+  const hoverText = (state.likedBy || []).map((u) => u.name).join(", ");
 
   /* ---------- render ---------- */
   return (
-    <button
-    type="button"
-    onClick={handleToggle}
-    // ← add title here
-    title={hoverText || "No likes yet"}
-    className={`px-3 py-1 rounded transition
+    <div className="space-y-2">
+     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2">
+        <p className="text-sm text-gray-600 dark:text-gray-300 flex-1">
+          {state.likes} player{state.likes !== 1 ? "s" : ""} like this formation so far.
+           Hit    ❤️  if you haven’t done so already.
+        </p>
+      <button
+        type="button"
+        onClick={handleToggle}
+        title={hoverText || "No likes yet"}
+        className={`px-3 py-1 rounded transition 
       ${hasLiked ? "bg-red-600 text-white" : "bg-gray-200 text-black"}
       hover:scale-105`}
-  >
-    ❤️ {state.likes} {state.likes === 1 ? "Like" : "Likes"}
-  </button>
+      >
+        ❤️ {state.likes} {state.likes === 1 ? "Like" : "Likes"}
+      </button>
+      </div>
+    </div>
   );
 }
