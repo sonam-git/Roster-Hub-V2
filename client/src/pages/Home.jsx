@@ -12,14 +12,22 @@ import RecentSkillsList from "../components/RecentSkillsList";
 import ComingGames from "../components/ComingGames";
 
 const Home = ({ isDarkMode }) => {
-  const { loading, data } = useQuery(QUERY_ME);
+  const { loading, error, data } = useQuery(QUERY_ME);
   const profile = data?.me || {};
   const isLoggedIn = Auth.loggedIn();
 
   if (loading) {
     return <div className="text-center py-10">Loading...</div>;
   }
-
+  if (error) {
+    return <div className="text-center py-10 text-red-500">
+      Error loading your profile.
+    </div>;
+  }
+//  Guard against missing profile
+if (!profile) {
+  return <div className="text-center py-10">No profile found.</div>;
+}
   if (!isLoggedIn) {
     return (
       <main className="container mx-auto px-4 mt-5">
@@ -45,7 +53,7 @@ const Home = ({ isDarkMode }) => {
 
         {/* Right (1 col): RecentSkillsList + ComingGames */}
         <div className="space-y-6">
-          <RecentSkillsList />
+          <RecentSkillsList  />
           <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-md shadow-md">
             <h2 className="text-center font-bold mb-2 text-sm md:text-xl lg:text-2xl">
               Game Schedule

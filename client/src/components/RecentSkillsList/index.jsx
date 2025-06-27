@@ -12,7 +12,7 @@ const RecentSkillsList = () => {
   const { isDarkMode } = useContext(ThemeContext);
 
   // pull in the basic list
-  const { loading, data, subscribeToMore } = useQuery(GET_SKILLS);
+  const { loading, error, data, subscribeToMore }  = useQuery(GET_SKILLS);
 
   // subscribe to additions and deletions
   useEffect(() => {
@@ -42,9 +42,15 @@ const RecentSkillsList = () => {
   }, [subscribeToMore]);
 
   if (loading) return <div>Loading...</div>;
+  if (error) return (
+       <div className="text-red-500">Error loading skills.</div>
+      );
+     // Ensure data.skills exists and is an array
+ const skillsData = data?.skills;
+ if (!Array.isArray(skillsData)) return <div>No Skills available</div>;
 
   // show the top 5 by createdAt
-  const sorted = [...data.skills].sort(
+  const sorted = [...skillsData].sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
   const topFive = sorted.slice(0, 5);
@@ -57,7 +63,7 @@ const RecentSkillsList = () => {
         }`}
       >
         <h3 className="text-center font-bold mb-2 text-sm md:text-xl lg:text-2xl xl:text-2xl">
-          {data.skills.length === 0 ? "No Skills available" : "Latest Skills"}
+          {skillsData.length === 0 ? "No Skills available" : "Latest Skills"}
         </h3>
       </div>
 
