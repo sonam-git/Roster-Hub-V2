@@ -1,3 +1,4 @@
+// src/pages/Home.jsx
 import React from "react";
 import { useQuery } from "@apollo/client";
 import Hero from "../components/Hero";
@@ -6,28 +7,23 @@ import Auth from "../utils/auth";
 import Welcome from "../components/Welcome";
 import PostForm from "../components/PostForm";
 import PostsList from "../components/PostsList";
-import RatingDisplay from "../components/RatingDisplay";
 import RecentSkillsList from "../components/RecentSkillsList";
 import ComingGames from "../components/ComingGames";
+import RatingDisplay from "../components/RatingDisplay";
 
 const Home = ({ isDarkMode }) => {
-  // 1) Do this first: show Hero if not logged in
+  // 1️⃣ Check login
   const isLoggedIn = Auth.loggedIn();
 
-  // 2) Now run your user‐profile query
-  const { loading, error, data } = useQuery(QUERY_ME);
-  
-  // Note: useQuery automatically handles loading and error states
-  if (!isLoggedIn) {
-    return (
-      <main className="container mx-auto px-4 mt-5">
-        <Hero />
-      </main>
-    );
-  }
-  // 3) Handle the async states
+  // 2️⃣ Fetch profile if logged in
+  const { loading, error, data } = useQuery(QUERY_ME, {
+    skip: !isLoggedIn,
+  });
+  const profile = data?.me || {};
+
+  // 3️⃣ Loading / error states
   if (loading) {
-    return <div className="text-center py-10">Loading...</div>;
+    return <div className="text-center py-10">Loading your dashboard…</div>;
   }
   if (error) {
     return (
@@ -37,47 +33,44 @@ const Home = ({ isDarkMode }) => {
     );
   }
 
-  // 4) Guard against missing profile
-  const profile = data?.me;
-  if (!profile) {
-    return <div className="text-center py-10">No profile found.</div>;
-  }
-
-  // 5) And finally, show the home dashboard
   return (
     <main className="container mx-auto px-4 mt-5">
-      {/* Welcome Banner */}
-      <div className="w-full mb-6">
-        <Welcome username={profile.name} />
-      </div>
-
-      {/* Main 4-col layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Left (3 cols): PostForm + PostsList */}
-        <div className="col-span-1 lg:col-span-3 space-y-6">
-          <PostForm />
-          <PostsList isDarkMode={isDarkMode} />
-        </div>
-
-        {/* Right (1 col): RecentSkillsList + ComingGames */}
-        <div className="space-y-6">
-          <RecentSkillsList />
-          <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-md shadow-md">
-            <h2 className="text-center font-bold mb-2 text-sm md:text-xl lg:text-2xl">
-              Game Schedule
-            </h2>
+      {isLoggedIn ? (
+        <div className="flex flex-col items-center">
+          {/* Welcome banner full-width */}
+          <div className="w-full mb-4">
+            <Welcome username={profile.name} />
           </div>
-          <ComingGames />
-        </div>
-      </div>
 
-      {/* Top Ratings */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-10">
-        <div className="col-span-1 lg:col-span-4 space-y-4">
-          <h2 className="text-2xl font-bold text-left mt-4">Top Ratings</h2>
-          <RatingDisplay limit={10} />
+          {/* PostForm + PostsList / RecentSkillsList + ComingGames */}
+          <div className="w-full flex flex-col lg:flex-row lg:space-x-4">
+            {/* Left: PostForm + PostsList */}
+            <div className="w-full lg:w-3/4 mb-4 lg:mb-0 space-y-6">
+              <PostForm />
+              <PostsList isDarkMode={isDarkMode} />
+            </div>
+
+            {/* Right: RecentSkillsList + ComingGames */}
+            <div className="w-full lg:w-1/4 space-y-6">
+              <RecentSkillsList />
+              <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-md shadow-md">
+                <h2 className="text-center font-bold mb-2 text-sm md:text-xl lg:text-2xl">
+                  Game Schedule
+                </h2>
+              </div>
+              <ComingGames />
+            </div>
+          </div>
+
+          {/* Top Ratings */}
+          <div className="w-full mt-8">
+            <h2 className="text-2xl font-bold mb-4">Top Ratings</h2>
+            <RatingDisplay limit={10} />
+          </div>
         </div>
-      </div>
+      ) : (
+        <Hero />
+      )}
     </main>
   );
 };
