@@ -8,13 +8,10 @@ import {
 } from "../../utils/subscription";
 import { ThemeContext } from "../ThemeContext";
 
-const RecentSkillsList = () => {
+export default function RecentSkillsList() {
   const { isDarkMode } = useContext(ThemeContext);
+  const { loading, error, data, subscribeToMore } = useQuery(GET_SKILLS);
 
-  // pull in the basic list
-  const { loading, error, data, subscribeToMore }  = useQuery(GET_SKILLS);
-
-  // subscribe to additions and deletions
   useEffect(() => {
     const unsubAdd = subscribeToMore({
       document: SKILL_ADDED_SUBSCRIPTION,
@@ -41,76 +38,63 @@ const RecentSkillsList = () => {
     };
   }, [subscribeToMore]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return (
-       <div className="text-red-500">Error loading skills.</div>
-      );
-     // Ensure data.skills exists and is an array
- const skillsData = data?.skills;
- if (!Array.isArray(skillsData)) return <div>No Skills available</div>;
+  if (loading) return <div>Loading latest skills…</div>;
+  if (error) return <div className="text-red-500">Error loading skills.</div>;
 
-  // show the top 5 by createdAt
-  const sorted = [...skillsData].sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  );
-  const topFive = sorted.slice(0, 5);
+  // safely grab the array (or default to [])
+  const skills = Array.isArray(data?.skills) ? data.skills : [];
 
   return (
-    <>
+    <div>
       <div
-        className={`top-0 mb-2 shadow-md p-2 rounded-md z-10 ${
+        className={`mb-2 shadow-md p-2 rounded-md ${
           isDarkMode ? "bg-gray-700 text-white" : "bg-white text-black"
         }`}
       >
-        <h3 className="text-center font-bold mb-2 text-sm md:text-xl lg:text-2xl xl:text-2xl">
-          {skillsData.length === 0 ? "No Skills available" : "Latest Skills"}
+        <h3 className="text-center font-bold text-lg">
+          {skills.length === 0 ? "No Skills available" : "Latest Skills"}
         </h3>
       </div>
 
-      <div className="w-full overflow-y-auto" style={{ height: "250px" }}>
-        <ul>
-          {topFive.map((skill) => (
-            <li key={skill._id} className="mb-2">
-              <div
-                className={`card shadow-2xl rounded-md ${
-                  isDarkMode ? "bg-gray-700 text-white" : "bg-white text-black"
-                }`}
-              >
-                {/* date row */}
-                <div
-                  className={`flex justify-between items-center px-2 py-2 text-xs ${
-                    isDarkMode ? "bg-gray-800" : "bg-green-700 text-white"
-                  }`}
-                >
-                  <span>Date: {skill.createdAt}</span>
-                </div>
-
-                {/* skill text */}
-                <div className="p-2 font-semibold border-b border-gray-300 dark:border-gray-600">
-                  {skill.skillText[0].toUpperCase() + skill.skillText.slice(1)}
-                </div>
-
-                {/* author → recipient row */}
-                <div
-                  className={`flex justify-between items-center px-2 py-2 text-xs ${
-                    isDarkMode ? "bg-gray-800" : "bg-yellow-700 text-white"
-                  }`}
-                >
-                  <span>
-                    {skill.skillAuthor[0].toUpperCase() + skill.skillAuthor.slice(1)}{" "}
-                    endorsed{" "}
-                    <strong>
-                      {skill.recipient?.name || "—"}
-                    </strong>
-                  </span>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </>
+      {skills.length === 0 ? (
+        <p className="text-center italic">Nothing here yet.</p>
+      ) : (
+        <div className="w-full overflow-y-auto" style={{ height: 250 }}>
+          <ul>
+            {skills
+              .slice()
+              .sort(
+                (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+              )
+              .slice(0, 5)
+              .map((skill) => (
+                <li key={skill._id} className="mb-2">
+                  <div
+                    className={`card shadow rounded-md p-2 ${
+                      isDarkMode
+                        ? "bg-gray-700 text-white"
+                        : "bg-white text-black"
+                    }`}
+                  >
+                    <div className="text-xs mb-1">
+                      Date : {skill.createdAt}
+                    </div>
+                    <div className="font-semibold mb-1">
+                      {skill.skillText[0].toUpperCase() +
+                        skill.skillText.slice(1)}
+                    </div>
+                    <div className="text-xs">
+                      {skill.skillAuthor[0].toUpperCase() +
+                        skill.skillAuthor.slice(1)}{" "}
+                      endorsed{" "}
+                      <strong>{skill.recipient?.name || "—"}</strong>
+                    </div>
+                  </div>
+                </li>
+              ))}
+          </ul>
+        </div>
+      )}
+    </div>
   );
-};
-
-export default RecentSkillsList;
+}
