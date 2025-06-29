@@ -70,7 +70,7 @@ export default function CommentList({
                 >
                   {c.commentAuthor}
                 </Link>
-                <p className="mt-1">{c.commentText}</p>
+                <p className="mt-1 text-xs font-thin">{c.commentText}</p>
                 <div className="flex justify-between items-center text-xs mt-2">
                   <span className="text-gray-500">
                     {new Date(parseInt(c.createdAt)).toLocaleString()}

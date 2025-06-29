@@ -26,7 +26,7 @@ const UserProfile = ({ profile }) => {
             <button
               className={`w-1/2 px-4 py-2 rounded-l-lg font-bold text-sm transition duration-300 ${
                 activeTab === 'posts'
-                  ? 'bg-indigo-600 text-white'
+                  ? 'bg-blue-600 text-white'
                   : 'bg-white text-dark text-gray-700 dark:bg-gray-800 dark:text-white'
               }`}
               onClick={() => setActiveTab('posts')}
@@ -36,7 +36,7 @@ const UserProfile = ({ profile }) => {
             <button
               className={`w-1/2 px-4 py-2 rounded-r-lg font-bold text-sm transition duration-300  ${
                 activeTab === 'skills'
-                  ? 'bg-indigo-600 text-white'
+                  ? 'bg-blue-600 text-white'
                   : 'bg-white text-dark text-gray-700 dark:bg-gray-800 dark:text-white'
               }`}
               onClick={() => setActiveTab('skills')}

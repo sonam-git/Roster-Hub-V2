@@ -129,9 +129,9 @@ const MyProfile = () => {
 
               <div className="navbar flex justify-center mt-4">
                 <button
-                  className={`px-4 py-2 rounded-l-lg ${
+                  className={`px-4 py-2 rounded-l-lg font-serif ${
                     selectedView === "settings"
-                      ? "bg-indigo-600 text-white"
+                      ? "bg-blue-600 text-white"
                       : "bg-gray-300 text-gray-700"
                   }`}
                   onClick={() => setSelectedView("settings")}
@@ -139,9 +139,9 @@ const MyProfile = () => {
                   Settings
                 </button>
                 <button
-                  className={`px-4 py-2 rounded-r-lg ${
+                  className={`px-4 py-2 rounded-r-lg font-serif ${
                     selectedView === "posts"
-                      ? "bg-indigo-600 text-white"
+                      ? "bg-blue-600 text-white"
                       : "bg-gray-300 text-gray-700"
                   }`}
                   onClick={() => setSelectedView("posts")}

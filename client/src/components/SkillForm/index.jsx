@@ -39,9 +39,9 @@ const SkillForm = ({ profileId, teamMate }) => {
 
   return (
     <div className="rounded-md bg-gray-100 dark:bg-gray-600 p-5 w-full">
-      <h4 className="text-base md:text-lg lg:text-xl font-bold mb-3">
+      {/* <h4 className="text-base md:text-lg lg:text-xl font-bold mb-3">
         {profileId !== authProfileId ? `Endorse ${teamMate}` : "Endorse Yourself"}
-      </h4>
+      </h4> */}
 
       {Auth.loggedIn() ? (
         <>
@@ -49,7 +49,7 @@ const SkillForm = ({ profileId, teamMate }) => {
             <input
               type="text"
               name="skill"
-              placeholder="Endorse your teammate..."
+              placeholder={profileId !== authProfileId ? `Endorse ${teamMate}` : "Endorse Yourself"}
               value={skillText}
               onChange={(e) => {
                 setSkillText(e.target.value);

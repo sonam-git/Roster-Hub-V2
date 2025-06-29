@@ -25,18 +25,18 @@ export default function RatingDisplay({ limit = 8 }) {
     .slice(0, limit);
 
   return (
-    <div className="flex space-x-4 overflow-x-auto p-4 bg-green-300 dark:bg-gray-600 rounded-xl shadow-md">
+    <div className="flex space-x-4 overflow-x-auto p-4 bg-gray-100 dark:bg-gray-600 rounded-xl shadow-md">
       {top.map((p) => {
         const stars = Math.round(p.averageRating);
         return (
           <div key={p._id} className="flex flex-col items-center">
-            <Link to={`/profiles/${p._id}`} className="hover:text-blue-500">
+            <Link to={`/profiles/${p._id}`} className="hover:text-blue-300 hover:no-underline">
               <img
                 src={p.profilePic || ProfileAvatar}
                 alt={p.name}
                 className="w-12 h-12 rounded-full mb-1"
               />
-              <span className="text-xs">{p.name}</span>
+              <span className="text-xs ">{p.name}</span>
             </Link>
             <div className="flex mt-1">
               {Array.from({ length: 5 }).map((_, i) =>

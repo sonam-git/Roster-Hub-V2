@@ -82,7 +82,7 @@ const SkillsList = ({
   return (
     <>
       {!isLoggedInUser && (
-        <h2 className="text-center font-bold mb-4">
+        <h2 className=" text-xs font-thin">
           {profile.name}'s friends have endorsed{" "}
           {profile.skills?.length ?? 0} skill
           {profile.skills?.length === 1 ? "" : "s"}
@@ -100,7 +100,7 @@ const SkillsList = ({
           <div key={skill._id} className="shadow rounded overflow-hidden">
             <div
               className={`p-2 font-bold border-b ${
-                isDarkMode ? "bg-gray-700 text-white" : "bg-white text-black"
+                isDarkMode ? "bg-gray-900 text-white" : "bg-white text-black"
               }`}
             >
               {skill.skillText[0].toUpperCase() + skill.skillText.slice(1)}

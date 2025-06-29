@@ -69,10 +69,10 @@ const ProfileList = ({ profiles, title }) => {
               {/* Column 1: Name and Jersey Number */}
               <div>
                 <div className="flex items-center">
-                  <h4 className="text-sm md:text-md lg:text-lg xl:text-xl">{profile.name}</h4>
+                  <h4 className="text-sm md:text-md lg:text-lg xl:text-xl font-bold">{profile.name}</h4>
                 </div>
                 <p className="font-bold">
-                  <RiTShirt2Line className="mr-2 text-xl inline" /> {profile.jerseyNumber}
+                  <RiTShirt2Line className="mr-2 text-xl inline font-semibold" /> {profile.jerseyNumber}
                 </p>
                 {/* Display star rating below jersey number */}
                 <div className="mt-2">
@@ -97,15 +97,15 @@ const ProfileList = ({ profiles, title }) => {
                 onClick={() => handleChatClick(profile)}
               >
                 <AiOutlineMessage className={`mr-2 text-2xl ${isDarkMode ? 'text-white ' : 'text-black'}`} />
-                <span className='text-sm md:text-md lg:text-lg xl:text-xl'>{isDarkMode ? 'Text' : 'Text'}</span>
+                <span className='text-sm md:text-md lg:text-lg xl:text-xl hover:underline underline-offset-4'>{isDarkMode ? 'Text' : 'Text'}</span>
               </button>
               {/* Rate button */}
               <button
-                className="flex items-center "
+                className="flex items-center   "
                 onClick={() => handleRatingClick(profile)}
               >
-                <AiFillStar className={`mr-2 text-2xl ${isDarkMode ? 'text-white' : 'text-black'}`} />
-                <span className='text-sm md:text-md lg:text-lg xl:text-xl'>{isDarkMode ? 'Rate' : 'Rate'}</span>
+                <AiFillStar className={`mr-2 text-2xl  ${isDarkMode ? 'text-white' : 'text-black'}`} />
+                <span className='text-sm md:text-md lg:text-lg xl:text-xl  hover:underline underline-offset-4'>{isDarkMode ? 'Rate' : 'Rate'}</span>
               </button>
               {/* Player info button */}
               <Link

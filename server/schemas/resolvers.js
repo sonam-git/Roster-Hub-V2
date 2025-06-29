@@ -51,8 +51,7 @@ const FORMATION_LIKED = "FORMATION_LIKED";
 const FORMATION_COMMENT_LIKED = "FORMATION_COMMENT_LIKED";
 
 const pubsub = new PubSub(); // Ensure this instance is used in the resolvers
-const FOOTBALL_API =
-  process.env.FOOTBALL_DATA_URL || "https://api.football-data.org/v4";
+const FOOTBALL_API = "https://api.football-data.org/v4";
 
 const resolvers = {
   // ############ QUERIES ########## //
@@ -292,7 +291,7 @@ const resolvers = {
       if (dateTo) url += `&dateTo=${dateTo}`;
 
       const res = await axios.get(url, {
-        headers: { "X-Auth-Token": process.env.FOOTBALL_DATA_KEY },
+        headers: { "X-Auth-Token": 'process.env.FOOTBALL_DATA_KEY '},
       });
 
       return res.data.matches.map((m) => ({

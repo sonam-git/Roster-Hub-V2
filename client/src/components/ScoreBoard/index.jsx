@@ -43,7 +43,7 @@ export default function Scoreboard({ competitionCode, title }) {
             onClick={() => setView(s)}
             className={
               (view === s
-                ? "bg-blue-600 dark:bg-gray-600 text-white"
+                ? "bg-indigo-600 dark:bg-gray-600 text-white"
                 : "bg-gray-200 text-gray-700 hover:bg-gray-300") +
               " px-3 py-1 rounded"
             }
@@ -56,12 +56,12 @@ export default function Scoreboard({ competitionCode, title }) {
       {/* list */}
       {data.soccerMatches.length > 0 ? (
         data.soccerMatches.map((m, i) => (
-          <div key={i} className="flex justify-between py-1 border-b dark:bg-gray-400">
+          <div key={i} className="flex justify-between py-1 border-b dark:bg-gray-400 ">
             <span>
               {m.homeTeam} {m.homeGoals ?? "-"}–{m.awayGoals ?? "-"} {m.awayTeam}
             </span>
             {view === "LIVE" ? (
-              <span className="text-xs text-red-500">{m.status}</span>
+              <span className="text-xs text-red-500 ">{m.status}</span>
             ) : (
               <span className="text-xs text-gray-500">
                 {format(new Date(m.utcDate), "PPpp")}

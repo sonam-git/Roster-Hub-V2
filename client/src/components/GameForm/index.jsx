@@ -176,7 +176,7 @@ const GameForm = () => {
           type="submit"
           disabled={loading}
           className={`mt-4 w-full py-2 rounded hover:opacity-90 disabled:opacity-50 ${
-            isDarkMode ? "bg-blue-500 text-white" : "bg-blue-600 text-white hover:bg-blue-700"
+            isDarkMode ? "bg-gray-600 text-white hover:bg-gray-700" : "bg-indigo-600 text-white hover:bg-indigo-900"
           }`}
         >
           {loading ? "Scheduling…" : "Schedule Game"}

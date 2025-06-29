@@ -54,7 +54,7 @@ const Home = ({ isDarkMode }) => {
             <div className="w-full lg:w-1/4 space-y-6">
               <RecentSkillsList />
               <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-md shadow-md">
-                <h2 className="text-center font-bold mb-2 text-sm md:text-xl lg:text-2xl">
+                <h2 className="text-center font-bold text-lg">
                   Game Schedule
                 </h2>
               </div>
@@ -63,8 +63,10 @@ const Home = ({ isDarkMode }) => {
           </div>
 
           {/* Top Ratings */}
-          <div className="w-full mt-8">
-            <h2 className="text-2xl font-bold mb-4">Top Ratings</h2>
+          <div className="w-full mt-8 mb-8">
+            <h2 className=" text-left text-2xl font-bold mb-4   ">
+              Top Ratings
+            </h2>
             <RatingDisplay limit={10} />
           </div>
         </div>

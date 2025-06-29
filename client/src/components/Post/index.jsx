@@ -182,7 +182,7 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
             alt=""
             className="w-8 h-8 rounded-full mr-2"
           />
-          <h3 className="text-lg dark:hover:text-yellow-300">{post.userId.name}</h3>
+          <h3 className="text-lg font-bold dark:hover:text-yellow-300">{post.userId.name}</h3>
         </Link>
         {currentUserId === post.userId._id && (
           <div className="flex space-x-2">
@@ -223,7 +223,7 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
         </>
       ) : (
         <>
-          <p className="mt-2">{postText}</p>
+          <p className="mt-2 mb-2 p-2 bg-gray-200 dark:bg-gray-600 font-light text-sm sm:text-xs rounded-md">{postText}</p>
           {isEdited && (
             <small className="text-gray-500">
               Edited: {new Date().toLocaleString()}

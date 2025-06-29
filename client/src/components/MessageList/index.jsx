@@ -79,8 +79,8 @@ const MessageList = ({ isLoggedInUser = false, isDarkMode }) => {
             <button
               onClick={() => setShowUserListModal(true)}
               className={`ml-4 flex items-center px-3 py-1 rounded-md ${
-                isDarkMode ? "bg-gray-700 text-white" : "bg-gray-200 text-black"
-              } hover:bg-indigo-500 hover:text-white transition`}
+                isDarkMode ? "bg-gray-700 text-white hover:bg-gray-500" : "bg-gray-200 text-black hover:bg-indigo-500 "
+              }  hover:text-white transition`}
             >
               <PlusIcon className="h-5 w-5 mr-1" />
               New
