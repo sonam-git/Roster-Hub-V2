@@ -55,7 +55,7 @@ const GameFeedbackList = ({ gameId, isDarkMode }) => {
             }`}
           >
             {/* top row: date left, rating right */}
-            <div className="flex justify-between items-center mb-2 text-sm text-gray-700">
+            <div className="flex justify-between items-center mb-2 text-sm dark:text-gray-300">
               <span>
                 {new Date(parseInt(fb.createdAt)).toLocaleString()}
               </span>

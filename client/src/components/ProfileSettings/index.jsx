@@ -104,17 +104,18 @@ const ProfileSettings = ({ isDarkMode }) => {
           <span className="block sm:inline">{successMessage}</span>
         </div>
       )}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm sm:text-base"
+          className=" block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm sm:text-base"
           placeholder="Enter your new name"
         />
+        <br></br>
         <button
           onClick={handleNameUpdate}
-          className=" w-full sm:w-auto text-sm sm:text-base  bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 sm:ml-2 sm:mt-0 rounded-md"
+          className=" w-full sm:w-auto text-sm sm:text-base  bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 sm:ml-2 sm:mt-0  rounded-md"
         >
           Update
         </button>

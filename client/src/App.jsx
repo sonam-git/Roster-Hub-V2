@@ -105,7 +105,7 @@ function AppContent() {
         }`}
       >
         <Header />
-        <div className="flex-1 mt-10">
+        <div className="flex-1 mt-10 ">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/roster" element={<Roster />} />

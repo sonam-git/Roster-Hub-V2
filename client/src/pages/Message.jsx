@@ -20,7 +20,7 @@ const Message = ({ isDarkMode }) => {
   const profile = data?.me || data?.profile || {};
 
   return (
-    <div className="container mx-auto px-4 mt-5">
+    <div className="container mx-auto lg:mt-5">
       <MessageList
         messages={profile?.messages || []}
         isLoggedInUser={!profileId}

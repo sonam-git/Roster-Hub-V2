@@ -20,7 +20,7 @@ const Skill = ({ isDarkMode }) => {
   }
 
   return (
-    <div className="container mx-auto px-4 mt-5">
+    <div className="container mx-auto px-4 lg:mt-5">
       <div className="max-w mx-auto space-y-6">
         {profile.skills?.length > 0 ? (
           <>

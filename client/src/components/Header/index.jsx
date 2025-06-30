@@ -165,13 +165,19 @@ const gameBadgeCount = pendingCount + confirmedCount;
           : " text-black  dark:text-white"
       }
     `}
-              onClick={Menu.action ? Menu.action : undefined}
+                onClick={() => {
+    // run action if it exists (e.g. logout)
+    if (Menu.action) Menu.action();
+    // always close the mobile menu
+    setOpen(false);
+  }}
             >
               {Menu.path ? (
                 <Link
                   to={Menu.path}
                   className="flex items-center w-full no-underline"
                   style={{ textDecoration: "none" }}
+                  onClick={() => setOpen(false)}
                 >
                   <div className="flex items-center">
                     <img

@@ -10,7 +10,7 @@ const Hero = () => {
   const [started, setStarted] = useState(false);
 
   return (
-    <main className="container min-h-screen flex items-center justify-center px-2">
+    <main className="container lg:mt-20 flex items-center justify-center px-2">
       <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-7xl">
 
         {/* Left side */}

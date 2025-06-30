@@ -27,7 +27,7 @@ const Game = () => {
   // Loading state
   if (!gameId) {
     return (
-      <div className="container mx-auto mt-5 p-4">
+      <div className="container mx-auto lg:mt-5 p-3">
         <div className="flex flex-col lg:flex-row lg:space-x-2">
           <div className=" w-full mb-6 lg:mb-0">
             <GameForm />
@@ -69,7 +69,7 @@ const Game = () => {
   }
 
   return (
-    <div className="container mx-auto mt-5 p-4">
+    <div className="container mx-auto lg:mt-5 p-4">
       <div className="flex flex-col lg:flex-row lg:space-x-6">
         <div className=" w-full mb-2">
           <GameDetails gameId={gameId} isDarkMode={isDarkMode} />

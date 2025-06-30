@@ -17,7 +17,7 @@ const Roster = () => {
   }
 
   return (
-    <main className="container mx-auto px-4 mt-5"> {/* Apply custom styles to reset margin and padding */}
+    <main className="container mx-auto lg:mt-5"> 
       <div className="flex-row justify-center">
         <div className="col-12 ">
           {/* Conditional rendering based on authentication status */}
