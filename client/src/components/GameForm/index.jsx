@@ -91,7 +91,7 @@ const GameForm = () => {
       <form onSubmit={handleSubmit}>
       <div className="grid grid-cols-2 gap-4 mb-2">
   {/* Date */}
-  <label className={`block ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+  <label className={` text-sm block ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
     Date
     <input
       type="date"
@@ -108,7 +108,7 @@ const GameForm = () => {
   </label>
 
   {/* Time */}
-  <label className={`block ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+  <label className={` text-sm block ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
     Time
     <input
       type="time"
@@ -125,7 +125,7 @@ const GameForm = () => {
   </label>
 </div>
         {/* Venue */}
-        <label className={`block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+        <label className={` text-sm block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
           Venue
           <input
             type="text"
@@ -141,7 +141,7 @@ const GameForm = () => {
         </label>
 
         {/* Opponent */}
-        <label className={`block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+        <label className={` text-sm block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
           Opponent
           <input
             type="text"
@@ -157,7 +157,7 @@ const GameForm = () => {
         </label>
 
         {/* Notes */}
-        <label className={`block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+        <label className={` italic text-sm block mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
           Special Notes
           <textarea
             name="notes"

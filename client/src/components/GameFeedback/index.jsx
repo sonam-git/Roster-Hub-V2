@@ -50,7 +50,7 @@ const GameFeedback = ({ gameId, isDarkMode, onFeedback }) => {
           rows={3}
         />
         <div className="flex items-center space-x-2">
-          <label className="font-medium">Your rating (0–10):</label>
+          <label className="font-medium text-sm ">Your rating (0 –10):</label>
           <input
             type="number"
             min="0"

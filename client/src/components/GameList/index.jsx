@@ -136,7 +136,7 @@ const GameList = () => {
                   </span>
                 </div>
                 {game.status === "PENDING" && (
-                  <p className="mt-3 flex items-center text-yellow-600 italic dark:text-yellow-300">
+                  <p className="mt-3 flex items-center text-yellow-600 italic dark:text-yellow-300 text-xs">
                     <span role="img" aria-label="attention" className="mr-2">⚠️</span>
                     Response cannot be changed once the game is confirmed.
                   </p>

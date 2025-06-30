@@ -176,11 +176,12 @@ export default function GameDetails({ gameId }) {
 
   /* voters list */
   const yesVoters = game.responses
-    .filter((r) => r.isAvailable)
-    .map((r) => r.user.name);
+  .filter(r => r.isAvailable)
+  .map(r => r.user);
   const noVoters = game.responses
     .filter((r) => !r.isAvailable)
-    .map((r) => r.user.name);
+    .map((r) => r.user);
+  
 
   /* ──────────────────────────────────────────────────────────── */
   /*  JSX                                                         */
@@ -196,7 +197,7 @@ export default function GameDetails({ gameId }) {
         <button
           onClick={() => navigate('/game-schedule')}
           className={`mb-4 px-4 py-2 rounded ${
-            isDarkMode ? 'bg-gray-500 text-white' : 'bg-indigo-600 text-white'
+            isDarkMode ? 'bg-gray-500 text-white hover:bg-gray-700' : 'bg-indigo-600 text-white hover:bg-indigo-800'
           }`}
         >
           ← Back to Game List
@@ -239,7 +240,7 @@ export default function GameDetails({ gameId }) {
                       variables: { input: { gameId, isAvailable: true } },
                     })
                   }
-                  className="px-4 py-2 bg-green-600 text-white rounded"
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-800"
                 >
                   Yes
                 </button>
@@ -249,7 +250,7 @@ export default function GameDetails({ gameId }) {
                       variables: { input: { gameId, isAvailable: false } },
                     })
                   }
-                  className="px-4 py-2 bg-red-600 text-white rounded"
+                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-800"
                 >
                   No
                 </button>
@@ -264,13 +265,13 @@ export default function GameDetails({ gameId }) {
                       },
                     })
                   }
-                  className="px-4 py-2 bg-yellow-600 text-white rounded"
+                  className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-800"
                 >
                   Change to {currentVote ? 'No' : 'Yes'}
                 </button>
                 <button
                   onClick={() => unvoteGame({ variables: { gameId } })}
-                  className="px-4 py-2 bg-gray-500 text-white rounded"
+                  className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700"
                 >
                   Unvote
                 </button>
@@ -324,7 +325,7 @@ export default function GameDetails({ gameId }) {
                 onClick={() =>
                   confirmGame({ variables: { gameId, note: updatedNote } })
                 }
-                className="px-4 py-2 bg-blue-600 text-white rounded"
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-800"
               >
                 Confirm
               </button>
@@ -335,7 +336,7 @@ export default function GameDetails({ gameId }) {
               <>
                 <button
                   onClick={() => setShowUpdate(true)}
-                  className="px-4 py-2 bg-green-600 text-white rounded"
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-800"
                 >
                   Update
                 </button>
@@ -343,7 +344,7 @@ export default function GameDetails({ gameId }) {
                   onClick={() =>
                     cancelGame({ variables: { gameId, note: updatedNote } })
                   }
-                  className="px-4 py-2 bg-red-600 text-white rounded"
+                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-800"
                 >
                   Cancel
                 </button>
@@ -355,7 +356,7 @@ export default function GameDetails({ gameId }) {
               <>
                 <button
                   onClick={() => setShowComplete(true)}
-                  className="px-4 py-2 bg-purple-600 text-white rounded"
+                  className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-800"
                 >
                   Complete
                 </button>
@@ -363,7 +364,7 @@ export default function GameDetails({ gameId }) {
                   onClick={() =>
                     cancelGame({ variables: { gameId, note: updatedNote } })
                   }
-                  className="px-4 py-2 bg-red-600 text-white rounded"
+                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-800"
                 >
                   Cancel
                 </button>
@@ -383,7 +384,7 @@ export default function GameDetails({ gameId }) {
       {/* ───────────────── RIGHT COLUMN ───────────────────────── */}
       <div>
         {game.status === 'CONFIRMED' && !formation && !isCreator && (
-          <p className="italic dark:text-white">
+          <p className="italic dark:text-white text-sm">
             The formation will appear here once the creator sets it up.
           </p>
         )}
@@ -401,7 +402,7 @@ export default function GameDetails({ gameId }) {
         {game.status === 'COMPLETED' && (
           <>
             {showThankYou ? (
-              <div className="p-4 bg-green-100 dark:bg-green-800 rounded text-center">
+              <div className="p-4 bg-green-300 dark:bg-green-800 rounded text-center italic">
                 Thank you for your feedback!
               </div>
             ) : !feedbackGiven ? (

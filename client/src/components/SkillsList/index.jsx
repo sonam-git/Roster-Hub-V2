@@ -100,7 +100,7 @@ const SkillsList = ({
           <div key={skill._id} className="shadow rounded overflow-hidden">
             <div
               className={`p-2 font-bold border-b ${
-                isDarkMode ? "bg-gray-900 text-white" : "bg-white text-black"
+                isDarkMode ? "bg-gray-900 text-white" : "bg-yellow-200 text-black"
               }`}
             >
               {skill.skillText[0].toUpperCase() + skill.skillText.slice(1)}

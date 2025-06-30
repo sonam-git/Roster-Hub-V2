@@ -39,7 +39,7 @@ const GameFeedbackList = ({ gameId, isDarkMode }) => {
     <div className="mt-6">
       {/* Anonymous feedback header */}
       <p
-        className={`mb-4 text-lg font-bold text-center ${
+        className={`mb-4 text-lg font-semibold text-center italic ${
           isDarkMode ? "text-gray-300" : "text-gray-700"
         }`}
       >
@@ -51,11 +51,11 @@ const GameFeedbackList = ({ gameId, isDarkMode }) => {
           <div
             key={fb._id}
             className={`p-4 rounded shadow ${
-              isDarkMode ? "bg-gray-700 text-gray-200" : "bg-gray-200 text-gray-800"
+              isDarkMode ? "bg-gray-700 text-gray-200" : "bg-green-100 text-gray-800"
             }`}
           >
             {/* top row: date left, rating right */}
-            <div className="flex justify-between items-center mb-2 text-sm text-gray-400">
+            <div className="flex justify-between items-center mb-2 text-sm text-gray-700">
               <span>
                 {new Date(parseInt(fb.createdAt)).toLocaleString()}
               </span>

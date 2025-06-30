@@ -64,10 +64,10 @@ const PostForm = () => {
             </button>
           </div>
           {(clientError || serverError) && (
-            <div className="col-12 my-3 bg-red-500 text-white italic p-3 rounded">
-              {clientError || serverError}
-            </div>
-          )}
+        <span className="text-sm text-red-500  px-2 py-1 rounded italic">
+          {clientError}
+        </span>
+      )}
         </form>
       ) : (
         <p className="ml-3">

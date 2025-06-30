@@ -24,30 +24,26 @@ const VotersList = ({ yesVoters = [], noVoters = [] }) => {
           </thead>
           <tbody>
             <tr>
-              {/* Fixed interpolation here: */}
               <td className={`align-top px-3 py-2 border-r ${borderColor}`}>
                 {yesVoters.length > 0 ? (
-                  <ul className="list-disc list-inside space-y-1">
-                    {yesVoters.map((name) => (
-                      // Use the voter name as key if it's unique
-                      <li key={name}>{name}</li>
+                  <ul className="list-disc list-inside space-y-1 text-xs">
+                    {yesVoters.map(user => (
+                      <li key={user.id || user._id}>{user.name}</li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="italic">No one has voted “Yes” yet.</p>
+                  <p className="italic text-xs">No one has voted “Yes” yet.</p>
                 )}
               </td>
-
-              {/* You can add a left border for symmetry if you like */}
-              <td className={`align-top px-3 py-2 ${borderColor ? `border-l ${borderColor}` : ""}`}>
+              <td className={`align-top px-3 py-2 border-l ${borderColor}`}>
                 {noVoters.length > 0 ? (
-                  <ul className="list-disc list-inside space-y-1">
-                    {noVoters.map((name) => (
-                      <li key={name}>{name}</li>
+                  <ul className="list-disc list-inside space-y-1 text-xs">
+                    {noVoters.map(user => (
+                      <li key={user.id || user._id}>{user.name}</li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="italic">No one has voted “No” yet.</p>
+                  <p className="italic text-xs">No one has voted “No” yet.</p>
                 )}
               </td>
             </tr>

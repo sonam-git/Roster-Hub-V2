@@ -79,7 +79,7 @@ export default function RecentSkillsList() {
                     <div className="text-xs mb-1">
                       Date : {skill.createdAt}
                     </div>
-                    <div className="font-semibold mb-1">
+                    <div className="font-semibold mb-1 ">
                       {skill.skillText[0].toUpperCase() +
                         skill.skillText.slice(1)}
                     </div>

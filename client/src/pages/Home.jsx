@@ -64,9 +64,6 @@ const Home = ({ isDarkMode }) => {
 
           {/* Top Ratings */}
           <div className="w-full mt-8 mb-8">
-            <h2 className=" text-left text-2xl font-bold mb-4   ">
-              Top Ratings
-            </h2>
             <RatingDisplay limit={10} />
           </div>
         </div>
