@@ -291,7 +291,7 @@ const resolvers = {
       if (dateTo) url += `&dateTo=${dateTo}`;
 
       const res = await axios.get(url, {
-        headers: { "X-Auth-Token": 'process.env.FOOTBALL_DATA_KEY '},
+        headers: { "X-Auth-Token": process.env.FOOTBALL_DATA_KEY },
       });
 
       return res.data.matches.map((m) => ({
@@ -658,6 +658,21 @@ const resolvers = {
       } catch (error) {
         throw new Error("Failed to save social media link: " + error.message);
       }
+    },
+    // ************************** REMOVE SOCIAL MEDIA LINK *******************************************//
+    removeSocialMediaLink: async (_, { userId, type }, context) => {
+      // Optional: check if context.user._id === userId for security
+      // Find the SocialMediaLink document
+      const linkDoc = await SocialMediaLink.findOne({ userId, type });
+      if (linkDoc) {
+        await SocialMediaLink.deleteOne({ _id: linkDoc._id });
+        // Remove the reference from the Profile
+        await Profile.findByIdAndUpdate(
+          userId,
+          { $pull: { socialMediaLinks: linkDoc._id } }
+        );
+      }
+      return true;
     },
     // ************************** UPDATE USER NAME *******************************************//
     updateName: async (_, { name }, context) => {

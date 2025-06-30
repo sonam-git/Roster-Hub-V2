@@ -293,6 +293,7 @@ const typeDefs = gql`
     deleteFormationComment(formationId: ID!, commentId: ID!): ID!
     likeFormationComment(commentId: ID!): FormationComment
     likeFormation(formationId: ID!): Formation
+    removeSocialMediaLink(userId: ID!, type: String!): Boolean
   }
   type Subscription {
     chatCreated: Chat

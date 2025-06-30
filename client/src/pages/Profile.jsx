@@ -10,11 +10,13 @@ import MyProfile from "../components/MyProfile";
 const Profile = () => {
   const { profileId } = useParams();
 
-  // If there is no `profileId` in the URL as a parameter, execute the `QUERY_ME` query instead for the logged in user's information
+  // Always fetch fresh data for profile views
   const { loading, data, error } = useQuery(
     profileId ? QUERY_SINGLE_PROFILE : QUERY_ME,
     {
       variables: { profileId: profileId },
+      fetchPolicy: "network-only",
+      pollInterval: 5000, // Refetch every 5 seconds
     }
   );
 

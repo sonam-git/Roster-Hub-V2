@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useTransition, useDeferredValue } from "react";
 import { useMutation, useSubscription } from "@apollo/client";
 import { REMOVE_SKILL } from "../../utils/mutations";
-import { QUERY_ME } from "../../utils/queries";
+import { QUERY_ME, GET_SKILLS } from "../../utils/queries";
 import {
   SKILL_ADDED_SUBSCRIPTION,
   SKILL_DELETED_SUBSCRIPTION,
@@ -16,6 +16,7 @@ const SkillsList = ({
   skills: initialSkills,
   isLoggedInUser = false,
   isDarkMode,
+  columns = 2, // default to 2 columns for profile, 1 for homepage
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isPending, startTransition] = useTransition();
@@ -46,7 +47,7 @@ const SkillsList = ({
   });
 
   // remove mutation
-  const [removeSkill, { error }] = useMutation(REMOVE_SKILL, {
+  const [removeSkill, { error, client }] = useMutation(REMOVE_SKILL, {
     update(cache, { data: { removeSkill: removed } }) {
       // 1️⃣ remove from the normalized Profile.skills field
       cache.modify({
@@ -61,6 +62,10 @@ const SkillsList = ({
       });
       // 2️⃣ also drop from our local list
       setLocalSkills(prev => prev.filter(s => s._id !== removed._id));
+      // 3️⃣ force refetch of all skills for recents list
+      if (client) {
+        client.refetchQueries({ include: [GET_SKILLS] });
+      }
     },
   });
 
@@ -95,7 +100,7 @@ const SkillsList = ({
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <div className={`grid grid-cols-1${columns > 1 ? ` sm:grid-cols-${columns}` : ""} gap-2`}>
         {deferredSkills.map(skill => (
           <div key={skill._id} className="shadow rounded overflow-hidden">
             <div
@@ -106,13 +111,14 @@ const SkillsList = ({
               {skill.skillText[0].toUpperCase() + skill.skillText.slice(1)}
             </div>
             <div
-              className={`flex justify-between items-center px-2 py-1 text-xs ${
+              className={`flex flex-col px-2 py-1 text-xs ${
                 isDarkMode ? "bg-gray-800 text-gray-200" : "bg-gray-100 text-gray-700"
               }`}
             >
               <span>
-                By {skill.skillAuthor} on {skill.createdAt}
+                {skill.skillAuthor[0].toUpperCase() + skill.skillAuthor.slice(1)} endorsed <strong>{skill.recipient?.name || "—"}</strong>
               </span>
+              <span>Date: {skill.createdAt}</span>
               {isLoggedInUser && (
                 <button
                   onClick={() => handleRemoveSkill(skill._id)}

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { ADD_SKILL } from "../../utils/mutations";
-import { QUERY_ME, QUERY_SINGLE_PROFILE } from "../../utils/queries";
+import { QUERY_ME, QUERY_SINGLE_PROFILE, GET_SKILLS } from "../../utils/queries";
 import Auth from "../../utils/auth";
 
 const SkillForm = ({ profileId, teamMate }) => {
@@ -11,14 +11,7 @@ const SkillForm = ({ profileId, teamMate }) => {
   const [skillText, setSkillText] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const [addSkill] = useMutation(ADD_SKILL, {
-    refetchQueries: [
-      {
-        query: profileId ? QUERY_SINGLE_PROFILE : QUERY_ME,
-        variables: profileId ? { profileId } : undefined,
-      },
-    ],
-  });
+  const [addSkill, { client }] = useMutation(ADD_SKILL);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,6 +25,10 @@ const SkillForm = ({ profileId, teamMate }) => {
     try {
       await addSkill({ variables: { profileId, skillText: text } });
       setSkillText("");
+      // Force refetch of all skills for recents list
+      if (client) {
+        client.refetchQueries({ include: [GET_SKILLS] });
+      }
     } catch (err) {
       console.error("Submission error:", err);
     }

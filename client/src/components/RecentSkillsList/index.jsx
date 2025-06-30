@@ -10,7 +10,9 @@ import { ThemeContext } from "../ThemeContext";
 
 export default function RecentSkillsList() {
   const { isDarkMode } = useContext(ThemeContext);
-  const { loading, error, data, subscribeToMore } = useQuery(GET_SKILLS);
+  const { loading, error, data, subscribeToMore } = useQuery(GET_SKILLS, {
+    fetchPolicy: "network-only",
+  });
 
   useEffect(() => {
     const unsubAdd = subscribeToMore({
@@ -24,12 +26,17 @@ export default function RecentSkillsList() {
     });
     const unsubDel = subscribeToMore({
       document: SKILL_DELETED_SUBSCRIPTION,
-      updateQuery: (prev, { subscriptionData }) => {
+      updateQuery: (prev, { subscriptionData, client }) => {
         const deletedId = subscriptionData.data?.skillDeleted;
         if (!deletedId) return prev;
-        return {
-          skills: prev.skills.filter((s) => s._id !== deletedId),
-        };
+        const filtered = prev.skills.filter(
+          (s) => String(s._id) !== String(deletedId)
+        );
+        // Always refetch to ensure UI is in sync
+        if (client) {
+          client.refetchQueries({ include: [GET_SKILLS] });
+        }
+        return { skills: filtered };
       },
     });
     return () => {
@@ -46,18 +53,14 @@ export default function RecentSkillsList() {
 
   return (
     <div>
-      <div
-        className={`mb-2 shadow-md p-2 rounded-md ${
-          isDarkMode ? "bg-gray-700 text-white" : "bg-white text-black"
-        }`}
-      >
+     <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-md shadow-md mb-4">
         <h3 className="text-center font-bold text-lg">
           {skills.length === 0 ? "No Skills available" : "Latest Skills"}
         </h3>
       </div>
 
       {skills.length === 0 ? (
-        <p className="text-center italic">Nothing here yet.</p>
+        <p className="text-center italic">No Skills endorsed yet.</p>
       ) : (
         <div className="w-full overflow-y-auto" style={{ height: 250 }}>
           <ul>

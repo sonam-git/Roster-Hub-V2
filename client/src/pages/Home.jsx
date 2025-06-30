@@ -7,21 +7,21 @@ import Auth from "../utils/auth";
 import Welcome from "../components/Welcome";
 import PostForm from "../components/PostForm";
 import PostsList from "../components/PostsList";
-import RecentSkillsList from "../components/RecentSkillsList";
 import ComingGames from "../components/ComingGames";
 import RatingDisplay from "../components/RatingDisplay";
+import RecentSkillsList from "../components/RecentSkillsList";
 
 const Home = ({ isDarkMode }) => {
-  // 1️⃣ Check login
+  // Check login
   const isLoggedIn = Auth.loggedIn();
 
-  // 2️⃣ Fetch profile if logged in
+  // Fetch profile if logged in
   const { loading, error, data } = useQuery(QUERY_ME, {
     skip: !isLoggedIn,
   });
   const profile = data?.me || {};
 
-  // 3️⃣ Loading / error states
+  // Loading / error states
   if (loading) {
     return <div className="text-center py-10">Loading your dashboard…</div>;
   }
@@ -52,11 +52,11 @@ const Home = ({ isDarkMode }) => {
 
             {/* Right: RecentSkillsList + ComingGames */}
             <div className="w-full lg:w-1/4 space-y-6">
-              <RecentSkillsList />
+              <div>
+                <RecentSkillsList />
+              </div>
               <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-md shadow-md">
-                <h2 className="text-center font-bold text-lg">
-                  Game Schedule
-                </h2>
+                <h2 className="text-center font-bold text-lg">Game Schedule</h2>
               </div>
               <ComingGames />
             </div>

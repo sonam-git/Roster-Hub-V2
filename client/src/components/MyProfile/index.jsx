@@ -2,9 +2,9 @@
 import React, { useState, useContext } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_ME } from "../../utils/queries";
-import { SAVE_SOCIAL_MEDIA_LINK } from "../../utils/mutations";
+import { SAVE_SOCIAL_MEDIA_LINK, REMOVE_SOCIAL_MEDIA_LINK } from "../../utils/mutations";
 import { RiTShirt2Line } from "react-icons/ri";
-import { FaUser } from "react-icons/fa";
+import { FaUser, FaTrash } from "react-icons/fa";
 import ProfilePicUploader from "../ProfilePicUploader";
 import ProfileManagement from "../ProfileManangement";
 import ProfileAvatar from "../../assets/images/profile-avatar.png";
@@ -30,6 +30,9 @@ const MyProfile = () => {
   const [selectedView, setSelectedView]                 = useState("posts");
 
   const [saveSocialMediaLink] = useMutation(SAVE_SOCIAL_MEDIA_LINK, {
+    refetchQueries: [{ query: QUERY_ME }],
+  });
+  const [removeSocialMediaLink] = useMutation(REMOVE_SOCIAL_MEDIA_LINK, {
     refetchQueries: [{ query: QUERY_ME }],
   });
 
@@ -171,9 +174,30 @@ const MyProfile = () => {
         <div className="fixed inset-0 flex items-center justify-center z-10">
           <div className="absolute inset-0 bg-black opacity-50" />
           <div className="relative bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md">
-            <h4 className="text-lg font-semibold mb-2">
-              Insert {label} Link:
-            </h4>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center">
+                <h4 className="text-lg font-semibold">
+                  {me.socialMediaLinks && me.socialMediaLinks.some(l => l.type === selectedSocialMedia) ? 'Delete' : 'Insert'} {label} Link:
+                </h4>
+                {me.socialMediaLinks && me.socialMediaLinks.some(l => l.type === selectedSocialMedia) && (
+                  <button
+                    className="ml-2 text-red-500 hover:text-red-700"
+                    title={`Delete ${label} link`}
+                    onClick={async () => {
+                      setSelectedSocialMedia(null);
+                      setSocialMediaLink("");
+                      try {
+                        await removeSocialMediaLink({ variables: { userId: me._id, type: selectedSocialMedia } });
+                      } catch (e) {
+                        console.error("Error deleting social media link:", e);
+                      }
+                    }}
+                  >
+                    <FaTrash />
+                  </button>
+                )}
+              </div>
+            </div>
             <input
               type="text"
               value={socialMediaLink}

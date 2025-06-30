@@ -127,6 +127,12 @@ export const SAVE_SOCIAL_MEDIA_LINK = gql`
     }
   }
 `;
+// Mutation to remove a social media link
+export const REMOVE_SOCIAL_MEDIA_LINK = gql`
+  mutation removeSocialMediaLink($userId: ID!, $type: String!) {
+    removeSocialMediaLink(userId: $userId, type: $type)
+  }
+`;
 // Mutation to update the name
 export const UPDATE_NAME_MUTATION = gql`
   mutation UpdateName($name: String!) {

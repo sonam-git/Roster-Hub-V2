@@ -20,6 +20,7 @@ const ProfileCard = ({ profile, isDarkMode }) => {
   const handleRateClick     = () => setShowRatingModal(true);
   const handleCloseRating   = () => setShowRatingModal(false);
 
+  // Restore the renderSocialMediaIcons function
   const renderSocialMediaIcons = () =>
     profile.socialMediaLinks.map((social) => {
       let IconComponent;
