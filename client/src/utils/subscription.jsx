@@ -336,3 +336,14 @@ export const FORMATION_COMMENT_LIKED_SUBSCRIPTION = gql`
     }
   }
 `;
+export const SKILL_REACTION_UPDATED_SUBSCRIPTION = gql`
+  subscription OnSkillReactionUpdated($skillId: ID!) {
+    skillReactionUpdated(skillId: $skillId) {
+      _id
+      reactions {
+        emoji
+        user { _id name }
+      }
+    }
+  }
+`;

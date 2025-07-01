@@ -15,7 +15,6 @@ const Roster = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
-
   return (
     <main className="container mx-auto lg:mt-5"> 
       <div className="flex-row justify-center">

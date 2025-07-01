@@ -1,13 +1,16 @@
 // src/components/SkillsList.jsx
 import { useState, useEffect, useTransition, useDeferredValue } from "react";
-import { useMutation, useSubscription } from "@apollo/client";
-import { REMOVE_SKILL } from "../../utils/mutations";
+import { useMutation, useSubscription, useApolloClient } from "@apollo/client";
+import { REMOVE_SKILL, REACT_TO_SKILL } from "../../utils/mutations";
 import { GET_SKILLS } from "../../utils/queries";
 import {
   SKILL_ADDED_SUBSCRIPTION,
   SKILL_DELETED_SUBSCRIPTION,
+  SKILL_REACTION_UPDATED_SUBSCRIPTION,
 } from "../../utils/subscription";
 import { AiOutlineDelete } from "react-icons/ai";
+import SkillReaction from "./SkillReaction";
+import Auth from "../../utils/auth";
 
 const PAGE_SIZE = 4;
 
@@ -18,10 +21,11 @@ const SkillsList = ({
   isDarkMode,
   columns = 2, // default to 2 columns for profile, 1 for homepage
 }) => {
+  const apolloClient = useApolloClient();
   const [currentPage, setCurrentPage] = useState(1);
   const [isPending, startTransition] = useTransition();
   const [localSkills, setLocalSkills] = useState(initialSkills);
-  
+  const userId = Auth.getProfile()?.data?._id;
 
   // keep localSkills in sync
   useEffect(() => {
@@ -46,8 +50,27 @@ const SkillsList = ({
     },
   });
 
+  // Subscribe to reaction updates for each skill
+  useEffect(() => {
+    if (!localSkills.length) return;
+    const unsubscribers = localSkills.map(skill =>
+      apolloClient && apolloClient.subscribe({
+        query: SKILL_REACTION_UPDATED_SUBSCRIPTION,
+        variables: { skillId: skill._id },
+      }).subscribe({
+        next({ data }) {
+          const updated = data?.skillReactionUpdated;
+          if (updated) {
+            setLocalSkills(prev => prev.map(s => s._id === updated._id ? { ...s, reactions: updated.reactions } : s));
+          }
+        },
+      })
+    );
+    return () => unsubscribers.forEach(sub => sub && sub.unsubscribe());
+  }, [localSkills, apolloClient]);
+
   // remove mutation
-  const [removeSkill, { error, client }] = useMutation(REMOVE_SKILL, {
+  const [removeSkill, { error }] = useMutation(REMOVE_SKILL, {
     update(cache, { data: { removeSkill: removed } }) {
       // 1️⃣ remove from the normalized Profile.skills field
       cache.modify({
@@ -63,8 +86,8 @@ const SkillsList = ({
       // 2️⃣ also drop from our local list
       setLocalSkills(prev => prev.filter(s => s._id !== removed._id));
       // 3️⃣ force refetch of all skills for recents list
-      if (client) {
-        client.refetchQueries({ include: [GET_SKILLS] });
+      if (apolloClient) {
+        apolloClient.refetchQueries({ include: [GET_SKILLS] });
       }
     },
   });
@@ -101,53 +124,81 @@ const SkillsList = ({
       )}
 
       <div className={`grid grid-cols-1${columns > 1 ? ` sm:grid-cols-${columns}` : ""} gap-2`}>
-        {deferredSkills.map(skill => (
-          <div key={skill._id} className="shadow rounded overflow-hidden flex flex-col justify-between h-32">
-            {/* Author on top */}
-            <div
-              className={`px-3 py-2 text-xs font-semibold tracking-wide border-b ${
-                isDarkMode ? "bg-gray-900 text-green-300" : "bg-green-100 text-yellow-800"
-              }`}
-              style={{ letterSpacing: '0.05em' }}
-            >
-              <span className="inline-block align-middle">
-                {skill.skillAuthor[0].toUpperCase() + skill.skillAuthor.slice(1)}
-              </span>
-              <span className="ml-1 text-gray-400 font-normal">endorsed </span> 
-               <span className="text-xs text-gray-500 italic">
-                {skill.recipient?.name ? <strong>{skill.recipient.name}</strong> : "—"}
-              </span>
+        {deferredSkills.map(skill => {
+          const isSkillAuthor = skill.skillAuthor === profile.name;
+          const userReaction = skill.reactions?.find(r => r.user?._id === userId)?.emoji || null;
+          return (
+            <div key={skill._id} className="shadow rounded overflow-hidden flex flex-col justify-between h-32">
+              {/* Author on top */}
+              <div
+                className={`px-3 py-2 text-xs font-semibold tracking-wide border-b ${
+                  isDarkMode ? "bg-gray-900 text-green-300" : "bg-green-100 text-yellow-800"
+                }`}
+                style={{ letterSpacing: '0.05em' }}
+              >
+                <span className="inline-block align-middle">
+                  {skill.skillAuthor[0].toUpperCase() + skill.skillAuthor.slice(1)}
+                </span>
+                <span className="ml-1 text-gray-400 font-normal">endorsed </span> 
+                 <span className="text-xs text-gray-500 italic">
+                  {skill.recipient?.name ? <strong>{skill.recipient.name}</strong> : "—"}
+                </span>
+              </div>
+              {/* Skill text in the middle */}
+              <div
+                className={`flex-1 flex items-center justify-center text-lg font-bold ${
+                  isDarkMode ? "bg-gray-800 text-white" : "bg-green-200 text-gray-900"
+                }`}
+                style={{ minHeight: '2.5rem' }}
+              >
+                {skill.skillText[0].toUpperCase() + skill.skillText.slice(1)}
+              </div>
+              {/* Date at the bottom in a pill/button, with emoji react button inline */}
+              <div className={`flex items-center justify-between px-3 py-2 border-t ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}>  
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold shadow ${isDarkMode ? "bg-gray-700 text-green-200" : "bg-green-300 text-yellow-900"}`}>
+                  {skill.createdAt}
+                </span>
+                {/* Emoji reactions display */}
+                <div className="flex items-center ml-2">
+                  {skill.reactions && skill.reactions.length > 0 && (
+                    <div className="flex space-x-1 mr-2">
+                      {skill.reactions.map((r, i) => (
+                        <span key={i} title={r.user?.name || ""} className="text-xl">
+                          {r.emoji}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {/* Emoji reaction button for users who are not the skill author, inline with date */}
+                  {!isSkillAuthor && (
+                    <div className="ml-1 relative z-20">
+                      <SkillReaction
+                        skillId={skill._id}
+                        initialReaction={userReaction}
+                        onReact={async (emoji) => {
+                          await apolloClient.mutate({
+                            mutation: REACT_TO_SKILL,
+                            variables: { skillId: skill._id, emoji },
+                          });
+                        }}
+                      />
+                    </div>
+                  )}
+                  {isLoggedInUser && (
+                    <button
+                      onClick={() => handleRemoveSkill(skill._id)}
+                      disabled={isPending}
+                      title="Delete skill"
+                      className={`transition ml-2 ${isDarkMode ? "text-red-400 hover:text-red-200" : "text-red-600 hover:text-red-800"}`}
+                    >
+                      <AiOutlineDelete size={18} />
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
-            {/* Skill text in the middle */}
-            <div
-              className={`flex-1 flex items-center justify-center text-lg font-bold ${
-                isDarkMode ? "bg-gray-800 text-white" : "bg-green-200 text-gray-900"
-              }`}
-              style={{ minHeight: '2.5rem' }}
-            >
-              {skill.skillText[0].toUpperCase() + skill.skillText.slice(1)}
-            </div>
-            {/* Date at the bottom in a pill/button */}
-            <div className={`flex items-center justify-between px-3 py-2 border-t ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}>
-            
-              <span className={`px-3 py-1 rounded-full text-xs font-semibold shadow ${isDarkMode ? "bg-gray-700 text-green-200" : "bg-green-300 text-yellow-900"}`}>
-                {skill.createdAt}
-              </span>
-              {isLoggedInUser && (
-                <button
-                  onClick={() => handleRemoveSkill(skill._id)}
-                  disabled={isPending}
-                  title="Delete skill"
-                  className={`transition ml-2 ${
-                    isDarkMode ? "text-red-400 hover:text-red-200" : "text-red-600 hover:text-red-800"
-                  }`}
-                >
-                  <AiOutlineDelete size={18} />
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {error && (

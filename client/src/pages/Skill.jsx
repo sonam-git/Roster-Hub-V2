@@ -14,11 +14,9 @@ const Skill = ({ isDarkMode }) => {
   if (loading) {
     return <div className="text-center mt-4">Loading...</div>;
   }
-
   if (error) {
     return <div className="text-center mt-4">Error: {error.message}</div>;
   }
-
   return (
     <div className="container mx-auto px-4 lg:mt-5">
       <div className="max-w mx-auto space-y-6">

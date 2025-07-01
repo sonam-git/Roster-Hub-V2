@@ -22,6 +22,19 @@ const skillSchema = new Schema(
       default: Date.now,
       get: (timestamp) => dateFormat(timestamp),
     },
+    reactions: [
+      {
+        user: {
+          type: Schema.Types.ObjectId,
+          ref: "Profile",
+          required: true,
+        },
+        emoji: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

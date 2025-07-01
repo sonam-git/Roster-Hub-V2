@@ -31,11 +31,9 @@ const Profile = () => {
   if (loading) {
     return <div className="text-center mt-4">Loading...</div>;
   }
-
   if (error) {
     return <div className="text-center text-red-500 mt-4">Error: {error.message}</div>;
   }
-
   if (!profile?.name) {
     return (
       <div className="text-center mt-4">
@@ -46,7 +44,6 @@ const Profile = () => {
       </div>
     );
   }
-
   return (
     <main className="container mx-auto  lg:mt-5">
       {profileId ? (

@@ -68,7 +68,9 @@ const Home = ({ isDarkMode }) => {
           </div>
         </div>
       ) : (
-        <Hero />
+        <div className="w-full flex flex-col items-center justify-center min-h-[60vh]">
+          <Hero />
+        </div>
       )}
     </main>
   );

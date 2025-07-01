@@ -49,6 +49,13 @@ export const QUERY_PROFILES = gql`
           _id
           name
         }
+        reactions {
+          emoji
+          user {
+            _id
+            name
+          }
+        }
       }
       receivedMessages {
         _id
@@ -116,6 +123,13 @@ export const QUERY_SINGLE_PROFILE = gql`
           _id
           name
         }
+        reactions {
+          emoji
+          user {
+            _id
+            name
+          }
+        }
       }
       receivedMessages {
         _id
@@ -158,6 +172,13 @@ export const QUERY_ME = gql`
         recipient {
           _id
           name
+        }
+        reactions {
+          emoji
+          user {
+            _id
+            name
+          }
         }
       }
       posts {
@@ -307,6 +328,13 @@ export const GET_SKILLS = gql`
       recipient {
         _id
         name
+      }
+      reactions {
+        emoji
+        user {
+          _id
+          name
+        }
       }
     }
   }

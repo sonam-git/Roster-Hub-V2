@@ -25,12 +25,18 @@ const typeDefs = gql`
     rating: Int!
   }
 
+  type SkillReaction {
+    user: Profile!
+    emoji: String!
+  }
+
   type Skill {
     _id: ID!
     skillText: String
     skillAuthor: String
     recipient: Profile!
     createdAt: String!
+    reactions: [SkillReaction!]!
   }
 
   type Post {
@@ -298,6 +304,7 @@ const typeDefs = gql`
     markChatAsSeen(
       userId: ID!
     ): Boolean
+    reactToSkill(skillId: ID!, emoji: String!): Skill!
   }
   type Subscription {
     chatCreated: Chat
@@ -327,6 +334,7 @@ const typeDefs = gql`
     formationCommentDeleted(formationId: ID!): ID!
     formationCommentLiked(formationId: ID!): FormationComment
     onlineStatusChanged(profileId: ID!): Profile
+    skillReactionUpdated(skillId: ID!): Skill
   }
 `;
 

@@ -626,4 +626,16 @@ export const LIKE_FORMATION_COMMENT = gql`
     }
   }
 `;
+// Mutation to react to a skill with an emoji
+export const REACT_TO_SKILL = gql`
+  mutation ReactToSkill($skillId: ID!, $emoji: String!) {
+    reactToSkill(skillId: $skillId, emoji: $emoji) {
+      _id
+      reactions {
+        emoji
+        user { _id name }
+      }
+    }
+  }
+`;
 

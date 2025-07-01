@@ -49,6 +49,7 @@ const FORMATION_COMMENT_UPDATED = "FORMATION_COMMENT_UPDATED";
 const FORMATION_COMMENT_DELETED = "FORMATION_COMMENT_DELETED";
 const FORMATION_LIKED = "FORMATION_LIKED";
 const FORMATION_COMMENT_LIKED = "FORMATION_COMMENT_LIKED";
+const SKILL_REACTION_UPDATED = "SKILL_REACTION_UPDATED";
 
 const pubsub = new PubSub(); // Ensure this instance is used in the resolvers
 const FOOTBALL_API = "https://api.football-data.org/v4";
@@ -1590,9 +1591,26 @@ const resolvers = {
       });
       return true;
     },
+    // ************************** REACT TO SKILL *******************************************//
+    reactToSkill: async (_, { skillId, emoji }, context) => {
+      if (!context.user) throw new AuthenticationError("You need to be logged in!");
+      const skill = await Skill.findById(skillId);
+      if (!skill) throw new UserInputError("Skill not found");
+      // Check if user already reacted
+      const idx = skill.reactions.findIndex(r => r.user.toString() === context.user._id.toString());
+      if (idx > -1) {
+        // Update existing reaction
+        skill.reactions[idx].emoji = emoji;
+      } else {
+        // Add new reaction
+        skill.reactions.push({ user: context.user._id, emoji });
+      }
+      await skill.save();
+      const populatedSkill = await Skill.findById(skillId).populate('recipient').populate('reactions.user');
+      pubsub.publish(SKILL_REACTION_UPDATED, { skillReactionUpdated: populatedSkill, skillId });
+      return populatedSkill;
+    },
   },
-
-  // ############ SUBSCRIPTION ############## //
   Subscription: {
     // chat related subscription
     chatCreated: {
@@ -1740,6 +1758,14 @@ const resolvers = {
       ),
       resolve: (payload) => payload.formationCommentLiked,
     },
+    // skill reaction subscription
+    skillReactionUpdated: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator(SKILL_REACTION_UPDATED),
+        (payload, variables) => payload.skillId === variables.skillId
+      ),
+      resolve: (payload) => payload.skillReactionUpdated,
+    },
     onlineStatusChanged: {
       subscribe: withFilter(
         () => pubsub.asyncIterator('ONLINE_STATUS_CHANGED'),
@@ -1786,6 +1812,23 @@ const resolvers = {
       return onlineUsers.has(String(parent._id));
     },
     // ...other field resolvers if needed...
+  },
+  Skill: {
+    reactions: async (parent) => {
+      // parent is the Skill document
+      // populate user in each reaction
+      return parent.reactions.map(async (reaction) => {
+        const user = await Profile.findById(reaction.user);
+        return { ...reaction.toObject(), user };
+      });
+    },
+  },
+  SkillReaction: {
+    user: async (parent) => {
+      // parent.user is the Profile object or ID
+      if (typeof parent.user === 'object') return parent.user;
+      return await Profile.findById(parent.user);
+    },
   },
 };
 

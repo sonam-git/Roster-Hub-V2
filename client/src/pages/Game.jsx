@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 
@@ -13,6 +13,7 @@ const Game = () => {
   const { gameId } = useParams();
   const navigate = useNavigate();
   const { isDarkMode } = useContext(ThemeContext);
+  const [shouldRedirect, setShouldRedirect] = useState(false);
 
   // Fetch game
   const {
@@ -23,6 +24,25 @@ const Game = () => {
     variables: { gameId },
     skip: !gameId,
   });
+
+  const game = gameData?.game;
+
+  // Redirect to /game-schedule if game does not exist, after showing message
+  useEffect(() => {
+    if (game === undefined) return; // Don't run until query resolves
+    if (!game) {
+      const timer = setTimeout(() => {
+        setShouldRedirect(true);
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [game]);
+
+  useEffect(() => {
+    if (shouldRedirect) {
+      navigate('/game-schedule');
+    }
+  }, [shouldRedirect, navigate]);
 
   // Loading state
   if (!gameId) {
@@ -39,31 +59,25 @@ const Game = () => {
       </div>
     );
   }
-
   if (loadingGame) {
     return <div className="text-center p-4">Loading...</div>;
   }
-
   if (gameError) {
-    return (
-      <div className="text-center p-4 text-red-600">Error loading data</div>
-    );
+    return <div className="text-center p-4 text-red-600">Error loading data</div>;
   }
 
-  const game = gameData?.game;
+  if (game === undefined) {
+    // Query not resolved yet
+    return null;
+  }
 
   if (!game) {
     return (
       <div className="text-center p-6">
         <p className="text-lg text-gray-600 mb-4">
-          This game no longer exists or has been deleted.
+          This game no longer exists or has been deleted.<br />
+          Redirecting to game schedule…
         </p>
-        <button
-          onClick={() => navigate("/game-schedule")}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-        >
-          Back to Game List
-        </button>
       </div>
     );
   }
