@@ -72,25 +72,36 @@ export default function RecentSkillsList() {
               .slice(0, 5)
               .map((skill) => (
                 <li key={skill._id} className="mb-2">
-                  <div
-                    className={`card shadow rounded-md p-2 ${
-                      isDarkMode
-                        ? "bg-gray-700 text-white"
-                        : "bg-white text-black"
-                    }`}
-                  >
-                    <div className="text-xs mb-1">
-                      Date : {skill.createdAt}
+                  <div className={`shadow rounded overflow-hidden flex flex-col justify-between h-32 ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
+                    {/* Author on top */}
+                    <div
+                      className={`px-3 py-2 text-xs font-semibold tracking-wide border-b ${
+                        isDarkMode ? "bg-gray-900 text-green-300" : "bg-green-100 text-yellow-800"
+                      }`}
+                      style={{ letterSpacing: '0.05em' }}
+                    >
+                      <span className="inline-block align-middle ">
+                        {skill.skillAuthor[0].toUpperCase() + skill.skillAuthor.slice(1)}
+                      </span>
+                      <span className="ml-1 text-gray-400 font-normal">endorsed </span>
+                      <span className="text-xs text-gray-500 italic">
+                        {skill.recipient?.name ? <strong>{skill.recipient.name}</strong> : "—"}
+                      </span>
                     </div>
-                    <div className="font-semibold mb-1 ">
-                      {skill.skillText[0].toUpperCase() +
-                        skill.skillText.slice(1)}
+                    {/* Skill text in the middle */}
+                    <div
+                      className={`flex-1 flex items-center justify-center text-lg font-bold ${
+                        isDarkMode ? "bg-gray-800 text-white" : "bg-green-200 text-gray-900"
+                      }`}
+                      style={{ minHeight: '2.5rem' }}
+                    >
+                      {skill.skillText[0].toUpperCase() + skill.skillText.slice(1)}
                     </div>
-                    <div className="text-xs">
-                      {skill.skillAuthor[0].toUpperCase() +
-                        skill.skillAuthor.slice(1)}{" "}
-                      endorsed{" "}
-                      <strong>{skill.recipient?.name || "—"}</strong>
+                    {/* Date at the bottom in a pill/button */}
+                    <div className={`flex items-center justify-end px-3 py-2 border-t ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}>
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold shadow ${isDarkMode ? "bg-gray-700 text-green-200" : "bg-green-300 text-yellow-900"}`}>
+                        {skill.createdAt}
+                      </span>
                     </div>
                   </div>
                 </li>
