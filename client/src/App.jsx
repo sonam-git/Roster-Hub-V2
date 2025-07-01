@@ -38,6 +38,9 @@ import ChatPopup from "./components/ChatPopup";
 import { QUERY_ME } from "./utils/queries";
 import Auth from "./utils/auth";
 import MainHeader from "./components/MainHeader";
+import TopHeader from "./components/TopHeader";
+import AllSkillsList from "./components/AllSkillsList";
+import CustomComingGames from "./components/CustomComingGames";
 
 
 
@@ -110,7 +113,7 @@ function AppContent() {
         }`}
       >
         <Header />
-        <div className="flex-1 mt-10 ">
+        <div className="flex-1">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/roster" element={<Roster />} />
@@ -122,6 +125,8 @@ function AppContent() {
               path="/skill"
               element={<Skill isDarkMode={isDarkMode} />}
             />
+            <Route path="/skills-shortcut" element={<AllSkillsList isDarkMode={isDarkMode} />} />
+            <Route path="/games-shortcut" element={<CustomComingGames isDarkMode={isDarkMode} />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/me" element={<Profile />} />
@@ -161,6 +166,7 @@ function App() {
             }}
           >
             <MainHeader />
+            <TopHeader />
             <AppContent />
           </Router>
         </ThemeProvider>

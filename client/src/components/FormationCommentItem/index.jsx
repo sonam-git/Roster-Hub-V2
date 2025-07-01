@@ -101,7 +101,7 @@ export default function FormationCommentItem({ comment, formationId }) {
         </>
       ) : (
         <>
-          <div className="flex justify-between items-start">
+          <div className="flex justify-between items-start italic text-sm">
             <p>{comment.commentText}</p>
             <small className="text-gray-500">
               {comment.commentAuthor} ·{' '}
