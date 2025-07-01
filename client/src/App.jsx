@@ -67,9 +67,14 @@ const httpLink = createHttpLink({ uri: httpUri });
 const wsLink = new GraphQLWsLink(
   createClient({
     url: wsUri,
-    connectionParams: () => ({
-      authorization: `Bearer ${localStorage.getItem("id_token") || ""}`,
-    }),
+    connectionParams: () => {
+      // Send token as 'token' param for online status tracking
+      const token = localStorage.getItem("id_token");
+      return {
+        authorization: token ? `Bearer ${token}` : "",
+        token: token || ""
+      };
+    },
   })
 );
 

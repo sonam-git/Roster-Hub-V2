@@ -23,6 +23,13 @@ const chatSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  deletedBy: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Profile",
+      default: [],
+    },
+  ],
 });
 
 const Chat = model("Chat", chatSchema);

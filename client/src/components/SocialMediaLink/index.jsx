@@ -1,5 +1,4 @@
 // src/components/SocialMediaSelector.jsx
-import React from "react";
 import { FaTwitter, FaFacebookF, FaLinkedinIn, FaPhone } from "react-icons/fa";
 
 const BUTTONS = [

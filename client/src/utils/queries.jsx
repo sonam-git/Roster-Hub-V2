@@ -10,6 +10,7 @@ export const QUERY_PROFILES = gql`
       phoneNumber
       profilePic
       averageRating
+      online
       posts {
         _id
         postText
@@ -76,6 +77,7 @@ export const QUERY_SINGLE_PROFILE = gql`
       phoneNumber
       profilePic
       averageRating
+      online
       posts {
         _id
         postText
@@ -115,7 +117,6 @@ export const QUERY_SINGLE_PROFILE = gql`
           name
         }
       }
-
       receivedMessages {
         _id
         text
@@ -387,6 +388,7 @@ export const GET_CHAT_BY_USER = gql`
       id
       content
       createdAt
+      seen
       from {
         _id
         name

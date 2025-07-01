@@ -198,41 +198,43 @@ const MyProfile = () => {
                 )}
               </div>
             </div>
-            <input
-              type="text"
-              value={socialMediaLink}
-              onChange={(e) => {
-                setSocialMediaLink(e.target.value);
-                if (error && e.target.value.trim()) setError(false);
-              }}
-              className={`w-full p-2 border rounded mb-1 ${
-                error ? "border-red-500" : "border-gray-300"
-              }`}
-              placeholder={`Enter your ${label} URL`}
-            />
-            {error && (
-              <p className="text-red-500 text-sm mb-4">
-                Please enter a valid URL.
-              </p>
-            )}
-            <div className="flex justify-end space-x-2">
-              <button
-                className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-800"
-                onClick={saveLink}
-              >
-                Save
-              </button>
-              <button
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
-                onClick={() => {
-                  setSelectedSocialMedia(null);
-                  setSocialMediaLink("");
-                  setError(false);
+            <>
+              <input
+                type="text"
+                value={socialMediaLink}
+                onChange={(e) => {
+                  setSocialMediaLink(e.target.value);
+                  if (error && e.target.value.trim()) setError(false);
                 }}
-              >
-                Cancel
-              </button>
-            </div>
+                className={`w-full p-2 border rounded mb-1 ${
+                  error ? "border-red-500" : "border-gray-300"
+                }`}
+                placeholder={`Enter your ${label} URL`}
+              />
+              {error && (
+                <p className="text-red-500 text-sm mb-4">
+                  Please enter a valid URL.
+                </p>
+              )}
+              <div className="flex justify-end space-x-2">
+                <button
+                  className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-800"
+                  onClick={saveLink}
+                >
+                  Save
+                </button>
+                <button
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                  onClick={() => {
+                    setSelectedSocialMedia(null);
+                    setSocialMediaLink("");
+                    setError(false);
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </>
           </div>
         </div>
       )}

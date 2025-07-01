@@ -21,6 +21,11 @@ const messageSchema = new Schema({
     default: Date.now,
     get: (timestamp) => dateFormat(timestamp),
   },
+  // deletedBy: [{
+  //   type: Schema.Types.ObjectId,
+  //   ref: 'Profile',
+  //   default: []
+  // }],
 });
 
 module.exports = model('Message', messageSchema);

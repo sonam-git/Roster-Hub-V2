@@ -53,6 +53,13 @@ const FORMATION_COMMENT_LIKED = "FORMATION_COMMENT_LIKED";
 const pubsub = new PubSub(); // Ensure this instance is used in the resolvers
 const FOOTBALL_API = "https://api.football-data.org/v4";
 
+// In-memory set to track online users
+const onlineUsers = require("../utils/onlineUsers");
+
+// If using Apollo Server subscriptions, add hooks for connect/disconnect
+// This example assumes you use Apollo Server's onConnect/onDisconnect in your server setup (not shown here)
+// You would add/remove user IDs to/from onlineUsers there.
+
 const resolvers = {
   // ############ QUERIES ########## //
   Query: {
@@ -98,7 +105,8 @@ const resolvers = {
     // ************************** QUERY ME (LOGIN USER) *******************************************//
     me: async (parent, args, context) => {
       if (context.user) {
-        return Profile.findById(context.user._id)
+        const userId = context.user._id;
+        return Profile.findById(userId)
           .populate({
             path: "receivedMessages",
             populate: { path: "sender" },
@@ -230,12 +238,13 @@ const resolvers = {
       }
 
       try {
-        // Query for chat using Chat model
+        // Query for chat using Chat model, only messages not deleted by current user
         const chat = await Chat.find({
           $or: [
             { from: userId, to },
             { from: to, to: userId },
           ],
+          deletedBy: { $ne: userId },
         }).populate("from to"); // 'from' and 'to' are references to User model
 
         return chat;
@@ -536,7 +545,6 @@ const resolvers = {
       try {
         // Find the recipient user
         const recipient = await Profile.findById(recipientId);
-        // console.log('recipient',recipient.name)
         if (!recipient) {
           throw new Error("Recipient user not found");
         }
@@ -554,10 +562,10 @@ const resolvers = {
         // Update sender's sentMessages and recipient's receivedMessages
         await Profile.findByIdAndUpdate(user._id, {
           $push: { sentMessages: savedMessage._id },
-        });
+        }, { new: true });
         await Profile.findByIdAndUpdate(recipientId, {
           $push: { receivedMessages: savedMessage._id },
-        });
+        }, { new: true });
         return savedMessage;
       } catch (error) {
         console.error("Error sending message:", error);
@@ -600,6 +608,7 @@ const resolvers = {
       });
       return true;
     },
+
     // ************************** CREATE CHAT AND SEND CHAT  *******************************************//
     createChat: async (parent, { from, to, content }, context) => {
       if (!context.user) {
@@ -633,6 +642,7 @@ const resolvers = {
         throw new Error("Failed to create chat");
       }
     },
+    
     // ************************** SAVE SOCIAL MEDIA LINK  *******************************************//
     saveSocialMediaLink: async (_, { userId, type, link }) => {
       try {
@@ -1543,6 +1553,27 @@ const resolvers = {
 
       return updatedComment;
     },
+    // ************************** MARK CHAT AS SEEN *******************************************//
+    markChatAsSeen: async (_, { userId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You must be logged in");
+      }
+      const me = context.user._id;
+      // Mark all messages sent FROM userId TO me as seen (i.e., userId is the sender, me is the recipient)
+      const result = await Chat.updateMany(
+        { from: userId, to: me, seen: false },
+        { $set: { seen: true } }
+      );
+      // Publish chatSeen event for all updated chats
+      const updatedChats = await Chat.find({ from: userId, to: me, seen: true });
+      updatedChats.forEach(chat => {
+        pubsub.publish('CHAT_SEEN', {
+          chatSeen: chat,
+          to: chat.from // notify the sender
+        });
+      });
+      return true;
+    },
   },
 
   // ############ SUBSCRIPTION ############## //
@@ -1550,6 +1581,15 @@ const resolvers = {
     // chat related subscription
     chatCreated: {
       subscribe: () => pubsub.asyncIterator(["CHAT_CREATED"]),
+    },
+    chatSeen: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator(["CHAT_SEEN"]),
+        (payload, variables) => {
+          // Only notify the user who sent the message
+          return String(payload.to) === String(variables.to);
+        }
+      ),
     },
     // skill related subscription
     skillAdded: {
@@ -1684,6 +1724,16 @@ const resolvers = {
       ),
       resolve: (payload) => payload.formationCommentLiked,
     },
+    onlineStatusChanged: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator('ONLINE_STATUS_CHANGED'),
+        (payload, variables) => {
+          // Only notify for the relevant profile
+          return String(payload.onlineStatusChanged._id) === String(variables.profileId);
+        }
+      ),
+      resolve: (payload) => payload.onlineStatusChanged,
+    },
   },
   // ############  Type‐level resolvers for Chat ############## //
   Chat: {
@@ -1712,6 +1762,14 @@ const resolvers = {
         "positions.player"
       );
     },
+  },
+  // ############  Type‐level resolvers for Profile ############## //
+  Profile: {
+    online: (parent) => {
+      // parent._id may be an ObjectId, so convert to string for Set comparison
+      return onlineUsers.has(String(parent._id));
+    },
+    // ...other field resolvers if needed...
   },
 };
 

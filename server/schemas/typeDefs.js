@@ -17,6 +17,7 @@ const typeDefs = gql`
     sentMessages: [Message]
     ratings: [Rating]
     averageRating: Float
+    online: Boolean # Indicates if the user is currently online
   }
 
   type Rating {
@@ -294,9 +295,13 @@ const typeDefs = gql`
     likeFormationComment(commentId: ID!): FormationComment
     likeFormation(formationId: ID!): Formation
     removeSocialMediaLink(userId: ID!, type: String!): Boolean
+    markChatAsSeen(
+      userId: ID!
+    ): Boolean
   }
   type Subscription {
     chatCreated: Chat
+    chatSeen(chatId: ID!, to: ID!): Chat
     skillAdded: Skill
     skillDeleted: ID
     postAdded: Post
@@ -321,6 +326,7 @@ const typeDefs = gql`
     formationCommentUpdated(formationId: ID!): FormationComment
     formationCommentDeleted(formationId: ID!): ID!
     formationCommentLiked(formationId: ID!): FormationComment
+    onlineStatusChanged(profileId: ID!): Profile
   }
 `;
 

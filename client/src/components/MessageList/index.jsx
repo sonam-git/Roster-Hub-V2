@@ -22,6 +22,7 @@ const MessageList = ({ isLoggedInUser = false, isDarkMode }) => {
 
   const loggedInUser = userData?.me || {};
   const profiles = profileData?.profiles || [];
+
   const allMessages = [
     ...(loggedInUser.receivedMessages || []),
     ...(loggedInUser.sentMessages || []),

@@ -6,10 +6,12 @@ const { makeExecutableSchema } = require("@graphql-tools/schema");
 const { createServer } = require("http");
 const { useServer } = require("graphql-ws/lib/use/ws");
 const { WebSocketServer } = require("ws");
+const jwt = require("jsonwebtoken");
 const { authMiddleware } = require("./utils/auth");
 const { typeDefs, resolvers } = require("./schemas");
 const { graphqlUploadExpress } = require("graphql-upload");
 const db = require("./config/connection");
+const onlineUsers = require("./utils/onlineUsers");
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -49,13 +51,59 @@ if (process.env.NODE_ENV === "production") {
 // Create an executable schema
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
+// In-memory set to track online users
+// const onlineUsers = new Set();
+
 // Create a WebSocket server
 const httpServer = createServer(app);
 const wsServer = new WebSocketServer({
   server: httpServer,
   path: "/graphql",
 });
-const serverCleanup = useServer({ schema }, wsServer);
+
+// Use graphql-ws server with onConnect/onDisconnect for online status
+const serverCleanup = useServer(
+  {
+    schema,
+    context: async (ctx, msg, args) => {
+      // ctx.connectionParams contains the params sent from the client
+      const token = ctx.connectionParams?.token;
+      let userId = null;
+      if (token) {
+        try {
+          const { data } = jwt.verify(token, process.env.JWT_SECRET);
+          userId = data?._id;
+          if (userId) {
+            onlineUsers.add(String(userId));
+            pubsub.publish("ONLINE_STATUS_CHANGED", {
+              onlineStatusChanged: { _id: userId, online: true },
+            });
+          }
+        } catch (e) {
+          // Invalid token
+        }
+      }
+      return { userId };
+    },
+    onDisconnect: (ctx, code, reason) => {
+      const token = ctx.connectionParams?.token;
+      let userId = null;
+      if (token) {
+        try {
+          const { data } = jwt.verify(token, process.env.JWT_SECRET);
+          userId = data?._id;
+          if (userId) {
+            onlineUsers.delete(String(userId));
+            pubsub.publish("ONLINE_STATUS_CHANGED", {
+              onlineStatusChanged: { _id: userId, online: false },
+            });
+          }
+        } catch (e) {}
+      }
+    },
+  },
+  wsServer
+);
 
 // Create a new instance of an Apollo server with the GraphQL schema
 const server = new ApolloServer({

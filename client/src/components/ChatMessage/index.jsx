@@ -2,15 +2,30 @@
 
 import React from "react";
 import ProfileAvatar from "../../assets/images/profile-avatar.png";
+import { relativeTime } from "../../utils/MessageUtils";
 
-const ChatMessage = ({ chat, userId, currentUser }) => {
+const ChatMessage = ({ chat, userId, currentUser, isLastFromCurrentUser }) => {
   if (!chat || !userId || !currentUser) {
     return null; // If essential props are missing, don't render anything
   }
 
   const isFromCurrentUser = chat.from._id === userId;
-  const messageTime = chat.createdAt
-    ? new Date(parseInt(chat.createdAt)).toLocaleString()
+
+  // Normalize createdAt to a valid date
+  let createdAtDate = null;
+  if (chat.createdAt) {
+    if (typeof chat.createdAt === 'number') {
+      createdAtDate = new Date(chat.createdAt);
+    } else if (!isNaN(Number(chat.createdAt))) {
+      // Numeric string
+      createdAtDate = new Date(Number(chat.createdAt));
+    } else {
+      // Try parsing as ISO string
+      createdAtDate = new Date(chat.createdAt);
+    }
+  }
+  const messageTime = createdAtDate && !isNaN(createdAtDate)
+    ? relativeTime(createdAtDate)
     : "Unknown time";
 
   return (
@@ -30,8 +45,13 @@ const ChatMessage = ({ chat, userId, currentUser }) => {
         >
           {chat.content}
         </div>
-        <div className="text-xs text-gray-500 mt-1">
+        <div className="text-xs text-gray-500 mt-1 flex items-center gap-2">
           {messageTime}
+          {isFromCurrentUser && isLastFromCurrentUser && (
+            <span className="ml-2">
+              {chat.seen ? "Seen" : "Delivered"}
+            </span>
+          )}
         </div>
       </div>
       {isFromCurrentUser && (
