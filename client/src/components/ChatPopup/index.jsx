@@ -40,7 +40,7 @@ const ChatPopup = ({ currentUser }) => {
   const [profiles, setProfiles] = useState([]);
 
   // 1) Load player list if logged in
-  const { data: profilesData } = useQuery(QUERY_PROFILES, {
+  useQuery(QUERY_PROFILES, {
     skip: !isLoggedIn,
     onCompleted: data => {
       // Only set profiles if data?.profiles is an array
@@ -165,29 +165,50 @@ const ChatPopup = ({ currentUser }) => {
           setMessages(result.data.getChatByUser || []);
           setNotifications(prev => ({ ...prev, [selectedUserId]: 0 }));
           // Debug: log messages to check seen status after marking as seen
-          console.log('Chat messages after markChatAsSeen:', result.data.getChatByUser);
+          // console.log('Chat messages after markChatAsSeen:', result.data.getChatByUser);
         });
       });
     }
   }, [selectedUserId, isLoggedIn, markChatAsSeen, refetchChat]);
+
+  // Refined: Mark as seen only when chat popup is open and user is viewing the conversation
+  useEffect(() => {
+    if (
+      isLoggedIn &&
+      selectedUserId &&
+      chatPopupOpen &&
+      messages.length > 0
+    ) {
+      const lastMsg = messages[messages.length - 1];
+      // Only mark as seen if the last message is from the other user and not already seen
+      if (lastMsg.from._id === selectedUserId && !lastMsg.seen) {
+        const timer = setTimeout(() => {
+          markChatAsSeen({ variables: { userId: selectedUserId } }).then(() => {
+            refetchChat({ to: selectedUserId, fetchPolicy: 'network-only' });
+          });
+        }, 1500); // 1.5 seconds delay
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [messages, isLoggedIn, selectedUserId, chatPopupOpen, markChatAsSeen, refetchChat]);
 
   // Auto-scroll on new messages
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Poll for chat updates every 2 seconds for real-time seen status
+  // Persist notifications in localStorage
   useEffect(() => {
-    if (isLoggedIn && selectedUserId) {
-      const interval = setInterval(() => {
-        refetchChat({ to: selectedUserId, fetchPolicy: 'network-only' }).then(result => {
-          setMessages(result.data.getChatByUser || []);
-          setNotifications(prev => ({ ...prev, [selectedUserId]: 0 }));
-        });
-      }, 2000);
-      return () => clearInterval(interval);
+    localStorage.setItem('chat_notifications', JSON.stringify(notifications));
+  }, [notifications]);
+
+  // Load notifications from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('chat_notifications');
+    if (saved) {
+      setNotifications(JSON.parse(saved));
     }
-  }, [isLoggedIn, selectedUserId, refetchChat]);
+  }, []);
 
   const handleUserSelect = user => setSelectedUser(user);
 
@@ -257,8 +278,8 @@ const ChatPopup = ({ currentUser }) => {
         <span className="flex items-center gap-2">
           <img src={chatBox} alt="Chat" className="h-6 w-6 rounded-full" />
           ChatBox
-          {!chatPopupOpen && totalNotifications > 0 && (
-            <span className="bg-red-500 text-white text-xs font-bold rounded-full px-2">
+          {totalNotifications > 0 && (
+            <span className="bg-red-500 text-white text-xs font-bold rounded-full px-2 ml-2">
               {totalNotifications}
             </span>
           )}
@@ -436,24 +457,37 @@ const ChatPopup = ({ currentUser }) => {
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <Modal showModal={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
-          <div className="p-4 bg-gray-200 dark:bg-gray-800 rounded-lg">
-            <h2 className="text-lg font-semibold mb-4">Delete Conversation</h2>
-            <p>Are you sure you want to delete conversation history?</p>
-            <div className="flex justify-end gap-2 mt-4">
-              <button
-                className="bg-gray-400 px-4 py-2 rounded hover:bg-gray-400"
-                onClick={() => setShowDeleteModal(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-                onClick={handleDeleteConversation}
-              >
-                Yes, Delete
-              </button>
-            </div>
-          </div>
+<div
+  className="
+    /* mobile: smaller padding & width */
+    p-2 max-w-xs mx-auto
+    /* from sm (≥640px) up: original padding & width */
+    sm:p-4 sm:max-w-md
+    bg-gray-200 dark:bg-gray-800 rounded-lg
+  "
+>
+  <h2 className="text-base sm:text-lg font-semibold mb-4">
+    Delete Conversation
+  </h2>
+  <p className="text-sm sm:text-base">
+    Are you sure you want to delete conversation history?
+  </p>
+  <div className="flex justify-end gap-2 mt-4">
+    <button
+      className="bg-gray-400 px-3 py-1 rounded hover:bg-gray-400 text-sm sm:px-4 sm:py-2"
+      onClick={() => setShowDeleteModal(false)}
+    >
+      Cancel
+    </button>
+    <button
+      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-sm sm:px-4 sm:py-2"
+      onClick={handleDeleteConversation}
+    >
+      Yes, Delete
+    </button>
+  </div>
+</div>
+
         </Modal>
       )}
     </div>
