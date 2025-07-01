@@ -137,8 +137,8 @@ const resolvers = {
       }
 
       try {
-        // Retrieve messages received by the authenticated user, excluding those deleted by the user
-        const messages = await Message.find({ recipient: user._id, deletedBy: { $ne: user._id } });
+        // Retrieve messages received by the authenticated user
+        const messages = await Message.find({ recipient: user._id });
         return messages;
       } catch (error) {
         console.error("Error fetching messages:", error);
@@ -579,16 +579,15 @@ const resolvers = {
       }
 
       try {
-        // Per-user delete: add current user's ID to deletedBy array
-        const updatedMessage = await Message.findOneAndUpdate(
-          { _id: messageId, deletedBy: { $ne: context.user._id } },
-          { $push: { deletedBy: context.user._id } },
-          { new: true }
-        );
-        if (!updatedMessage) {
-          throw new Error("Message not found or already deleted by user");
+        const deletedMessage = await Message.findOneAndDelete({
+          _id: messageId,
+        });
+
+        if (!deletedMessage) {
+          throw new Error("Message not found");
         }
-        return updatedMessage; // Return the updated message object
+
+        return deletedMessage; // Return the deleted message object
       } catch (error) {
         console.error("Error deleting Message:", error);
         throw new Error("Error deleting Message.");

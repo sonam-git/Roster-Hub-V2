@@ -457,37 +457,24 @@ const ChatPopup = ({ currentUser }) => {
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <Modal showModal={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
-<div
-  className="
-    /* mobile: smaller padding & width */
-    p-2 max-w-xs mx-auto
-    /* from sm (≥640px) up: original padding & width */
-    sm:p-4 sm:max-w-md
-    bg-gray-200 dark:bg-gray-800 rounded-lg
-  "
->
-  <h2 className="text-base sm:text-lg font-semibold mb-4">
-    Delete Conversation
-  </h2>
-  <p className="text-sm sm:text-base">
-    Are you sure you want to delete conversation history?
-  </p>
-  <div className="flex justify-end gap-2 mt-4">
-    <button
-      className="bg-gray-400 px-3 py-1 rounded hover:bg-gray-400 text-sm sm:px-4 sm:py-2"
-      onClick={() => setShowDeleteModal(false)}
-    >
-      Cancel
-    </button>
-    <button
-      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-sm sm:px-4 sm:py-2"
-      onClick={handleDeleteConversation}
-    >
-      Yes, Delete
-    </button>
-  </div>
-</div>
-
+          <div className="p-4 bg-gray-200 dark:bg-gray-800 rounded-lg">
+            <h2 className="text-lg font-semibold mb-4">Delete Conversation</h2>
+            <p>Are you sure you want to delete conversation history?</p>
+            <div className="flex justify-end gap-2 mt-4">
+              <button
+                className="bg-gray-400 px-4 py-2 rounded hover:bg-gray-400"
+                onClick={() => setShowDeleteModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                onClick={handleDeleteConversation}
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
         </Modal>
       )}
     </div>
