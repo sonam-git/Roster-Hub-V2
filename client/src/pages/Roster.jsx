@@ -16,7 +16,7 @@ const Roster = () => {
     return <div>Loading...</div>;
   }
   return (
-    <main className="container mx-auto lg:mt-5"> 
+    <main className="container mx-auto mt-5"> 
       <div className="flex-row justify-center">
         <div className="col-12 ">
           {/* Conditional rendering based on authentication status */}

@@ -34,7 +34,7 @@ const Home = ({ isDarkMode }) => {
   }
 
   return (
-    <main className="container mx-auto px-4 lg:mt-5">
+    <main className="container mx-auto px-4 mt-5">
       {isLoggedIn ? (
         <div className="flex flex-col items-center">
           {/* Welcome banner full-width */}

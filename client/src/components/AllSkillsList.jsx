@@ -1,10 +1,24 @@
 import React from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery, useSubscription } from "@apollo/client";
 import { QUERY_PROFILES } from "../utils/queries";
+import { SKILL_ADDED_SUBSCRIPTION, SKILL_DELETED_SUBSCRIPTION } from "../utils/subscription";
 import SkillReaction from "./SkillsList/SkillReaction";
 
 export default function AllSkillsList({ isDarkMode }) {
   const { loading, error, data } = useQuery(QUERY_PROFILES);
+
+  // Subscribe to real-time skill add/delete
+  useSubscription(SKILL_ADDED_SUBSCRIPTION, {
+    onData: ({ client }) => {
+      client.refetchQueries({ include: [QUERY_PROFILES] });
+    },
+  });
+  useSubscription(SKILL_DELETED_SUBSCRIPTION, {
+    onData: ({ client }) => {
+      client.refetchQueries({ include: [QUERY_PROFILES] });
+    },
+  });
+
   if (loading) return <div className="text-center mt-4">Loading skills...</div>;
   if (error) return <div className="text-center mt-4 text-red-600">Error: {error.message}</div>;
 
@@ -18,11 +32,11 @@ export default function AllSkillsList({ isDarkMode }) {
   }
 
   return (
-    <div className="container mx-auto px-4 sm:px-8 md:px-12 lg:px-20 xl:px-32">
+    <div className="container mx-auto px-4 sm:px-8 md:px-12 lg:px-20 xl:px-32 mt-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {allSkills.map(skill => (
           <div key={skill._id} className="shadow rounded overflow-hidden flex flex-col justify-between h-32">
-            <div className={`px-3 py-2 text-xs font-semibold tracking-wide border-b ${isDarkMode ? "bg-gray-900 text-green-300" : "bg-green-100 text-yellow-800"}`}
+            <div className={`px-3 py-2 text-xs font-semibold tracking-wide border-b ${isDarkMode ? "bg-gray-700 text-green-300" : "bg-green-100 text-yellow-800"}`}
               style={{ letterSpacing: '0.05em' }}>
               <span className="inline-block align-middle">
                 {skill.skillAuthor[0].toUpperCase() + skill.skillAuthor.slice(1)}
@@ -36,7 +50,7 @@ export default function AllSkillsList({ isDarkMode }) {
               style={{ minHeight: '2.5rem' }}>
               {skill.skillText[0].toUpperCase() + skill.skillText.slice(1)}
             </div>
-            <div className={`flex items-center justify-between px-3 py-2 border-t ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}>
+            <div className={`flex items-center justify-between px-3 py-2 border-t ${isDarkMode ? "bg-gray-700" : "bg-gray-50"}`}>
               <span className={`px-3 py-1 rounded-full text-xs font-semibold shadow ${isDarkMode ? "bg-gray-700 text-green-200" : "bg-green-300 text-yellow-900"}`}>{skill.createdAt}</span>
               <div className="flex items-center ml-2">
                 {skill.reactions && skill.reactions.length > 0 && (

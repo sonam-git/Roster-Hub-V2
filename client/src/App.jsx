@@ -41,6 +41,7 @@ import MainHeader from "./components/MainHeader";
 import TopHeader from "./components/TopHeader";
 import AllSkillsList from "./components/AllSkillsList";
 import CustomComingGames from "./components/CustomComingGames";
+import About from "./pages/About";
 
 
 
@@ -142,6 +143,7 @@ function AppContent() {
               element={<Game isDarkMode={isDarkMode} />}
             />
             <Route path="/scoreboard" element={<Score />} />
+            <Route path="/about" element={<About />} />
           </Routes>
           {Auth.loggedIn() && currentUser && (
             <ChatPopup currentUser={currentUser} isDarkMode={isDarkMode} />
@@ -166,7 +168,7 @@ function App() {
             }}
           >
             <MainHeader />
-            <TopHeader />
+            {Auth.loggedIn() && <TopHeader className="mb-0" />}
             <AppContent />
           </Router>
         </ThemeProvider>
