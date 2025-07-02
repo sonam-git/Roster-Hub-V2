@@ -71,19 +71,19 @@ export default function FormationCommentItem({ comment, formationId }) {
   });
 
   return (
-    <div className="my-2 p-2 border rounded dark:border-gray-600">
+    <div className="my-2 p-3 border rounded-xl shadow-sm bg-white/90 dark:bg-gray-800 transition-all flex flex-col justify-between min-h-[90px]">
       {editing ? (
         <>
           <textarea
             rows="2"
-            className="w-full border rounded px-2 py-1 dark:bg-gray-700"
+            className="w-full border rounded px-2 py-1 dark:bg-gray-700 focus:ring-2 focus:ring-blue-400"
             value={text}
             onChange={e => setText(e.target.value)}
           />
-          <div className="mt-1 space-x-2">
+          <div className="mt-2 flex gap-2">
             <button
               onClick={() => updateComment()}
-              className="px-3 py-1 bg-blue-600 text-white rounded"
+              className="px-4 py-1 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition"
               disabled={!text.trim()}
             >
               Save
@@ -93,7 +93,7 @@ export default function FormationCommentItem({ comment, formationId }) {
                 setEditing(false);
                 setText(comment.commentText);
               }}
-              className="px-3 py-1 bg-gray-400 rounded"
+              className="px-4 py-1 bg-gray-400 text-white rounded shadow hover:bg-gray-500 transition"
             >
               Cancel
             </button>
@@ -101,28 +101,31 @@ export default function FormationCommentItem({ comment, formationId }) {
         </>
       ) : (
         <>
-          <div className="flex justify-between items-start italic text-sm">
-            <p>{comment.commentText}</p>
-            <small className="text-gray-500">
-              {comment.commentAuthor} ·{' '}
+          {/* Top: author and date */}
+          <div className="flex justify-between items-center mb-1">
+            <span className="font-semibold text-sm text-indigo-700 dark:text-yellow-200">{comment.commentAuthor}</span>
+            <small className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
               {new Date(parseInt(comment.createdAt, 10)).toLocaleString()}
             </small>
           </div>
-
-          <div className="mt-1 flex items-center space-x-4 text-sm">
+          {/* Middle: comment text */}
+          <div className="text-base leading-snug break-words text-gray-900 dark:text-gray-100 mb-2">
+            {comment.commentText}
+          </div>
+          {/* Bottom: like and actions right */}
+          <div className="flex items-center justify-end gap-4 text-sm mt-auto">
             <button
               onClick={() => userId && likeComment()}
-              className="flex items-center space-x-1"
+              className={`flex items-center gap-1 px-2 py-1 rounded-full font-semibold transition ${hasLiked ? 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'} hover:scale-105`}
               title={hasLiked ? 'Unlike' : 'Like'}
             >
-              <span className={hasLiked ? 'text-red-600' : 'text-gray-600'}>♥</span>
+              <span className="text-lg">♥</span>
               <span>{comment.likes}</span>
             </button>
-
             {isMine && (
               <>
-                <button onClick={() => setEditing(true)} title="Edit">✏️</button>
-                <button onClick={() => deleteComment()} title="Delete">🗑️</button>
+                <button onClick={() => setEditing(true)} title="Edit" className="hover:text-blue-600">✏️</button>
+                <button onClick={() => deleteComment()} title="Delete" className="hover:text-red-600">🗑️</button>
               </>
             )}
           </div>

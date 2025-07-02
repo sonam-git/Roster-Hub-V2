@@ -22,17 +22,19 @@ export default function About() {
           <p className="mb-2 text-gray-700 dark:text-gray-200 text-lg">
             This project is a blend of his love for soccer and technology, providing a modern, real-time platform for teams to thrive both on and off the field.
           </p>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">Contact: <a href="mailto:sonamjsherpa@gmail.com" className="underline text-blue-600 dark:text-blue-400">sonamjsherpa@gmail.com</a></p>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">Contact: <a href="mailto:sherpa.sjs@gmail.com" className="underline text-blue-600 dark:text-blue-400">sonamjsherpa@gmail.com</a></p>
         </div>
       </div>
       <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-6 ">
         <h3 className="text-xl font-bold mb-2 text-green-700 dark:text-green-300 flex items-center gap-2"><span role="img" aria-label="soccer">🏟️</span> Platform Features</h3>
         <ul className="list-disc pl-6 mb-4 text-gray-700 dark:text-gray-200 text-lg">
           <li>Real-time chat and notifications</li>
-          <li>Game scheduling and availability tracking</li>
+          <li>Game scheduling and availability tracking : such yes voting poll</li>
           <li>Skill endorsements and reactions</li>
           <li>Player profiles and ratings</li>
+          <li>Player can post their thoughts and comment or react on others thought.</li>
           <li>Dark mode and responsive design</li>
+          <li>Get the result or match schedule of the professional league</li>
         </ul>
         <div className="flex justify-center mt-4">
           <span className="inline-block px-6 py-2 bg-green-600 text-white font-bold rounded-full shadow-lg text-lg tracking-wide animate-bounce  sm:text-center">Play as a Team, Win as a Family!</span>

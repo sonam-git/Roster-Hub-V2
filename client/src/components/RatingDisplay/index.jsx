@@ -26,10 +26,6 @@ export default function RatingDisplay({ limit = 8 }) {
 
   return (
     <>
-      <h2 className="text-center lg:text-left font-bold text-lg mb-2">
-        Top Ratings
-      </h2>
-
       <div className="flex space-x-4 overflow-x-auto p-4 bg-gray-100 dark:bg-gray-600 rounded-xl shadow-md">
         {top.map((p) => {
           const stars = Math.round(p.averageRating);

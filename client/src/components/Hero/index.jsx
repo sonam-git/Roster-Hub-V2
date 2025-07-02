@@ -63,80 +63,26 @@ const Hero = () => {
             md:w-1/2 flex flex-col items-center
           `}
         >
-          <div className="bg-gray-200 shadow-xl px-2 pt-6 pb-2 mb-4 dark:bg-gray-800 w-full max-w-lg rounded-xl">
-            <h4 className="text-center text-2xl font-bold text-gray-900 mb-6 dark:text-white">
-            ⚽️ Join the Roster ⚽️ 
-            </h4>
-            <p className="
-              text-sm md:text-md leading-relaxed
-              text-gray-700 dark:text-gray-300
-              bg-gradient-to-br from-white/60 to-gray-100
-              dark:from-gray-800 dark:to-gray-900
-              p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700
-            ">
-              <span className="font-semibold text-indigo-600 dark:text-indigo-400">
-                Our platform
-              </span>{" "}
-              transforms how teams <strong>connect, play, and grow</strong>{" "}
-              together. Players can build{" "}
-              <span className="text-green-600 font-medium">
-                dynamic profiles
-              </span>{" "}
-              with photos, jersey numbers, preferred positions, and more —
-              creating a digital identity that truly reflects their presence on
-              the pitch.
-              <br />
-              <br />
-              Teammates can{" "}
-              <span className="text-yellow-600 font-medium">
-                endorse each other’s skills
-              </span>{" "}
-              and give <strong>star ratings</strong>, helping everyone get
-              recognized for what they bring to the squad. Stay connected with{" "}
-              <strong>real-time chat, messaging, likes, and comments</strong> —
-              every interaction made meaningful.
-              <br />
-              <br />
-              Coaches and admins can easily create{" "}
-              <span className="text-blue-600 font-medium">game polls</span> to
-              notify players about upcoming matches, opponents, venue, and
-              tactical formations. And for fans, follow your{" "}
-              <span className="font-semibold text-pink-600">
-                favorite pro teams
-              </span>{" "}
-              with live match schedules and scores — all in one place.
+          <div className="mt-8 bg-gradient-to-r from-green-400 via-blue-400 to-green-600 dark:from-green-900 dark:via-blue-900 dark:to-green-800 rounded-xl shadow-lg p-6 flex flex-col items-center w-full overflow-x-auto">
+            <h2 className="text-2xl font-bold text-white mb-2 text-center break-words w-full">
+              Join Roster Hub Today!
+            </h2>
+            <p className="text-white/90 mb-4 text-center w-full break-words">
+              Sign up to connect with your team, track games, and share your soccer journey.
             </p>
-          </div>
-
-          <div className="flex justify-center mt-2 mb-2 space-x-4">
-            <Link
-              className="
-                bg-gray-800 border border-gray-300
-                hover:bg-gray-100 hover:text-black
-                text-gray-300 font-bold
-                py-2 px-6 sm:py-3 sm:px-8
-                rounded-xl
-                hover:no-underline
-                transition
-              "
-              to="/login"
+            <ul className="text-white/90 mb-4 text-left w-full max-w-lg list-disc list-inside space-y-2">
+              <li><span className="font-semibold text-yellow-200">Dynamic profiles</span> with photos, jersey numbers, positions, and more</li>
+              <li>Endorse teammates’ <span className="font-semibold text-yellow-200">skills</span> and give <span className="font-semibold text-yellow-200">star ratings</span></li>
+              <li>Real-time <span className="font-semibold text-yellow-200">chat, messaging, likes, and comments</span></li>
+              <li>Coaches/admins can create <span className="font-semibold text-yellow-200">game polls</span> and manage schedules</li>
+              <li>Follow your <span className="font-semibold text-yellow-200">favorite pro teams</span> with live match schedules and scores</li>
+            </ul>
+            <a
+              href="/signup"
+              className="px-6 py-2 bg-yellow-400 text-green-900 font-bold rounded-full shadow hover:bg-yellow-300 transition"
             >
-              Login
-            </Link>
-            <Link
-              className="
-                bg-gray-800 border border-gray-300
-                hover:bg-gray-100 hover:text-black
-                text-gray-300 font-bold
-                py-2 px-6 sm:py-3 sm:px-8
-                rounded-xl
-                hover:no-underline
-                transition
-              "
-              to="/signup"
-            >
-              Signup
-            </Link>
+              Get Started
+            </a>
           </div>
         </div>
 

@@ -83,20 +83,20 @@ function CommentsPane({ gameId }) {
   );
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full max-w-2xl mx-auto bg-white/80 dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
       {formationId && <FormationCommentInput formationId={formationId} />}
 
       {sorted.length === 0 ? (
-        <p className="mt-2 italic text-center">
+        <p className="mt-4 italic text-center text-gray-500 dark:text-gray-300 text-base">
           No comments yet for this Formation.
         </p>
       ) : (
-        <div className="mt-4 max-h-64 overflow-y-auto">
+        <div className="mt-4 max-h-80 overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-900/60">
           {/* sticky header */}
-          <div className="sticky top-0 bg-yellow-100 dark:bg-gray-700 px-4 py-2 font-semibold text-center z-10 border-b">
+          <div className="sticky top-0 bg-yellow-100 dark:bg-gray-700 px-4 py-2 font-semibold text-center z-10 border-b rounded-t-lg shadow-sm">
             {sorted.length} Comment{sorted.length !== 1 ? "s" : ""}
           </div>
-          <div className="space-y-2 px-4 py-2">
+          <div className="space-y-3 px-4 py-3">
             {sorted.map((c) => (
               <FormationCommentItem
                 key={c._id}

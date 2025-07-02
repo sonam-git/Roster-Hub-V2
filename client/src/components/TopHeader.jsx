@@ -1,7 +1,6 @@
-import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFutbol, faPersonRunning, faCalendarAlt, faPlus, faInbox, faStar, faHome, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import {  faPersonRunning, faCalendarAlt, faPlus, faInbox, faStar, faHome, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { useQuery } from "@apollo/client";
 import { QUERY_ME } from "../utils/queries";
 
@@ -24,7 +23,6 @@ export default function TopHeader({ className }) {
       {/* Left: Username and soccer icon */}
       <div className="hidden sm:flex items-center space-x-2 mb-2 sm:mb-0 w-full sm:w-auto justify-center">
         <FontAwesomeIcon icon={faPersonRunning} className="ml-2 text-green-500 text-2xl" />
-        <FontAwesomeIcon icon={faFutbol} className="text-blue-600 text-xl animate-bounce" />
         <span className="font-extrabold text-2xl italic tracking-wide text-gray-800 dark:text-white drop-shadow-md flex items-center gap-2" style={{ fontFamily: 'cursive, sans-serif' }}>
           {username}
         </span>

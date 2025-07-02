@@ -17,7 +17,7 @@ export default function SkillReaction({ onReact }) {
 	};
 
 	return (
-		<div className="relative flex flex-col items-center" style={{ zIndex: 9999 }}>
+		<div className="relative flex flex-col items-center" >
 			<button
 				className={`px-2 py-1 rounded-full border text-xs font-semibold shadow bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition mb-1`}
 				onClick={() => setShowPicker((v) => !v)}

@@ -173,7 +173,7 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
   const isLikedByCurrentUser = likedBy.some((u) => u._id === currentUserId);
 
   return (
-    <div className="relative bg-gray-100 dark:bg-gray-800 shadow-md rounded-lg p-4 mb-4">
+    <div className="relative bg-gray-100 dark:bg-gray-600 shadow-md rounded-lg p-4 mb-4">
       {/* Header */}
       <div className="flex justify-between items-center">
         <Link to={`/profiles/${post.userId._id}`} className="flex items-center hover:no-underline">
@@ -234,7 +234,7 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
 
       {/* Footer */}
       <div className="flex justify-between items-center mt-4 ">
-        <small className="text-gray-500">
+        <small className="text-gray-300">
           {new Date(parseInt(post.createdAt)).toLocaleString()}
         </small>
         <div className="flex items-center space-x-4">

@@ -36,8 +36,8 @@ const SkillsList = ({
   useSubscription(SKILL_ADDED_SUBSCRIPTION, {
     onData: ({ data }) => {
       const added = data.data?.skillAdded;
-      if (added && !localSkills.some(s => s._id === added._id)) {
-        setLocalSkills(prev => [added, ...prev]);
+      if (added && !localSkills.some((s) => s._id === added._id)) {
+        setLocalSkills((prev) => [added, ...prev]);
       }
     },
   });
@@ -45,7 +45,7 @@ const SkillsList = ({
     onData: ({ data }) => {
       const deletedId = data.data?.skillDeleted;
       if (deletedId) {
-        setLocalSkills(prev => prev.filter(s => s._id !== deletedId));
+        setLocalSkills((prev) => prev.filter((s) => s._id !== deletedId));
       }
     },
   });
@@ -53,20 +53,30 @@ const SkillsList = ({
   // Subscribe to reaction updates for each skill
   useEffect(() => {
     if (!localSkills.length) return;
-    const unsubscribers = localSkills.map(skill =>
-      apolloClient && apolloClient.subscribe({
-        query: SKILL_REACTION_UPDATED_SUBSCRIPTION,
-        variables: { skillId: skill._id },
-      }).subscribe({
-        next({ data }) {
-          const updated = data?.skillReactionUpdated;
-          if (updated) {
-            setLocalSkills(prev => prev.map(s => s._id === updated._id ? { ...s, reactions: updated.reactions } : s));
-          }
-        },
-      })
+    const unsubscribers = localSkills.map(
+      (skill) =>
+        apolloClient &&
+        apolloClient
+          .subscribe({
+            query: SKILL_REACTION_UPDATED_SUBSCRIPTION,
+            variables: { skillId: skill._id },
+          })
+          .subscribe({
+            next({ data }) {
+              const updated = data?.skillReactionUpdated;
+              if (updated) {
+                setLocalSkills((prev) =>
+                  prev.map((s) =>
+                    s._id === updated._id
+                      ? { ...s, reactions: updated.reactions }
+                      : s
+                  )
+                );
+              }
+            },
+          })
     );
-    return () => unsubscribers.forEach(sub => sub && sub.unsubscribe());
+    return () => unsubscribers.forEach((sub) => sub && sub.unsubscribe());
   }, [localSkills, apolloClient]);
 
   // remove mutation
@@ -78,13 +88,13 @@ const SkillsList = ({
         fields: {
           skills(existingRefs = [], { readField }) {
             return existingRefs.filter(
-              ref => readField("_id", ref) !== removed._id
+              (ref) => readField("_id", ref) !== removed._id
             );
-          }
-        }
+          },
+        },
       });
       // 2️⃣ also drop from our local list
-      setLocalSkills(prev => prev.filter(s => s._id !== removed._id));
+      setLocalSkills((prev) => prev.filter((s) => s._id !== removed._id));
       // 3️⃣ force refetch of all skills for recents list
       if (apolloClient) {
         apolloClient.refetchQueries({ include: [GET_SKILLS] });
@@ -92,7 +102,7 @@ const SkillsList = ({
     },
   });
 
-  const handleRemoveSkill = skillId => {
+  const handleRemoveSkill = (skillId) => {
     startTransition(() => removeSkill({ variables: { skillId } }));
   };
 
@@ -111,8 +121,8 @@ const SkillsList = ({
     <>
       {!isLoggedInUser && (
         <h2 className=" text-xs font-thin">
-          {profile.name}'s friends have endorsed{" "}
-          {profile.skills?.length ?? 0} skill
+          {profile.name}'s friends have endorsed {profile.skills?.length ?? 0}{" "}
+          skill
           {profile.skills?.length === 1 ? "" : "s"}
         </h2>
       )}
@@ -123,39 +133,71 @@ const SkillsList = ({
         </div>
       )}
 
-      <div className={`grid grid-cols-1${columns > 1 ? ` sm:grid-cols-${columns}` : ""} gap-2`}>
-        {deferredSkills.map(skill => {
+      <div
+        className={`grid grid-cols-1${
+          columns > 1 ? ` sm:grid-cols-${columns}` : ""
+        } gap-2`}
+      >
+        {deferredSkills.map((skill) => {
           const isSkillAuthor = skill.skillAuthor === profile.name;
-          const userReaction = skill.reactions?.find(r => r.user?._id === userId)?.emoji || null;
+          const userReaction =
+            skill.reactions?.find((r) => r.user?._id === userId)?.emoji || null;
           return (
-            <div key={skill._id} className="shadow rounded overflow-hidden flex flex-col justify-between h-32">
+            <div
+              key={skill._id}
+              className="shadow rounded overflow-hidden flex flex-col justify-between h-32"
+            >
               {/* Author on top */}
               <div
                 className={`px-3 py-2 text-xs font-semibold tracking-wide border-b ${
-                  isDarkMode ? "bg-gray-900 text-green-300" : "bg-green-100 text-yellow-800"
+                  isDarkMode
+                    ? "bg-gray-600 text-green-300"
+                    : "bg-green-100 text-yellow-800"
                 }`}
-                style={{ letterSpacing: '0.05em' }}
+                style={{ letterSpacing: "0.05em" }}
               >
-                <span className="inline-block align-middle">
-                  {skill.skillAuthor[0].toUpperCase() + skill.skillAuthor.slice(1)}
+                <span className="inline-block align-middle ">
+                  {skill.skillAuthor[0].toUpperCase() +
+                    skill.skillAuthor.slice(1)}
                 </span>
-                <span className="ml-1 text-gray-400 font-normal">endorsed </span> 
-                 <span className="text-xs text-gray-500 italic">
-                  {skill.recipient?.name ? <strong>{skill.recipient.name}</strong> : "—"}
+                <span className="ml-1 text-gray-400 font-normal">
+                  endorsed{" "}
+                </span>
+                <span className="text-xs text-gray-800 dark:text-yellow-300 italic">
+                  {skill.recipient?.name &&
+                  skill.recipient?.name === skill.skillAuthor ? (
+                    <strong>himself</strong>
+                  ) : skill.recipient?.name ? (
+                    <strong>{skill.recipient.name}</strong>
+                  ) : (
+                    "—"
+                  )}
                 </span>
               </div>
               {/* Skill text in the middle */}
               <div
                 className={`flex-1 flex items-center justify-center text-lg font-bold ${
-                  isDarkMode ? "bg-gray-800 text-white" : "bg-green-200 text-gray-900"
+                  isDarkMode
+                    ? "bg-gray-800 text-white"
+                    : "bg-green-200 text-gray-900"
                 }`}
-                style={{ minHeight: '2.5rem' }}
+                style={{ minHeight: "2.5rem" }}
               >
                 {skill.skillText[0].toUpperCase() + skill.skillText.slice(1)}
               </div>
               {/* Date at the bottom in a pill/button, with emoji react button inline */}
-              <div className={`flex items-center justify-between px-3 py-2 border-t ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}>  
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold shadow ${isDarkMode ? "bg-gray-700 text-green-200" : "bg-green-300 text-yellow-900"}`}>
+              <div
+                className={`flex items-center justify-between px-3 py-2 border-t ${
+                  isDarkMode ? "bg-gray-600" : "bg-gray-50"
+                }`}
+              >
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-semibold shadow ${
+                    isDarkMode
+                      ? "bg-gray-700 text-green-200"
+                      : "bg-green-300 text-yellow-900"
+                  }`}
+                >
                   {skill.createdAt}
                 </span>
                 {/* Emoji reactions display */}
@@ -163,7 +205,11 @@ const SkillsList = ({
                   {skill.reactions && skill.reactions.length > 0 && (
                     <div className="flex space-x-1 mr-2">
                       {skill.reactions.map((r, i) => (
-                        <span key={i} title={r.user?.name || ""} className="text-xl">
+                        <span
+                          key={i}
+                          title={r.user?.name || ""}
+                          className="text-xl"
+                        >
                           {r.emoji}
                         </span>
                       ))}
@@ -189,7 +235,11 @@ const SkillsList = ({
                       onClick={() => handleRemoveSkill(skill._id)}
                       disabled={isPending}
                       title="Delete skill"
-                      className={`transition ml-2 ${isDarkMode ? "text-red-400 hover:text-red-200" : "text-red-600 hover:text-red-800"}`}
+                      className={`transition ml-2 ${
+                        isDarkMode
+                          ? "text-red-400 hover:text-red-200"
+                          : "text-red-600 hover:text-red-800"
+                      }`}
                     >
                       <AiOutlineDelete size={18} />
                     </button>
@@ -210,7 +260,7 @@ const SkillsList = ({
       <div className="flex justify-center mt-4 space-x-2">
         <button
           onClick={() =>
-            startTransition(() => setCurrentPage(p => Math.max(p - 1, 1)))
+            startTransition(() => setCurrentPage((p) => Math.max(p - 1, 1)))
           }
           disabled={currentPage === 1}
           className={`px-4 py-1 rounded ${
@@ -223,7 +273,9 @@ const SkillsList = ({
         </button>
         <button
           onClick={() =>
-            startTransition(() => setCurrentPage(p => Math.min(p + 1, totalPages)))
+            startTransition(() =>
+              setCurrentPage((p) => Math.min(p + 1, totalPages))
+            )
           }
           disabled={currentPage === totalPages}
           className={`px-4 py-1 rounded ${

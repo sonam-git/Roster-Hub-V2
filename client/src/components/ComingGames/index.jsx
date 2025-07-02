@@ -133,34 +133,62 @@ export default function ComingGames() {
           const ampm = h >= 12 ? "PM" : "AM";
           const timeStr = `${hour12}:${m.toString().padStart(2, "0")} ${ampm}`;
 
+          // Color classes for card backgrounds
+          let cardBg =
+            status === "PENDING"
+              ? "bg-yellow-50 border-yellow-300 dark:bg-yellow-900/30"
+              : status === "CONFIRMED"
+              ? "bg-green-50 border-green-300 dark:bg-green-900/30"
+              : "bg-red-50 border-red-300 dark:bg-red-900/30";
+          let borderColor =
+            status === "PENDING"
+              ? "border-yellow-400"
+              : status === "CONFIRMED"
+              ? "border-green-400"
+              : "border-red-400";
+          let icon =
+            status === "PENDING"
+              ? faClock
+              : status === "CONFIRMED"
+              ? faCheck
+              : faTimes;
+
           return (
             <li key={_id}>
               <Link
                 to={`/game-schedule/${_id}`}
-                className="flex flex-col justify-between items-start p-2 rounded hover:bg-indigo-200 hover:no-underline dark:hover:bg-gray-700 transition"
+                className={`flex flex-col justify-between items-start p-3 rounded-xl border shadow transition hover:scale-[1.02] hover:shadow-lg hover:no-underline cursor-pointer ${cardBg} ${borderColor}`}
+                style={{ borderWidth: 2 }}
               >
-                <div>
-                  <p className="font-medium">{monthDay}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {timeStr} vs. {opponent}
-                  </p>
-                  {formation && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400 italic mt-1">
-                      Formation: {formation.formationType}
-                    </p>
-                  )}
+                <div className="flex items-center gap-2 mb-1">
+                  <FontAwesomeIcon icon={icon} className={`text-lg ${status === "PENDING" ? "text-yellow-500" : status === "CONFIRMED" ? "text-green-500" : "text-red-500"}`} />
+                  <p className="font-semibold text-base">{monthDay}</p>
                 </div>
-                <span
-                  className={`self-end px-2 py-0.5 rounded-full text-xs mt-1 ${
-                    status === "PENDING"
-                      ? "bg-yellow-100 text-yellow-800"
-                      : status === "CONFIRMED"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
-                  }`}
-                >
-                  {status[0] + status.slice(1).toLowerCase()}
-                </span>
+                <p className="text-sm text-gray-700 dark:text-gray-200 mb-1">
+                  {timeStr} <span className="font-medium">vs. {opponent}</span>
+                </p>
+                {formation && (
+                  <p className="text-xs text-gray-500 dark:text-gray-400 italic mb-1">
+                    Formation: {formation.formationType}
+                  </p>
+                )}
+                <div className="flex items-center justify-between w-full mt-1">
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-xs font-bold ${
+                      status === "PENDING"
+                        ? "bg-yellow-200 text-yellow-900"
+                        : status === "CONFIRMED"
+                        ? "bg-green-200 text-green-900"
+                        : "bg-red-200 text-red-900"
+                    }`}
+                  >
+                    {status[0] + status.slice(1).toLowerCase()}
+                  </span>
+                  <span className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-300 font-semibold animate-pulse select-none">
+                    <FontAwesomeIcon icon="arrow-right" className="text-base" />
+                    Click for details
+                  </span>
+                </div>
               </Link>
             </li>
           );
