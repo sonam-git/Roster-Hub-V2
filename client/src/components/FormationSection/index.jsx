@@ -46,6 +46,7 @@ export default function FormationSection({
 
   const gameId   = game._id;
   const isFormed = Boolean(formation);
+  const creator = game.creator || {};
 
   // ─── Subscriptions ───────────────────────────────────────────────────────
   useSubscription(FORMATION_CREATED_SUBSCRIPTION, {
@@ -201,8 +202,7 @@ export default function FormationSection({
               />
             )}
 
-            <FormationBoard rows={rows} assignments={assignments} />
-
+            <FormationBoard rows={rows} assignments={assignments} formationType={formationType} creator={creator} />
             <DragOverlay>
               {draggingPlayer && (
                 <div className="p-2 bg-white rounded shadow text-sm font-semibold">

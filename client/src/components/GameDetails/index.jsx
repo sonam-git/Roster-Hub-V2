@@ -1,5 +1,5 @@
 // src/components/GameDetails.jsx
-import React, {
+import {
   useState,
   useEffect,
   useContext,
@@ -250,31 +250,17 @@ export default function GameDetails({ gameId }) {
           : "bg-gradient-to-br from-white via-blue-50 to-green-50 text-gray-900"
       }`}
     >
-      {/* Back to Game List button */}
-      {/* <div className="mb-6 flex justify-start">
-        <button
-          onClick={() => navigate('/game-schedule')}
-          className={`px-4 py-2 rounded-lg font-semibold shadow transition-colors duration-200 flex items-center gap-2 w-fit ${
-            isDarkMode
-              ? 'bg-gray-600 text-white hover:bg-gray-500'
-              : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
-          }`}
-        >
-          <span className="material-icons text-lg"></span>
-         ← Game List
-        </button>
-      </div> */}
       {/* Main content swapper */}
       {!showFormation ? (
         <div>
           {/* Top: Game Formation/Game Feedback button */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-4">
+          <div className="flex justify-between mb-4">
             <button
               onClick={() => navigate("/game-schedule")}
               className={`px-4 py-2 rounded-lg font-semibold shadow transition-colors duration-200 flex items-center gap-2 w-fit ${
                 isDarkMode
-                  ? "bg-gray-600 text-white hover:bg-gray-500"
-                  : "bg-gray-200 text-gray-900 hover:bg-gray-300"
+                  ? "bg-gray-600 text-white hover:bg-gray-900"
+                  : "bg-indigo-600 text-white hover:bg-indigo-900"
               }`}
             >
               <span className="material-icons text-lg"></span>← Game List
@@ -283,36 +269,33 @@ export default function GameDetails({ gameId }) {
               onClick={() => setShowFormation(true)}
               className={`px-5 py-2 rounded-lg font-semibold shadow transition-colors duration-200 flex items-center gap-2 w-fit ${
                 isDarkMode
-                  ? "bg-indigo-700 text-white hover:bg-indigo-600"
-                  : "bg-indigo-600 text-white hover:bg-indigo-700"
+                  ? "bg-gray-600 text-white hover:bg-gray-900"
+                  : "bg-indigo-600 text-white hover:bg-indigo-900"
               }`}
             >
-              {game.status === "COMPLETED"
-                ? "Show Game Feedback"
-                : "Show Game Formation"}
+              {game.status === "COMPLETED" ? "Show Feedback" : "Show Formation"}
             </button>
           </div>
-          {/* Main game details (was left column) */}
           {/* INFO */}
           <div
             className={`mb-6 p-4 rounded-xl shadow-md flex flex-col gap-2 ${
               isDarkMode ? "bg-gray-700" : "bg-white/80"
             }`}
           >
-            <h3 className="text-2xl font-bold flex flex-wrap gap-4 items-center">
+            <h3 className="text-lg sm:text-xl font-bold flex flex-wrap gap-4 items-center tracking-tight">
               <span className="inline-block">
-                <strong>Date:</strong> {humanDate}
+                <strong>Date:</strong> <span className="font-normal text-base sm:text-lg">{humanDate}</span>
               </span>
               <span className="inline-block">
-                <strong>Time:</strong> {humanTime}
+                <strong>Time:</strong> <span className="font-normal text-base sm:text-lg">{humanTime}</span>
               </span>
             </h3>
-            <p className="text-lg font-semibold flex flex-wrap gap-4 items-center">
+            <p className="text-base sm:text-lg font-semibold flex flex-wrap gap-4 items-center text-gray-700 dark:text-gray-200">
               <span>
-                <strong>Venue:</strong> {game.venue}
+                <strong>Venue:</strong> <span className="font-normal text-base sm:text-lg">{game.venue}</span>
               </span>
               <span>
-                <strong>Opponent:</strong> {game.opponent}
+                <strong>Opponent:</strong> <span className="font-normal text-base sm:text-lg">{game.opponent}</span>
               </span>
             </p>
           </div>
@@ -524,27 +507,39 @@ export default function GameDetails({ gameId }) {
                   : "bg-yellow-400 text-gray-900 hover:bg-yellow-500"
               }`}
             >
-              {game.status === "COMPLETED"
-                ? "Hide Game Feedback"
-                : "Hide Game Formation"}
+              {game.status === "COMPLETED" ? "Hide Feedback" : "Hide Formation"}
             </button>
           </div>
           <div>
-            <RightColumn
-              game={game}
-              formation={formation}
-              isCreator={isCreator}
-              showThankYou={showThankYou}
-              feedbackGiven={feedbackGiven}
-              startTransition={startTransition}
-              refetchGame={refetchGame}
-              setFormation={setFormation}
-              gameId={gameId}
-              isDarkMode={isDarkMode}
-              handleFeedback={handleFeedback}
-              showFormation={true}
-              setShowFormation={setShowFormation}
-            />
+            {/* Show message if game is pending, else show RightColumn */}
+            {game.status === "PENDING" ? (
+              <div
+                className={`p-6 rounded-xl shadow text-center text-lg font-medium italic ${
+                  isDarkMode
+                    ? "bg-gray-700 text-gray-100"
+                    : "bg-white/80 text-gray-800"
+                }`}
+              >
+                The formation will be displayed here once the game is confirmed.
+                Please cast your vote and stay tuned. Thank you!
+              </div>
+            ) : (
+              <RightColumn
+                game={game}
+                formation={formation}
+                isCreator={isCreator}
+                showThankYou={showThankYou}
+                feedbackGiven={feedbackGiven}
+                startTransition={startTransition}
+                refetchGame={refetchGame}
+                setFormation={setFormation}
+                gameId={gameId}
+                isDarkMode={isDarkMode}
+                handleFeedback={handleFeedback}
+                showFormation={true}
+                setShowFormation={setShowFormation}
+              />
+            )}
           </div>
         </div>
       )}

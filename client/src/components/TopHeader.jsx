@@ -1,8 +1,10 @@
+import React, { useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {  faPersonRunning, faCalendarAlt, faPlus, faInbox, faStar, faHome, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faPersonRunning, faCalendarAlt, faPlus, faInbox, faStar, faHome, faInfoCircle, faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { useQuery } from "@apollo/client";
 import { QUERY_ME } from "../utils/queries";
+import { ThemeContext } from "../components/ThemeContext";
 
 const BUTTONS = [
   { key: "home", label: "Home", icon: faHome, path: "/" },
@@ -18,6 +20,7 @@ export default function TopHeader({ className }) {
   const location = useLocation();
   const { data } = useQuery(QUERY_ME);
   const username = data?.me?.name || "Player";
+  const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
   return (
     <div className={`w-full flex flex-col sm:flex-row items-center justify-between bg-gray-100 dark:bg-gray-700 py-2 shadow-md sticky top-0 z-30 px-4 ${typeof className !== 'undefined' ? className : ''}`}>
       {/* Left: Username and soccer icon */}
@@ -45,6 +48,16 @@ export default function TopHeader({ className }) {
             <span className="hidden sm:inline">{btn.label}</span>
           </button>
         ))}
+      </div>
+      {/* Right: Dark/Light mode toggle */}
+      <div className="hidden md:flex items-center ml-4">
+        <button
+          onClick={toggleDarkMode}
+          className="rounded-full p-2 bg-white dark:bg-gray-800 shadow hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+          aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+        >
+          <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} className="text-xl text-yellow-500 dark:text-gray-200" />
+        </button>
       </div>
     </div>
   );

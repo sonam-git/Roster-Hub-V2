@@ -43,7 +43,8 @@ const GameFeedbackList = ({ gameId, isDarkMode }) => {
           isDarkMode ? "text-gray-300" : "text-gray-700"
         }`}
       >
-       Feedback List from our players.
+        Feedback from our players for recent game held on{" "}
+        {new Date(parseInt(data.game.date)).toLocaleDateString()}.
       </p>
 
       <div className="space-y-4">
@@ -51,23 +52,19 @@ const GameFeedbackList = ({ gameId, isDarkMode }) => {
           <div
             key={fb._id}
             className={`p-4 rounded shadow ${
-              isDarkMode ? "bg-gray-700 text-gray-200" : "bg-green-100 text-gray-800"
+              isDarkMode
+                ? "bg-gray-900 text-gray-200"
+                : "bg-green-100 text-gray-800"
             }`}
           >
             {/* top row: date left, rating right */}
             <div className="flex justify-between items-center mb-2 text-sm dark:text-gray-300">
-              <span>
-                {new Date(parseInt(fb.createdAt)).toLocaleString()}
-              </span>
-              <span className="font-medium">
-                Rating : {fb.rating} / 10
-              </span>
+              <span>{new Date(parseInt(fb.createdAt)).toLocaleString()}</span>
+              <span className="font-medium">Rating : {fb.rating} / 10</span>
             </div>
 
             {/* comment, italic, smaller text */}
-            <p className="italic text-sm">
-              {fb.comment}
-            </p>
+            <p className="italic text-sm">{fb.comment}</p>
           </div>
         ))}
       </div>
