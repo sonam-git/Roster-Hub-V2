@@ -4,7 +4,6 @@ import { useQuery } from "@apollo/client";
 import Hero from "../components/Hero";
 import { QUERY_ME } from "../utils/queries";
 import Auth from "../utils/auth";
-import Welcome from "../components/Welcome";
 import PostForm from "../components/PostForm";
 import PostsList from "../components/PostsList";
 import ComingGames from "../components/ComingGames";

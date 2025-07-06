@@ -1,4 +1,4 @@
-import React, { useState, useContext, useTransition } from "react";
+import  { useState, useContext, useTransition } from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { ThemeContext } from "../components/ThemeContext";
@@ -41,39 +41,29 @@ const Signup = () => {
   };
 
   return (
-    <main className="container min-h-screen flex items-center justify-center px-4">
-      <div className="  flex flex-col md:flex-row items-center justify-center w-full max-w-7xl">
-        <div className="md:w-1/2 flex flex-col items-center text-center md:mb-0">
-          <h1 className="text-5xl font-bold pb-2">Roster Hub</h1>
-          <p className="text-xl mb-4">Create your team's hub with us</p>
+    <main className="flex items-center justify-center px-4 py-12">
+      <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-7xl">
+        <div className="hidden md:flex md:w-1/2 flex-col items-center text-center md:mb-0 p-6">
+          <h1 className="text-5xl font-extrabold pb-2 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-green-600 via-blue-600 to-yellow-400 dark:from-green-300 dark:via-blue-400 dark:to-yellow-200 drop-shadow-lg">
+            Roster Hub
+          </h1>
+          <p className="text-xl mb-3 font-medium text-gray-700 dark:text-gray-200">
+            Create your team's hub with us
+          </p>
           <img
             src={isDarkMode ? heroImage : heroImageDark}
             alt="Roster Hub Logo"
-            className="w-64 h-64 animate-bounce mt-4"
+            className="w-56 h-56 md:w-64 md:h-64 animate-bounce mt-4 drop-shadow-xl rounded-full border-4 border-white dark:border-gray-800"
           />
           <h4
-            className="
-    text-md        /* mobile first: small text */
-    sm:text-lg     /* from 640px up: larger */
-    md:text-xl     /* from 768px up: even larger */
-    lg:text-2xl    /* from 1024px up: biggest */
-    text-center 
-    font-extrabold 
-    tracking-tight 
-    text-gray-900 
-    dark:text-white 
-    mb-6 
-    bg-gradient-to-r from-green-500 via-blue-500 to-red-500 
-    bg-clip-text 
-    text-transparent
-  "
+            className="text-md sm:text-md md:text-xl lg:text-2xl text-center font-bold tracking-tight mt-6 mb-6 text-gray-900 dark:text-white bg-gradient-to-r from-green-500 via-blue-500 to-yellow-400 dark:from-green-300 dark:via-blue-400 dark:to-yellow-200 bg-clip-text text-transparent drop-shadow"
           >
             Elevate Your Game, On and Off the Field
           </h4>
         </div>
         <div className="md:w-1/2 flex flex-col-1 items-center">
-          <div className="bg-gray-200 shadow-xl rounded px-8 pt-6 pb-8 mb-4 dark:bg-gray-800 w-full max-w-md">
-            <h4 className="text-center text-2xl font-bold text-gray-900 dark:text-white mb-6">
+          <div className="bg-gradient-to-br from-green-400 via-blue-400 to-yellow-300 dark:from-green-900 dark:via-blue-900 dark:to-yellow-700 rounded-2xl shadow-2xl p-8 flex flex-col items-center w-full overflow-x-auto mb-6 border border-green-200 dark:border-green-800">
+            <h4 className="text-center text-3xl font-extrabold text-gray-900 dark:text-white mb-6 tracking-tight drop-shadow">
               Sign Up
             </h4>
             {data ? (
@@ -82,11 +72,11 @@ const Signup = () => {
                 <Link to="/">back to the homepage</Link>.
               </p>
             ) : (
-              <form onSubmit={handleFormSubmit} className="space-y-6">
+              <form onSubmit={handleFormSubmit} className="space-y-6 w-full max-w-md">
                 <div>
                   <label
                     htmlFor="name"
-                    className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+                    className="block text-sm font-semibold leading-6 text-gray-900 dark:text-white mb-1"
                   >
                     Username
                   </label>
@@ -98,13 +88,13 @@ const Signup = () => {
                     onChange={handleChange}
                     required
                     placeholder="Your username"
-                    className="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    className="form-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-400 focus:ring focus:ring-blue-200 focus:ring-opacity-50 bg-white dark:bg-gray-900 text-gray-900 dark:text-black placeholder-gray-400 dark:placeholder-gray-500 transition"
                   />
                 </div>
                 <div>
                   <label
                     htmlFor="email"
-                    className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+                    className="block text-sm font-semibold leading-6 text-gray-900 dark:text-white mb-1"
                   >
                     Email address
                   </label>
@@ -116,13 +106,13 @@ const Signup = () => {
                     onChange={handleChange}
                     required
                     placeholder="Your email"
-                    className="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    className="form-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-400 focus:ring focus:ring-blue-200 focus:ring-opacity-50 bg-white dark:bg-gray-900 text-gray-900 dark:text-black placeholder-gray-400 dark:placeholder-gray-500 transition"
                   />
                 </div>
                 <div>
                   <label
                     htmlFor="password"
-                    className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+                    className="block text-sm font-semibold leading-6 text-gray-900 dark:text-white mb-1"
                   >
                     Password
                   </label>
@@ -134,22 +124,22 @@ const Signup = () => {
                     onChange={handleChange}
                     required
                     placeholder="Password"
-                    className="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    className="form-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-400 focus:ring focus:ring-blue-200 focus:ring-opacity-50 bg-white dark:bg-gray-900 text-gray-900 dark:text-black placeholder-gray-400 dark:placeholder-gray-500 transition"
                   />
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center mt-4">
                   <button
                     type="submit"
                     disabled={isPending}
-                    className="bg-blue-500 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring focus:ring-blue-200 hover:bg-blue-800 cursor-pointer disabled:opacity-50"
+                    className="bg-yellow-400 dark:bg-yellow-300 text-green-900 dark:text-green-900 font-extrabold py-2 px-6 rounded-full shadow hover:bg-yellow-300 dark:hover:bg-yellow-200 transition disabled:opacity-50"
                   >
-                    {isPending ? "Submitting..." : "Submit"}
+                    {isPending ? "Submitting..." : "Sign Up"}
                   </button>
                 </div>
                 <div className="flex justify-between mt-3 text-sm">
                   <Link
                     to="/login"
-                    className="text-gray-600 hover:text-blue-500 dark:text-white dark:hover:text-blue-400"
+                    className="text-blue-700  hover:underline-offset-4  dark:text-blue-300"
                   >
                     Already have an account?
                   </Link>
@@ -159,7 +149,7 @@ const Signup = () => {
           </div>
           {error && (
             <div
-              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-2 w-full max-w-md"
               role="alert"
             >
               <span className="block sm:inline">{error.message}</span>

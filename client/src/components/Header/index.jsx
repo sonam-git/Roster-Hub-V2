@@ -36,17 +36,19 @@ const Header = () => {
   const messageCount = meData?.me?.receivedMessages?.length || 0;
 
   // 2) fetch all games to compute badges
-const { data: allGamesData } = useQuery(QUERY_GAMES, {
-  fetchPolicy: "network-only",
-});
-const allGames = allGamesData?.games || [];
+  const { data: allGamesData } = useQuery(QUERY_GAMES, {
+    fetchPolicy: "network-only",
+  });
+  const allGames = allGamesData?.games || [];
 
-// count pending and confirmed
-const pendingCount   = allGames.filter(g => g.status === "PENDING").length;
-const confirmedCount = allGames.filter(g => g.status === "CONFIRMED").length;
+  // count pending and confirmed
+  const pendingCount = allGames.filter((g) => g.status === "PENDING").length;
+  const confirmedCount = allGames.filter(
+    (g) => g.status === "CONFIRMED"
+  ).length;
 
-// total of those two
-const gameBadgeCount = pendingCount + confirmedCount;
+  // total of those two
+  const gameBadgeCount = pendingCount + confirmedCount;
 
   // handle logout
   const handleLogout = () => {
@@ -100,7 +102,7 @@ const gameBadgeCount = pendingCount + confirmedCount;
       >
         <img
           src={controlImage}
-          className={`hidden lg:block absolute cursor-pointer right-3 mt-2 w-6 md:w-8 lg:w-10 border-dark-blue border-2 rounded-full bg-white transform transition-transform duration-300 ${
+          className={`hidden lg:block absolute cursor-pointer right-3  w-6 md:w-8 lg:w-10 border-dark-blue border-2 rounded-full bg-white transform transition-transform duration-300 ${
             open ? "" : "rotate-180"
           }`}
           onClick={toggleMenu}
@@ -165,12 +167,12 @@ const gameBadgeCount = pendingCount + confirmedCount;
           : " text-black  dark:text-white"
       }
     `}
-                onClick={() => {
-    // run action if it exists (e.g. logout)
-    if (Menu.action) Menu.action();
-    // always close the mobile menu
-    setOpen(false);
-  }}
+              onClick={() => {
+                // run action if it exists (e.g. logout)
+                if (Menu.action) Menu.action();
+                // always close the mobile menu
+                setOpen(false);
+              }}
             >
               {Menu.path ? (
                 <Link

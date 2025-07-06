@@ -38,10 +38,6 @@ import ChatPopup from "./components/ChatPopup";
 import { QUERY_ME } from "./utils/queries";
 import Auth from "./utils/auth";
 import MainHeader from "./components/MainHeader";
-import TopHeader from "./components/TopHeader";
-import AllSkillsList from "./components/AllSkillsList";
-import CustomComingGames from "./components/CustomComingGames";
-import About from "./pages/About";
 
 
 
@@ -71,14 +67,9 @@ const httpLink = createHttpLink({ uri: httpUri });
 const wsLink = new GraphQLWsLink(
   createClient({
     url: wsUri,
-    connectionParams: () => {
-      // Send token as 'token' param for online status tracking
-      const token = localStorage.getItem("id_token");
-      return {
-        authorization: token ? `Bearer ${token}` : "",
-        token: token || ""
-      };
-    },
+    connectionParams: () => ({
+      authorization: `Bearer ${localStorage.getItem("id_token") || ""}`,
+    }),
   })
 );
 
@@ -114,7 +105,7 @@ function AppContent() {
         }`}
       >
         <Header />
-        <div className="flex-1">
+        <div className="flex-1 mt-10 ">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/roster" element={<Roster />} />
@@ -126,8 +117,6 @@ function AppContent() {
               path="/skill"
               element={<Skill isDarkMode={isDarkMode} />}
             />
-            <Route path="/skills-shortcut" element={<AllSkillsList isDarkMode={isDarkMode} />} />
-            <Route path="/games-shortcut" element={<CustomComingGames isDarkMode={isDarkMode} />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/me" element={<Profile />} />
@@ -143,7 +132,6 @@ function AppContent() {
               element={<Game isDarkMode={isDarkMode} />}
             />
             <Route path="/scoreboard" element={<Score />} />
-            <Route path="/about" element={<About />} />
           </Routes>
           {Auth.loggedIn() && currentUser && (
             <ChatPopup currentUser={currentUser} isDarkMode={isDarkMode} />
@@ -168,7 +156,6 @@ function App() {
             }}
           >
             <MainHeader />
-            {Auth.loggedIn() && <TopHeader className="mb-0" />}
             <AppContent />
           </Router>
         </ThemeProvider>
