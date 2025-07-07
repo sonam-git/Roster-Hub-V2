@@ -100,12 +100,10 @@ function AppContent() {
   return (
     <>
       <div
-        className={`flex min-h-screen ${
-          isDarkMode ? "bg-gray-900 text-white" : "bg-gray-300 text-black"
-        }`}
+        className={`flex min-h-screen bg-gradient-to-b from-white via-blue-50 to-green-50 dark:from-gray-900 dark:via-blue-950 dark:to-green-950 transition-colors duration-300`}
       >
         <Header />
-        <div className="flex-1 mt-10 ">
+        <div className="flex-1  ">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/roster" element={<Roster />} />

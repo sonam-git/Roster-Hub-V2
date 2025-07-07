@@ -50,13 +50,13 @@ export default function CommentList({
                 <div className="mt-2 flex space-x-2">
                   <button
                     onClick={() => handleSave(c._id)}
-                    className="px-3 py-1 bg-blue-500 text-white rounded"
+                    className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-800 disabled:opacity-50"
                   >
                     Save
                   </button>
                   <button
                     onClick={() => setEditingCommentId(null)}
-                    className="px-3 py-1 bg-gray-500 text-white rounded"
+                    className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-800 disabled:opacity-50"
                   >
                     Cancel
                   </button>
@@ -66,13 +66,13 @@ export default function CommentList({
               <>
                 <Link
                   to={`/profiles/${c.userId}`}
-                  className="font-semibold hover:no-underline dark:hover:text-yellow-300"
+                  className="font-semibold hover:no-underline dark:hover:text-yellow-300 dark:text-white"
                 >
                   {c.commentAuthor}
                 </Link>
-                <p className="mt-1 text-xs font-thin">{c.commentText}</p>
+                <p className="mt-1 text-xs font-thin dark:text-white">{c.commentText}</p>
                 <div className="flex justify-between items-center text-xs mt-2">
-                  <span className="text-gray-500">
+                  <span className="text-gray-500 dark:text-gray-400">
                     {new Date(parseInt(c.createdAt)).toLocaleString()}
                   </span>
                   {/* ← comment-like button */}
@@ -101,7 +101,7 @@ export default function CommentList({
           </div>
         ))
       ) : (
-        <p className="text-gray-500 text-center">No comments yet</p>
+        <p className="text-gray-500 text-center italic dark:text-white">No comments yet</p>
       )}
     </div>
   );

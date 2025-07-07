@@ -25,7 +25,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <main className="flex items-center justify-center px-2 py-12 font-sans bg-gradient-to-b from-white via-blue-50 to-green-50 dark:from-gray-900 dark:via-blue-950 dark:to-green-950 transition-colors duration-300">
+    <main className="flex items-center justify-center px-2 py-12 font-sans ">
       <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-7xl">
         {/* Left side: hide on mobile after 5s */}
         {(!isMobile || (isMobile && !showRight)) && (

@@ -43,9 +43,7 @@ const Header = () => {
 
   // count pending and confirmed
   const pendingCount = allGames.filter((g) => g.status === "PENDING").length;
-  const confirmedCount = allGames.filter(
-    (g) => g.status === "CONFIRMED"
-  ).length;
+  const confirmedCount = allGames.filter((g) => g.status === "CONFIRMED").length;
 
   // total of those two
   const gameBadgeCount = pendingCount + confirmedCount;
@@ -92,17 +90,17 @@ const Header = () => {
   return (
     <div
       className={`flex min-h-screen ${
-        isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"
+        isDarkMode ? "bg-gray-800 text-white" : "bg-gray-200 text-black"
       }`}
     >
       <div
         className={`fixed lg:static top-0 left-0 h-full p-5 pt-2 transition-all duration-300 z-50 ${
           open ? "w-55" : "hidden lg:block lg:w-28"
-        } ${isDarkMode ? "bg-gray-800" : "bg-gray-100"} lg:bg-transparent`}
+        } ${isDarkMode ? "bg-gray-800" : "bg-gray-300"} lg:bg-transparent`}
       >
         <img
           src={controlImage}
-          className={`hidden lg:block absolute cursor-pointer right-3  w-6 md:w-8 lg:w-10 border-dark-blue border-2 rounded-full bg-white transform transition-transform duration-300 ${
+          className={`hidden lg:block absolute cursor-pointer right-3 mt-2 w-6 md:w-8 lg:w-10 border-dark-blue border-2 rounded-full bg-white transform transition-transform duration-300 ${
             open ? "" : "rotate-180"
           }`}
           onClick={toggleMenu}
@@ -134,11 +132,29 @@ const Header = () => {
           </div>
         </div>
 
+        {/* Custom styles for hover/active border color */}
+        <style>{`
+          .sidebar-menu-item {
+            transition: border-color 0.2s;
+          }
+          .sidebar-menu-item:hover {
+            border-color: ${isDarkMode ? '#facc15' : '#2563eb'} !important;
+          }
+          .sidebar-menu-item.active-light {
+            border-color: #000 !important;
+            background: #f3f4f6 !important; /* Tailwind gray-100 for subtle highlight */
+          }
+          .sidebar-menu-title {
+            transition: color 0.2s, background 0.2s;
+          }
+          .sidebar-menu-item:hover .sidebar-menu-title {
+            color: ${isDarkMode ? '#fff' : '#1e293b'} !important;
+          }
+        `}</style>
+
         <ul className="pt-6 mt-8">
           <li
-            className={`flex rounded-md p-2 cursor-pointer items-center gap-x-4 mt-2 ${
-              isDarkMode ? "bg-gray-700 text-white" : "bg-gray-300 text-black"
-            }`}
+            className="flex rounded-md p-2 cursor-pointer items-center gap-x-4 mt-2 bg-gradient-to-r from-green-400 via-blue-400 to-yellow-300 dark:from-green-900 dark:via-blue-900 dark:to-yellow-700 text-green-900 dark:text-yellow-200 font-bold shadow-md hover:shadow-lg transition-all duration-200 border border-green-200 dark:border-green-800 "
             onClick={toggleDarkMode}
           >
             <button className="flex items-center w-full no-underline">
@@ -149,7 +165,7 @@ const Header = () => {
                 <span
                   className={`${
                     !open && "hidden"
-                  } origin-left duration-200 text-sm md:text-base lg:text-lg font-serif ml-2 md:ml-4 lg:ml-6 hover:text-blue-400`}
+                  } origin-left duration-200 text-sm md:text-base lg:text-lg font-serif ml-2 md:ml-4 lg:ml-6 hover:text-gray-100`}
                 >
                   {isDarkMode ? "Light Mode" : "Dark Mode"}
                 </span>
@@ -160,17 +176,13 @@ const Header = () => {
           {Menus.map((Menu, index) => (
             <li
               key={index}
-              className={`flex rounded-md p-2 cursor-pointer items-center gap-x-4 mt-2
-      ${
-        location.pathname === Menu.path
-          ? "bg-gray-800 text-white dark:bg-gray-600"
-          : " text-black  dark:text-white"
-      }
-    `}
+              className={`sidebar-menu-item flex rounded-md p-2 cursor-pointer items-center gap-x-4 mt-2
+                bg-gradient-to-r from-green-400 via-blue-400 to-yellow-300 dark:from-green-900 dark:via-blue-900 dark:to-yellow-700 text-green-900 dark:text-yellow-200 font-bold shadow-md hover:shadow-lg transition-all duration-200 border border-green-200 dark:border-blue-800
+                ${location.pathname === Menu.path ? (isDarkMode ? "ring-2 ring-yellow-400 dark:ring-yellow-300" : "active-light") : ""}
+                hover:border-blue-500 dark:hover:border-yellow-400
+              `}
               onClick={() => {
-                // run action if it exists (e.g. logout)
                 if (Menu.action) Menu.action();
-                // always close the mobile menu
                 setOpen(false);
               }}
             >
@@ -181,47 +193,37 @@ const Header = () => {
                   style={{ textDecoration: "none" }}
                   onClick={() => setOpen(false)}
                 >
-                  <div className="flex items-center">
+                  <div className="flex items-center w-full">
                     <img
                       src={Menu.src}
                       alt={Menu.title}
-                      className="w-8 md:w-8 lg:w-10 mr-2 p-1  dark:hover:text-red hover:bg-gray-800 rounded-full transition-all duration-300"
+                      className="w-8 md:w-8 lg:w-10 mr-2 p-1 rounded-full transition-all duration-300 bg-white/80 dark:bg-gray-900/80 border border-green-200 dark:border-blue-800"
                     />
-                    <span
-                      className={`${
-                        !open && "hidden"
-                      } origin-left duration-200 md:text-base lg:text-lg flex items-center gap-2 hover:text-red-600 dark:hover:text-red-400 dark:text-white text-lg font-bold`}
-                    >
-                      {Menu.title}
-                      {Menu.badge > 0 && (
-                        <span className="bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5 ml-1">
-                          {Menu.badge}
-                        </span>
-                      )}
-                    </span>
+                    {open && (
+                      <span className="sidebar-menu-title origin-left duration-200 md:text-base lg:text-lg flex items-center gap-2 hover:text-red-600 dark:hover:text-white text-lg font-bold"
+                        style={location.pathname === Menu.path && !isDarkMode ? { background: '#f3f4f6', borderRadius: '0.375rem', padding: '0.25rem 0.75rem' } : {}}>
+                        {Menu.title}
+                        {Menu.badge > 0 && (
+                          <span className="bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5 ml-1">
+                            {Menu.badge}
+                          </span>
+                        )}
+                      </span>
+                    )}
                   </div>
                 </Link>
               ) : (
-                <div className="flex items-center w-full no-underline">
-                  <div className="flex items-center">
-                    <img
-                      src={Menu.src}
-                      alt={Menu.title}
-                      className="w-6 md:w-8 lg:w-10 mr-2 p-1 hover:bg-gray-800 rounded-full transition-all duration-300"
-                    />
-                    <span
-                      className={`${
-                        !open && "hidden"
-                      } origin-left duration-200 text-sm md:text-base lg:text-lg px-3 py-1 rounded 
-    ${
-      Menu.title === "Logout"
-        ? "bg-red-600 text-white hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600"
-        : "text-blue-500 hover:text-red-500"
-    }`}
-                    >
+                <div className="flex items-center w-full no-underline" onClick={() => { if (Menu.action) Menu.action(); setOpen(false); }}>
+                  <img
+                    src={Menu.src}
+                    alt={Menu.title}
+                    className="w-6 md:w-8 lg:w-10 mr-2 p-1 rounded-full transition-all duration-300 bg-white/80 dark:bg-gray-900/80 border border-green-200 dark:border-blue-800"
+                  />
+                  {open && (
+                    <span className="sidebar-menu-title origin-left duration-200 text-sm md:text-base lg:text-lg px-3 py-1 rounded font-bold">
                       {Menu.title}
                     </span>
-                  </div>
+                  )}
                 </div>
               )}
             </li>

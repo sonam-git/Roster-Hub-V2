@@ -62,14 +62,14 @@ const PostsList = ({ profileId }) => {
   if (error) return <div>Error loading posts.</div>;
   
   if (!data || !data?.posts || !data?.posts.length) {
-    return <h3 className=' ml-3 text-left text-sm lg:text-md '>No post yet, create your first post. </h3>;
+    return <h3 className=' ml-3 text-left text-sm lg:text-md dark:text-white '>No post yet, create your first post. </h3>;
   }
 
 
   // Filter by profile if needed
   const allPosts = data.posts;
   const loginPost = allPosts.filter((p) => p.userId._id === profileId)
-  if(loginPost.length === 0 && profileId) { return <h3 className='ml-5 text-sm lg:text-md font-italic'>Posted nothing yet. Post will be appeared here. </h3> }
+  if(loginPost.length === 0 && profileId) { return <h3 className='ml-5 text-sm lg:text-md font-italic dark:text-white'>Posted nothing yet. Post will be appeared here. </h3> }
   const postsToDisplay = profileId
     ? loginPost
     : allPosts;

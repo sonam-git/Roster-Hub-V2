@@ -182,7 +182,7 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
             alt=""
             className="w-8 h-8 rounded-full mr-2"
           />
-          <h3 className="text-lg font-bold dark:hover:text-yellow-300">{post.userId.name}</h3>
+          <h3 className="text-lg font-bold dark:hover:text-yellow-300 dark:text-white">{post.userId.name}</h3>
         </Link>
         {currentUserId === post.userId._id && (
           <div className="flex space-x-2">
@@ -209,13 +209,13 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
           <div className="mt-2 flex space-x-2">
             <button
               onClick={handleUpdatePost}
-              className="bg-blue-500 text-white px-3 py-1 rounded"
+              className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-800 disabled:opacity-50"
             >
               Save
             </button>
             <button
               onClick={() => setIsEditing(false)}
-              className="bg-gray-500 text-white px-3 py-1 rounded"
+              className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-800 disabled:opacity-50"
             >
               Cancel
             </button>
@@ -223,7 +223,7 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
         </>
       ) : (
         <>
-          <p className="mt-2 mb-2 p-2 bg-gray-200 dark:bg-gray-600 font-light text-sm sm:text-xs rounded-md">{postText}</p>
+          <p className="mt-2 mb-2 p-2 bg-gray-200 dark:bg-gray-600 font-light text-sm sm:text-xs rounded-md dark:text-white">{postText}</p>
           {isEdited && (
             <small className="text-gray-500">
               Edited: {new Date().toLocaleString()}
@@ -256,7 +256,7 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
               </div>
             )}
           </div>
-          <span>{likes}</span>
+          <span className="dark:text-white">{likes}</span>
 
           {/* Comment toggle */}
           {showComments ? (
@@ -273,7 +273,7 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
               }}
             />
           )}
-          <span>{comments.length}</span>
+          <span className="dark:text-white">{comments.length}</span>
         </div>
       </div>
 
@@ -288,13 +288,13 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
           />
           <button
             onClick={handleAddComment}
-            className="mt-2 bg-blue-500 text-white px-3 py-1 rounded"
+            className="mt-2 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-800 disabled:opacity-50"
           >
             Post Comment
           </button>
           <button
               onClick={handleCancelComment}
-              className="bg-gray-500 text-white px-3 py-1 rounded ml-2"
+              className="bg-gray-500 text-white px-3 py-1 rounded ml-2 hover:bg-gray-800 disabled:opacity-50"
             >
               Cancel
             </button>

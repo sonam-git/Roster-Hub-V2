@@ -60,7 +60,7 @@ export default function CommentLike({ comment, currentUserId }) {
         </div>
       )}
 
-      <span className="text-sm">{likes}</span>
+      <span className="text-sm dark:text-white">{likes}</span>
     </div>
   );
 }

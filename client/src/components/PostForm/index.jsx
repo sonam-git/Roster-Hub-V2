@@ -39,7 +39,7 @@ const PostForm = () => {
 
   return (
     <div>
-      <h4 className="text-2xl font-bold mb-2 ml-3">What's on your mind?</h4>
+      <h4 className="text-2xl font-bold mb-2 ml-3 dark:text-white">What's on your mind?</h4>
       {Auth.loggedIn() ? (
         <form
           onSubmit={handleSubmit}

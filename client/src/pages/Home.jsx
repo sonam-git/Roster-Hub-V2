@@ -62,14 +62,14 @@ const Home = ({ isDarkMode }) => {
               <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-4 w-full overflow-x-auto">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <FaRegListAlt className="text-green-600 dark:text-green-300 text-xl" />
-                  <span className="font-bold text-lg">Share a Thought</span>
+                  <span className="font-bold text-lg dark:text-white">Share a Thought</span>
                 </div>
                 <PostForm />
               </div>
-              <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-4 w-full overflow-x-auto">
+              <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-4 w-full overflow-x-auto ">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <FaRegListAlt className="text-blue-600 dark:text-blue-300 text-xl" />
-                  <span className="font-bold text-lg">Recent Posts</span>
+                  <span className="font-bold text-lg dark:text-white">Recent Posts</span>
                 </div>
                 <PostsList isDarkMode={isDarkMode} />
               </div>
@@ -80,14 +80,14 @@ const Home = ({ isDarkMode }) => {
               <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-4 w-full overflow-x-auto">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <FaFutbol className="text-yellow-500 dark:text-yellow-300 text-xl animate-bounce" />
-                  <span className="font-bold text-lg">Latest Skills</span>
+                  <span className="font-bold text-lg dark:text-white">Latest Skills</span>
                 </div>
                 <RecentSkillsList />
               </div>
               <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-4 w-full overflow-x-auto">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <FaCalendarAlt className="text-blue-600 dark:text-blue-300 text-xl" />
-                  <span className="font-bold text-lg">Game Schedule</span>
+                  <span className="font-bold text-lg dark:text-white">Game Schedule</span>
                 </div>
                 <ComingGames />
               </div>

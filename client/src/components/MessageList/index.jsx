@@ -120,14 +120,14 @@ const MessageList = ({ isLoggedInUser = false, isDarkMode }) => {
         <button
           disabled={page === 0}
           onClick={() => setPage((p) => p - 1)}
-          className="px-3 py-1 border rounded disabled:opacity-50"
+          className="px-3 py-1 border rounded disabled:opacity-50 dark:text-white"
         >
           Prev
         </button>
         <button
           disabled={(page + 1) * PER_PAGE >= conversations.length}
           onClick={() => setPage((p) => p + 1)}
-          className="px-3 py-1 border rounded disabled:opacity-50"
+          className="px-3 py-1 border rounded disabled:opacity-50 dark:text-white"
         >
           Next
         </button>
