@@ -83,7 +83,7 @@ const Game = () => {
   }
 
   return (
-    <div className="container mx-auto lg:mt-5 p-4">
+    <div className="container mx-auto lg:mt-5 pt-4">
       <div className="flex flex-col lg:flex-row lg:space-x-6">
         <div className=" w-full mb-2">
           <GameDetails gameId={gameId} isDarkMode={isDarkMode} />

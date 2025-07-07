@@ -40,7 +40,7 @@ export default function RatingDisplay({ limit = 8 }) {
                   alt={p.name}
                   className="w-12 h-12 rounded-full mb-1"
                 />
-                <span className="text-xs ">{p.name}</span>
+                <span className="text-xs dark:text-white ">{p.name}</span>
               </Link>
               <div className="flex mt-1">
                 {Array.from({ length: 5 }).map((_, i) =>

@@ -1,4 +1,3 @@
-// src/pages/Home.jsx
 import React from "react";
 import { useQuery } from "@apollo/client";
 import Hero from "../components/Hero";
@@ -38,7 +37,7 @@ const Home = ({ isDarkMode }) => {
       {isLoggedIn ? (
         <div className="flex flex-col items-center w-full">
           {/* Hero banner for logged-in users */}
-          <div className="w-full mb-4 mx-2 md:mx-6 rounded-xl bg-gradient-to-r from-green-400 via-blue-400 to-green-600 dark:from-green-900 dark:via-blue-900 dark:to-green-800 shadow-lg flex flex-col items-center justify-center py-8 relative overflow-hidden">
+          <div className="w-full mb-4  md:mx-6 rounded-xl bg-gradient-to-r from-green-400 via-blue-400 to-green-600 dark:from-green-900 dark:via-blue-900 dark:to-green-800 shadow-lg flex flex-col items-center justify-center py-8 relative overflow-hidden">
             <FaFutbol className="absolute left-4 top-4 text-6xl text-white opacity-10 animate-spin-slow" />
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white drop-shadow-lg mb-2 text-center break-words w-full">
               {profile.name ? (
@@ -56,9 +55,9 @@ const Home = ({ isDarkMode }) => {
           </div>
 
           {/* PostForm + PostsList / RecentSkillsList + ComingGames */}
-          <div className="w-full flex flex-col lg:flex-row lg:space-x-4 px-4">
+          <div className="w-full flex flex-col lg:flex-row lg:space-x-2 px-4">
             {/* Left: PostForm + PostsList */}
-            <div className="w-full lg:w-3/4 mb-4 lg:mb-0 space-y-6">
+            <div className="flex-1 mb-4 lg:mb-0 space-y-6 md:mx-2">
               <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-4 w-full overflow-x-auto">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <FaRegListAlt className="text-green-600 dark:text-green-300 text-xl" />
@@ -77,14 +76,14 @@ const Home = ({ isDarkMode }) => {
 
             {/* Right: RecentSkillsList + ComingGames */}
             <div className="w-full lg:w-1/4 space-y-6 mt-4 lg:mt-0">
-              <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-4 w-full overflow-x-auto">
+              <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-2 w-full overflow-x-auto">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <FaFutbol className="text-yellow-500 dark:text-yellow-300 text-xl animate-bounce" />
                   <span className="font-bold text-lg dark:text-white">Latest Skills</span>
                 </div>
                 <RecentSkillsList />
               </div>
-              <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-4 w-full overflow-x-auto">
+              <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-2 w-full overflow-x-auto">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <FaCalendarAlt className="text-blue-600 dark:text-blue-300 text-xl" />
                   <span className="font-bold text-lg dark:text-white">Game Schedule</span>
@@ -98,7 +97,7 @@ const Home = ({ isDarkMode }) => {
           <div className="w-full mt-8 mb-8  rounded-xl shadow p-6 overflow-x-auto ">
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <FaStar className="text-yellow-500 dark:text-yellow-300 text-xl" />
-              <span className="font-bold text-lg">Top Rated Players</span>
+              <span className="font-bold text-lg dark:text-white">Top Rated Players</span>
             </div>
             <RatingDisplay limit={10} />
           </div>

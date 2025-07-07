@@ -5,7 +5,7 @@ export default function FormationBoard({ rows, assignments, formationType, creat
 
   
   return (
-    <div className="relative p-4 bg-green-600 dark:bg-gray-800 rounded shadow">
+    <div className="relative bg-green-600 dark:bg-gray-800 rounded shadow">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
         <h3 className="font-bold text-white text-base sm:text-lg">Formation : {formationType}</h3>
         <h3 className="font-bold text-white text-base sm:text-lg">Creator : {creator?.name}</h3>

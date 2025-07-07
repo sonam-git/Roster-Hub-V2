@@ -80,7 +80,7 @@ export default function ComingGames() {
   if (loading) return <p>Loading upcoming games…</p>;
   if (error) return <p className="text-red-500">Error: {error.message}</p>;
   if (upcoming.length === 0)
-    return <p className="text-center italic">No upcoming games.</p>;
+    return <p className="text-center italic dark:text-white">No upcoming games.</p>;
   
 
   return (
@@ -89,7 +89,7 @@ export default function ComingGames() {
         isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-800"
       }`}
     >
-      <p className="text-xs text-center mb-2">
+      <p className="text-xs text-center mb-2 dark:text-gray-100">
         Select the button to see the game status.
       </p>
  
@@ -157,7 +157,7 @@ export default function ComingGames() {
             <li key={_id}>
               <Link
                 to={`/game-schedule/${_id}`}
-                className={`flex flex-col justify-between items-start p-3 rounded-xl border shadow transition hover:scale-[1.02] hover:shadow-lg hover:no-underline cursor-pointer ${cardBg} ${borderColor}`}
+                className={`flex flex-col justify-between items-start p-2 rounded-xl border shadow transition hover:scale-[1.02] hover:shadow-lg hover:no-underline cursor-pointer ${cardBg} ${borderColor}`}
                 style={{ borderWidth: 2 }}
               >
                 <div className="flex items-center gap-2 mb-1">
