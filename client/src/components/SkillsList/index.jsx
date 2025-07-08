@@ -120,7 +120,7 @@ const SkillsList = ({
   return (
     <>
       {!isLoggedInUser && (
-        <h2 className=" text-xs font-thin">
+        <h2 className=" text-xs font-thin dark:text-white">
           {profile.name}'s friends have endorsed {profile.skills?.length ?? 0}{" "}
           skill
           {profile.skills?.length === 1 ? "" : "s"}

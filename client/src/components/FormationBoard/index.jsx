@@ -5,10 +5,10 @@ export default function FormationBoard({ rows, assignments, formationType, creat
 
   
   return (
-    <div className="relative bg-green-600 dark:bg-gray-800 rounded shadow">
+    <div className="relative bg-gray-100 p-2 dark:bg-gray-800 rounded shadow">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
-        <h3 className="font-bold text-white text-base sm:text-lg">Formation : {formationType}</h3>
-        <h3 className="font-bold text-white text-base sm:text-lg">Creator : {creator?.name}</h3>
+        <h3 className="font-bold dark:text-white text-base sm:text-lg  ">Formation : {formationType.slice(2)}</h3>
+        <h3 className="font-bold dark:text-white text-base sm:text-lg">Creator : {creator?.name}</h3>
       </div>
       <div className="relative w-full h-[500px] mx-auto rounded-lg overflow-hidden bg-green-700 bg-[repeating-linear-gradient(to-bottom,_#006400_0px,_#006400_40px,_#228B22_40px,_#228B22_80px)] border-4 border-white dark:bg-gray-800">
 
