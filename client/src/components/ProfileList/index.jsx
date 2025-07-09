@@ -36,7 +36,7 @@ const ProfileList = ({ profiles, title }) => {
   };
 
   if (!profiles.length) {
-    return <h3>No Profiles Yet</h3>;
+    return <h3 className='dark:text-white'>No Profiles Yet</h3>;
   }
 
   // Get the ID of the logged-in user
@@ -58,7 +58,7 @@ const ProfileList = ({ profiles, title }) => {
 
   return (
     <div>
-      <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center">{title}</h3>
+      <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center dark:text-white">{title}</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
         {currentProfiles.map((profile) => (
           <div

@@ -10,7 +10,7 @@ import { ThemeContext } from "../ThemeContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 
-import controlImage from "../../assets/images/iconizer-arrow-left.png";
+// import controlImage from "../../assets/images/iconizer-arrow-left.png";
 import lightLogo from "../../assets/images/roster-hub-logo.png";
 import darkLogo from "../../assets/images/dark-logo.png";
 import chartFillImage from "../../assets/images/iconizer-home.png";
@@ -23,8 +23,7 @@ import loginImage from "../../assets/images/iconizer-login.png";
 import signupImage from "../../assets/images/iconizer-signup.png";
 import calenderImage from "../../assets/images/iconizer-calender.png";
 
-const Header = () => {
-  const [open, setOpen] = React.useState(false);
+const Header = ({ open, setOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
@@ -98,14 +97,14 @@ const Header = () => {
           open ? "w-55" : "hidden lg:block lg:w-28"
         } ${isDarkMode ? "bg-gray-800" : "bg-gray-300"} lg:bg-transparent`}
       >
-        <img
+        {/* <img
           src={controlImage}
           className={`hidden lg:block absolute cursor-pointer right-3 mt-2 w-6 md:w-8 lg:w-10 border-dark-blue border-2 rounded-full bg-white transform transition-transform duration-300 ${
             open ? "" : "rotate-180"
           }`}
           onClick={toggleMenu}
           alt="toggle menu"
-        />
+        /> */}
 
         <div className="hidden lg:flex items-center justify-between">
           <div className="flex items-center">

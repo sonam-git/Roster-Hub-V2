@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
   ApolloClient,
   InMemoryCache,
@@ -10,11 +10,7 @@ import {
 } from "@apollo/client";
 
 import { setContext } from "@apollo/client/link/context";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
@@ -38,8 +34,10 @@ import ChatPopup from "./components/ChatPopup";
 import { QUERY_ME } from "./utils/queries";
 import Auth from "./utils/auth";
 import MainHeader from "./components/MainHeader";
-
-
+import TopHeader from "./components/TopHeader";
+import CustomComingGames from "./components/CustomComingGames";
+import AllSkillsList from "./components/AllSkillsList";
+import About from "./pages/About";
 
 // Define HTTP and WebSocket URIs based on environment
 const httpUri =
@@ -77,14 +75,12 @@ const splitLink = split(
   ({ query }) => {
     const def = getMainDefinition(query);
     return (
-      def.kind === "OperationDefinition" &&
-      def.operation === "subscription"
+      def.kind === "OperationDefinition" && def.operation === "subscription"
     );
   },
   wsLink,
   authLink.concat(httpLink)
 );
-
 
 const client = new ApolloClient({
   link: splitLink,
@@ -92,7 +88,7 @@ const client = new ApolloClient({
 });
 
 // ─── App Content ───
-function AppContent() {
+function AppContent({ sidebarOpen, setSidebarOpen }) {
   const { isDarkMode } = useContext(ThemeContext);
   const { data } = useQuery(QUERY_ME);
   const currentUser = data?.me;
@@ -102,34 +98,37 @@ function AppContent() {
       <div
         className={`flex min-h-screen bg-gradient-to-b from-white via-blue-50 to-green-50 dark:from-gray-900 dark:via-blue-950 dark:to-green-950 transition-colors duration-300`}
       >
-        <Header />
-        <div className="flex-1  ">
+        <Header open={sidebarOpen} setOpen={setSidebarOpen} />
+        <div className="flex-1  bg-gray-300 dark:bg-gray-500">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route
+              path="/games-shortcut"
+              element={<CustomComingGames isDarkMode={isDarkMode} />}
+            />
+            <Route
+              path="/skills-shortcut"
+              element={<AllSkillsList isDarkMode={isDarkMode} />}
+            />
             <Route path="/roster" element={<Roster />} />
             <Route
               path="/message"
               element={<Message isDarkMode={isDarkMode} />}
             />
-            <Route
-              path="/skill"
-              element={<Skill isDarkMode={isDarkMode} />}
-            />
+            <Route path="/skill" element={<Skill isDarkMode={isDarkMode} />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/me" element={<Profile />} />
             <Route path="/profiles/:profileId" element={<Profile />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route
-              path="/reset-password/:token"
-              element={<PasswordReset />}
-            />
+            <Route path="/reset-password/:token" element={<PasswordReset />} />
             <Route path="/game-schedule" element={<Game />} />
             <Route
               path="/game-schedule/:gameId"
               element={<Game isDarkMode={isDarkMode} />}
             />
             <Route path="/scoreboard" element={<Score />} />
+            <Route path="/about" element={<About />} />
           </Routes>
           {Auth.loggedIn() && currentUser && (
             <ChatPopup currentUser={currentUser} isDarkMode={isDarkMode} />
@@ -143,6 +142,7 @@ function AppContent() {
 
 // ─── Main App ───
 function App() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <ApolloProvider client={client}>
@@ -154,7 +154,8 @@ function App() {
             }}
           >
             <MainHeader />
-            <AppContent />
+            <TopHeader onToggleMenu={() => setSidebarOpen((v) => !v)} open={sidebarOpen} />
+            <AppContent sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
           </Router>
         </ThemeProvider>
       </ApolloProvider>

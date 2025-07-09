@@ -33,25 +33,44 @@ const Home = ({ isDarkMode }) => {
   }
 
   return (
-    <main className="container mx-auto mt-5 ">
+    <main className="container mx-auto  ">
       {isLoggedIn ? (
         <div className="flex flex-col items-center w-full">
           {/* Hero banner for logged-in users */}
-          <div className="w-full mb-4  md:mx-6 rounded-xl bg-gradient-to-r from-green-400 via-blue-400 to-green-600 dark:from-green-900 dark:via-blue-900 dark:to-green-800 shadow-lg flex flex-col items-center justify-center py-8 relative overflow-hidden">
-            <FaFutbol className="absolute left-4 top-4 text-6xl text-white opacity-10 animate-spin-slow" />
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white drop-shadow-lg mb-2 text-center break-words w-full">
+          <div className="w-full flex flex-col items-center justify-center px-4 mb-8 mt-4 bg-gradient-to-r from-green-400 via-blue-400 to-green-600 dark:from-green-900 dark:via-blue-900 dark:to-green-800 shadow-2xl border-2 border-white/60 dark:border-blue-900/60 relative overflow-hidden animate-gradient-x" style={{ borderBottomLeftRadius: '2.5rem', borderBottomRightRadius: '2.5rem' }}>
+            {/* Decorative SVG wave at the bottom */}
+            <svg className="absolute bottom-0 left-0 w-full h-16" viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ zIndex: 1 }}>
+              <path fill="url(#waveGradient)" fillOpacity="1" d="M0,40 C360,120 1080,0 1440,80 L1440,80 L0,80 Z" />
+              <defs>
+                <linearGradient id="waveGradient" x1="0" y1="0" x2="1440" y2="0" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#4ade80" />
+                  <stop offset="0.5" stopColor="#60a5fa" />
+                  <stop offset="1" stopColor="#22c55e" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div className="absolute left-4 bottom-4 opacity-20 text-6xl pointer-events-none select-none z-10">
+              <FaFutbol className="animate-bounce text-yellow-200" />
+            </div>
+            <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-extrabold text-white drop-shadow-2xl mb-2 text-center break-words w-full tracking-tight py-4 flex items-center justify-center gap-4 z-10">
               {profile.name ? (
                 <>
                   Welcome back,{" "}
-                  <span className="text-yellow-200">{profile.name}</span>!
+                  <span className="text-yellow-200 animate-pulse">
+                    {profile.name}
+                  </span>
+                  !
                 </>
               ) : (
                 <>Welcome!</>
               )}
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-white/90 font-semibold text-center w-full break-words">
+            <p className="text-lg sm:text-xl pb-4 md:text-2xl text-white/90 font-semibold text-center w-full break-words italic z-10">
               Let's play, connect, and win together!
             </p>
+            <div className="absolute right-4 bottom-4 opacity-20 text-6xl pointer-events-none select-none z-10">
+              <FaFutbol className="animate-bounce text-yellow-200" />
+            </div>
           </div>
 
           {/* PostForm + PostsList / RecentSkillsList + ComingGames */}
@@ -61,14 +80,18 @@ const Home = ({ isDarkMode }) => {
               <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-4 w-full overflow-x-auto">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <FaRegListAlt className="text-green-600 dark:text-green-300 text-xl" />
-                  <span className="font-bold text-lg dark:text-white">Share a Thought</span>
+                  <span className="font-bold text-lg dark:text-white">
+                    Share a Thought
+                  </span>
                 </div>
                 <PostForm />
               </div>
               <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-4 w-full overflow-x-auto ">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <FaRegListAlt className="text-blue-600 dark:text-blue-300 text-xl" />
-                  <span className="font-bold text-lg dark:text-white">Recent Posts</span>
+                  <span className="font-bold text-lg dark:text-white">
+                    Recent Posts
+                  </span>
                 </div>
                 <PostsList isDarkMode={isDarkMode} />
               </div>
@@ -76,17 +99,21 @@ const Home = ({ isDarkMode }) => {
 
             {/* Right: RecentSkillsList + ComingGames */}
             <div className="w-full lg:w-1/4 space-y-6 mt-4 lg:mt-0">
-              <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-2 w-full overflow-x-auto">
+              <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-2 w-full overflow-x-auto min-h-[300px] lg:min-h-[360px] flex flex-col">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <FaFutbol className="text-yellow-500 dark:text-yellow-300 text-xl animate-bounce" />
-                  <span className="font-bold text-lg dark:text-white">Latest Skills</span>
+                  <span className="font-bold text-lg dark:text-white">
+                    Latest Skills
+                  </span>
                 </div>
                 <RecentSkillsList />
               </div>
-              <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-2 w-full overflow-x-auto">
+              <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-2 w-full overflow-x-auto min-h-[300px] lg:min-h-[360px] flex flex-col">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <FaCalendarAlt className="text-blue-600 dark:text-blue-300 text-xl" />
-                  <span className="font-bold text-lg dark:text-white">Game Schedule</span>
+                  <span className="font-bold text-lg dark:text-white">
+                    Game Schedule
+                  </span>
                 </div>
                 <ComingGames />
               </div>
@@ -97,7 +124,9 @@ const Home = ({ isDarkMode }) => {
           <div className="w-full mt-8 mb-8  rounded-xl shadow p-6 overflow-x-auto ">
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <FaStar className="text-yellow-500 dark:text-yellow-300 text-xl" />
-              <span className="font-bold text-lg dark:text-white">Top Rated Players</span>
+              <span className="font-bold text-lg dark:text-white">
+                Top Rated Players
+              </span>
             </div>
             <RatingDisplay limit={10} />
           </div>

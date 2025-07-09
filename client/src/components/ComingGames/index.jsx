@@ -169,7 +169,7 @@ export default function ComingGames() {
                 </p>
                 {formation && (
                   <p className="text-xs text-gray-500 dark:text-gray-400 italic mb-1">
-                    Formation: {formation.formationType}
+                    Formation: {formation.formationType.slice(2)}
                   </p>
                 )}
                 <div className="flex items-center justify-between w-full mt-1">

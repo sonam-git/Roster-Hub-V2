@@ -36,13 +36,13 @@ export default function SkillReaction({ onReact }) {
 				React
 			</button>
 			{showPicker && (
-				<div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-44 max-w-xs bg-white dark:bg-gray-800 p-2 rounded shadow border z-50 overflow-x-auto whitespace-nowrap flex gap-2 scrollbar-thin hover:scrollbar-thumb-gray-400 scrollbar-thumb-rounded-full"
-					style={{ minWidth: "140px", cursor: 'grab' }}
+				<div className="fixed left-1/2 bottom-auto top-1/2 -translate-x-1/2 -translate-y-1/2 w-56 max-w-xs bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-2xl border-2 border-blue-200 dark:border-blue-900 z-[9999] overflow-x-auto whitespace-nowrap flex flex-wrap gap-2 scrollbar-thin hover:scrollbar-thumb-gray-400 scrollbar-thumb-rounded-full animate-fade-in"
+					style={{ minWidth: "180px", cursor: 'grab' }}
 				>
 					{EMOJIS.map(({ emoji, label }) => (
 						<button
 							key={label}
-							className="text-xl hover:scale-125 transition-transform focus:outline-none inline-block"
+							className="px-2 py-1 text-2xl rounded-full bg-blue-50 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-700 shadow transition-transform focus:outline-none inline-block border border-blue-100 dark:border-blue-800 hover:scale-125 focus:ring-2 focus:ring-blue-400"
 							title={label}
 							aria-label={label}
 							onClick={() => handleReact(emoji)}

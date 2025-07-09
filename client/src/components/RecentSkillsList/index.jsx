@@ -64,7 +64,7 @@ export default function RecentSkillsList() {
       {skills.length === 0 ? (
         <p className="text-center italic">No Skills endorsed yet.</p>
       ) : (
-        <div className="w-full overflow-y-auto" style={{ height: 250 }}>
+        <div className="w-full overflow-y-auto" style={{ height: 350 }}>
           <ul>
             {skills
               .slice()

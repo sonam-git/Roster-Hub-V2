@@ -22,7 +22,7 @@ const MainHeader = () => {
         <span className={
           isDarkMode
             ? "text-xl font-extrabold tracking-tight bg-gradient-to-r from-green-300 via-blue-400 to-yellow-200 bg-clip-text text-transparent drop-shadow"
-            : "text-xl font-extrabold tracking-tight text-green-700 drop-shadow"
+            : "text-xl font-extrabold tracking-tight text-green-700 drop-shadow "
         }>
           Roster Hub
         </span>

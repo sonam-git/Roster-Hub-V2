@@ -1,11 +1,15 @@
 import React from "react";
-import { useQuery, useSubscription } from "@apollo/client";
+import { useQuery, useSubscription, useMutation } from "@apollo/client";
 import { QUERY_PROFILES } from "../utils/queries";
 import { SKILL_ADDED_SUBSCRIPTION, SKILL_DELETED_SUBSCRIPTION } from "../utils/subscription";
 import SkillReaction from "./SkillsList/SkillReaction";
+import { REACT_TO_SKILL } from "../utils/mutations";
 
 export default function AllSkillsList({ isDarkMode }) {
   const { loading, error, data } = useQuery(QUERY_PROFILES);
+  const [reactToSkill] = useMutation(REACT_TO_SKILL, {
+    refetchQueries: [{ query: QUERY_PROFILES }],
+  });
 
   // Subscribe to real-time skill add/delete
   useSubscription(SKILL_ADDED_SUBSCRIPTION, {
@@ -60,7 +64,8 @@ export default function AllSkillsList({ isDarkMode }) {
                     ))}
                   </div>
                 )}
-                {/* No react button for all-skills view */}
+                {/* React button for all-skills view */}
+                <SkillReaction onReact={emoji => reactToSkill({ variables: { skillId: skill._id, emoji } })} />
               </div>
             </div>
           </div>
