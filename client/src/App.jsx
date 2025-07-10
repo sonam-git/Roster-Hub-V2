@@ -99,7 +99,7 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
         className={`flex min-h-screen bg-gradient-to-b from-white via-blue-50 to-green-50 dark:from-gray-900 dark:via-blue-950 dark:to-green-950 transition-colors duration-300`}
       >
         <Header open={sidebarOpen} setOpen={setSidebarOpen} />
-        <div className="flex-1  bg-gray-300 dark:bg-gray-500">
+        <div className="flex-1  ">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route

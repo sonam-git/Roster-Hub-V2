@@ -58,21 +58,21 @@ const ProfileList = ({ profiles, title }) => {
 
   return (
     <div>
-      <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center dark:text-white">{title}</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
+      <h3 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center text-blue-700 dark:text-blue-200 mb-6 tracking-tight drop-shadow-lg mt-5">{title}</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 my-6">
         {currentProfiles.map((profile) => (
           <div
             key={profile._id}
-            className={`rounded-lg shadow-xl p-6 ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-black'}`}
+            className={`rounded-2xl shadow-2xl border border-blue-100 dark:border-gray-700 p-6 bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 transition-transform duration-200 hover:scale-[1.02] ${isDarkMode ? 'text-white' : 'text-black'}`}
           >
-            <div className="grid grid-cols-2 items-center">
+            <div className="grid grid-cols-2 items-center gap-2">
               {/* Column 1: Name and Jersey Number */}
               <div>
-                <div className="flex items-center">
-                  <h4 className="text-sm md:text-md lg:text-lg xl:text-xl font-bold">{profile.name}</h4>
+                <div className="flex items-center mb-1">
+                  <h4 className="text-lg md:text-xl lg:text-2xl xl:text-2xl font-bold tracking-tight drop-shadow">{profile.name}</h4>
                 </div>
-                <p className="font-bold">
-                  <RiTShirt2Line className="mr-2 text-xl inline font-semibold" /> {profile.jerseyNumber}
+                <p className="font-bold flex items-center gap-2">
+                  <RiTShirt2Line className="text-xl" /> {profile.jerseyNumber}
                 </p>
                 {/* Display star rating below jersey number */}
                 <div className="mt-2">
@@ -85,35 +85,35 @@ const ProfileList = ({ profiles, title }) => {
                 <img
                   src={profile?.profilePic || ProfileAvatar}
                   alt="Profile"
-                  className="rounded-full w-24 h-24 sm:w-20 sm:h-20 md:w-16 md:h-16 lg:w-24 lg:h-24"
+                  className="rounded-full w-24 h-24 sm:w-20 sm:h-20 md:w-16 md:h-16 lg:w-24 lg:h-24 border-4 border-blue-200 dark:border-gray-700 shadow-lg"
                 />
               </div>
             </div>
             {/* Icons */}
-            <div className="flex justify-between mt-4">
+            <div className="flex flex-col sm:flex-row justify-between mt-6 gap-2 sm:gap-0">
               {/* Chat button */}
               <button
-                className="flex items-center"
+                className="flex items-center px-3 py-1 rounded-full bg-blue-100 dark:bg-gray-800 shadow hover:bg-blue-200 dark:hover:bg-blue-900 transition-colors w-full sm:w-auto justify-center"
                 onClick={() => handleChatClick(profile)}
               >
                 <AiOutlineMessage className={`mr-2 text-2xl ${isDarkMode ? 'text-white ' : 'text-black'}`} />
-                <span className='text-sm md:text-md lg:text-lg xl:text-xl hover:underline underline-offset-4'>{isDarkMode ? 'Text' : 'Text'}</span>
+                <span className='text-base font-semibold hover:underline underline-offset-4'>{isDarkMode ? 'Text' : 'Text'}</span>
               </button>
               {/* Rate button */}
               <button
-                className="flex items-center   "
+                className="flex items-center px-3 py-1 rounded-full bg-yellow-100 dark:bg-gray-800 shadow hover:bg-yellow-200 dark:hover:bg-yellow-900 transition-colors w-full sm:w-auto justify-center mt-2 sm:mt-0"
                 onClick={() => handleRatingClick(profile)}
               >
                 <AiFillStar className={`mr-2 text-2xl  ${isDarkMode ? 'text-white' : 'text-black'}`} />
-                <span className='text-sm md:text-md lg:text-lg xl:text-xl  hover:underline underline-offset-4'>{isDarkMode ? 'Rate' : 'Rate'}</span>
+                <span className='text-base font-semibold hover:underline underline-offset-4'>{isDarkMode ? 'Rate' : 'Rate'}</span>
               </button>
               {/* Player info button */}
               <Link
-                className={`flex items-center   hover:underline-offset-4  ${isDarkMode ? 'text-white '  : 'text-black'} `}
+                className={`flex items-center px-3 py-1 rounded-full bg-green-100 dark:bg-gray-800 shadow hover:bg-green-200 dark:hover:bg-green-900 transition-colors font-semibold hover:underline-offset-4 w-full sm:w-auto justify-center mt-2 sm:mt-0 ${isDarkMode ? 'text-white '  : 'text-black'} `}
                 to={`/profiles/${profile._id}`}
               >
                 <RiProfileLine className={`mr-2 text-2xl`} />
-                <span className={`mr-2 text-sm md:text-md lg:text-lg xl:text-xl `}>
+                <span className={`text-base`}>
                   {isDarkMode ? 'View Profile' : 'View Profile'}
                 </span>
               </Link>

@@ -25,7 +25,7 @@ export default function TopHeader({ className, onToggleMenu, open }) {
   const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
   const isLoggedIn = Auth.loggedIn();
   return (
-    <div className={`w-full flex flex-col sm:flex-row items-center justify-between bg-gray-100 dark:bg-gray-700 py-2 shadow-md sticky top-0 lg:z-[60] px-4 ${typeof className !== 'undefined' ? className : ''}`}>
+    <div className={`w-full flex flex-col sm:flex-row items-center justify-between bg-gray-200 dark:bg-gray-800 py-2 shadow-md sticky top-0 lg:z-[60] px-4 ${typeof className !== 'undefined' ? className : ''}`}>
       {/* Left: Username and soccer icon (only if logged in) */}
       <div className={`hidden sm:flex items-center space-x-2 mb-2 sm:mb-0 w-full sm:w-auto justify-center${isLoggedIn ? '' : ' invisible'}`}>
         <FontAwesomeIcon icon={faPersonRunning} className="ml-2 text-green-500 text-2xl" />
@@ -56,7 +56,7 @@ export default function TopHeader({ className, onToggleMenu, open }) {
       <div className="hidden md:flex items-center ml-4 gap-2">
         <button
           onClick={toggleDarkMode}
-          className="rounded-full p-2 bg-white dark:bg-gray-800 shadow hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+          className="rounded-full p-2 bg-gray-100 dark:bg-gray-600 shadow hover:bg-gray-600 dark:hover:bg-gray-400 transition-colors"
           aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
         >
           <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} className="text-xl text-yellow-500 dark:text-gray-200" />

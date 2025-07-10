@@ -29,8 +29,11 @@ export default function ComingGames() {
   const client = useApolloClient();
   const [filter, setFilter] = useState("PENDING");
 
-  // Query games
-  const { loading, error, data } = useQuery(QUERY_GAMES);
+  // Query games with status variable (but fallback to all if server does not filter)
+  const { loading, error, data } = useQuery(QUERY_GAMES, {
+    variables: filter ? { status: filter } : {},
+    fetchPolicy: 'network-only', // always get latest
+  });
 
   // Refetch helper
   const refetchGames = () => {
@@ -72,16 +75,20 @@ export default function ComingGames() {
       .sort((a, b) => a.dateObj - b.dateObj);
   }, [data, today]);
 
-  const byStatus = useMemo(
-    () => upcoming.filter((g) => g.status === filter),
-    [upcoming, filter]
-  );
+  const byStatus = useMemo(() => {
+    // If server returns all statuses, filter client-side
+    if (!upcoming.length) return [];
+    if (!upcoming[0].status || upcoming.some(g => g.status !== filter)) {
+      return upcoming.filter(g => g.status === filter);
+    }
+    return upcoming;
+  }, [upcoming, filter]);
 
+  // Only show 'No upcoming games.' if all statuses are empty
   if (loading) return <p>Loading upcoming games…</p>;
   if (error) return <p className="text-red-500">Error: {error.message}</p>;
-  if (upcoming.length === 0)
-    return <p className="text-center italic dark:text-white">No upcoming games.</p>;
-  
+  const allUpcomingEmpty = !upcoming.length;
+  const noStatusGames = byStatus.length === 0;
 
   return (
     <div
@@ -92,7 +99,6 @@ export default function ComingGames() {
       <p className="text-xs text-center mb-2 dark:text-gray-100">
         Select the button to see the game status.
       </p>
- 
       {/* Status filter */}
       <div className="flex justify-between mb-4 bg-gray-200 p-2 rounded">
         {STATUS_FILTERS.map((opt) => {
@@ -117,10 +123,13 @@ export default function ComingGames() {
           );
         })}
       </div>
-      
-      { byStatus.length === 0 &&
-        <p className="text-center italic text-sm">No {filter.toLowerCase()} games.</p>}
-      <ul className="overflow-y-auto max-h-40 space-y-3">
+      {noStatusGames && !allUpcomingEmpty && (
+        <p className="text-center italic text-sm">No {filter.toLowerCase()} games.</p>
+      )}
+      {allUpcomingEmpty && (
+        <p className="text-center italic dark:text-white">No upcoming games.</p>
+      )}
+      <ul className="overflow-y-auto max-h-72 space-y-3">
         {byStatus.map((game) => {
           const { _id, opponent, dateObj, status, time, formation } = game;
 

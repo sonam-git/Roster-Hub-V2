@@ -66,23 +66,26 @@ const MyProfile = () => {
   return (
     <>
       <div
-        className={`md:flex md:space-x-2 mb-6 rounded-lg p-3 ${
+        className={`md:flex md:space-x-2 mb-6  p-3 shadow-2xl border border-blue-200 dark:border-gray-700 bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800  ${
           isDarkMode ? "text-white" : "text-black"
         }`}
       >
         {/* ─── LEFT COLUMN */}
         <div className="md:w-2/5 p-2">
           <div
-            className={`w-full rounded-lg overflow-hidden shadow-md ${
+            className={`w-full rounded-2xl overflow-hidden shadow-lg border border-blue-100 dark:border-gray-700 ${
               isDarkMode ? "bg-gray-700" : "bg-blue-50"
             }`}
           >
             <div
-              className={`w-full h-[200px] flex items-center justify-center ${
-                isDarkMode ? "bg-gray-800" : "bg-gray-400"
+              className={`w-full h-[220px] flex items-center justify-center relative ${
+                isDarkMode ? "bg-gray-800" : "bg-gradient-to-r from-blue-200 via-green-100 to-yellow-100"
               }`}
             >
-              <div className="w-40 h-40 rounded-full bg-white overflow-hidden">
+              <div className="absolute top-4 right-4 text-xs px-3 py-1 rounded-full bg-blue-500 text-white shadow-md font-bold tracking-wide animate-pulse z-10">
+                My Profile
+              </div>
+              <div className="w-40 h-40 rounded-full bg-white overflow-hidden border-4 border-blue-300 dark:border-gray-600 shadow-lg">
                 <img
                   src={me.profilePic || ProfileAvatar}
                   alt="Profile"
@@ -100,23 +103,23 @@ const MyProfile = () => {
 
               <div className="flex flex-col items-center">
                 <h3
-                  className={`font-semibold ${
-                    isDarkMode ? "text-white" : "text-black"
+                  className={`font-extrabold text-2xl tracking-tight mb-1 ${
+                    isDarkMode ? "text-white" : "text-blue-900"
                   }`}
                 >
                   {me.name.charAt(0).toUpperCase() + me.name.slice(1)}
                 </h3>
-                {renderStars(me.averageRating)}
+                <div className="mb-2">{renderStars(me.averageRating)}</div>
 
                 <div className="flex items-center gap-6 mt-4">
                   {me.position && (
-                    <div className="flex items-center">
+                    <div className="flex items-center bg-blue-100 dark:bg-gray-800 px-3 py-1 rounded-full shadow text-blue-700 dark:text-blue-200">
                       <FaUser className="mr-2 text-xl" />
                       <span>{me.position}</span>
                     </div>
                   )}
                   {me.jerseyNumber && (
-                    <div className="flex items-center">
+                    <div className="flex items-center bg-green-100 dark:bg-gray-800 px-3 py-1 rounded-full shadow text-green-700 dark:text-green-200">
                       <RiTShirt2Line className="mr-2 text-2xl" />
                       <span>{me.jerseyNumber}</span>
                     </div>
@@ -124,28 +127,30 @@ const MyProfile = () => {
                 </div>
               </div>
 
-              <SocialMediaLink
-                isDarkMode={isDarkMode}
-                phoneNumber={me.phoneNumber}
-                onSelect={(type) => setSelectedSocialMedia(type)}
-              />
+              <div className="mt-6">
+                <SocialMediaLink
+                  isDarkMode={isDarkMode}
+                  phoneNumber={me.phoneNumber}
+                  onSelect={(type) => setSelectedSocialMedia(type)}
+                />
+              </div>
 
-              <div className="navbar flex justify-center mt-4">
+              <div className="navbar flex justify-center mt-6">
                 <button
-                  className={`px-4 py-2 rounded-l-lg font-serif ${
+                  className={`px-4 py-2 rounded-l-lg font-serif font-bold shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
                     selectedView === "settings"
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-300 text-gray-700"
+                      ? "bg-blue-600 text-white scale-105"
+                      : "bg-gray-200 text-gray-700 hover:bg-blue-100"
                   }`}
                   onClick={() => setSelectedView("settings")}
                 >
                   Settings
                 </button>
                 <button
-                  className={`px-4 py-2 rounded-r-lg font-serif ${
+                  className={`px-4 py-2 rounded-r-lg font-serif font-bold shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
                     selectedView === "posts"
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-300 text-gray-700"
+                      ? "bg-blue-600 text-white scale-105"
+                      : "bg-gray-200 text-gray-700 hover:bg-blue-100"
                   }`}
                   onClick={() => setSelectedView("posts")}
                 >
