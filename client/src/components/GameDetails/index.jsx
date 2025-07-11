@@ -48,9 +48,11 @@ function RightColumn({
   // Only show for CONFIRMED games
   if (game.status === "COMPLETED") {
     return (
-      <div className="rounded-xl shadow bg-white/80 dark:bg-gray-700 p-4">
+      <div className="rounded-2xl shadow-xl bg-gradient-to-br p-6 mb-4 border-2 transition-all duration-300
+        dark:from-gray-800 dark:via-gray-700 dark:to-gray-900 dark:border-gray-700 dark:text-blue-100
+        from-green-50 via-blue-50 to-yellow-50 border-blue-200 text-blue-900">
         {showThankYou ? (
-          <div className="p-4 bg-green-300 dark:bg-green-800 rounded text-center italic">
+          <div className="p-4 bg-green-300 dark:bg-green-800 rounded text-center italic font-semibold">
             Thank you for your feedback!
           </div>
         ) : !feedbackGiven ? (
@@ -68,7 +70,9 @@ function RightColumn({
 
   if (game.status === "CONFIRMED") {
     return (
-      <div className="rounded-xl shadow bg-white/80 dark:bg-gray-700 p-4">
+      <div className="rounded-2xl shadow-xl bg-gradient-to-br p-6 mb-4 border-2 transition-all duration-300
+        dark:from-gray-800 dark:via-gray-700 dark:to-gray-900 dark:border-gray-700 dark:text-blue-100
+        from-green-50 via-blue-50 to-yellow-50 border-blue-200 text-blue-900">
         {!formation && !isCreator && (
           <div className="italic dark:text-white text-sm bg-yellow-100 dark:bg-gray-700 p-4 rounded shadow">
             The formation will appear here once the creator sets it up.
@@ -282,12 +286,12 @@ export default function GameDetails({ gameId }) {
               isDarkMode ? "bg-gray-700" : "bg-white/80"
             }`}
           >
-            <h3 className="text-lg sm:text-xl font-bold flex flex-wrap gap-4 items-center tracking-tight">
+            <h3 className="text-sm sm:text-lg font-bold flex flex-wrap gap-4 items-center tracking-tight">
               <span className="inline-block">
-                <strong>Date:</strong> <span className="font-normal text-base sm:text-lg">{humanDate}</span>
+                <strong className="text-xs sm:text-base">Date:</strong> <span className="font-normal text-xs sm:text-base">{humanDate}</span>
               </span>
               <span className="inline-block">
-                <strong>Time:</strong> <span className="font-normal text-base sm:text-lg">{humanTime}</span>
+                <strong className="text-xs sm:text-base">Time:</strong> <span className="font-normal text-xs sm:text-base">{humanTime}</span>
               </span>
             </h3>
             <p className="text-base sm:text-lg font-semibold flex flex-wrap gap-4 items-center text-gray-700 dark:text-gray-200">

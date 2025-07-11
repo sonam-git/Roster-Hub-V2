@@ -81,7 +81,7 @@ const PostsList = ({ profileId }) => {
     currentPage * PAGE_SIZE
   );
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full">
       {paginated.map((post) => (
         <Post key={post._id} post={post} />
       ))}
@@ -91,7 +91,7 @@ const PostsList = ({ profileId }) => {
         <button
           onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
           disabled={currentPage === 1}
-          className={`px-4 py-1 rounded ${
+          className={`px-4 py-1 rounded font-semibold text-xs sm:text-sm transition-all duration-200 shadow border-2 border-blue-200 dark:border-gray-700 ${
             currentPage === 1
               ? "bg-gray-300 text-gray-500 cursor-not-allowed"
               : "bg-blue-600 text-white hover:bg-blue-700"
@@ -102,7 +102,7 @@ const PostsList = ({ profileId }) => {
         <button
           onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
           disabled={currentPage === totalPages}
-          className={`px-4 py-1 rounded ${
+          className={`px-4 py-1 rounded font-semibold text-xs sm:text-sm transition-all duration-200 shadow border-2 border-blue-200 dark:border-gray-700 ${
             currentPage === totalPages
               ? "bg-gray-300 text-gray-500 cursor-not-allowed"
               : "bg-blue-600 text-white hover:bg-blue-700"

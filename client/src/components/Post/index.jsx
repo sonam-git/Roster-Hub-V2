@@ -31,7 +31,6 @@ export default function Post({ post }) {
   const [isEditing, setIsEditing] = useState(false);
   const [postText, setPostText] = useState(post.postText);
   const [isEdited, setIsEdited] = useState(false);
-  const [isCommenting, setIsCommenting] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -154,7 +153,6 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
       setComments(data.addComment.comments);
       // make sure the list is visible immediately
       setShowComments(true);
-      setIsCommenting(false);
       setCommentText("");
     } catch (e) {
       console.error(e);
@@ -162,154 +160,94 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
   };
 // Cancel comment input
   const handleCancelComment = () => {
-    setIsCommenting(false);
     setCommentText("");
     setErrorMessage("");
   };
 
-
   if (deleted) return null;
 
-  const isLikedByCurrentUser = likedBy.some((u) => u._id === currentUserId);
-
   return (
-    <div className="relative bg-gray-100 dark:bg-gray-600 shadow-md rounded-lg p-4 mb-4">
+    <div className="relative rounded-2xl shadow-xl border-2 bg-gradient-to-br p-4 mb-6 transition-all duration-300 hover:border-blue-400 flex flex-col gap-2 w-full max-w-2xl mx-auto from-blue-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 border-blue-200 dark:border-gray-700">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex items-center gap-3 mb-2">
         <Link to={`/profiles/${post.userId._id}`} className="flex items-center hover:no-underline">
-          <img
-            src={post.userId.profilePic || ProfileAvatar}
-            alt=""
-            className="w-8 h-8 rounded-full mr-2"
-          />
-          <h3 className="text-lg font-bold dark:hover:text-yellow-300 dark:text-white">{post.userId.name}</h3>
+          <img src={post.userId.profilePic || ProfileAvatar} alt="profile picture" className="w-10 h-10 rounded-full border-2 border-blue-300 dark:border-gray-700 shadow" />
+          <span className="font-bold text-blue-700 dark:text-blue-200 text-sm sm:text-base ml-2">{post.userId.name}</span>
         </Link>
+        {/* Owner controls: edit/delete icons always visible for post owner */}
         {currentUserId === post.userId._id && (
-          <div className="flex space-x-2">
-            <PencilAltIcon
-              className="h-5 w-5 text-blue-500 cursor-pointer"
-              onClick={() => setIsEditing(true)}
-            />
-            <TrashIcon
-              className="h-5 w-5 text-red-500 cursor-pointer"
-              onClick={handleDeletePost}
-            />
+          <div className="flex items-center gap-2 ml-auto">
+            {!isEditing && (
+              <>
+                <button title="Edit Post" className="flex items-center px-2 py-1 rounded hover:bg-blue-100 dark:hover:bg-blue-900" onClick={() => setIsEditing(true)}>
+                  <PencilAltIcon className="h-5 w-5 text-blue-500 cursor-pointer" />
+                </button>
+                <button title="Delete Post" className="flex items-center px-2 py-1 rounded hover:bg-red-100 dark:hover:bg-red-900" onClick={handleDeletePost}>
+                  <TrashIcon className="h-5 w-5 text-red-500 cursor-pointer" />
+                </button>
+              </>
+            )}
           </div>
         )}
       </div>
-
-      {/* Edit vs View */}
-      {isEditing ? (
-        <>
-          <textarea
-            value={postText}
-            onChange={(e) => setPostText(e.target.value)}
-            className="w-full p-2 mt-2 border rounded dark:text-black"
-          />
-          <div className="mt-2 flex space-x-2">
-            <button
-              onClick={handleUpdatePost}
-              className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-800 disabled:opacity-50"
-            >
-              Save
-            </button>
-            <button
-              onClick={() => setIsEditing(false)}
-              className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-800 disabled:opacity-50"
-            >
-              Cancel
-            </button>
+      {/* Post Content (edit/view) */}
+      <div className="mb-2 relative">
+        {isEditing ? (
+          <div className="mt-2">
+            <textarea value={postText} onChange={(e) => setPostText(e.target.value)} className="w-full p-2 border rounded dark:text-black text-xs sm:text-sm mb-2" />
+            <div className="flex gap-2">
+              <button className="px-4 py-1 rounded bg-blue-500 text-white hover:bg-blue-700 text-xs sm:text-sm" onClick={handleUpdatePost}>Update Post</button>
+              <button className="px-4 py-1 rounded bg-gray-500 text-white hover:bg-gray-700 text-xs sm:text-sm" onClick={() => setIsEditing(false)}>Cancel</button>
+            </div>
+            {isEdited && <div className="text-green-500 text-xs mt-2">Post updated successfully!</div>}
           </div>
-        </>
-      ) : (
-        <>
-          <p className="mt-2 mb-2 p-2 bg-gray-200 dark:bg-gray-600 font-light text-sm sm:text-xs rounded-md dark:text-white">{postText}</p>
-          {isEdited && (
-            <small className="text-gray-500">
-              Edited: {new Date().toLocaleString()}
-            </small>
-          )}
-        </>
-      )}
-
-      {/* Footer */}
-      <div className="flex justify-between items-center mt-4 ">
-        <small className="text-gray-300">
-          {new Date(parseInt(post.createdAt)).toLocaleString()}
-        </small>
-        <div className="flex items-center space-x-4">
-          {/* Like */}
-          <div className="relative">
-            <HeartIcon
-              className={`h-5 w-5 cursor-pointer  ${
-                isLikedByCurrentUser ? "text-green-500" : "text-gray-400"
-              }`}
+        ) : (
+          <>
+            <p className="text-gray-800 dark:bg-gray-800 dark:text-gray-100 text-base sm:text-lg font-serif font-medium leading-relaxed mt-2 bg-gray-100 rounded-lg px-4 py-3 shadow-sm transition-colors duration-300">
+              {postText}
+            </p>
+          </>
+        )}
+      </div>
+      {/* Actions: Like, Comment, Date/Time - always visible, fixed position */}
+      <div className="flex items-center gap-4 mt-2 justify-between">
+        <div className="flex items-center gap-4">
+          <div className="relative flex items-center">
+            <button
+              className={`flex items-center gap-1 px-3 py-1 rounded-full font-semibold shadow transition bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-700 text-xs sm:text-sm`}
               onClick={handleLike}
               onMouseEnter={() => setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
-            />
-            {showTooltip && (
-              <div className="absolute top-0 left-full ml-2 w-max bg-white dark:bg-gray-700 text-black dark:text-white text-sm rounded p-2 shadow z-10">
+            >
+              <HeartIcon className="h-4 w-4" /> {likes}
+            </button>
+            {/* Tooltip for liked users */}
+            {showTooltip && likedBy.length > 0 && (
+              <div className="absolute left-full top-0 ml-2 w-max bg-white dark:bg-gray-700 text-black dark:text-white text-xs rounded p-2 shadow z-10">
                 {likedBy.map((u) => (
                   <div key={u._id}>{u.name}</div>
                 ))}
               </div>
             )}
           </div>
-          <span className="dark:text-white">{likes}</span>
-
-          {/* Comment toggle */}
-          {showComments ? (
-            <XIcon
-              className="h-5 w-5 text-blue-500 cursor-pointer"
-              onClick={() => setShowComments(false)}
-            />
-          ) : (
-            <ChatAltIcon
-              className="h-5 w-5 text-blue-500 cursor-pointer"
-              onClick={() => {
-                setIsCommenting(true);
-                setShowComments(true);
-              }}
-            />
-          )}
-          <span className="dark:text-white">{comments.length}</span>
-        </div>
-      </div>
-
-      {/* New Comment */}
-      {isCommenting && (
-        <div className="mt-2">
-          <textarea
-            className="w-full p-2 border rounded dark:bg-gray-700 dark:text-white"
-            placeholder="Write a comment..."
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-          />
-          <button
-            onClick={handleAddComment}
-            className="mt-2 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-800 disabled:opacity-50"
-          >
-            Post Comment
+          <button className={`flex items-center gap-1 px-3 py-1 rounded-full font-semibold shadow transition bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-700 text-xs sm:text-sm`} onClick={() => setShowComments((v) => !v)}>
+            <ChatAltIcon className="h-4 w-4" /> {comments.length}
           </button>
-          <button
-              onClick={handleCancelComment}
-              className="bg-gray-500 text-white px-3 py-1 rounded ml-2 hover:bg-gray-800 disabled:opacity-50"
-            >
-              Cancel
-            </button>
-          {errorMessage && <p className="text-red-500 mt-1">{errorMessage}</p>}
         </div>
-      )}
-
-      {/* Comment List */}
+        <span className="text-xs text-gray-500 dark:text-gray-400">{new Date(parseInt(post.createdAt)).toLocaleString()}</span>
+      </div>
+      {/* Comments section - always below actions */}
       {showComments && (
         <div className="mt-4">
-          <CommentList
-            postId={post._id}
-            comments={comments}
-            currentUserId={currentUserId}
-          />
+          <CommentList postId={post._id} comments={comments} currentUserId={currentUserId} />
+          <div className="mt-4">
+            <textarea className="w-full p-2 border rounded dark:text-black text-xs sm:text-sm mb-2" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Write a comment..." />
+            <div className="flex gap-2">
+              <button className="px-4 py-1 rounded bg-blue-500 text-white hover:bg-blue-700 text-xs sm:text-sm" onClick={handleAddComment}>Add Comment</button>
+              <button className="px-4 py-1 rounded bg-gray-500 text-white hover:bg-gray-700 text-xs sm:text-sm" onClick={() => { handleCancelComment(); setShowComments(false); }}>Cancel</button>
+            </div>
+            {errorMessage && <div className="text-red-500 text-xs mt-2 animate-fade-in">{errorMessage}</div>}
+          </div>
         </div>
       )}
     </div>

@@ -38,7 +38,7 @@ export default function CustomComingGames({ isDarkMode }) {
 
   return (
     <div className="container mx-auto px-4 sm:px-8 md:px-12 lg:px-20 xl:px-32">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
         {games.map(game => {
           // Format date and time like GameDetails
           let humanDate = game.date;
@@ -55,22 +55,39 @@ export default function CustomComingGames({ isDarkMode }) {
             humanTime = `${hour12}:${m.toString().padStart(2, "0")} ${ampm}`;
           }
           return (
-            <div key={game._id} className={`rounded shadow p-4 flex flex-col mt-8 ${isDarkMode ? "bg-gray-600 text-white" : "bg-white text-gray-900"}`}>
-              <div className="flex justify-between items-center mb-2">
+            <div
+              key={game._id}
+              className={`relative rounded-2xl shadow-xl p-6 flex flex-col mt-8 border-2 transition-all duration-300
+                bg-gradient-to-br
+                ${isDarkMode ? "from-gray-800 via-gray-700 to-gray-900 border-gray-700 text-white" : "from-blue-50 via-white to-blue-100 border-blue-300 text-gray-900"}
+                hover:scale-[1.02] hover:ring-4 hover:ring-blue-400
+              `}
+            >
+              <div className="flex justify-between items-center mb-4">
                 <p className="flex items-center gap-2">
-                  Game against  <FontAwesomeIcon icon={faPersonRunning} className="ml-2 text-green-500 text-xl" />
-                  <span className="font-bold text-xl text-blue-500 dark:text-gray-100 ml-1 flex items-center">
-                    {game.opponent}
-                  </span>
+                  <FontAwesomeIcon icon={faPersonRunning} className="text-green-500 text-2xl mr-2" />
+                  <span className={`font-extrabold text-xl tracking-tight drop-shadow-lg ${isDarkMode ? 'text-blue-200' : 'text-blue-700'}`}>{game.opponent}</span>
                 </p>
-                <span className={`px-2 py-1 rounded text-xs font-semibold ${game.status === "CONFIRMED" ? "bg-green-200 text-green-800" : "bg-yellow-200 text-yellow-800"}`}>{game.status}</span>
+                <span className={`px-3 py-1 rounded-full text-xs font-bold shadow-lg border-2
+                  ${game.status === "CONFIRMED" ? (isDarkMode ? "bg-green-700 text-green-200 border-green-400" : "bg-green-200 text-green-800 border-green-400")
+                  : "bg-yellow-200 text-yellow-800 border-yellow-400"}`}>{game.status}</span>
               </div>
-              <div className="mb-1">Date: <span className="font-semibold">{humanDate}</span></div>
-              <div className="mb-1">Time: <span className="font-semibold">{humanTime}</span></div>
-              <div className="mb-1">Venue: <span className="font-semibold">{game.venue}</span></div>
-              <div className="mb-1">Notes: <span className="italic">{game.notes || "-"}</span></div>
+              <div className="mb-2 flex flex-col gap-1">
+                <div className={`text-base ${isDarkMode ? 'text-blue-200' : 'text-blue-500'}`}><span className="font-bold">Date:</span> <span className="font-semibold">{humanDate}</span></div>
+                <div className={`text-base ${isDarkMode ? 'text-blue-200' : 'text-blue-500'}`}><span className="font-bold">Time:</span> <span className="font-semibold">{humanTime}</span></div>
+                <div className={`text-base ${isDarkMode ? 'text-blue-200' : 'text-blue-500'}`}><span className="font-bold">Venue:</span> <span className="font-semibold">{game.venue}</span></div>
+                <div className={`text-base ${isDarkMode ? 'text-blue-200' : 'text-blue-500'}`}>
+                  <span className="font-bold">Notes:</span> <span className="italic">{game.notes ? game.notes : "No note provided for this game."}</span>
+                </div>
+                <div className={`text-base ${isDarkMode ? 'text-blue-200' : 'text-blue-500'}`}>
+                  <span className="font-bold">Available Players:</span> <span className="font-semibold">{game.availableCount}</span>
+                </div>
+              </div>
               <button
-                className="mt-3 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition self-end"
+                className={`mt-4 px-5 py-2 rounded-lg font-bold shadow-lg transition-all duration-200 self-end
+                  ${isDarkMode ? "bg-blue-700 text-white hover:bg-blue-800" : "bg-blue-500 text-white hover:bg-blue-700"}
+                  focus:outline-none focus:ring-2 focus:ring-blue-400`
+                }
                 onClick={() => window.location.href = `/game-schedule/${game._id}`}
               >
                 Details

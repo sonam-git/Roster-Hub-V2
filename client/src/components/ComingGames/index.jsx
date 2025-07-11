@@ -166,7 +166,7 @@ export default function ComingGames() {
             <li key={_id}>
               <Link
                 to={`/game-schedule/${_id}`}
-                className={`flex flex-col justify-between items-start p-2 rounded-xl border shadow transition hover:scale-[1.02] hover:shadow-lg hover:no-underline cursor-pointer ${cardBg} ${borderColor}`}
+                className={`flex flex-col justify-between items-start p-2 rounded-xl border shadow transition hover:border-blue-400 hover:shadow-lg hover:no-underline cursor-pointer ${cardBg} ${borderColor}`}
                 style={{ borderWidth: 2 }}
               >
                 <div className="flex items-center gap-2 mb-1">

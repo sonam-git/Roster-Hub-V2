@@ -145,24 +145,24 @@ const SkillsList = ({
           return (
             <div
               key={skill._id}
-              className="shadow rounded overflow-hidden flex flex-col justify-between h-32"
+              className={`shadow-xl rounded-2xl overflow-hidden flex flex-col justify-between h-36 border-2 transition-all duration-300
+    bg-gradient-to-br
+    ${isDarkMode ? 'from-gray-900 via-gray-800 to-gray-700 border-gray-700 text-blue-100' : 'from-green-50 via-blue-50 to-yellow-50 border-blue-200 text-blue-900'}
+    hover:scale-[1.02] hover:ring-4 hover:ring-blue-400
+  `}
             >
               {/* Author on top */}
               <div
-                className={`px-3 py-2 text-xs font-semibold tracking-wide border-b ${
-                  isDarkMode
-                    ? "bg-gray-600 text-green-300"
-                    : "bg-green-100 text-yellow-800"
-                }`}
+                className={`px-3 py-2 text-xs font-semibold tracking-wide border-b
+      ${isDarkMode ? 'bg-gray-700 text-green-200 border-gray-700' : 'bg-green-100 text-blue-800 border-blue-200'}
+    `}
                 style={{ letterSpacing: "0.05em" }}
               >
                 <span className="inline-block align-middle ">
                   {skill.skillAuthor[0].toUpperCase() +
                     skill.skillAuthor.slice(1)}
                 </span>
-                <span className="ml-1 text-gray-400 font-normal">
-                  endorsed{" "}
-                </span>
+                <span className="ml-1 text-gray-400 font-normal">endorsed </span>
                 <span className="text-xs text-gray-800 dark:text-yellow-300 italic">
                   {skill.recipient?.name &&
                   skill.recipient?.name === skill.skillAuthor ? (
@@ -176,27 +176,23 @@ const SkillsList = ({
               </div>
               {/* Skill text in the middle */}
               <div
-                className={`flex-1 flex items-center justify-center text-lg font-bold ${
-                  isDarkMode
-                    ? "bg-gray-800 text-white"
-                    : "bg-green-200 text-gray-900"
-                }`}
+                className={`flex-1 flex items-center justify-center text-lg font-bold text-center
+      ${isDarkMode ? 'bg-gray-800 text-blue-100' : 'bg-blue-100 text-blue-900'}
+    `}
                 style={{ minHeight: "2.5rem" }}
               >
                 {skill.skillText[0].toUpperCase() + skill.skillText.slice(1)}
               </div>
               {/* Date at the bottom in a pill/button, with emoji react button inline */}
               <div
-                className={`flex items-center justify-between px-3 py-2 border-t ${
-                  isDarkMode ? "bg-gray-600" : "bg-gray-50"
-                }`}
+                className={`flex items-center justify-between px-3 py-2 border-t
+      ${isDarkMode ? 'bg-gray-700 border-gray-700' : 'bg-blue-50 border-blue-200'}
+    `}
               >
                 <span
-                  className={`px-3 py-1 rounded-full text-xs font-semibold shadow ${
-                    isDarkMode
-                      ? "bg-gray-700 text-green-200"
-                      : "bg-green-300 text-yellow-900"
-                  }`}
+                  className={`px-3 py-1 rounded-full text-xs font-semibold shadow
+        ${isDarkMode ? 'bg-gray-800 text-green-200' : 'bg-green-300 text-blue-900'}
+      `}
                 >
                   {skill.createdAt}
                 </span>

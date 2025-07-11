@@ -51,46 +51,40 @@ const UserInfoForm = ({ profileId, isDarkMode }) => {
   };
 
   return (
-    <div className={`max-w-md mx-auto ${isDarkMode ? 'bg-gray-600 text-white' : 'bg-white text-black'}`}>
+    <div className={`max-w-md mx-auto rounded-2xl shadow-2xl border border-blue-100 dark:border-gray-700 bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 p-6 ${isDarkMode ? 'text-white' : 'text-black'}`}> 
       {Auth.loggedIn() ? (
         <>
           <form
-            className={`flex flex-col lg:flex-row justify-center items-center lg:justify-between lg:items-center`}
+            className={`flex flex-col gap-6 justify-center items-center w-full`}
             onSubmit={handleFormSubmit}
           >
-            <div className={`w-full ${isDarkMode ? 'bg-gray-600 text-white' : 'bg-white text-black'} lg:mr-4 mb-4 lg:mb-0`}>
-              <label htmlFor="jersey-number" className="block text-sm font-semibold leading-6 text-gray-900 dark:text-white">
-                Jersey Number
-              </label>
+            <div className={`w-full`}>
+              <label htmlFor="jersey-number" className="block text-base font-bold leading-6 mb-2 text-blue-700 dark:text-blue-200 tracking-tight">Jersey Number</label>
               <input
                 placeholder="Enter Your Jersey Number"
                 value={jerseyNumber}
-                className="block w-full rounded-md border-0 px-3.5 py-2 mb-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-lg border-0 px-4 py-3 mb-4 text-gray-900 shadow-lg ring-1 ring-inset ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-base"
                 onChange={(event) => setJerseyNumber(event.target.value)}
                 required
               />
-              <label htmlFor="position" className="block text-sm font-semibold leading-6 text-gray-900 dark:text-white">
-                Position
-              </label>
+              <label htmlFor="position" className="block text-base font-bold leading-6 mb-2 text-blue-700 dark:text-blue-200 tracking-tight">Position</label>
               <input
                 placeholder="Enter Your Position"
                 value={position}
-                className="block w-full rounded-md border-0 px-3.5 py-2 mb-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-lg border-0 px-4 py-3 mb-4 text-gray-900 shadow-lg ring-1 ring-inset ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-base"
                 onChange={(event) => setPosition(event.target.value)}
                 required
               />
-              <label htmlFor="phone-number" className="block text-sm font-semibold leading-6 text-gray-900 dark:text-white">
-                Phone Number
-              </label>
+              <label htmlFor="phone-number" className="block text-base font-bold leading-6 mb-2 text-blue-700 dark:text-blue-200 tracking-tight">Phone Number</label>
               <input
                 placeholder="Enter Your Phone Number"
                 value={phoneNumber}
-                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-lg border-0 px-4 py-3 text-gray-900 shadow-lg ring-1 ring-inset ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-base"
                 onChange={(event) => setPhoneNumber(event.target.value)}
                 required
               />
               <button
-                className="block w-full md:w-1/2 rounded-md bg-indigo-600 px-3.5 py-2.5 mt-5 text-center text-xs font-semibold text-white shadow-sm hover:bg-indigo-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="block w-full md:w-1/2 rounded-lg bg-indigo-600 px-4 py-3 mt-6 text-center text-base font-bold text-white shadow-lg hover:bg-indigo-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors"
                 type="submit"
               >
                 {buttonText}
@@ -99,7 +93,7 @@ const UserInfoForm = ({ profileId, isDarkMode }) => {
             </div>
             <div>
               {error && (
-                <div className="col-12 my-3 bg-red-500 text-white p-3">
+                <div className="col-12 my-3 bg-red-500 text-white p-3 rounded-lg shadow-lg">
                   {error.message}
                 </div>
               )}

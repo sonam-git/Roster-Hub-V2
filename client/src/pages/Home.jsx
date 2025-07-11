@@ -74,49 +74,43 @@ const Home = ({ isDarkMode }) => {
           </div>
 
           {/* PostForm + PostsList / RecentSkillsList + ComingGames */}
-          <div className="w-full flex flex-col lg:flex-row lg:space-x-2 px-4">
+          <div className="w-full flex flex-col lg:flex-row lg:space-x-6 px-4">
             {/* Left: PostForm + PostsList */}
             <div className="flex-1 mb-4 lg:mb-0 space-y-6 md:mx-2">
-              <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-4 w-full overflow-x-auto">
+              <div className="bg-gradient-to-br from-blue-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 rounded-2xl shadow-xl p-4 w-full overflow-x-auto border-2 border-blue-200 dark:border-gray-700 transition-all">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <FaRegListAlt className="text-green-600 dark:text-green-300 text-xl" />
-                  <span className="font-bold text-lg dark:text-white">
+                  <span className="font-bold text-lg dark:text-white sm:text-base xs:text-sm">
                     Share a Thought
                   </span>
                 </div>
-                <PostForm />
+                <div className="w-full">
+                  <PostForm />
+                </div>
               </div>
-              <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-4 w-full overflow-x-auto ">
+              <div className="bg-gradient-to-br from-blue-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 rounded-2xl shadow-xl p-4 w-full overflow-x-auto border-2 border-blue-200 dark:border-gray-700 transition-all">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <FaRegListAlt className="text-blue-600 dark:text-blue-300 text-xl" />
-                  <span className="font-bold text-lg dark:text-white">
+                  <span className="font-bold text-lg dark:text-white sm:text-base xs:text-sm">
                     Recent Posts
                   </span>
                 </div>
-                <PostsList isDarkMode={isDarkMode} />
+                <div className="w-full">
+                  <PostsList isDarkMode={isDarkMode} />
+                </div>
               </div>
             </div>
 
-            {/* Right: RecentSkillsList + ComingGames */}
-            <div className="w-full lg:w-1/4 space-y-6 mt-4 lg:mt-0">
-              <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-2 w-full overflow-x-auto min-h-[300px] lg:min-h-[360px] flex flex-col">
-                <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  <FaFutbol className="text-yellow-500 dark:text-yellow-300 text-xl animate-bounce" />
-                  <span className="font-bold text-lg dark:text-white">
-                    Latest Skills
-                  </span>
-                </div>
-                <RecentSkillsList />
+            {/* Right: RecentSkillsList + ComingGames - wider, no extra divs */}
+            <div className="w-full lg:w-2/5 space-y-8 mt-4 lg:mt-0">
+              <RecentSkillsList />
+              <div className="flex items-center gap-2 mb-2 flex-wrap mt-8">
+                <FaCalendarAlt className="text-blue-600 dark:text-blue-300 text-xl" />
+                <span className="font-bold text-lg dark:text-white">
+                  Game Schedule
+                </span>
               </div>
-              <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-2 w-full overflow-x-auto min-h-[300px] lg:min-h-[360px] flex flex-col">
-                <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  <FaCalendarAlt className="text-blue-600 dark:text-blue-300 text-xl" />
-                  <span className="font-bold text-lg dark:text-white">
-                    Game Schedule
-                  </span>
-                </div>
-                <ComingGames />
-              </div>
+              <ComingGames />
             </div>
           </div>
 

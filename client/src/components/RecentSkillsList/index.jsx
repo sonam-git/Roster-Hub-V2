@@ -1,23 +1,17 @@
 // src/components/RecentSkillsList.jsx
 import React, { useContext, useEffect } from "react";
-import { useQuery, useMutation } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { GET_SKILLS } from "../../utils/queries";
 import {
   SKILL_ADDED_SUBSCRIPTION,
   SKILL_DELETED_SUBSCRIPTION,
 } from "../../utils/subscription";
 import { ThemeContext } from "../ThemeContext";
-import SkillReaction from "../SkillsList/SkillReaction";
-import { REACT_TO_SKILL } from "../../utils/mutations";
+import { FaFutbol } from "react-icons/fa";
 
 export default function RecentSkillsList() {
   const { isDarkMode } = useContext(ThemeContext);
-  const { loading, error, data, subscribeToMore } = useQuery(GET_SKILLS, {
-    fetchPolicy: "network-only",
-  });
-
-  // Add react mutation
-  const [reactToSkill] = useMutation(REACT_TO_SKILL);
+  const { loading, error, data, subscribeToMore } = useQuery(GET_SKILLS);
 
   useEffect(() => {
     const unsubAdd = subscribeToMore({
@@ -31,17 +25,12 @@ export default function RecentSkillsList() {
     });
     const unsubDel = subscribeToMore({
       document: SKILL_DELETED_SUBSCRIPTION,
-      updateQuery: (prev, { subscriptionData, client }) => {
+      updateQuery: (prev, { subscriptionData }) => {
         const deletedId = subscriptionData.data?.skillDeleted;
         if (!deletedId) return prev;
-        const filtered = prev.skills.filter(
-          (s) => String(s._id) !== String(deletedId)
-        );
-        // Always refetch to ensure UI is in sync
-        if (client) {
-          client.refetchQueries({ include: [GET_SKILLS] });
-        }
-        return { skills: filtered };
+        return {
+          skills: prev.skills.filter((s) => s._id !== deletedId),
+        };
       },
     });
     return () => {
@@ -57,15 +46,34 @@ export default function RecentSkillsList() {
   const skills = Array.isArray(data?.skills) ? data.skills : [];
 
   return (
-    <div>
-      <h3 className="text-center font-bold text-lg">
-        {skills.length === 0 ? "No Skills available" : " "}
-      </h3>
+    <div className="w-full">
+      <div
+        className={`mb-2 shadow-xl rounded-2xl p-4 border-2 bg-gradient-to-br ${
+          isDarkMode
+            ? "from-gray-800 via-gray-700 to-gray-900 border-gray-700 text-blue-100"
+            : "from-blue-100 via-white to-blue-50 border-blue-300 text-blue-900"
+        }`}
+      >
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
+                        <FaFutbol className="text-yellow-500 dark:text-yellow-300 text-xl animate-bounce" />
+                        <span className="font-bold text-lg dark:text-white">
+                         {skills.length === 0 ? "No Skills available" : "Latest Skills"}
+                        </span>
+                      </div>
+      </div>
       {skills.length === 0 ? (
-        <p className="text-center italic">No Skills endorsed yet.</p>
+        <div
+          className={`rounded-2xl shadow-xl p-6 border-2 text-center bg-gradient-to-br ${
+            isDarkMode
+              ? "from-gray-800 via-gray-700 to-gray-900 border-gray-700 text-blue-100"
+              : "from-blue-100 via-white to-blue-50 border-blue-300 text-blue-900"
+          }`}
+        >
+          <p className="italic text-base">Nothing here yet.</p>
+        </div>
       ) : (
         <div className="w-full overflow-y-auto" style={{ height: 350 }}>
-          <ul>
+          <ul className="space-y-4">
             {skills
               .slice()
               .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -73,90 +81,29 @@ export default function RecentSkillsList() {
               .map((skill) => (
                 <li key={skill._id} className="mb-2">
                   <div
-                    className={`shadow rounded overflow-hidden flex flex-col justify-between h-36 relative ${
-                      isDarkMode ? "bg-gray-800" : "bg-white"
+                    className={`card shadow-xl rounded-2xl border-2 bg-gradient-to-br transition-all duration-300 hover:border-blue-400 p-4 flex flex-col justify-between h-28 relative ${
+                      isDarkMode
+                        ? "from-gray-900 via-gray-800 to-gray-700 border-gray-700 text-blue-100"
+                        : "from-blue-50 via-white to-blue-100 border-blue-300 text-blue-900"
                     }`}
                   >
-                    {/* 1. Author and recipient */}
-                    <div
-                      className={`px-3 py-2 text-xs font-semibold tracking-wide border-b ${
-                        isDarkMode
-                          ? "bg-gray-600 text-green-300"
-                          : "bg-green-100 text-yellow-800"
-                      }`}
-                      style={{ letterSpacing: "0.05em" }}
-                    >
-                      <span className="inline-block align-middle ">
-                        {skill.skillAuthor[0].toUpperCase() +
-                          skill.skillAuthor.slice(1)}
+                    <div className="text-xs mb-1 font-semibold tracking-wide border-b pb-1 rounded-t-2xl bg-opacity-80">
+                      Date :{" "}
+                      <span className="font-bold">{skill.createdAt}</span>
+                    </div>
+                    <div className="font-semibold mb-1 text-base break-words whitespace-normal">
+                      {skill.skillText}
+                    </div>
+                    <div className="text-xs flex items-center gap-1">
+                      <span className="font-bold">
+                        {skill.skillAuthor[0].toUpperCase() + skill.skillAuthor.slice(1)}
                       </span>
                       <span className="ml-1 text-gray-400 font-normal">
-                        endorsed{" "}
+                        endorsed
                       </span>
-                      <span className="text-xs text-gray-800 dark:text-yellow-300 italic">
-                        {skill.recipient?.name &&
-                        skill.recipient?.name === skill.skillAuthor ? (
-                          <strong>himself</strong>
-                        ) : skill.recipient?.name ? (
-                          <strong>{skill.recipient.name}</strong>
-                        ) : (
-                          "—"
-                        )}
-                      </span>
-                    </div>
-                    {/* 2. Skill text and emoji row in one flex div */}
-                    <div
-                      className={`flex flex-row items-center justify-between gap-2 px-3 py-2 text-base sm:text-md font-semibold border-b border-gray-200 dark:border-gray-700 ${
-                        isDarkMode
-                          ? "bg-gray-800 text-white"
-                          : "bg-green-200 text-gray-900"
-                      }`}
-                      style={{ minHeight: "2.2rem", wordBreak: "break-word" }}
-                    >
-                      <span
-                        className="truncate text-sm"
-                        style={{ maxWidth: "60%" }}
-                      >
-                        {skill.skillText[0].toUpperCase() +
-                          skill.skillText.slice(1)}
-                      </span>
-                      <div className="flex flex-wrap gap-1 items-center min-h-[1.5rem]">
-                        {skill.reactions && skill.reactions.length > 0 ? (
-                          skill.reactions.map((r, i) => (
-                            <span
-                              key={i}
-                              title={r.user?.name || ""}
-                              className="text-lg sm:text-xl bg-white/70 dark:bg-gray-700/70 rounded-full px-1 shadow border border-gray-200 dark:border-gray-600"
-                              style={{ minWidth: 24, textAlign: "center" }}
-                            >
-                              {r.emoji}
-                            </span>
-                          ))
-                        ) : (
-                          <span className="text-gray-400 italic text-xs sm:text-sm">
-                            No reactions
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    {/* 3. React button and date */}
-                    <div className="flex items-center justify-between w-full px-3 py-2 dark:bg-gray-600">
-                      <SkillReaction
-                        onReact={(emoji) =>
-                          reactToSkill({
-                            variables: { skillId: skill._id, emoji },
-                          })
-                        }
-                      />
-                      <span
-                        className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold shadow ${
-                          isDarkMode
-                            ? "bg-gray-700 text-green-200"
-                            : "bg-green-300 text-yellow-900"
-                        }`}
-                      >
-                        {skill.createdAt}
-                      </span>
+                      <strong className="italic text-blue-500 dark:text-yellow-300">
+                        {skill.recipient?.name || "—"}
+                      </strong>
                     </div>
                   </div>
                 </li>

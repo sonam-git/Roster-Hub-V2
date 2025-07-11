@@ -92,8 +92,8 @@ const ProfileSettings = ({ isDarkMode }) => {
   };
 
   return (
-    <div className={`max-w-md mx-auto ${isDarkMode ? 'dark:text-white' : ''}`}>
-      <h2 className="text-sm md:text-md lg:text-lg xl:text-xl font-semibold mb-4">Update Name</h2>
+    <div className={`max-w-md mx-auto rounded-2xl shadow-2xl border border-blue-100 dark:border-gray-700 bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 p-6 ${isDarkMode ? 'text-white' : 'text-black'}`}> 
+      <h2 className={`text-lg md:text-xl lg:text-xl xl:text-xl font-extrabold mb-4 tracking-tight drop-shadow ${isDarkMode ? 'text-blue-200' : 'text-blue-700'}`}>Update Name</h2>
       {errorNameMessage && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mb-2 rounded relative" role="alert">
           <span className="block sm:inline">{errorNameMessage}</span>
@@ -120,7 +120,7 @@ const ProfileSettings = ({ isDarkMode }) => {
           Update
         </button>
       </div>
-      <h2 className="text-sm md:text-md lg:text-lg xl:text-xl font-semibold my-6">Update Password</h2>
+      <h2 className={`text-lg md:text-xl lg:text-xl xl:text-xl font-extrabold my-6 tracking-tight drop-shadow ${isDarkMode ? 'text-blue-200' : 'text-blue-700'}`}>Update Password</h2>
       {errorMessage && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mb-2 rounded relative" role="alert">
           <span className="block sm:inline">{errorMessage}</span>
@@ -152,10 +152,10 @@ const ProfileSettings = ({ isDarkMode }) => {
         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm sm:text-base mb-2"
         placeholder="Confirm your new password"
       />
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
         <button
           onClick={handlePasswordChange}
-          className="w-full sm:w-auto text-sm sm:text-base bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md mt-4 sm:mt-0"
+          className={`w-full sm:w-auto text-sm sm:text-base font-semibold py-2 px-4 rounded-md mt-4 sm:mt-0 shadow-lg transition-colors ${isDarkMode ? 'bg-indigo-700 hover:bg-indigo-600 text-white' : 'bg-indigo-500 hover:bg-indigo-600 text-white'}`}
         >
           Change Password
         </button>
