@@ -182,7 +182,11 @@ const Header = ({ open, setOpen }) => {
               `}
               onClick={() => {
                 if (Menu.action) Menu.action();
-                setOpen(false);
+                if (window.innerWidth < 1024) {
+                  setOpen(false);
+                } else {
+                  setOpen(true);
+                }
               }}
             >
               {Menu.path ? (

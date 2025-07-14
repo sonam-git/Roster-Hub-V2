@@ -1,9 +1,9 @@
 import React from "react";
 import { useQuery, useSubscription, useMutation } from "@apollo/client";
-import { QUERY_PROFILES } from "../utils/queries";
-import { SKILL_ADDED_SUBSCRIPTION, SKILL_DELETED_SUBSCRIPTION } from "../utils/subscription";
-import SkillReaction from "./SkillsList/SkillReaction";
-import { REACT_TO_SKILL } from "../utils/mutations";
+import { QUERY_PROFILES } from "../../utils/queries";
+import { SKILL_ADDED_SUBSCRIPTION, SKILL_DELETED_SUBSCRIPTION } from "../../utils/subscription";
+import SkillReaction from "../SkillsList/SkillReaction";
+import { REACT_TO_SKILL } from "../../utils/mutations";
 
 export default function AllSkillsList({ isDarkMode }) {
   const { loading, error, data } = useQuery(QUERY_PROFILES);

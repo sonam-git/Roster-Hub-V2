@@ -39,11 +39,11 @@ const GameList = () => {
   const [statusFilter, setStatusFilter] = useState('ALL');
 
   const STATUS_OPTIONS = [
-    { key: 'ALL', label: 'All', color: 'bg-gray-200 text-gray-900 hover:bg-blue-100 dark:bg-gray-800 dark:text-white' },
-    { key: 'PENDING', label: 'Pending', color: 'bg-orange-400 text-white hover:bg-orange-500' },
-    { key: 'CONFIRMED', label: 'Confirmed', color: 'bg-green-500 text-white hover:bg-green-600' },
-    { key: 'CANCELLED', label: 'Cancelled', color: 'bg-red-500 text-white hover:bg-red-600' },
-    { key: 'COMPLETED', label: 'Completed', color: 'bg-purple-500 text-white hover:bg-purple-600' },
+    { key: 'ALL', label: 'All', color: 'bg-gray-200 text-gray-900 hover:bg-gray-400 dark:bg-gray-800 dark:text-white' },
+    { key: 'PENDING', label: 'Pending', color: 'bg-orange-400 text-white hover:bg-orange-700' },
+    { key: 'CONFIRMED', label: 'Confirmed', color: 'bg-green-500 text-white hover:bg-green-700' },
+    { key: 'CANCELLED', label: 'Cancelled', color: 'bg-red-500 text-white hover:bg-red-700' },
+    { key: 'COMPLETED', label: 'Completed', color: 'bg-purple-500 text-white hover:bg-purple-700' },
   ];
 
   if (loading) return <div className="text-center mt-4">Loading games...</div>;

@@ -53,9 +53,7 @@ const Skill = ({ isDarkMode }) => {
         </div>
         {/* Divider and SkillForm section */}
         <div className="mt-auto">
-          <div className="flex justify-center mb-4">
-            <span className={`inline-block w-2/3 h-1 rounded-full bg-gradient-to-r ${isDarkMode ? 'from-blue-900 via-blue-700 to-blue-500' : 'from-blue-200 via-blue-400 to-blue-600'} animate-divider`}></span>
-          </div>
+        
           <div className={`rounded-2xl shadow-xl p-8 border-2 bg-gradient-to-br
             ${isDarkMode ? "from-gray-900 via-gray-800 to-gray-700 border-gray-700 text-blue-100" : "from-blue-50 via-white to-blue-100 border-blue-300 text-blue-900"}
             animate-slide-up

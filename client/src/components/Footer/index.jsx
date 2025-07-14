@@ -18,7 +18,7 @@ const Footer = ({ className = "" }) => {
               onClick={() => navigate(-1)}
               className="rounded bg-white text-gray-800 px-4 py-2 text-sm font-medium shadow hover:bg-gray-100 transition"
             >
-              ← Home
+              ← Back
             </button>
           )}
           <span className="text-sm">&copy; {year} - Roster Hub</span>
