@@ -80,7 +80,7 @@ export default function ComingGames() {
   if (loading) return <p>Loading upcoming games…</p>;
   if (error) return <p className="text-red-500">Error: {error.message}</p>;
   if (upcoming.length === 0)
-    return <p className="text-center italic">No upcoming games.</p>;
+    return <p className=" text-center italic dark:text-white">No upcoming games.</p>;
 
   return (
     <div

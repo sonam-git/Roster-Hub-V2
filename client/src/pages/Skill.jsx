@@ -35,6 +35,7 @@ const Skill = ({ isDarkMode }) => {
               isLoggedInUser={!profileId && true}
               profile={profile}
               isDarkMode={isDarkMode}
+              columns={1} // Force Skill-list page to always use columns=1
             />
           ) : (
             <div className={`rounded-2xl shadow-xl p-8 border-2 text-center bg-gradient-to-br

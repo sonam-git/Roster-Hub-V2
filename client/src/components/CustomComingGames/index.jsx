@@ -32,7 +32,7 @@ export default function CustomComingGames({ isDarkMode }) {
 
   const games = (data?.games || []).filter(g => g.status === "PENDING" || g.status === "CONFIRMED");
   if (!games.length) {
-    return <div className="text-center italic">No upcoming games.</div>;
+    return <div className="text-center italic dark:text-white mt-4">No upcoming games.</div>;
   }
 
   return (

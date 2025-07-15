@@ -114,7 +114,7 @@ const SkillsList = ({
   );
 
   if (!localSkills.length) {
-    return <h3 className="text-center italic">No endorsed Skill yet</h3>;
+    return <h3 className="text-center italic">No endorsed Skill yet </h3>;
   }
 
   return (
@@ -142,6 +142,9 @@ const SkillsList = ({
           const isSkillAuthor = skill.skillAuthor === profile.name;
           const userReaction =
             skill.reactions?.find((r) => r.user?._id === userId)?.emoji || null;
+          // Determine if this is the Skill-list page (Skill-list menu)
+          // We'll use columns === 1 as a proxy for /skill page (since shortcut uses columns > 1)
+          const isSkillListPage = columns === 1;
           return (
             <div
               key={skill._id}
@@ -196,35 +199,54 @@ const SkillsList = ({
                 >
                   {skill.createdAt}
                 </span>
-                {/* Emoji reactions display */}
+                {/* Emoji reactions display - match shortcut style for /skill */}
                 <div className="flex items-center ml-2">
-                  {skill.reactions && skill.reactions.length > 0 && (
-                    <div className="flex space-x-1 mr-2">
-                      {skill.reactions.map((r, i) => (
-                        <span
-                          key={i}
-                          title={r.user?.name || ""}
-                          className="text-xl"
-                        >
-                          {r.emoji}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  {/* Emoji reaction button for users who are not the skill author, inline with date */}
-                  {!isSkillAuthor && (
-                    <div className="ml-1 relative z-20">
-                      <SkillReaction
-                        skillId={skill._id}
-                        initialReaction={userReaction}
-                        onReact={async (emoji) => {
-                          await apolloClient.mutate({
-                            mutation: REACT_TO_SKILL,
-                            variables: { skillId: skill._id, emoji },
-                          });
-                        }}
-                      />
-                    </div>
+                  {/* Only show emoji row in Skill-list page, and only show SkillReaction in shortcut */}
+                  {isSkillListPage ? (
+                    skill.reactions && skill.reactions.length > 0 && (
+                      <div className="flex flex-row space-x-1 mr-0">
+                        {skill.reactions.map((r, i) => (
+                          <span
+                            key={i}
+                            title={r.user?.name || ""}
+                            className="text-xl"
+                          >
+                            {r.emoji}
+                          </span>
+                        ))}
+                      </div>
+                    )
+                  ) : (
+                    <>
+                      {skill.reactions && skill.reactions.length > 0 && (
+                        <div className="flex flex-row space-x-1 mr-2">
+                          {skill.reactions.map((r, i) => (
+                            <span
+                              key={i}
+                              title={r.user?.name || ""}
+                              className="text-xl"
+                            >
+                              {r.emoji}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {/* Only show reaction button if not skill author and not in Skill-list page */}
+                      {!isSkillListPage && !isSkillAuthor && (
+                        <div className="ml-1 relative z-20">
+                          <SkillReaction
+                            skillId={skill._id}
+                            initialReaction={userReaction}
+                            onReact={async (emoji) => {
+                              await apolloClient.mutate({
+                                mutation: REACT_TO_SKILL,
+                                variables: { skillId: skill._id, emoji },
+                              });
+                            }}
+                          />
+                        </div>
+                      )}
+                    </>
                   )}
                   {isLoggedInUser && (
                     <button

@@ -31,7 +31,7 @@ export default function AllSkillsList({ isDarkMode }) {
   );
 
   if (!allSkills.length) {
-    return <div className="text-center italic">No skills endorsed yet.</div>;
+    return <div className="text-center italic dark:text-white mt-4">No skills endorsed yet.</div>;
   }
 
   return (

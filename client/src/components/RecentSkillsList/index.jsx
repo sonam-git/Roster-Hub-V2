@@ -69,7 +69,7 @@ export default function RecentSkillsList() {
               : "from-blue-100 via-white to-blue-50 border-blue-300 text-blue-900"
           }`}
         >
-          <p className="italic text-base">Nothing here yet.</p>
+          <p className="italic text-base">Skills will be displayed here.</p>
         </div>
       ) : (
         <div className="w-full overflow-y-auto" style={{ height: 350 }}>

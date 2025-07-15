@@ -1,4 +1,3 @@
-import React from "react";
 import { useQuery } from "@apollo/client";
 import Hero from "../components/Hero";
 import { QUERY_ME } from "../utils/queries";
@@ -104,7 +103,7 @@ const Home = ({ isDarkMode }) => {
             {/* Right: RecentSkillsList + ComingGames - wider, no extra divs */}
             <div className="w-full lg:w-2/5 space-y-8 mt-4 lg:mt-0 min-w-0">
               <RecentSkillsList />
-              <div className="flex items-center gap-2 mb-2 flex-wrap mt-8">
+              <div className="flex items-center gap-2 mb-2 flex-wrap mt-8 bg-gradient-to-br from-blue-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 rounded-2xl shadow-xl p-2 xs:p-4 w-full overflow-x-auto border-2 border-blue-200 dark:border-gray-700 transition-all">
                 <FaCalendarAlt className="text-blue-600 dark:text-blue-300 text-xl" />
                 <span className="font-bold text-base xs:text-lg dark:text-white">
                   Game Schedule

@@ -51,7 +51,7 @@ const GameList = () => {
 
   const games = data.games || [];
   if (!games.length) {
-    return <div className="text-center mt-4 text-xl font-semibold italic">No games scheduled yet.</div>;
+    return <div className="text-center mt-4 text-xl italic dark:text-white">No games scheduled yet.</div>;
   }
 
   // Filter games by status
