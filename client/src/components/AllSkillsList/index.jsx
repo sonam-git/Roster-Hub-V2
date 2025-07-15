@@ -1,4 +1,3 @@
-import React from "react";
 import { useQuery, useSubscription, useMutation } from "@apollo/client";
 import { QUERY_PROFILES } from "../../utils/queries";
 import { SKILL_ADDED_SUBSCRIPTION, SKILL_DELETED_SUBSCRIPTION } from "../../utils/subscription";

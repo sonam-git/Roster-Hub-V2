@@ -22,7 +22,7 @@ export default function About() {
           <p className="mb-2 text-gray-700 dark:text-gray-200 text-base sm:text-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
             This project is a blend of his love for soccer and technology, providing a modern, real-time platform for teams to thrive both on and off the field.
           </p>
-          <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm" style={{ fontFamily: 'Inter, sans-serif' }}>Contact: <a href="mailto:sherpa.sjs@gmail.com" className="underline text-blue-600 dark:text-blue-400">sonamjsherpa@gmail.com</a></p>
+          <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm" style={{ fontFamily: 'Inter, sans-serif' }}>Contact: <a href="mailto:sherpa.sjs@gmail.com" className="underline text-blue-600 dark:text-blue-400">sherpa.sjs@gmail.com</a></p>
         </div>
       </div>
       <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow p-6 ">
