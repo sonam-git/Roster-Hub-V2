@@ -20,24 +20,24 @@ const UserProfile = ({ profile }) => {
 
       {/* Right Side */}
       <div className="md:w-3/5 p-2">
-        <div className={`w-full h-full rounded-2xl shadow-2xl border border-blue-100 dark:border-gray-700 bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 ${isDarkMode ? 'text-white' : 'text-black'}`}> 
+        <div className={`w-full h-full rounded-lg shadow-md ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
           {/* Buttons row */}
           <div className="flex w-full p-2">
             <button
-              className={`w-1/2 px-4 py-2 rounded-l-lg font-serif font-bold shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm ${
+              className={`w-1/2 px-4 py-2 rounded-l-lg font-bold text-sm transition duration-300 ${
                 activeTab === 'posts'
-                  ? 'bg-blue-600 text-white scale-105'
-                  : 'bg-white text-dark text-gray-700 dark:bg-gray-800 dark:text-white hover:bg-blue-100'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-dark text-gray-700 dark:bg-gray-800 dark:text-white'
               }`}
               onClick={() => setActiveTab('posts')}
             >
               POST
             </button>
             <button
-              className={`w-1/2 px-4 py-2 rounded-r-lg font-serif font-bold shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm ${
+              className={`w-1/2 px-4 py-2 rounded-r-lg font-bold text-sm transition duration-300  ${
                 activeTab === 'skills'
-                  ? 'bg-blue-600 text-white scale-105'
-                  : 'bg-white text-dark text-gray-700 dark:bg-gray-800 dark:text-white hover:bg-blue-100'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-dark text-gray-700 dark:bg-gray-800 dark:text-white'
               }`}
               onClick={() => setActiveTab('skills')}
             >
@@ -45,10 +45,18 @@ const UserProfile = ({ profile }) => {
             </button>
           </div>
 
-          <div className="p-4">
+          <div className="p-4 dark:bg-gray-800 rounded-b-lg">
             {activeTab === 'skills' ? (
-              <div className="flex flex-col gap-4">
-                <SkillsList skills={profile.skills || []} isDarkMode={isDarkMode} profile={profile} />
+              <div className="w-full flex flex-col gap-4">
+                {profile.skills && profile.skills.length > 0 ? (
+                  <SkillsList skills={profile.skills} isDarkMode={isDarkMode} profile={profile} />
+                ) : (
+                  <div className="w-full flex flex-col items-center justify-center py-8">
+                    <p className="text-lg text-gray-500 dark:text-gray-400 font-semibold">
+                      No skills to display yet.
+                    </p>
+                  </div>
+                )}
                 <SkillForm profileId={profile._id} teamMate={profile.name} />
               </div>
             ) : (

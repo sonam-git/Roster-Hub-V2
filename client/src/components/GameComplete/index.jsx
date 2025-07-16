@@ -81,14 +81,14 @@ const GameComplete = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+              className="px-5 py-2 rounded-full font-bold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm mx-1 mb-2 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 text-white hover:bg-gray-800 hover:text-gray-100 active:scale-95 dark:from-gray-700 dark:via-gray-800 dark:to-gray-900 dark:text-white"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+              className="px-5 py-2 rounded-full font-bold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm mx-1 mb-2 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white hover:bg-gray-800 hover:text-gray-100 active:scale-95 dark:from-blue-700 dark:via-blue-800 dark:to-blue-900 dark:text-white disabled:opacity-50"
             >
               {loading ? "Submitting…" : "Complete"}
             </button>

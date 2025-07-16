@@ -43,7 +43,8 @@ const ChatPopup = ({ currentUser }) => {
   useQuery(QUERY_PROFILES, {
     skip: !isLoggedIn,
     onCompleted: data => {
-      // Only set profiles if data?.profiles is an array
+      // Debug: log profiles data
+      console.log('Profiles fetched:', data?.profiles);
       if (Array.isArray(data?.profiles)) {
         setProfiles(data.profiles);
       } else {
@@ -51,6 +52,44 @@ const ChatPopup = ({ currentUser }) => {
       }
     }
   });
+
+  // Periodically refetch profiles to keep online status fresh
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    const interval = setInterval(() => {
+      client.refetchQueries({ include: [QUERY_PROFILES] });
+    }, 15000); // every 15 seconds
+    return () => clearInterval(interval);
+  }, [isLoggedIn, client]);
+
+  // Subscribe to online status for all users, including logged-in user
+  useEffect(() => {
+    if (!profiles.length) return;
+    // Debug: log profiles on update
+    console.log('Profiles state updated:', profiles);
+    const subscriptions = profiles.map(user =>
+      client.subscribe({
+        query: ONLINE_STATUS_CHANGED_SUBSCRIPTION,
+        variables: { profileId: user._id },
+      }).subscribe({
+        next({ data }) {
+          if (data?.onlineStatusChanged) {
+            console.log('Online status changed:', data.onlineStatusChanged);
+            setProfiles(prev =>
+              prev.map(p =>
+                p._id === data.onlineStatusChanged._id
+                  ? { ...p, online: data.onlineStatusChanged.online }
+                  : p
+              )
+            );
+          }
+        },
+      })
+    );
+    return () => {
+      subscriptions.forEach(sub => sub && sub.unsubscribe());
+    };
+  }, [profiles, client]);
 
   // 2) Load chat for selectedUser (only when we have an ID)
   const { loading: chatLoading, refetch: refetchChat } = useQuery(GET_CHAT_BY_USER, {
@@ -116,34 +155,6 @@ const ChatPopup = ({ currentUser }) => {
       ));
     },
   });
-
-  // Subscribe to online status changes for all users in the list
-  useEffect(() => {
-    if (!profiles.length) return;
-    const subscriptions = profiles.map(user =>
-      user._id !== userId
-        ? client.subscribe({
-            query: ONLINE_STATUS_CHANGED_SUBSCRIPTION,
-            variables: { profileId: user._id },
-          }).subscribe({
-            next({ data }) {
-              if (data?.onlineStatusChanged) {
-                setProfiles(prev =>
-                  prev.map(p =>
-                    p._id === data.onlineStatusChanged._id
-                      ? { ...p, online: data.onlineStatusChanged.online }
-                      : p
-                  )
-                );
-              }
-            },
-          })
-        : null
-    );
-    return () => {
-      subscriptions.forEach(sub => sub && sub.unsubscribe());
-    };
-  }, [profiles, userId, client]);
 
   // Refetch chat when selectedUserId changes
   useEffect(() => {

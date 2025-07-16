@@ -66,7 +66,7 @@ const wsLink = new GraphQLWsLink(
   createClient({
     url: wsUri,
     connectionParams: () => ({
-      authorization: `Bearer ${localStorage.getItem("id_token") || ""}`,
+      token: localStorage.getItem("id_token") || "",
     }),
   })
 );

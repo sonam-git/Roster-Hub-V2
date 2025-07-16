@@ -10,13 +10,11 @@ import MyProfile from "../components/MyProfile";
 const Profile = () => {
   const { profileId } = useParams();
 
-  // Always fetch fresh data for profile views
+  // If there is no `profileId` in the URL as a parameter, execute the `QUERY_ME` query instead for the logged in user's information
   const { loading, data, error } = useQuery(
     profileId ? QUERY_SINGLE_PROFILE : QUERY_ME,
     {
       variables: { profileId: profileId },
-      fetchPolicy: "network-only",
-      pollInterval: 5000, // Refetch every 5 seconds
     }
   );
 
@@ -31,9 +29,11 @@ const Profile = () => {
   if (loading) {
     return <div className="text-center mt-4">Loading...</div>;
   }
+
   if (error) {
     return <div className="text-center text-red-500 mt-4">Error: {error.message}</div>;
   }
+
   if (!profile?.name) {
     return (
       <div className="text-center mt-4">
@@ -44,8 +44,9 @@ const Profile = () => {
       </div>
     );
   }
+
   return (
-    <main className="container mx-auto  lg:mt-5">
+    <main className="container mx-auto lg:mt-5">
       {profileId ? (
         <UserProfile profile={profile} />
       ) : (

@@ -534,7 +534,7 @@ const resolvers = {
         throw new Error("Error deleting Skill.");
       }
     },
-    // ************************** SEND MESSAGE *******************************************//
+    // ************************** SEND MESSAGE (its different functionality, not related to the chat functionality)*******************************************//
     sendMessage: async (_, { recipientId, text }, { user }) => {
       // Check if the user is authenticated
       if (!user) {
@@ -561,19 +561,27 @@ const resolvers = {
         // Save the message to the database
         const savedMessage = await message.save();
         // Update sender's sentMessages and recipient's receivedMessages
-        await Profile.findByIdAndUpdate(user._id, {
-          $push: { sentMessages: savedMessage._id },
-        }, { new: true });
-        await Profile.findByIdAndUpdate(recipientId, {
-          $push: { receivedMessages: savedMessage._id },
-        }, { new: true });
+        await Profile.findByIdAndUpdate(
+          user._id,
+          {
+            $push: { sentMessages: savedMessage._id },
+          },
+          { new: true }
+        );
+        await Profile.findByIdAndUpdate(
+          recipientId,
+          {
+            $push: { receivedMessages: savedMessage._id },
+          },
+          { new: true }
+        );
         return savedMessage;
       } catch (error) {
         console.error("Error sending message:", error);
         throw new Error("Failed to send message");
       }
     },
-    // ************************** REMOVE MESSAGE *******************************************//
+    // ************************** REMOVE MESSAGE (its different functionality,not related to the chat functionality) *******************************************//
     removeMessage: async (parent, { messageId }, context) => {
       if (!context.user._id) {
         throw new AuthenticationError("You need to be logged in!");
@@ -594,7 +602,7 @@ const resolvers = {
         throw new Error("Error deleting Message.");
       }
     },
-    // ************************** DELETE CONVERSATION HISTORY *******************************************//
+    // ************************** DELETE CONVERSATION HISTORY IN THE CHAT *******************************************//
     deleteConversation: async (_, { userId }, context) => {
       if (!context.user) {
         throw new AuthenticationError("You must be logged in");
@@ -659,7 +667,7 @@ const resolvers = {
         throw new Error("Failed to create chat");
       }
     },
-    
+
     // ************************** SAVE SOCIAL MEDIA LINK  *******************************************//
     saveSocialMediaLink: async (_, { userId, type, link }) => {
       try {
@@ -694,10 +702,9 @@ const resolvers = {
       if (linkDoc) {
         await SocialMediaLink.deleteOne({ _id: linkDoc._id });
         // Remove the reference from the Profile
-        await Profile.findByIdAndUpdate(
-          userId,
-          { $pull: { socialMediaLinks: linkDoc._id } }
-        );
+        await Profile.findByIdAndUpdate(userId, {
+          $pull: { socialMediaLinks: linkDoc._id },
+        });
       }
       return true;
     },
@@ -1444,7 +1451,8 @@ const resolvers = {
     // ************************** ADD FORMATION COMMENT *******************************************//
     addFormationComment: async (_, { formationId, commentText }, { user }) => {
       if (!user) throw new AuthenticationError("Login required");
-      if (!commentText.trim()) throw new UserInputError("Comment cannot be empty");
+      if (!commentText.trim())
+        throw new UserInputError("Comment cannot be empty");
 
       // build the new subdoc
       const newComment = {
@@ -1467,7 +1475,8 @@ const resolvers = {
       if (!updatedFormation) throw new Error("Formation not found");
 
       // pull out the comment we just added
-      const added = updatedFormation.comments[updatedFormation.comments.length - 1];
+      const added =
+        updatedFormation.comments[updatedFormation.comments.length - 1];
 
       // publish just that subdoc
       pubsub.publish(FORMATION_COMMENT_ADDED, {
@@ -1481,7 +1490,8 @@ const resolvers = {
     // ************************** UPDATE FORMATION COMMENT *******************************************//
     updateFormationComment: async (_, { commentId, commentText }, { user }) => {
       if (!user) throw new AuthenticationError("Login required");
-      if (!commentText.trim()) throw new UserInputError("Comment cannot be empty");
+      if (!commentText.trim())
+        throw new UserInputError("Comment cannot be empty");
 
       // atomically update the matching comment subdoc
       const updatedFormation = await Formation.findOneAndUpdate(
@@ -1495,7 +1505,8 @@ const resolvers = {
         { new: true }
       ).populate("comments.user");
 
-      if (!updatedFormation) throw new Error("Comment not found or not authorized");
+      if (!updatedFormation)
+        throw new Error("Comment not found or not authorized");
 
       // pull out the updated subdoc
       const updated = updatedFormation.comments.id(commentId);
@@ -1542,24 +1553,26 @@ const resolvers = {
       const userId = user._id.toString();
 
       // decide if we should like or unlike
-      const already = comment.likedBy.map(id => id.toString()).includes(userId);
+      const already = comment.likedBy
+        .map((id) => id.toString())
+        .includes(userId);
       const operator = already ? "$pull" : "$push";
-      const inc     = already ? -1 : +1;
+      const inc = already ? -1 : +1;
 
       // atomically update that one comment’s likes and likedBy
       await Formation.findOneAndUpdate(
         { "comments._id": commentId },
         {
-          $inc:    { "comments.$.likes": inc },
+          $inc: { "comments.$.likes": inc },
           [operator]: { "comments.$.likedBy": user._id },
         },
         { new: true }
       );
 
       // re-fetch and populate
-      const updatedFormation = await Formation.findOne({ "comments._id": commentId }).populate(
-        "comments.user"
-      );
+      const updatedFormation = await Formation.findOne({
+        "comments._id": commentId,
+      }).populate("comments.user");
       const updatedComment = updatedFormation.comments.id(commentId);
 
       // publish the new subdoc
@@ -1582,22 +1595,29 @@ const resolvers = {
         { $set: { seen: true } }
       );
       // Publish chatSeen event for all updated chats
-      const updatedChats = await Chat.find({ from: userId, to: me, seen: true });
-      updatedChats.forEach(chat => {
-        pubsub.publish('CHAT_SEEN', {
+      const updatedChats = await Chat.find({
+        from: userId,
+        to: me,
+        seen: true,
+      });
+      updatedChats.forEach((chat) => {
+        pubsub.publish("CHAT_SEEN", {
           chatSeen: chat,
-          to: chat.from // notify the sender
+          to: chat.from, // notify the sender
         });
       });
       return true;
     },
     // ************************** REACT TO SKILL *******************************************//
     reactToSkill: async (_, { skillId, emoji }, context) => {
-      if (!context.user) throw new AuthenticationError("You need to be logged in!");
+      if (!context.user)
+        throw new AuthenticationError("You need to be logged in!");
       const skill = await Skill.findById(skillId);
       if (!skill) throw new UserInputError("Skill not found");
       // Check if user already reacted
-      const idx = skill.reactions.findIndex(r => r.user.toString() === context.user._id.toString());
+      const idx = skill.reactions.findIndex(
+        (r) => r.user.toString() === context.user._id.toString()
+      );
       if (idx > -1) {
         // Update existing reaction
         skill.reactions[idx].emoji = emoji;
@@ -1606,8 +1626,13 @@ const resolvers = {
         skill.reactions.push({ user: context.user._id, emoji });
       }
       await skill.save();
-      const populatedSkill = await Skill.findById(skillId).populate('recipient').populate('reactions.user');
-      pubsub.publish(SKILL_REACTION_UPDATED, { skillReactionUpdated: populatedSkill, skillId });
+      const populatedSkill = await Skill.findById(skillId)
+        .populate("recipient")
+        .populate("reactions.user");
+      pubsub.publish(SKILL_REACTION_UPDATED, {
+        skillReactionUpdated: populatedSkill,
+        skillId,
+      });
       return populatedSkill;
     },
   },
@@ -1747,7 +1772,7 @@ const resolvers = {
         () => pubsub.asyncIterator([FORMATION_COMMENT_DELETED]),
         (payload, variables) => payload.formationId === variables.formationId
       ),
-      resolve: payload => payload.formationCommentDeleted
+      resolve: (payload) => payload.formationCommentDeleted,
     },
 
     formationCommentLiked: {
@@ -1768,10 +1793,13 @@ const resolvers = {
     },
     onlineStatusChanged: {
       subscribe: withFilter(
-        () => pubsub.asyncIterator('ONLINE_STATUS_CHANGED'),
+        () => pubsub.asyncIterator("ONLINE_STATUS_CHANGED"),
         (payload, variables) => {
           // Only notify for the relevant profile
-          return String(payload.onlineStatusChanged._id) === String(variables.profileId);
+          return (
+            String(payload.onlineStatusChanged._id) ===
+            String(variables.profileId)
+          );
         }
       ),
       resolve: (payload) => payload.onlineStatusChanged,
@@ -1826,7 +1854,7 @@ const resolvers = {
   SkillReaction: {
     user: async (parent) => {
       // parent.user is the Profile object or ID
-      if (typeof parent.user === 'object') return parent.user;
+      if (typeof parent.user === "object") return parent.user;
       return await Profile.findById(parent.user);
     },
   },
