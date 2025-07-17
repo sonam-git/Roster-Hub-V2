@@ -57,9 +57,6 @@ const FOOTBALL_API = "https://api.football-data.org/v4";
 // In-memory set to track online users
 const onlineUsers = require("../utils/onlineUsers");
 
-// If using Apollo Server subscriptions, add hooks for connect/disconnect
-// This example assumes you use Apollo Server's onConnect/onDisconnect in your server setup (not shown here)
-// You would add/remove user IDs to/from onlineUsers there.
 
 const resolvers = {
   // ############ QUERIES ########## //
@@ -1019,6 +1016,31 @@ const resolvers = {
         await Message.deleteMany({
           $or: [{ sender: profileId }, { recipient: profileId }],
         });
+
+        // Delete all posts created by the user
+        const userPosts = await Post.find({ userId: profileId });
+        const postIds = userPosts.map((p) => p._id);
+        await Post.deleteMany({ userId: profileId });
+        // Remove post references from all profiles
+        await Profile.updateMany({}, { $pull: { posts: { $in: postIds } } });
+        // Remove post references from all comments
+        await Comment.updateMany({}, { $pull: { postId: { $in: postIds } } });
+
+        // Delete all comments created by the user
+        const userComments = await Comment.find({ userId: profileId });
+        const commentIds = userComments.map((c) => c._id);
+        await Comment.deleteMany({ userId: profileId });
+        // Remove comment references from all posts
+        await Post.updateMany({}, { $pull: { comments: { $in: commentIds } } });
+
+        // Delete all games created by the user
+        const userGames = await Game.find({ creator: profileId });
+        const gameIds = userGames.map((g) => g._id);
+        await Game.deleteMany({ creator: profileId });
+        // Remove game references from formations
+        await Formation.deleteMany({ game: { $in: gameIds } });
+        // Remove game references from other places if needed (add more if your schema has them)
+
         return profile;
       } catch (error) {
         console.error("Error removing profile:", error);

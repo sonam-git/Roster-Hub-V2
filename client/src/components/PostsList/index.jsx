@@ -10,9 +10,10 @@ import Post from "../Post";
 
 const PAGE_SIZE = 3;
 
-const PostsList = ({ profileId }) => {
+const PostsList = ({ profileId, profile }) => {
   const { loading, data, error, subscribeToMore } = useQuery(GET_POSTS);
   const [currentPage, setCurrentPage] = useState(1);
+  const user = profile?.name || "";
 
   // Wire up all three subscriptions
   useEffect(() => {
@@ -33,9 +34,7 @@ const PostsList = ({ profileId }) => {
         const updated = subscriptionData.data?.postUpdated;
         if (!updated) return prev;
         return {
-          posts: prev.posts.map((p) =>
-            p._id === updated._id ? updated : p
-          ),
+          posts: prev.posts.map((p) => (p._id === updated._id ? updated : p)),
         };
       },
     });
@@ -60,19 +59,28 @@ const PostsList = ({ profileId }) => {
 
   if (loading) return <div>Loading posts...</div>;
   if (error) return <div>Error loading posts.</div>;
-  
-  if (!data || !data?.posts || !data?.posts.length) {
-    return <h3 className=' ml-3 text-left text-sm lg:text-md dark:text-white '>No post yet, create your first post. </h3>;
-  }
 
+  if (!data || !data?.posts || !data?.posts.length) {
+    return (
+      <h3 className=" ml-3 text-left text-sm lg:text-md dark:text-white ">
+        No post yet, create your first post.{" "}
+      </h3>
+    );
+  }
 
   // Filter by profile if needed
   const allPosts = data.posts;
-  const loginPost = allPosts.filter((p) => p.userId._id === profileId)
-  if(loginPost.length === 0 && profileId) { return <h3 className='ml-5 text-sm lg:text-md font-italic dark:text-white'>Posted nothing yet. Post will be appeared here. </h3> }
-  const postsToDisplay = profileId
-    ? loginPost
-    : allPosts;
+  const loginPost = allPosts.filter((p) => p.userId._id === profileId);
+  if (loginPost.length === 0 && profileId) {
+    return (
+      <div className="w-full flex flex-col items-center justify-center py-8">
+       <p className="text-md text-gray-500 dark:text-gray-400 italic">
+          {user ? `${user} hasn't posted anything yet.` : `You haven't posted anything yet.`}
+        </p>
+      </div>
+    );
+  }
+  const postsToDisplay = profileId ? loginPost : allPosts;
 
   // Pagination
   const totalPages = Math.ceil(postsToDisplay.length / PAGE_SIZE);

@@ -43,8 +43,6 @@ const ChatPopup = ({ currentUser }) => {
   useQuery(QUERY_PROFILES, {
     skip: !isLoggedIn,
     onCompleted: data => {
-      // Debug: log profiles data
-      console.log('Profiles fetched:', data?.profiles);
       if (Array.isArray(data?.profiles)) {
         setProfiles(data.profiles);
       } else {
@@ -65,8 +63,6 @@ const ChatPopup = ({ currentUser }) => {
   // Subscribe to online status for all users, including logged-in user
   useEffect(() => {
     if (!profiles.length) return;
-    // Debug: log profiles on update
-    console.log('Profiles state updated:', profiles);
     const subscriptions = profiles.map(user =>
       client.subscribe({
         query: ONLINE_STATUS_CHANGED_SUBSCRIPTION,

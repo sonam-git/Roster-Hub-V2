@@ -53,13 +53,33 @@ const Home = ({ isDarkMode }) => {
             </div>
             <h1 className="text-xl xs:text-2xl sm:text-3xl md:text-5xl font-extrabold text-white drop-shadow-2xl mb-2 text-center break-words w-full tracking-tight py-4 flex flex-wrap items-center justify-center gap-2 sm:gap-4 z-10">
               {profile.name ? (
-                <>
-                  Welcome back,{" "}
-                  <span className="text-yellow-200 animate-pulse break-words max-w-[10rem] xs:max-w-[12rem] sm:max-w-none">
-                    {profile.name}
-                  </span>
-                  !
-                </>
+                (() => {
+                  // Check if user is new (created within last 5 minutes)
+                  const createdAt = profile.createdAt ? new Date(profile.createdAt) : null;
+                  const now = new Date();
+                  const isNewUser = createdAt && ((now - createdAt) < 5 * 60 * 1000);
+                  if (isNewUser) {
+                    return (
+                      <>
+                        Welcome{" "}
+                        <span className="text-yellow-200 animate-pulse break-words max-w-[10rem] xs:max-w-[12rem] sm:max-w-none">
+                          {profile.name}
+                        </span>{" "}
+                        to the Roster Hub!
+                      </>
+                    );
+                  } else {
+                    return (
+                      <>
+                        Welcome back,{" "}
+                        <span className="text-yellow-200 animate-pulse break-words max-w-[10rem] xs:max-w-[12rem] sm:max-w-none">
+                          {profile.name}
+                        </span>
+                        !
+                      </>
+                    );
+                  }
+                })()
               ) : (
                 <>Welcome!</>
               )}

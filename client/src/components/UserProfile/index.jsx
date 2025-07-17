@@ -52,15 +52,15 @@ const UserProfile = ({ profile }) => {
                   <SkillsList skills={profile.skills} isDarkMode={isDarkMode} profile={profile} />
                 ) : (
                   <div className="w-full flex flex-col items-center justify-center py-8">
-                    <p className="text-lg text-gray-500 dark:text-gray-400 font-semibold">
-                      No skills to display yet.
+                    <p className="text-md text-gray-500 dark:text-gray-400 italic">
+                      {profile.name} has no endorsed skills yet.
                     </p>
                   </div>
                 )}
                 <SkillForm profileId={profile._id} teamMate={profile.name} />
               </div>
             ) : (
-              <PostsList profileId={profile._id} isDarkMode={isDarkMode} />
+              <PostsList profileId={profile._id} isDarkMode={isDarkMode} profile={profile} />
             )}
           </div>
         </div>

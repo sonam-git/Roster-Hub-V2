@@ -249,7 +249,7 @@ export default function GameDetails({ gameId }) {
   // Modern responsive button style
   const actionButtonClass =
     "px-5 py-2 rounded-full font-bold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm mx-1 mb-2 " +
-    "bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white hover:from-blue-600 hover:to-blue-800 active:scale-95 dark:from-blue-700 dark:via-blue-800 dark:to-blue-900 dark:text-white";
+    "bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-900 active:scale-95 dark:from-gray-500 dark:via-gray-600 dark:to-gray-900 dark:text-white dark:hover:from-gray-600 dark:hover:to-gray-900  ";
 
   return (
     <div

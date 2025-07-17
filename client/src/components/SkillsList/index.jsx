@@ -194,8 +194,8 @@ const SkillsList = ({
                 <span className="text-xs text-gray-800 dark:text-yellow-300 italic">
                   {isRecipientLoggedInUser ? (
                     <strong>you</strong>
-                  ) : skill.recipient?.name && skill.recipient?.name ===
-                    skill.skillAuthor ? (
+                  ) : skill.recipient?.name &&
+                    skill.recipient?.name === skill.skillAuthor ? (
                     <strong>himself</strong>
                   ) : skill.recipient?.name ? (
                     <strong>{skill.recipient.name}</strong>
