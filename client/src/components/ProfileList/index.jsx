@@ -25,6 +25,8 @@ const ProfileList = ({ profiles, title }) => {
   const handleModalClose = () => {
     setSelectedUser(null); // Reset selectedUser state when modal is closed
     setShowModal(false);
+    // Redirect to /message after sending a message
+    window.location.href = '/message';
   };
 
   const handleRatingClick = (profile) => {

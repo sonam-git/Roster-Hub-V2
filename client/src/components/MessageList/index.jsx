@@ -6,6 +6,7 @@ import { MailIcon, PlusIcon } from "@heroicons/react/solid";
 import MessageBox from "../MessageBox";
 import UserListModal from "../UserListModal";
 import MessageCard from "../MessageCard";
+import DeleteMessageModal from "../DeleteMessageModal";
 import { getDateFromObjectId } from "../../utils/MessageUtils";
 
 const MessageList = ({ isLoggedInUser = false, isDarkMode }) => {
@@ -48,10 +49,13 @@ const MessageList = ({ isLoggedInUser = false, isDarkMode }) => {
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [showUserListModal, setShowUserListModal] = useState(false);
   const [page, setPage] = useState(0);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteMessageId, setDeleteMessageId] = useState(null);
 
-  const handleSendMessage = async (recipientId) => {
-    const text = inputValues[recipientId];
-    if (!text?.trim()) return;
+
+const handleSendMessage = async (recipientId) => {
+    const text = inputValues?.[recipientId] ?? "";
+    if (!text.trim()) return;
 
     try {
       await sendMessage({
@@ -61,6 +65,33 @@ const MessageList = ({ isLoggedInUser = false, isDarkMode }) => {
       setInputValues((prev) => ({ ...prev, [recipientId]: "" }));
     } catch (err) {
       console.error("Error sending message", err);
+    }
+  };
+
+  const handleDeleteMessage = (msgId) => {
+    setDeleteMessageId(msgId);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteMessage = async () => {
+    if (deleteMessageId) {
+      await removeMessage({ variables: { messageId: deleteMessageId }, refetchQueries: [{ query: QUERY_ME }] });
+    }
+    setShowDeleteModal(false);
+    setDeleteMessageId(null);
+  };
+
+  const cancelDeleteMessage = () => {
+    setShowDeleteModal(false);
+    setDeleteMessageId(null);
+  };
+
+  const handleDeleteConversation = async (userId) => {
+    if (!userId) return;
+    try {
+      await deleteConversation({ variables: { userId } });
+    } catch (err) {
+      console.error("Error deleting conversation", err);
     }
   };
 
@@ -98,15 +129,9 @@ const MessageList = ({ isLoggedInUser = false, isDarkMode }) => {
             conv={conv}
             loggedInUser={loggedInUser}
             isLoggedInUser={isLoggedInUser}
-            inputValue={inputValues[conv.user._id] || ""}
-            onInputChange={(userId, value) =>
-              setInputValues((prev) => ({ ...prev, [userId]: value }))
-            }
             onSend={handleSendMessage}
-            onDelete={(id) => removeMessage({ variables: { messageId: id } })}
-            onDeleteConversation={(userId) =>
-              deleteConversation({ variables: { userId } })
-            }  // bulk-convo delete
+            onDelete={handleDeleteMessage}
+            onDeleteConversation={() => handleDeleteConversation(conv.user._id)}
             onReply={(user, msg) => {
               setSelectedRecipient(user);
               setSelectedMessage(msg);
@@ -155,9 +180,17 @@ const MessageList = ({ isLoggedInUser = false, isDarkMode }) => {
             setSelectedMessage(null);
           }}
           isDarkMode={isDarkMode}
+          inputValue={inputValues[selectedRecipient?._id] || ""}
+          setInputValue={(val) => setInputValues((prev) => ({ ...prev, [selectedRecipient._id]: val }))}
+          onSendMessage={() => handleSendMessage(selectedRecipient._id)}
         />
       )}
-      
+
+      <DeleteMessageModal
+        show={showDeleteModal}
+        onConfirm={confirmDeleteMessage}
+        onCancel={cancelDeleteMessage}
+      />
     </>
   );
 };

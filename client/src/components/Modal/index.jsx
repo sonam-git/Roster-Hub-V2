@@ -1,4 +1,3 @@
-import React from "react";
 import "../../assets/css/chatModal.css";
 
 const Modal = ({ showModal, children, onClose }) => {

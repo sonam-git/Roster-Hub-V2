@@ -22,7 +22,8 @@ const MessageInput = ({ userId, value, onChange, onSend }) => {
   }, []);
 
   const handleSend = () => {
-    if (value.trim() === "") {
+    const safeValue = value ?? "";
+    if (safeValue.trim() === "") {
       setError(true);
       clearTimeout(timerRef.current);
       // hide error after 3s
