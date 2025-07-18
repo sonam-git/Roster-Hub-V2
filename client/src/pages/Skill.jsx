@@ -51,7 +51,7 @@ const Skill = ({ isDarkMode }) => {
             </h1>
             <p className="text-center text-base font-medium mb-2">
               {profileId ? `${profile.name}'s` : "Your"} friends have
-              endorsed{" "}
+              endorsed you{" "}  
               <span className="font-bold text-blue-500">
                 {filteredSkills.length || 0}
               </span>{" "}

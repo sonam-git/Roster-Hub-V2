@@ -9,6 +9,7 @@ import RatingDisplay from "../components/RatingDisplay";
 import RecentSkillsList from "../components/RecentSkillsList";
 import { FaFutbol, FaRegListAlt, FaStar, FaCalendarAlt } from "react-icons/fa";
 
+
 const Home = ({ isDarkMode }) => {
   // Check login
   const isLoggedIn = Auth.loggedIn();
@@ -18,6 +19,9 @@ const Home = ({ isDarkMode }) => {
     skip: !isLoggedIn,
   });
   const profile = data?.me || {};
+
+ 
+ 
 
   // Loading / error states
   if (loading) {
@@ -36,15 +40,15 @@ const Home = ({ isDarkMode }) => {
       {isLoggedIn ? (
         <div className="flex flex-col items-center w-full">
           {/* Hero banner for logged-in users */}
-          <div className="w-full flex flex-col items-center justify-center px-2 sm:px-4 mb-8 mt-4 bg-gradient-to-r from-green-400 via-blue-400 to-green-600 dark:from-green-900 dark:via-blue-900 dark:to-green-800 shadow-2xl border-2 border-white/60 dark:border-blue-900/60 relative overflow-hidden animate-gradient-x" style={{ borderBottomLeftRadius: '2.5rem', borderBottomRightRadius: '2.5rem' }}>
+          <div className="w-full flex flex-col items-center justify-center px-2 sm:px-4 mb-8 mt-4 bg-gradient-to-r from-blue-900 via-gray-800 to-gray-900 dark:from-blue-950 dark:via-gray-900 dark:to-gray-800 shadow-2xl border-2 border-white/60 dark:border-blue-900/60 relative overflow-hidden animate-gradient-x" style={{ borderBottomLeftRadius: '2.5rem', borderBottomRightRadius: '2.5rem' }}>
             {/* Decorative SVG wave at the bottom */}
             <svg className="absolute bottom-0 left-0 w-full h-16" viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ zIndex: 1 }}>
               <path fill="url(#waveGradient)" fillOpacity="1" d="M0,40 C360,120 1080,0 1440,80 L1440,80 L0,80 Z" />
               <defs>
                 <linearGradient id="waveGradient" x1="0" y1="0" x2="1440" y2="0" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#4ade80" />
-                  <stop offset="0.5" stopColor="#60a5fa" />
-                  <stop offset="1" stopColor="#22c55e" />
+                  <stop stopColor="#1e3a8a" />
+                  <stop offset="0.5" stopColor="#334155" />
+                  <stop offset="1" stopColor="#0f172a" />
                 </linearGradient>
               </defs>
             </svg>
@@ -52,36 +56,8 @@ const Home = ({ isDarkMode }) => {
               <FaFutbol className="animate-bounce text-yellow-200" />
             </div>
             <h1 className="text-xl xs:text-2xl sm:text-3xl md:text-5xl font-extrabold text-white drop-shadow-2xl mb-2 text-center break-words w-full tracking-tight py-4 flex flex-wrap items-center justify-center gap-2 sm:gap-4 z-10">
-              {profile.name ? (
-                (() => {
-                  // Check if user is new (created within last 5 minutes)
-                  const createdAt = profile.createdAt ? new Date(profile.createdAt) : null;
-                  const now = new Date();
-                  const isNewUser = createdAt && ((now - createdAt) < 5 * 60 * 1000);
-                  if (isNewUser) {
-                    return (
-                      <>
-                        Welcome{" "}
-                        <span className="text-yellow-200 animate-pulse break-words max-w-[10rem] xs:max-w-[12rem] sm:max-w-none">
-                          {profile.name}
-                        </span>{" "}
-                        to the Roster Hub!
-                      </>
-                    );
-                  } else {
-                    return (
-                      <>
-                        Welcome back,{" "}
-                        <span className="text-yellow-200 animate-pulse break-words max-w-[10rem] xs:max-w-[12rem] sm:max-w-none">
-                          {profile.name}
-                        </span>
-                        !
-                      </>
-                    );
-                  }
-                })()
-              ) : (
-                <>Welcome!</>
+              {profile.name && (
+                <>Welcome <span className="text-yellow-200 animate-pulse break-words max-w-[10rem] xs:max-w-[12rem] sm:max-w-none">{profile.name}</span>!</>
               )}
             </h1>
             <p className="text-base xs:text-lg sm:text-xl pb-4 md:text-2xl text-white/90 font-semibold text-center w-full break-words italic z-10">

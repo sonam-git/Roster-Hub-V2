@@ -140,7 +140,7 @@ const Header = ({ open, setOpen }) => {
             border-color: ${isDarkMode ? '#facc15' : '#2563eb'} !important;
           }
           .sidebar-menu-item.active-light {
-            border-color: #000 !important;
+            border-color: #8B0000 !important;
             background: #f3f4f6 !important; /* Tailwind gray-100 for subtle highlight */
           }
           .sidebar-menu-title {
@@ -153,7 +153,7 @@ const Header = ({ open, setOpen }) => {
 
         <ul className="pt-6 mt-8">
           <li
-            className="flex rounded-md p-2 cursor-pointer items-center gap-x-4 mt-2 bg-gradient-to-r from-green-400 via-blue-400 to-yellow-300 dark:from-green-900 dark:via-blue-900 dark:to-yellow-700 text-green-900 dark:text-yellow-200 font-bold shadow-md hover:shadow-lg transition-all duration-200 border border-green-200 dark:border-green-800 "
+            className="flex rounded-md p-2 cursor-pointer items-center gap-x-4 mt-2 bg-gradient-to-r from-green-200 via-blue-200 to-yellow-200 dark:from-green-900 dark:via-blue-900 dark:to-yellow-700 text-green-900 dark:text-yellow-200 font-bold shadow-md hover:shadow-lg transition-all duration-200 border border-green-200 dark:border-green-800 "
             onClick={toggleDarkMode}
           >
             <button className="flex items-center w-full no-underline">
@@ -176,7 +176,10 @@ const Header = ({ open, setOpen }) => {
             <li
               key={index}
               className={`sidebar-menu-item flex rounded-md p-2 cursor-pointer items-center gap-x-4 mt-2
-                bg-gradient-to-r from-green-400 via-blue-400 to-yellow-300 dark:from-green-900 dark:via-blue-900 dark:to-yellow-700 text-green-900 dark:text-yellow-200 font-bold shadow-md hover:shadow-lg transition-all duration-200 border border-green-200 dark:border-blue-800
+                ${Menu.title === "Logout"
+                  ? "bg-gradient-to-r from-blue-600 via-blue-400 to-red-500 text-white border-blue-700 dark:from-blue-900 dark:via-blue-700 dark:to-red-700 dark:text-white font-bold shadow-lg hover:shadow-xl hover:from-red-600 hover:to-blue-700 hover:via-blue-500 border-2 dark:border-red-800"
+                  : "bg-gradient-to-r from-green-100 via-blue-100 to-yellow-100 border-blue-700 dark:from-green-900 dark:via-blue-900 dark:to-yellow-700 text-green-900 dark:text-yellow-200 font-bold shadow-md hover:shadow-lg transition-all duration-200 border  dark:border-blue-800"
+                }
                 ${location.pathname === Menu.path ? (isDarkMode ? "ring-2 ring-yellow-400 dark:ring-yellow-300" : "active-light") : ""}
                 hover:border-blue-500 dark:hover:border-yellow-400
               `}
