@@ -103,7 +103,7 @@ const handleSendMessage = async (recipientId) => {
       <div className="text-center py-8">
         <h1 className="text-xl font-bold dark:text-white mb-2">Message Box</h1>
         <div className="flex justify-center items-center space-x-2">
-          <MailIcon className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+          <MailIcon className="h-6 w-6 text-white dark:text-gray-300" />
           <span className="font-bold dark:text-white">
             {loggedInUser.receivedMessages?.length || 0}
           </span>
@@ -111,7 +111,7 @@ const handleSendMessage = async (recipientId) => {
             <button
               onClick={() => setShowUserListModal(true)}
               className={`ml-4 flex items-center px-3 py-1 rounded-md ${
-                isDarkMode ? "bg-gray-700 text-white hover:bg-gray-500" : "bg-gray-200 text-black hover:bg-indigo-500 "
+                isDarkMode ? "bg-gray-700 text-white hover:bg-gray-500" : "bg-gray-200 text-gray-800 hover:bg-blue-500 hover:text-gray-100"
               }  hover:text-white transition`}
             >
               <PlusIcon className="h-5 w-5 mr-1" />

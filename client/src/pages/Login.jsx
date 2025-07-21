@@ -23,6 +23,14 @@ const Login = () => {
   // State to track form submission status
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Auto-dismiss error after 3 seconds
+  React.useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormState((prev) => ({ ...prev, [name]: value }));
@@ -98,6 +106,15 @@ const Login = () => {
             <h4 className="text-center text-3xl font-extrabold text-gray-900 dark:text-white mb-6 tracking-tight drop-shadow">
               Login
             </h4>
+            {/* Error Alert - show under Login title */}
+            {error && (
+              <div className="w-full flex justify-center mb-4">
+                <div className="bg-gradient-to-r from-red-200 via-red-100 to-red-300 dark:from-red-900 dark:via-red-800 dark:to-red-700 border-l-4 border-red-500 text-red-900 dark:text-red-200 px-4 py-3 rounded-lg shadow font-semibold text-sm flex items-center gap-2 animate-shake">
+                  <svg className="w-5 h-5 text-red-500 dark:text-red-300 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" /></svg>
+                  <span>{error.message}</span>
+                </div>
+              </div>
+            )}
             <form onSubmit={handleFormSubmit} className="space-y-6 w-full max-w-md">
               {/* Email */}
               <div>
@@ -182,16 +199,6 @@ const Login = () => {
               </p>
             )}
           </div>
-
-          {/* Error Alert */}
-          {error && (
-            <div
-              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-              role="alert"
-            >
-              <span className="block sm:inline">{error.message}</span>
-            </div>
-          )}
         </div>
       </div>
     </main>

@@ -336,13 +336,13 @@ const resolvers = {
       const profile = await Profile.findOne({ email });
 
       if (!profile) {
-        throw new AuthenticationError("No profile with this email found!");
+        throw new AuthenticationError("No profile with this email and password found!");
       }
 
       const correctPw = await profile.isCorrectPassword(password);
 
       if (!correctPw) {
-        throw new AuthenticationError("Incorrect password!");
+        throw new AuthenticationError("Incorrect email or password!");
       }
 
       const token = signToken(profile);
@@ -1658,6 +1658,8 @@ const resolvers = {
       return populatedSkill;
     },
   },
+  
+   // ############  SUBSCRIPTION  ############ //
   Subscription: {
     // chat related subscription
     chatCreated: {
@@ -1863,6 +1865,7 @@ const resolvers = {
     },
     // ...other field resolvers if needed...
   },
+   // ############  Type‐level resolvers for Skill ############ //
   Skill: {
     reactions: async (parent) => {
       // parent is the Skill document
@@ -1873,6 +1876,7 @@ const resolvers = {
       });
     },
   },
+   // ############  Type‐level resolvers for SkillReaction ############ //
   SkillReaction: {
     user: async (parent) => {
       // parent.user is the Profile object or ID

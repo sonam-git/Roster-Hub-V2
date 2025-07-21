@@ -1,4 +1,4 @@
-import  { useState, useContext, useTransition } from "react";
+import { useEffect, useState, useContext, useTransition } from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { ThemeContext } from "../components/ThemeContext";
@@ -14,8 +14,10 @@ const Signup = () => {
     email: "",
     password: "",
   });
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const [addProfile, { error, data }] = useMutation(ADD_PROFILE);
+  const [addProfile, { data }] = useMutation(ADD_PROFILE);
   const [isPending, startTransition] = useTransition();
 
   const handleChange = (event) => {
@@ -35,10 +37,18 @@ const Signup = () => {
         });
         Auth.login(data.addProfile.token);
       } catch (e) {
-        console.error(e);
+        setErrorMessage(e.message || "Signup failed. Please try again.");
+        setShowError(true);
       }
     });
   };
+
+  useEffect(() => {
+    if (showError) {
+      const timer = setTimeout(() => setShowError(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showError]);
 
   return (
     <main className="flex items-center justify-center px-4 py-12">
@@ -66,6 +76,14 @@ const Signup = () => {
             <h4 className="text-center text-3xl font-extrabold text-gray-900 dark:text-white mb-6 tracking-tight drop-shadow">
               Sign Up
             </h4>
+            {showError && (
+              <div
+                className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 w-full max-w-md mx-auto animate-fade-in"
+                role="alert"
+              >
+                <span className="block sm:inline">{errorMessage}</span>
+              </div>
+            )}
             {data ? (
               <p className="text-center text-gray-900 dark:text-white">
                 Success! You may now head{" "}
@@ -147,14 +165,6 @@ const Signup = () => {
               </form>
             )}
           </div>
-          {error && (
-            <div
-              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-2 w-full max-w-md"
-              role="alert"
-            >
-              <span className="block sm:inline">{error.message}</span>
-            </div>
-          )}
         </div>
       </div>
     </main>

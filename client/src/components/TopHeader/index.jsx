@@ -28,18 +28,18 @@ export default function TopHeader({ className, onToggleMenu, open }) {
     <div className={`w-full flex flex-col sm:flex-row items-center justify-between bg-gray-200 dark:bg-gray-800 py-2 shadow-md sticky top-0 lg:z-[60] px-4 ${typeof className !== 'undefined' ? className : ''}`}>
       {/* Left: Username and soccer icon (only if logged in) */}
       <div className={`hidden sm:flex items-center space-x-2 mb-2 sm:mb-0 w-full sm:w-auto justify-center${isLoggedIn ? '' : ' invisible'}`}>
-        <FontAwesomeIcon icon={faPersonRunning} className="ml-2 text-green-500 text-2xl" />
+        <FontAwesomeIcon icon={faPersonRunning} className="ml-2 text-blue-800 dark:text-gray-200 text-2xl" />
         <span className="font-extrabold text-2xl italic tracking-wide text-gray-800 dark:text-white drop-shadow-md flex items-center gap-2" style={{ fontFamily: 'cursive, sans-serif' }}>
           {username}
         </span>
       </div>
       {/* Center: Menu buttons or promo text */}
-      <div className={`flex flex-row pt-4 flex-wrap sm:flex-nowrap items-center justify-center flex-1 w-full sm:w-auto gap-y-2`}> 
+      <div className={`flex flex-row  flex-wrap sm:flex-nowrap items-center justify-center flex-1 w-full sm:w-auto gap-y-2`}> 
         {isLoggedIn ? (
           BUTTONS.map(btn => (
             <button
               key={btn.key}
-              className={`dark:text-gray-900 mx-2 px-4 py-1 rounded-full font-semibold transition-colors text-sm flex items-center gap-2 mb-2 sm:mb-0 ${location.pathname === btn.path.split('#')[0] ? "bg-blue-600 text-white" : "bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-blue-200 dark:hover:bg-blue-800 hover:bg-opacity-90 dark:hover:bg-opacity-90"}`}
+              className={`dark:text-gray-900 mx-2 px-4 py-1 rounded-full font-semibold transition-colors text-sm flex items-center gap-2  sm:mb-0 ${location.pathname === btn.path.split('#')[0] ? "bg-blue-600 text-white" : "bg-gray-100 dark:bg-gray-500 text-gray-800 dark:text-white  hover:bg-gray-300 dark:hover:bg-blue-800 hover:bg-opacity-90 dark:hover:bg-opacity-90"}`}
               onClick={() => {
                 if (btn.key === "creategame") {
                   navigate("/game-schedule", { state: { scrollTo: "gameform" } });
@@ -56,7 +56,7 @@ export default function TopHeader({ className, onToggleMenu, open }) {
           <div className="w-full flex items-center justify-center overflow-hidden">
             <span className="animate-marquee whitespace-nowrap text-lg sm:text-xl md:text-2xl font-extrabold tracking-wide px-4 sm:px-6 py-2 sm:py-3 rounded-2xl bg-blue-50 dark:bg-gray-700 shadow-lg flex items-center gap-2 sm:gap-4" style={{ fontFamily: 'cursive, sans-serif', letterSpacing: '0.04em' }}>
               <FontAwesomeIcon icon={faPersonRunning} className="text-green-500 text-xl sm:text-2xl md:text-3xl drop-shadow-lg" />
-              <span className="text-blue-700 dark:text-blue-200" style={{ fontFamily: 'cursive, sans-serif', fontWeight: 900, fontSize: '1.2rem', textShadow: '0 2px 8px #60a5fa' }}>
+              <span className="text-blue-700 dark:text-blue-200 " style={{ fontFamily: 'cursive, sans-serif', fontWeight: 900, fontSize: '1.2rem', textShadow: '0 2px 8px #60a5fa' }}>
                 Roster Hub
               </span>
               <span className="text-gray-800 dark:text-gray-200 font-bold text-base sm:text-lg md:text-xl" style={{ fontFamily: 'serif' }}>
