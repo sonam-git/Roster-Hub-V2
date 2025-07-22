@@ -178,7 +178,7 @@ const MyProfile = () => {
       {selectedSocialMedia && (
         <div className="fixed inset-0 flex items-center justify-center z-10">
           <div className="absolute inset-0 bg-black opacity-50" />
-          <div className="relative bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md">
+          <div className="relative bg-gray-100 dark:bg-gray-500 dark:text-white p-6 rounded-lg shadow-lg w-11/12 max-w-md">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center">
                 <h4 className="text-lg font-semibold">
@@ -223,13 +223,13 @@ const MyProfile = () => {
               )}
               <div className="flex justify-end space-x-2">
                 <button
-                  className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-800"
+                  className="px-4 py-2 bg-indigo-600 text-white dark:bg-gray-600 rounded hover:bg-indigo-800 hover:dark:bg-gray-900"
                   onClick={saveLink}
                 >
                   Save
                 </button>
                 <button
-                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-800 hover:text-white "
                   onClick={() => {
                     setSelectedSocialMedia(null);
                     setSocialMediaLink("");

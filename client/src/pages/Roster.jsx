@@ -7,6 +7,7 @@ import Auth from '../utils/auth';
 const Roster = () => {
   const { loading, data } = useQuery(QUERY_PROFILES);
   const profiles = data?.profiles || [];
+    const year = new Date().getFullYear();
 
 
   // Check if the user is logged in
@@ -22,7 +23,7 @@ const Roster = () => {
         <div className="col-12 ">
           {/* Conditional rendering based on authentication status */}
           {isLoggedIn && (
-            <ProfileList profiles={profiles} title="The current roster" />
+            <ProfileList profiles={profiles} title={`The ${year} roster`} />
           )}
         </div>
       </div>

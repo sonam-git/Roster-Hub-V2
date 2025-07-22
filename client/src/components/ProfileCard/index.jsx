@@ -67,18 +67,21 @@ const ProfileCard = ({ profile, isDarkMode }) => {
 
         {/* Name / Position / Jersey / Stars */}
         <div className="py-10 px-6 grid grid-cols-1 gap-6">
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center"> 
             <h3 className={`font-extrabold text-2xl tracking-tight mb-1 ${isDarkMode ? "text-white" : "text-blue-900"}`}>{profile.name[0].toUpperCase() + profile.name.slice(1)}</h3>
-            <div className="flex items-center space-x-4 p-4 shadow-lg rounded-md dark:bg-gray-800 bg-blue-100">
-              <p className={`font-semibold flex items-center text-sm text-blue-700 dark:text-blue-200`}>
-                <FaUser className="mr-2 text-xl inline mb-1" />
-                {profile.position}
-              </p>
-              <p className={`font-semibold flex items-center text-sm text-green-700 dark:text-green-200`}>
-                <RiTShirt2Line className="mr-2 text-2xl inline" />
-                {profile.jerseyNumber}
-              </p>
-            </div>
+
+            {(profile.position && profile.jerseyNumber) ? (
+              <div className="flex items-center space-x-4 p-4 shadow-lg rounded-md dark:bg-gray-800 bg-blue-100">
+                <p className={`font-semibold flex items-center text-sm text-blue-700 dark:text-blue-200`}>
+                  <FaUser className="mr-2 text-xl inline mb-1" />
+                  {profile.position}
+                </p>
+                <p className={`font-semibold flex items-center text-sm text-green-700 dark:text-green-200`}>
+                  <RiTShirt2Line className="mr-2 text-2xl inline" />
+                  {profile.jerseyNumber}
+                </p>
+              </div>
+            ) : null}
             <div className="mb-2">{renderStars(profile.averageRating)}</div>
           </div>
 

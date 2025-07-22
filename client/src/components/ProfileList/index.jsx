@@ -1,8 +1,9 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import MessageBox from '../MessageBox';
-import { AiOutlineMessage, AiFillStar } from 'react-icons/ai'; // Import the chat and star icons
-import { RiProfileLine, RiTShirt2Line } from 'react-icons/ri';
+import { AiOutlineMessage, AiFillStar } from 'react-icons/ai'; 
+import {  RiProfileLine, RiTShirt2Line} from 'react-icons/ri';
+import { FaUser } from 'react-icons/fa';
 import Auth from '../../utils/auth';
 import ProfileAvatar from '../../assets/images/profile-avatar.png';
 import { ThemeContext } from '../ThemeContext';
@@ -45,7 +46,7 @@ const ProfileList = ({ profiles, title }) => {
   const loggedInUserId = Auth.loggedIn() && Auth.getProfile().data._id;
 
   // Filter out the logged-in user from the profiles list
-  const filteredProfiles = profiles.filter((profile) => profile._id !== loggedInUserId);
+  const filteredProfiles = profiles?.filter((profile) => profile._id !== loggedInUserId);
 
   // Calculate the total number of pages
   const totalPages = Math.ceil(filteredProfiles.length / profilesPerPage);
@@ -62,7 +63,7 @@ const ProfileList = ({ profiles, title }) => {
     <div>
       <h3 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center text-blue-700 dark:text-blue-200 mb-6 tracking-tight drop-shadow-lg mt-5">{title}</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 my-6">
-        {currentProfiles.map((profile) => (
+        {currentProfiles?.map((profile) => (
           <div
             key={profile._id}
             className={`rounded-2xl shadow-2xl border border-blue-100 dark:border-gray-700 p-6 bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 transition-transform duration-200 hover:scale-[1.02] ${isDarkMode ? 'text-white' : 'text-black'}`}
@@ -73,22 +74,30 @@ const ProfileList = ({ profiles, title }) => {
                 <div className="flex items-center mb-1">
                   <h4 className="text-lg md:text-xl lg:text-2xl xl:text-2xl font-bold tracking-tight drop-shadow">{profile.name}</h4>
                 </div>
-                <p className="font-bold flex items-center gap-2">
-                  <RiTShirt2Line className="text-xl" /> {profile.jerseyNumber}
-                </p>
-                {/* Display star rating below jersey number */}
-                <div className="mt-2">
-                  {renderStars(profile.averageRating)}
-                  <p className="text-sm font-bold">{profile.averageRating.toFixed(1)} / 5</p>
-                </div>
+                {profile?.position && profile?.jerseyNumber ? (
+                  <div className="flex  items-center mt-4">
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 shadow border border-blue-200 dark:border-gray-600">
+                      <RiTShirt2Line className="text-xl text-green-700 dark:text-green-300" />
+                      <span className="font-bold text-lg text-blue-900 dark:text-blue-200">#{profile.jerseyNumber}</span>
+                      <FaUser className="text-xl text-blue-700 dark:text-blue-200 ml-4" />
+                      <span className="font-semibold text-base text-gray-900 dark:text-white">{profile.position}</span>
+                    </div>
+                  </div>
+                ) : null}
               </div>
               {/* Column 2: Image */}
               <div className="flex justify-end items-center">
-                <img
-                  src={profile?.profilePic || ProfileAvatar}
-                  alt="Profile"
-                  className="rounded-full w-24 h-24 sm:w-20 sm:h-20 md:w-16 md:h-16 lg:w-24 lg:h-24 border-4 border-blue-200 dark:border-gray-700 shadow-lg"
-                />
+                <div className="flex flex-col items-center">
+                  <img
+                    src={profile?.profilePic || ProfileAvatar}
+                    alt="Profile"
+                    className="rounded-full w-24 h-24 sm:w-20 sm:h-20 md:w-16 md:h-16 lg:w-24 lg:h-24 border-4 border-blue-200 dark:border-gray-700 shadow-lg"
+                  />
+                  {/* Display star rating and value under profile pic */}
+                  <div className="mt-2 text-sm font-bold">
+                    {renderStars(profile.averageRating)}
+                  </div>
+                </div>
               </div>
             </div>
             {/* Icons */}
