@@ -74,13 +74,15 @@ const ProfileList = ({ profiles, title }) => {
                 <div className="flex items-center mb-1">
                   <h4 className="text-lg md:text-xl lg:text-2xl xl:text-2xl font-bold tracking-tight drop-shadow">{profile.name}</h4>
                 </div>
-                {profile?.position && profile?.jerseyNumber ? (
-                  <div className="flex  items-center mt-4">
-                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 shadow border border-blue-200 dark:border-gray-600">
+                {profile.position && profile.jerseyNumber ? (
+                  <div className="mt-2">
+                    <div className="font-bold flex items-center gap-2">
                       <RiTShirt2Line className="text-xl text-green-700 dark:text-green-300" />
-                      <span className="font-bold text-lg text-blue-900 dark:text-blue-200">#{profile.jerseyNumber}</span>
-                      <FaUser className="text-xl text-blue-700 dark:text-blue-200 ml-4" />
-                      <span className="font-semibold text-base text-gray-900 dark:text-white">{profile.position}</span>
+                      <span className="text-lg text-blue-900 dark:text-blue-200">#{profile.jerseyNumber}</span>
+                    </div>
+                    <div className="font-bold flex items-center gap-2 mt-1">
+                      <FaUser className="text-xl text-blue-700 dark:text-blue-200" />
+                      <span className="text-base text-gray-900 dark:text-white">{profile.position}</span>
                     </div>
                   </div>
                 ) : null}
