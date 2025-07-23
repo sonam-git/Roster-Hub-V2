@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import Hero from "../components/Hero";
 import { QUERY_ME } from "../utils/queries";
@@ -20,8 +21,7 @@ const Home = ({ isDarkMode }) => {
   });
   const profile = data?.me || {};
 
- 
- 
+  const [activeSection, setActiveSection] = useState("newpost");
 
   // Loading / error states
   if (loading) {
@@ -36,94 +36,113 @@ const Home = ({ isDarkMode }) => {
   }
 
   return (
-    <main className="container mx-auto px-2 sm:px-4 w-full max-w-full">
+    <main className=" container mx-auto w-full px-2 sm:px-8 xl:max-w-7xl xl:px-16">
       {isLoggedIn ? (
-        <div className="flex flex-col items-center w-full">
-          {/* Hero banner for logged-in users */}
-          <div className="w-full flex flex-col items-center justify-center px-2 sm:px-4 mb-8 mt-4 bg-gradient-to-r from-blue-900 via-gray-800 to-gray-900 dark:from-blue-950 dark:via-gray-900 dark:to-gray-800 shadow-2xl border-2 border-white/60 dark:border-blue-900/60 relative overflow-hidden animate-gradient-x" style={{ borderBottomLeftRadius: '2.5rem', borderBottomRightRadius: '2.5rem' }}>
-            {/* Decorative SVG wave at the bottom */}
-            <svg className="absolute bottom-0 left-0 w-full h-16" viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ zIndex: 1 }}>
-              <path fill="url(#waveGradient)" fillOpacity="1" d="M0,40 C360,120 1080,0 1440,80 L1440,80 L0,80 Z" />
-              <defs>
-                <linearGradient id="waveGradient" x1="0" y1="0" x2="1440" y2="0" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#1e3a8a" />
-                  <stop offset="0.5" stopColor="#334155" />
-                  <stop offset="1" stopColor="#0f172a" />
-                </linearGradient>
-              </defs>
-            </svg>
-            <div className="absolute left-2 sm:left-4 bottom-4 opacity-20 text-5xl sm:text-6xl pointer-events-none select-none z-10">
-              <FaFutbol className="animate-bounce text-yellow-200" />
+        <>
+          {/* Welcome & Hero Section */}
+          <section className="w-full flex flex-col items-center justify-center mt-8 mb-6">
+            <div className="w-full bg-gradient-to-br from-blue-900 via-blue-700 to-blue-900 dark:from-blue-950 dark:via-gray-900 dark:to-gray-800 rounded-3xl shadow-2xl border-2 border-white/60 dark:border-blue-900/60 p-6 relative overflow-hidden animate-gradient-x">
+              <div className="flex items-center justify-between w-full mb-2">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white drop-shadow-2xl text-center w-full tracking-tight py-2 flex flex-wrap items-center justify-center gap-2">
+                  {profile.name ? (
+                    <>Welcome, <span className="text-yellow-200 animate-pulse">{profile.name}</span>!</>
+                  ) : (
+                    <>Welcome!</>
+                  )}
+                </h1>
+                <FaFutbol className="text-yellow-200 text-4xl animate-bounce ml-2" />
+              </div>
+              <p className="text-base sm:text-lg md:text-xl text-white/90 font-semibold text-center w-full break-words italic mb-2">
+                Your soccer dashboard: connect, play, and win together!
+              </p>
             </div>
-            <h1 className="text-xl xs:text-2xl sm:text-3xl md:text-5xl font-extrabold text-white drop-shadow-2xl mb-2 text-center break-words w-full tracking-tight py-4 flex flex-wrap items-center justify-center gap-2 sm:gap-4 z-10">
-              {profile.name && (
-                <>Welcome <span className="text-yellow-200 animate-pulse break-words max-w-[10rem] xs:max-w-[12rem] sm:max-w-none">{profile.name}</span>!</>
-              )}
-            </h1>
-            <p className="text-base xs:text-lg sm:text-xl pb-4 md:text-2xl text-white/90 font-semibold text-center w-full break-words italic z-10">
-              Let's play, connect, and win together!
-            </p>
-            <div className="absolute right-2 sm:right-4 bottom-4 opacity-20 text-5xl sm:text-6xl pointer-events-none select-none z-10">
-              <FaFutbol className="animate-bounce text-yellow-200" />
-            </div>
-          </div>
+          </section>
 
-          {/* PostForm + PostsList / RecentSkillsList + ComingGames */}
-          <div className="w-full flex flex-col lg:flex-row lg:space-x-6 px-0 sm:px-4">
-            {/* Left: PostForm + PostsList */}
-            <div className="flex-1 mb-4 lg:mb-0 space-y-6 md:mx-2 min-w-0">
-              <div className="bg-gradient-to-br from-blue-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 rounded-2xl shadow-xl p-2 xs:p-4 w-full overflow-x-auto border-2 border-blue-200 dark:border-gray-700 transition-all">
-                <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  <FaRegListAlt className="text-green-600 dark:text-green-300 text-xl" />
-                  <span className="font-bold text-base xs:text-lg dark:text-white sm:text-base xs:text-sm">
-                    Share a Thought
-                  </span>
-                </div>
-                <div className="w-full min-w-0">
+          {/* Quick Actions */}
+          <section className="w-full grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+            <button
+              className={`bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all ${activeSection === "newpost" ? "ring-4 ring-blue-300" : ""}`}
+              onClick={() => setActiveSection("newpost")}
+            >
+              <FaRegListAlt className="text-2xl mb-1" />
+              <span className="text-xs">New Post</span>
+            </button>
+            <button
+              className={`bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all ${activeSection === "topplayers" ? "ring-4 ring-green-300" : ""}`}
+              onClick={() => setActiveSection("topplayers")}
+            >
+              <FaStar className="text-2xl mb-1" />
+              <span className="text-xs">Top Players</span>
+            </button>
+            <button
+              className={`bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all ${activeSection === "upcominggames" ? "ring-4 ring-yellow-300" : ""}`}
+              onClick={() => setActiveSection("upcominggames")}
+            >
+              <FaCalendarAlt className="text-2xl mb-1" />
+              <span className="text-xs">Upcoming Games</span>
+            </button>
+            <button
+              className={`bg-gray-700 hover:bg-gray-800 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all ${activeSection === "recentskills" ? "ring-4 ring-gray-400" : ""}`}
+              onClick={() => setActiveSection("recentskills")}
+            >
+              <FaFutbol className="text-2xl mb-1" />
+              <span className="text-xs">Recent Skills</span>
+            </button>
+          </section>
+
+          {/* Main Content Sections - show only active section */}
+          <section className="w-full flex flex-col gap-8 mb-8">
+            {activeSection === "newpost" && (
+              <div className="w-full flex flex-col gap-4">
+                <div className="bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-xl p-4 border-2 border-blue-200 dark:border-gray-700">
+                  <div className="flex items-center gap-2 mb-2">
+                    <FaRegListAlt className="text-blue-600 dark:text-blue-300 text-xl" />
+                    <span className="font-bold text-lg dark:text-white">Share a Thought</span>
+                  </div>
                   <PostForm />
                 </div>
-              </div>
-              <div className="bg-gradient-to-br from-blue-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 rounded-2xl shadow-xl p-2 xs:p-4 w-full overflow-x-auto border-2 border-blue-200 dark:border-gray-700 transition-all">
-                <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  <FaRegListAlt className="text-blue-600 dark:text-blue-300 text-xl" />
-                  <span className="font-bold text-base xs:text-lg dark:text-white sm:text-base xs:text-sm">
-                    Recent Posts
-                  </span>
-                </div>
-                <div className="w-full min-w-0">
+                <div className="bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-xl p-4 border-2 border-blue-200 dark:border-gray-700">
+                  <div className="flex items-center gap-2 mb-2">
+                    <FaRegListAlt className="text-green-600 dark:text-green-300 text-xl" />
+                    <span className="font-bold text-lg dark:text-white">Recent Posts</span>
+                  </div>
                   <PostsList isDarkMode={isDarkMode} />
                 </div>
               </div>
-            </div>
-
-            {/* Right: RecentSkillsList + ComingGames - wider, no extra divs */}
-            <div className="w-full lg:w-2/5 space-y-8 mt-4 lg:mt-0 min-w-0">
-              <RecentSkillsList />
-              <div className="flex items-center gap-2 mb-2 flex-wrap mt-8 bg-gradient-to-br from-blue-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 rounded-2xl shadow-xl p-2 xs:p-4 w-full overflow-x-auto border-2 border-blue-200 dark:border-gray-700 transition-all">
-                <FaCalendarAlt className="text-blue-600 dark:text-blue-300 text-xl" />
-                <span className="font-bold text-base xs:text-lg dark:text-white">
-                  Game Schedule
-                </span>
+            )}
+            {activeSection === "topplayers" && (
+              <div className="w-full max-w-full bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-xl p-4 border-2 border-blue-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 mb-2">
+                  <FaStar className="text-yellow-500 dark:text-yellow-300 text-xl" />
+                  <span className="font-bold text-lg dark:text-white">Top Rated Players</span>
+                </div>
+                <div className="w-full overflow-x-auto">
+                  <RatingDisplay limit={10} />
+                </div>
               </div>
-              <div className="w-full min-w-0">
-                <ComingGames />
+            )}
+            {activeSection === "upcominggames" && (
+              <div className="w-full max-w-full bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-xl p-4 border-2 border-blue-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 mb-2">
+                  <FaCalendarAlt className="text-blue-600 dark:text-blue-300 text-xl" />
+                  <span className="font-bold text-lg dark:text-white">Upcoming Games</span>
+                </div>
+                <div className="w-full overflow-x-auto">
+                  <ComingGames />
+                </div>
               </div>
-            </div>
-          </div>
-
-          {/* Top Ratings */}
-          <div className="w-full mt-8 mb-8 rounded-xl shadow p-2 xs:p-6 overflow-x-auto">
-            <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <FaStar className="text-yellow-500 dark:text-yellow-300 text-xl" />
-              <span className="font-bold text-base xs:text-lg dark:text-white">
-                Top Rated Players
-              </span>
-            </div>
-            <div className="w-full min-w-0">
-              <RatingDisplay limit={10} />
-            </div>
-          </div>
-        </div>
+            )}
+            {activeSection === "recentskills" && (
+              <div className="bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-xl p-4 border-2 border-blue-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 mb-2">
+                  <FaFutbol className="text-yellow-500 dark:text-yellow-300 text-xl" />
+                  <span className="font-bold text-lg dark:text-white">Recent Skills</span>
+                </div>
+                <RecentSkillsList />
+              </div>
+            )}
+          </section>
+        </>
       ) : (
         <div className="w-full flex flex-col items-center justify-center min-h-[60vh]">
           <Hero />
