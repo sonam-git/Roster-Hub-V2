@@ -34,7 +34,8 @@ const Profile = () => {
     return <div className="text-center text-red-500 mt-4">Error: {error.message}</div>;
   }
 
-  if (!profile?.name) {
+  // Only show fallback if not loading and not error
+  if (!profile?.name && !loading && !error) {
     return (
       <div className="text-center mt-4">
         <h4>
