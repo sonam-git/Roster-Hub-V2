@@ -18,6 +18,9 @@ export default function RatingDisplay() {
     return <div className="text-center italic">No ratings yet.</div>;
   }
 
+  // Filter out profiles with missing _id or name
+  const validProfiles = profiles.filter((p) => p._id && p.name);
+
   // Group profiles by rounded rating
   const grouped = {
     5: [],
@@ -26,7 +29,7 @@ export default function RatingDisplay() {
     2: [],
     unrated: [],
   };
-  profiles.forEach((p) => {
+  validProfiles.forEach((p) => {
     const stars = Math.round(p.averageRating);
     if (stars >= 5) grouped[5].push(p);
     else if (stars === 4) grouped[4].push(p);
@@ -47,9 +50,14 @@ export default function RatingDisplay() {
     <div className="w-full overflow-x-auto">
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
         {columns.map((col) => (
-          <div key={col.label} className="bg-gray-100 dark:bg-gray-900 rounded-xl shadow p-4 border-2 border-blue-200 dark:border-gray-700 min-w-[180px]">
+          <div
+            key={col.label}
+            className="bg-gray-100 dark:bg-gray-900 rounded-xl shadow p-4 border-2 border-blue-200 dark:border-gray-700 min-w-[180px]"
+          >
             <div className="flex flex-col items-center mb-2">
-              <span className="font-bold text-base dark:text-white mb-1">{col.label}</span>
+              <span className="font-bold text-base dark:text-white mb-1">
+                {col.label}
+              </span>
               <div className="flex">
                 {Array.from({ length: 5 }).map((_, i) =>
                   i < col.stars ? (
@@ -64,20 +72,24 @@ export default function RatingDisplay() {
               {col.players.length === 0 ? (
                 <span className="italic text-gray-400">No players</span>
               ) : (
-                col.players.map((p) => (
-                  <Link
-                    key={p._id}
-                    to={`/profiles/${p._id}`}
-                    className="hover:text-blue-300 hover:no-underline flex flex-col items-center"
-                  >
-                    <img
-                      src={p.profilePic || ProfileAvatar}
-                      alt={p.name}
-                      className="w-12 h-12 rounded-full mb-1 border border-gray-300 dark:border-gray-700"
-                    />
-                    <span className="text-xs dark:text-white text-center break-words max-w-[80px]">{p.name}</span>
-                  </Link>
-                ))
+                col.players
+                  .filter((p) => p._id && p.name)
+                  .map((p) => (
+                    <Link
+                      key={p._id}
+                      to={`/profiles/${p._id}`}
+                      className="hover:text-blue-300 hover:no-underline flex flex-col items-center"
+                    >
+                      <img
+                        src={p.profilePic || ProfileAvatar}
+                        alt={p.name}
+                        className="w-12 h-12 rounded-full mb-1 border border-gray-300 dark:border-gray-700"
+                      />
+                      <span className="text-xs dark:text-white text-center break-words max-w-[80px]">
+                        {p.name}
+                      </span>
+                    </Link>
+                  ))
               )}
             </div>
           </div>

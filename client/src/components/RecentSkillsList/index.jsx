@@ -48,9 +48,14 @@ export default function RecentSkillsList() {
   // safely grab the array (or default to [])
   const skills = Array.isArray(data?.skills) ? data.skills : [];
 
+  // Filter out skills with missing author or text, and reactions with missing user
+  const validSkills = skills.filter(
+    (skill) => skill.skillAuthor && skill.skillText
+  );
+
   return (
     <div className="w-full mt-4">
-      {skills.length === 0 ? (
+      {validSkills.length === 0 ? (
         <div
           className={`rounded-2xl shadow-xl p-6 border-2 text-center bg-gradient-to-br ${
             isDarkMode
@@ -63,7 +68,7 @@ export default function RecentSkillsList() {
       ) : (
         <div className="w-full overflow-y-auto" style={{ height: 350 }}>
           <div className="grid grid-cols-1 gap-4">
-            {skills
+            {validSkills
               .slice()
               .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
               .slice(0, 5)
@@ -107,10 +112,10 @@ export default function RecentSkillsList() {
                     <div className="flex items-center justify-end w-1/2">
                       {skill.reactions && skill.reactions.length > 0 && (
                         <div className="flex space-x-1 mr-2">
-                          {skill.reactions.map((r, i) => (
+                          {skill.reactions.filter(r => r.user).map((r, i) => (
                             <span
                               key={i}
-                              title={r.user?.name || ""}
+                              title={r.user?.name || "Unknown User"}
                               className="text-xl"
                             >
                               {r.emoji}
