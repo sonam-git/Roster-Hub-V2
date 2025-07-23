@@ -49,21 +49,7 @@ export default function RecentSkillsList() {
   const skills = Array.isArray(data?.skills) ? data.skills : [];
 
   return (
-    <div className="w-full">
-      <div
-        className={`mb-2 shadow-xl rounded-2xl p-4 border-2 bg-gradient-to-br ${
-          isDarkMode
-            ? "from-gray-800 via-gray-700 to-gray-900 border-gray-700 text-blue-100"
-            : "from-blue-100 via-white to-blue-50 border-blue-300 text-blue-900"
-        }`}
-      >
-        <div className="flex items-center gap-2 mb-2 flex-wrap">
-          <FaFutbol className="text-yellow-500 dark:text-yellow-300 text-xl animate-bounce" />
-          <span className="font-bold text-lg dark:text-white">
-            {skills.length === 0 ? "No Skills available" : "Latest Skills"}
-          </span>
-        </div>
-      </div>
+    <div className="w-full mt-4">
       {skills.length === 0 ? (
         <div
           className={`rounded-2xl shadow-xl p-6 border-2 text-center bg-gradient-to-br ${

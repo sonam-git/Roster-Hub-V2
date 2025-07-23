@@ -202,7 +202,7 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
           </div>
         </>
       )}
-      <div className="relative rounded-2xl shadow-xl border-2 bg-gradient-to-br p-4 mb-6 transition-all duration-300 hover:border-blue-400 flex flex-col gap-2 w-full max-w-2xl mx-auto from-blue-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 border-blue-200 dark:border-gray-700">
+      <div className="relative rounded-2xl shadow-xl border-2 bg-gradient-to-br p-4 px-2 sm:px-4 xl:px-8 mb-6 transition-all duration-300 hover:border-blue-400 flex flex-col gap-2 w-full from-blue-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 border-blue-200 dark:border-gray-700">
         {/* Header */}
         <div className="flex items-center gap-3 mb-2">
           <Link to={`/profiles/${post.userId._id}`} className="flex items-center hover:no-underline">

@@ -36,7 +36,7 @@ export default function CommentList({
     <div className="space-y-3 w-full">
       {comments.length > 0 ? (
         comments.map((c) => (
-          <div key={c._id} className="bg-gradient-to-br from-blue-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 p-3 rounded-2xl shadow border-2 border-blue-200 dark:border-gray-700 transition-all w-full max-w-xl mx-auto">
+          <div key={c._id} className="bg-gradient-to-br from-blue-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 p-3 px-2 sm:px-4 xl:px-8 rounded-2xl shadow border-2 border-blue-200 dark:border-gray-700 transition-all w-full">
             {editingCommentId === c._id ? (
               <>
                 <textarea className="w-full p-2 mt-2 border rounded dark:text-black text-xs sm:text-sm" value={text} onChange={(e) => setText(e.target.value)} />

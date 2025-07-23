@@ -9,6 +9,7 @@ import ComingGames from "../components/ComingGames";
 import RatingDisplay from "../components/RatingDisplay";
 import RecentSkillsList from "../components/RecentSkillsList";
 import { FaFutbol, FaRegListAlt, FaStar, FaCalendarAlt } from "react-icons/fa";
+import ProfileAvatar from '../assets/images/profile-avatar.png';
 
 
 const Home = ({ isDarkMode }) => {
@@ -41,8 +42,27 @@ const Home = ({ isDarkMode }) => {
         <>
           {/* Welcome & Hero Section */}
           <section className="w-full flex flex-col items-center justify-center mt-8 mb-6">
-            <div className="w-full bg-gradient-to-br from-blue-900 via-blue-700 to-blue-900 dark:from-blue-950 dark:via-gray-900 dark:to-gray-800 rounded-3xl shadow-2xl border-2 border-white/60 dark:border-blue-900/60 p-6 relative overflow-hidden animate-gradient-x">
+            <div className="w-full bg-gradient-to-br from-blue-900 via-green-700 to-blue-900 dark:from-blue-950 dark:via-gray-900 dark:to-gray-800 rounded-3xl shadow-2xl border-2 border-white/60 dark:border-blue-900/60 p-6 relative overflow-hidden animate-gradient-x">
               <div className="flex items-center justify-between w-full mb-2">
+                {/* Profile Image Left */}
+                <div className="flex items-center justify-center mr-4">
+                  {profile?.profilePic && profile?.profilePic.trim() !== "" ? (
+                    <img
+                      src={profile.profilePic}
+                      alt="Profile"
+                      className="w-16 h-16 rounded-full border-4 border-yellow-200 shadow-lg object-cover bg-white"
+                      onError={e => { e.target.onerror=null; e.target.src=ProfileAvatar; }}
+                    />
+                  ) : (
+                    <div className="w-16 h-16 rounded-full flex items-center justify-center bg-gradient-to-br from-blue-400 via-blue-600 to-blue-900 border-4 border-yellow-200 shadow-lg">
+                      <img
+                        src={ProfileAvatar}
+                        alt="Avatar"
+                        className="w-12 h-12 object-cover"
+                      />
+                    </div>
+                  )}
+                </div>
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white drop-shadow-2xl text-center w-full tracking-tight py-2 flex flex-wrap items-center justify-center gap-2">
                   {profile.name ? (
                     <>Welcome, <span className="text-yellow-200 animate-pulse">{profile.name}</span>!</>
@@ -50,11 +70,17 @@ const Home = ({ isDarkMode }) => {
                     <>Welcome!</>
                   )}
                 </h1>
-                <FaFutbol className="text-yellow-200 text-4xl animate-bounce ml-2" />
+                <FaFutbol className="text-yellow-200 text-6xl animate-bounce ml-2" />
               </div>
               <p className="text-base sm:text-lg md:text-xl text-white/90 font-semibold text-center w-full break-words italic mb-2">
-                Your soccer dashboard: connect, play, and win together!
+                <span className="block text-xl sm:text-xl md:text-xl font-bold text-yellow-200 mb-2 tracking-tight animate-fade-in">Connect, play and win together</span>
               </p>
+              <div className="w-full flex justify-center mt-4">
+                <div className="w-full max-w-xl bg-white/80 dark:bg-gray-900/80 rounded-xl shadow-lg border-2 border-blue-200 dark:border-blue-900 p-2 flex flex-col items-center gap-2">
+                  <span className="text-lg font-bold text-blue-700 dark:text-blue-200">Your Dashboard</span>
+                  <span className="text-sm italic text-gray-700 dark:text-gray-300">All your soccer activities, posts, games, and skills in one place.</span>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -122,12 +148,12 @@ const Home = ({ isDarkMode }) => {
               </div>
             )}
             {activeSection === "upcominggames" && (
-              <div className="w-full max-w-full bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-xl p-4 border-2 border-blue-200 dark:border-gray-700">
-                <div className="flex items-center gap-2 mb-2">
+              <div className="w-full max-w-full bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-xl p-4 border-2 border-blue-200 dark:border-gray-700 flex flex-col items-center">
+                <div className="flex items-center gap-2 mb-2 w-full">
                   <FaCalendarAlt className="text-blue-600 dark:text-blue-300 text-xl" />
                   <span className="font-bold text-lg dark:text-white">Upcoming Games</span>
                 </div>
-                <div className="w-full overflow-x-auto">
+                <div className="w-full max-w-full overflow-x-auto">
                   <ComingGames />
                 </div>
               </div>

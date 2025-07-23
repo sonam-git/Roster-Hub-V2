@@ -10,10 +10,9 @@ import Post from "../Post";
 
 const PAGE_SIZE = 3;
 
-const PostsList = ({ profileId, profile }) => {
+const PostsList = ({ profileId }) => {
   const { loading, data, error, subscribeToMore } = useQuery(GET_POSTS);
   const [currentPage, setCurrentPage] = useState(1);
-  const user = profile?.name || "";
 
   // Wire up all three subscriptions
   useEffect(() => {
@@ -34,7 +33,9 @@ const PostsList = ({ profileId, profile }) => {
         const updated = subscriptionData.data?.postUpdated;
         if (!updated) return prev;
         return {
-          posts: prev.posts.map((p) => (p._id === updated._id ? updated : p)),
+          posts: prev.posts.map((p) =>
+            p._id === updated._id ? updated : p
+          ),
         };
       },
     });
@@ -59,28 +60,19 @@ const PostsList = ({ profileId, profile }) => {
 
   if (loading) return <div>Loading posts...</div>;
   if (error) return <div>Error loading posts.</div>;
-
+  
   if (!data || !data?.posts || !data?.posts.length) {
-    return (
-      <h3 className=" ml-3 text-left text-sm lg:text-md dark:text-white ">
-        No post yet, create your first post.{" "}
-      </h3>
-    );
+    return <h3 className=' ml-3 text-left text-sm lg:text-md dark:text-white '>No post yet, create your first post. </h3>;
   }
+
 
   // Filter by profile if needed
   const allPosts = data.posts;
-  const loginPost = allPosts.filter((p) => p.userId._id === profileId);
-  if (loginPost.length === 0 && profileId) {
-    return (
-      <div className="w-full flex flex-col items-center justify-center py-8">
-       <p className="text-md text-gray-500 dark:text-gray-400 italic">
-          {user ? `${user} hasn't posted anything yet.` : `You haven't posted anything yet.`}
-        </p>
-      </div>
-    );
-  }
-  const postsToDisplay = profileId ? loginPost : allPosts;
+  const loginPost = allPosts.filter((p) => p.userId._id === profileId)
+  if(loginPost.length === 0 && profileId) { return <h3 className='ml-5 text-sm lg:text-md font-italic dark:text-white'>Posted nothing yet. Post will be appeared here. </h3> }
+  const postsToDisplay = profileId
+    ? loginPost
+    : allPosts;
 
   // Pagination
   const totalPages = Math.ceil(postsToDisplay.length / PAGE_SIZE);
@@ -89,7 +81,7 @@ const PostsList = ({ profileId, profile }) => {
     currentPage * PAGE_SIZE
   );
   return (
-    <div className="space-y-6 w-full">
+    <div className="space-y-6">
       {paginated.map((post) => (
         <Post key={post._id} post={post} />
       ))}
@@ -99,7 +91,7 @@ const PostsList = ({ profileId, profile }) => {
         <button
           onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
           disabled={currentPage === 1}
-          className={`px-4 py-1 rounded font-semibold text-xs sm:text-sm transition-all duration-200 shadow border-2 border-blue-200 dark:border-gray-700 ${
+          className={`px-4 py-1 rounded ${
             currentPage === 1
               ? "bg-gray-300 text-gray-500 cursor-not-allowed"
               : "bg-blue-600 text-white hover:bg-blue-700"
@@ -110,7 +102,7 @@ const PostsList = ({ profileId, profile }) => {
         <button
           onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
           disabled={currentPage === totalPages}
-          className={`px-4 py-1 rounded font-semibold text-xs sm:text-sm transition-all duration-200 shadow border-2 border-blue-200 dark:border-gray-700 ${
+          className={`px-4 py-1 rounded ${
             currentPage === totalPages
               ? "bg-gray-300 text-gray-500 cursor-not-allowed"
               : "bg-blue-600 text-white hover:bg-blue-700"
