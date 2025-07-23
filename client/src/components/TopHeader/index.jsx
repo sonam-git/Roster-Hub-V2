@@ -94,16 +94,16 @@ export default function TopHeader({ className, onToggleMenu, open }) {
             </div>
           </>
         ) : (
-          <div className="w-full flex items-center justify-center overflow-hidden">
-            <span className="animate-marquee whitespace-nowrap text-lg sm:text-xl md:text-2xl font-extrabold tracking-wide px-4 sm:px-6 py-2 sm:py-3 rounded-2xl bg-blue-50 dark:bg-gray-700 shadow-lg flex items-center gap-2 sm:gap-4" style={{ fontFamily: 'cursive, sans-serif', letterSpacing: '0.04em' }}>
-              <FontAwesomeIcon icon={faPersonRunning} className="text-green-500 text-xl sm:text-2xl md:text-3xl drop-shadow-lg" />
-              <span className="text-blue-700 dark:text-blue-200 " style={{ fontFamily: 'cursive', fontWeight: 900, fontSize: '1.2rem', textShadow: '0 2px 8px #60a5fa' }}>
+          <div className="w-full flex items-center justify-center overflow-hidden bg-gray-100 dark:bg-gray-800 py-0.5 rounded-2xl shadow-2xl border-2 border-blue-300 dark:border-blue-900 relative">
+            <span className="animate-marquee whitespace-nowrap  text-lg sm:text-xl md:text-2xl font-bold tracking-wide px-2 sm:px-4 py-1 rounded-2xl flex items-center gap-4 bg-gradient-to-r from-green-100 via-green-200 to-green-300 dark:text-white dark:bg-gray-800" style={{ fontFamily: 'sans-serif', letterSpacing: '0.04em', boxShadow: '0 4px 24px rgba(59,130,246,0.15)' }}>
+              <FontAwesomeIcon icon={faPersonRunning} className="text-green-500 text-2xl sm:text-3xl md:text-4xl drop-shadow-lg animate-spin-slow" />
+              <span className="text-blue-700 font-bold" style={{ fontFamily: 'sans-serif', fontWeight: 700, fontSize: '1.3rem', textShadow: 'none' }}>
                 Roster Hub
               </span>
-              <span className="text-gray-800 dark:text-gray-200 font-bold text-base sm:text-lg md:text-xl" style={{ fontFamily: 'serif' }}>
-                - Create your team's hub with us. Join Roster Hub Today..!
+              <span className="text-gray-800  font-medium text-base sm:text-lg md:text-xl italic" style={{ fontFamily: 'sans-serif', textShadow: 'none' }}>
+                — Create your team's hub with us. Join Roster Hub Today!
               </span>
-              <FontAwesomeIcon icon={faStar} className="text-yellow-500 text-xl sm:text-2xl md:text-3xl drop-shadow-lg" />
+              <FontAwesomeIcon icon={faStar} className="text-yellow-400 text-2xl sm:text-3xl md:text-4xl drop-shadow-lg animate-pulse" />
             </span>
             <style>{`
               @keyframes marquee {
@@ -111,7 +111,21 @@ export default function TopHeader({ className, onToggleMenu, open }) {
                 100% { transform: translateX(-100%); }
               }
               .animate-marquee {
-                animation: marquee 12s linear infinite;
+                animation: marquee 10s linear infinite;
+              }
+              @keyframes spin-slow {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+              .animate-spin-slow {
+                animation: spin-slow 6s linear infinite;
+              }
+              .animate-pulse {
+                animation: pulse 1.5s infinite;
+              }
+              @keyframes pulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.5; }
               }
             `}</style>
           </div>

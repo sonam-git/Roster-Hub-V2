@@ -151,12 +151,12 @@ const Header = ({ open, setOpen }) => {
           }
         `}</style>
 
-        <ul className="pt-6 mt-8">
+        <ul className="pt-8 mt-10">
           <li
             className="flex rounded-md p-2 cursor-pointer items-center gap-x-4 mt-2 bg-gradient-to-r from-green-200 via-blue-200 to-yellow-200 dark:from-green-900 dark:via-blue-900 dark:to-yellow-700 text-green-900 dark:text-yellow-200 font-bold shadow-md hover:shadow-lg transition-all duration-200 border border-green-200 dark:border-green-800 "
             onClick={toggleDarkMode}
           >
-            <button className="flex items-center w-full no-underline">
+            <button className="flex items-center w-full no-underline ">
               <div className="flex items-center">
                 <span className="text-white p-1.5 md:p-2 lg:p-2.5 rounded-full bg-gray-700 dark:bg-gray-500">
                   {isDarkMode ? "☀️" : "🌙"}
@@ -238,7 +238,7 @@ const Header = ({ open, setOpen }) => {
       </div>
       <div className="flex-1">
         <button
-          className={`fixed justify-center top-4 left-6 lg:hidden p-2 rounded-md border border-black ${
+          className={`fixed justify-center top-8 left-6 lg:hidden p-2 rounded-md border border-black ${
             isDarkMode
               ? "bg-gray-200 text-black"
               : " text-black rounded-md border border-black"
