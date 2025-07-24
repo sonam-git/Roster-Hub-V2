@@ -11,7 +11,7 @@ import { FaChevronDown } from "react-icons/fa";
 
 const BUTTONS = [
   { key: "home", label: "Home", icon: faHome, path: "/" },
-  { key: "gameschedule", label: "Schedule", icon: faCalendarAlt, path: "/games-shortcut" },
+  { key: "gameschedule", label: "Upcoming", icon: faCalendarAlt, path: "/games-shortcut" },
   { key: "creategame", label: "Create Game", icon: faPlus, path: "/game-schedule#create" },
   { key: "messages", label: "Inbox", icon: faInbox, path: "/message" },
   { key: "skilllist", label: "Skills", icon: faStar, path: "/skills-shortcut" },
