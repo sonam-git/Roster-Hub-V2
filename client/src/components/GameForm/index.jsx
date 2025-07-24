@@ -6,7 +6,7 @@ import { QUERY_GAMES } from "../../utils/queries";
 import { ThemeContext } from "../ThemeContext";
 import Auth from "../../utils/auth";
 
-const GameForm = () => {
+const GameForm = ({ onGameCreated, onBackToGames }) => {
   const navigate = useNavigate();
   const { isDarkMode } = useContext(ThemeContext);
 
@@ -73,7 +73,13 @@ const GameForm = () => {
       const { data } = await createGame({
         variables: { input: { date, time, venue, notes, opponent } },
       });
-      navigate(`/game-schedule/${data.createGame._id}`);
+      
+      // If onGameCreated callback is provided, call it instead of navigating
+      if (onGameCreated) {
+        onGameCreated(data.createGame);
+      } else {
+        navigate(`/game-schedule/${data.createGame._id}`);
+      }
     } catch (err) {
       console.error("Create game failed", err);
     }
@@ -163,17 +169,31 @@ const GameForm = () => {
             rows={3}
           />
         </label>
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={loading}
-          className={`mt-4 w-full py-2 rounded-lg font-bold shadow-lg transition-all duration-200
-            ${isDarkMode ? "bg-blue-700 text-white hover:bg-blue-800" : "bg-blue-500 text-white hover:bg-blue-700"}
-            disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-400`
-          }
-        >
-          {loading ? "Scheduling…" : "Schedule Game"}
-        </button>
+        {/* Buttons */}
+        <div className={`mt-4 ${onBackToGames ? 'flex gap-3' : ''}`}>
+          {onBackToGames && (
+            <button
+              type="button"
+              onClick={onBackToGames}
+              className={`py-2 px-4 rounded-lg font-bold shadow-lg transition-all duration-200 ${onBackToGames ? 'flex-1' : 'w-full'}
+                ${isDarkMode ? "bg-gray-600 text-white hover:bg-gray-700" : "bg-gray-500 text-white hover:bg-gray-600"}
+                focus:outline-none focus:ring-2 focus:ring-gray-400`
+              }
+            >
+              ← Back to Games
+            </button>
+          )}
+          <button
+            type="submit"
+            disabled={loading}
+            className={`py-2 rounded-lg font-bold shadow-lg transition-all duration-200 ${onBackToGames ? 'flex-1 px-4' : 'w-full'}
+              ${isDarkMode ? "bg-blue-700 text-white hover:bg-blue-800" : "bg-blue-500 text-white hover:bg-blue-700"}
+              disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-400`
+            }
+          >
+            {loading ? "Scheduling…" : "Schedule Game"}
+          </button>
+        </div>
         {error && <p className="text-red-600 mt-2">Error: {error.message}</p>}
       </form>
     </div>

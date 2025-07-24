@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 
 import GameList from "../components/GameList";
@@ -12,8 +12,10 @@ import { QUERY_GAME } from "../utils/queries";
 const Game = () => {
   const { gameId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { isDarkMode } = useContext(ThemeContext);
   const [shouldRedirect, setShouldRedirect] = useState(false);
+  const [showCreateGame, setShowCreateGame] = useState(false);
 
   // Fetch game
   const {
@@ -26,6 +28,13 @@ const Game = () => {
   });
 
   const game = gameData?.game;
+
+  // Check if user came from "Create Game" button
+  useEffect(() => {
+    if (location.state?.showCreateGame || location.state?.scrollTo === "gameform") {
+      setShowCreateGame(true);
+    }
+  }, [location.state]);
 
   // Redirect to /game-schedule if game does not exist, after showing message
   useEffect(() => {
@@ -46,14 +55,34 @@ const Game = () => {
 
   // Loading state
   if (!gameId) {
+    // Show only GameForm if user clicked "Create Game"
+    if (showCreateGame) {
+      return (
+        <div className="container mx-auto lg:mt-5 p-3">
+          <div className="flex flex-col items-center">
+            <div className="w-full max-w-2xl">
+              <GameForm 
+                onGameCreated={(game) => {
+                  setShowCreateGame(false);
+                  navigate(`/game-schedule/${game._id}`);
+                }}
+                onBackToGames={() => {
+                  setShowCreateGame(false);
+                  navigate("/game-schedule", { replace: true });
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
+    // Show GameList by default when no gameId
     return (
       <div className="container mx-auto lg:mt-5 p-3">
         <div className="flex flex-col lg:flex-row lg:space-x-2">
-          <div className=" w-full mb-6 lg:mb-0">
-            <GameForm />
-          </div>
-          <div className=" w-full">
-            <GameList />
+          <div className="w-full">
+            <GameList onCreateGame={() => setShowCreateGame(true)} />
           </div>
         </div>
       </div>

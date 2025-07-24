@@ -31,6 +31,7 @@ import GameComplete from "../GameComplete";
 import GameFeedback from "../GameFeedback";
 import GameFeedbackList from "../GameFeedbackList";
 import FormationSection from "../FormationSection";
+import WeatherForecast from "../WeatherForecast";
 
 function RightColumn({
   game,
@@ -300,6 +301,13 @@ export default function GameDetails({ gameId }) {
               </span>
             </p>
           </div>
+
+          {/* WEATHER FORECAST */}
+          <WeatherForecast 
+            date={game.date} 
+            venue={game.venue} 
+            isDarkMode={isDarkMode} 
+          />
 
           {/* NOTES */}
           <div

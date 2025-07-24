@@ -47,7 +47,7 @@ export default function TopHeader({ className, onToggleMenu, open }) {
                 className={`dark:text-gray-900 mx-2 px-4 py-1 rounded-full font-semibold transition-colors text-sm flex items-center gap-2  sm:mb-0 ${location.pathname === btn.path.split('#')[0] ? "bg-blue-600 text-white" : "bg-gray-100 dark:bg-gray-500 text-gray-800 dark:text-white  hover:bg-gray-300 dark:hover:bg-blue-800 hover:bg-opacity-90 dark:hover:bg-opacity-90"}`}
                 onClick={() => {
                   if (btn.key === "creategame") {
-                    navigate("/game-schedule", { state: { scrollTo: "gameform" } });
+                    navigate("/game-schedule", { state: { showCreateGame: true } });
                   } else {
                     navigate(btn.path);
                   }
