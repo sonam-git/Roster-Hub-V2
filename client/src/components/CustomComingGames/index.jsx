@@ -125,6 +125,17 @@ export default function CustomComingGames({ isDarkMode }) {
                   </div>
                 </div>
 
+                {/* City Section */}
+                <div className={`p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-800/30' : 'bg-blue-50/50'} border-l-4 ${isDarkMode ? 'border-blue-400' : 'border-blue-500'}`}>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-lg">🏙️</span>
+                    <div>
+                      <p className="text-xs font-medium opacity-75 uppercase tracking-wide mb-1">City</p>
+                      <p className={`font-bold text-sm ${isDarkMode ? 'text-blue-200' : 'text-blue-700'}`}>{game.city}</p>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Notes Section */}
                 {game.notes && (
                   <div className={`p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-800/20' : 'bg-gray-50'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>

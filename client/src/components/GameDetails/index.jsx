@@ -49,12 +49,21 @@ function RightColumn({
   // Only show for CONFIRMED games
   if (game.status === "COMPLETED") {
     return (
-      <div className="rounded-2xl shadow-xl bg-gradient-to-br p-6 mb-4 border-2 transition-all duration-300
-        dark:from-gray-800 dark:via-gray-700 dark:to-gray-900 dark:border-gray-700 dark:text-blue-100
-        from-green-50 via-blue-50 to-yellow-50 border-blue-200 text-blue-900">
+      <div className={`rounded-3xl shadow-2xl p-8 mb-6 border-2 transition-all duration-500 transform hover:scale-[1.02] ${
+        isDarkMode 
+          ? "bg-gradient-to-br from-gray-800 via-purple-900 to-gray-900 border-purple-600 text-purple-100" 
+          : "bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 border-purple-300 text-purple-900"
+      }`}>
+        <div className="flex items-center justify-center mb-6">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+            <span className="text-3xl">🏆</span>
+          </div>
+        </div>
+        <h3 className="text-2xl font-bold text-center mb-6">Game Feedback</h3>
         {showThankYou ? (
-          <div className="p-4 bg-green-300 dark:bg-green-800 rounded text-center italic font-semibold">
-            Thank you for your feedback!
+          <div className="p-6 bg-gradient-to-r from-green-400 to-green-600 rounded-2xl text-center shadow-lg">
+            <div className="text-4xl mb-4">🎉</div>
+            <p className="text-white font-bold text-lg">Thank you for your feedback!</p>
           </div>
         ) : !feedbackGiven ? (
           <GameFeedback
@@ -71,19 +80,30 @@ function RightColumn({
 
   if (game.status === "CONFIRMED") {
     return (
-      <div className="rounded-2xl shadow-xl bg-gradient-to-br p-6 mb-4 border-2 transition-all duration-300
-        dark:from-gray-800 dark:via-gray-700 dark:to-gray-900 dark:border-gray-700 dark:text-blue-100
-        from-green-50 via-blue-50 to-yellow-50 border-blue-200 text-blue-900">
+      <div className={`rounded-3xl shadow-2xl p-8 mb-6 border-2 transition-all duration-500 transform hover:scale-[1.02] ${
+        isDarkMode 
+          ? "bg-gradient-to-br from-gray-800 via-blue-900 to-gray-900 border-blue-600 text-blue-100" 
+          : "bg-gradient-to-br from-blue-50 via-green-50 to-teal-50 border-blue-300 text-blue-900"
+      }`}>
+        <div className="flex items-center justify-center mb-6">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-teal-500 flex items-center justify-center">
+            <span className="text-3xl">⚽</span>
+          </div>
+        </div>
         {!formation && !isCreator && (
-          <div className="italic dark:text-white text-sm bg-yellow-100 dark:bg-gray-700 p-4 rounded shadow">
-            The formation will appear here once the creator sets it up.
+          <div className={`p-6 rounded-2xl shadow-lg mb-6 text-center ${
+            isDarkMode ? "bg-gray-700 text-yellow-300" : "bg-yellow-100 text-yellow-800"
+          }`}>
+            <div className="text-3xl mb-3">⏳</div>
+            <p className="font-semibold">Formation is being prepared...</p>
+            <p className="text-sm mt-2 opacity-80">The formation will appear here once the creator sets it up.</p>
           </div>
         )}
         {(formation || isCreator) && (
           <>
-            <div className="mb-4 text-lg font-bold text-center">
-              {isCreator ? "Manage Game Formation" : "Game Formation"}
-            </div>
+            <h3 className="text-2xl font-bold text-center mb-8">
+              {isCreator ? "⚙️ Manage Game Formation" : "🎯 Game Formation"}
+            </h3>
             <FormationSection
               game={game}
               formation={formation}
@@ -194,6 +214,7 @@ export default function GameDetails({ gameId }) {
   const [showThankYou, setShowThankYou] = useState(false);
   const [feedbackGiven, setFeedbackGiven] = useState(false);
   const [showFormation, setShowFormation] = useState(false);
+  const [activeSection, setActiveSection] = useState("overview");
 
   /* sync misc states when game query resolves */
   useEffect(() => {
@@ -213,6 +234,342 @@ export default function GameDetails({ gameId }) {
     setShowThankYou(true);
     setTimeout(() => setShowThankYou(false), 3_000);
     setFeedbackGiven(true);
+  };
+
+  // Function to render different sections based on activeSection
+  const renderActiveSection = () => {
+    switch (activeSection) {
+      case "overview":
+        return (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+            {/* Date & Time Card */}
+            <div className={`p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-xl transition-all duration-300 hover:shadow-2xl transform hover:scale-[1.02] ${
+              isDarkMode ? "bg-gradient-to-br from-gray-700 to-gray-800 border border-gray-600" : "bg-gradient-to-br from-white to-blue-50 border border-blue-200"
+            }`}>
+              <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                  <span className="text-lg sm:text-xl text-white">📅</span>
+                </div>
+                <h3 className={`text-lg sm:text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                  Date & Time
+                </h3>
+              </div>
+              <div className="space-y-2 sm:space-y-3">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="text-xl sm:text-2xl">📅</span>
+                  <div>
+                    <p className={`font-semibold text-sm sm:text-base ${isDarkMode ? "text-blue-300" : "text-blue-600"}`}>Date</p>
+                    <p className={`text-base sm:text-lg ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>{humanDate}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="text-xl sm:text-2xl">⏰</span>
+                  <div>
+                    <p className={`font-semibold text-sm sm:text-base ${isDarkMode ? "text-blue-300" : "text-blue-600"}`}>Time</p>
+                    <p className={`text-base sm:text-lg ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>{humanTime}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Location Card */}
+            <div className={`p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-xl transition-all duration-300 hover:shadow-2xl transform hover:scale-[1.02] ${
+              isDarkMode ? "bg-gradient-to-br from-gray-700 to-gray-800 border border-gray-600" : "bg-gradient-to-br from-white to-green-50 border border-green-200"
+            }`}>
+              <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-green-500 to-teal-500 flex items-center justify-center">
+                  <span className="text-lg sm:text-xl text-white">📍</span>
+                </div>
+                <h3 className={`text-lg sm:text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                  Location Details
+                </h3>
+              </div>
+              <div className="space-y-2 sm:space-y-3">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="text-xl sm:text-2xl">🏟️</span>
+                  <div>
+                    <p className={`font-semibold text-sm sm:text-base ${isDarkMode ? "text-green-300" : "text-green-600"}`}>Venue</p>
+                    <p className={`text-base sm:text-lg ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>{game.venue}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="text-xl sm:text-2xl">🏙️</span>
+                  <div>
+                    <p className={`font-semibold text-sm sm:text-base ${isDarkMode ? "text-green-300" : "text-green-600"}`}>City</p>
+                    <p className={`text-base sm:text-lg ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>{game.city}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case "weather":
+        return (
+          <WeatherForecast 
+            date={game.date} 
+            city={game.city} 
+            isDarkMode={isDarkMode} 
+          />
+        );
+
+      case "notes":
+        return (
+          <div className={`p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-xl transition-all duration-300 hover:shadow-2xl ${
+            isDarkMode ? "bg-gradient-to-br from-gray-700 to-gray-800 border border-gray-600" : "bg-gradient-to-br from-white to-yellow-50 border border-yellow-200"
+          }`}>
+            <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 flex items-center justify-center">
+                <span className="text-lg sm:text-xl text-white">📝</span>
+              </div>
+              <h3 className={`text-lg sm:text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                Game Notes
+              </h3>
+            </div>
+            {isCreator ? (
+              <textarea
+                value={updatedNote}
+                onChange={(e) => setUpdatedNote(e.target.value)}
+                rows={4}
+                className={`w-full p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 focus:ring-4 focus:ring-blue-300 transition-all duration-300 resize-none text-sm sm:text-base ${
+                  isDarkMode 
+                    ? "bg-gray-800 border-gray-600 text-white placeholder-gray-400" 
+                    : "bg-white border-gray-300 text-gray-800 placeholder-gray-500"
+                }`}
+                placeholder="Add game notes or instructions for players..."
+              />
+            ) : (
+              <div className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl ${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
+                <p className={`text-base sm:text-lg ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  {game.notes || (
+                    <span className="italic text-gray-400 flex items-center gap-2">
+                      <span>💭</span> No notes available
+                    </span>
+                  )}
+                </p>
+              </div>
+            )}
+          </div>
+        );
+
+      case "voting":
+        return game.status === "PENDING" ? (
+          <div className={`p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-xl transition-all duration-300 hover:shadow-2xl ${
+            isDarkMode ? "bg-gradient-to-br from-gray-700 to-gray-800 border border-gray-600" : "bg-gradient-to-br from-white to-purple-50 border border-purple-200"
+          }`}>
+            <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+                <span className="text-lg sm:text-xl text-white">🗳️</span>
+              </div>
+              <h3 className={`text-lg sm:text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                Your Response
+              </h3>
+            </div>
+            <div className="flex flex-wrap gap-4 justify-center">
+              {currentVote === null ? (
+                <>
+                  <button
+                    onClick={() =>
+                      respondToGame({
+                        variables: { input: { gameId, isAvailable: true } },
+                      })
+                    }
+                    className="group px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-3"
+                  >
+                    <span className="text-xl sm:text-2xl group-hover:scale-110 transition-transform duration-300">✅</span>
+                    Available
+                  </button>
+                  <button
+                    onClick={() =>
+                      respondToGame({
+                        variables: { input: { gameId, isAvailable: false } },
+                      })
+                    }
+                    className="group px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-3"
+                  >
+                    <span className="text-xl sm:text-2xl group-hover:scale-110 transition-transform duration-300">❌</span>
+                    Not Available
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() =>
+                      respondToGame({
+                        variables: {
+                          input: { gameId, isAvailable: !currentVote },
+                        },
+                      })
+                    }
+                    className="group px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-3"
+                  >
+                    <span className="text-xl sm:text-2xl group-hover:scale-110 transition-transform duration-300">🔄</span>
+                    <span className="hidden sm:inline">Change to {currentVote ? "Not Available" : "Available"}</span>
+                    <span className="sm:hidden">Change</span>
+                  </button>
+                  <button
+                    onClick={() => unvoteGame({ variables: { gameId } })}
+                    className="group px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-3"
+                  >
+                    <span className="text-xl sm:text-2xl group-hover:scale-110 transition-transform duration-300">🗑️</span>
+                    <span className="hidden sm:inline">Remove Vote</span>
+                    <span className="sm:hidden">Remove</span>
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        ) : null;
+
+      case "management":
+        return isCreator ? (
+          <div className={`p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-xl transition-all duration-300 hover:shadow-2xl ${
+            isDarkMode ? "bg-gradient-to-br from-gray-700 to-gray-800 border border-gray-600" : "bg-gradient-to-br from-white to-indigo-50 border border-indigo-200"
+          }`}>
+            <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">
+                <span className="text-lg sm:text-xl text-white">⚙️</span>
+              </div>
+              <h3 className={`text-lg sm:text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                Game Management
+              </h3>
+            </div>
+            <div className="flex flex-wrap gap-4 justify-center">
+              {(game.status === "PENDING" || game.status === "CANCELLED") && (
+                <button
+                  onClick={() =>
+                    confirmGame({ variables: { gameId, note: updatedNote } })
+                  }
+                  className="group px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-2 sm:gap-3"
+                >
+                  <span className="text-lg sm:text-xl group-hover:scale-110 transition-transform duration-300">✅</span>
+                  <span className="text-sm sm:text-base">Confirm Game</span>
+                </button>
+              )}
+              {game.status === "PENDING" && (
+                <>
+                  <button
+                    onClick={() => setShowUpdate(true)}
+                    className="group px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-2 sm:gap-3"
+                  >
+                    <span className="text-lg sm:text-xl group-hover:scale-110 transition-transform duration-300">✏️</span>
+                    <span className="text-sm sm:text-base">Update Game</span>
+                  </button>
+                  <button
+                    onClick={() =>
+                      cancelGame({ variables: { gameId, note: updatedNote } })
+                    }
+                    className="group px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-2 sm:gap-3"
+                  >
+                    <span className="text-lg sm:text-xl group-hover:scale-110 transition-transform duration-300">❌</span>
+                    <span className="text-sm sm:text-base">Cancel Game</span>
+                  </button>
+                </>
+              )}
+              {game.status === "CONFIRMED" && (
+                <>
+                  <button
+                    onClick={() => setShowComplete(true)}
+                    className="group px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-2 sm:gap-3"
+                  >
+                    <span className="text-lg sm:text-xl group-hover:scale-110 transition-transform duration-300">🏁</span>
+                    <span className="text-sm sm:text-base">Complete Game</span>
+                  </button>
+                  <button
+                    onClick={() =>
+                      cancelGame({ variables: { gameId, note: updatedNote } })
+                    }
+                    className="group px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-2 sm:gap-3"
+                  >
+                    <span className="text-lg sm:text-xl group-hover:scale-110 transition-transform duration-300">❌</span>
+                    <span className="text-sm sm:text-base">Cancel Game</span>
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        ) : null;
+
+      case "responses":
+        return (
+          <div className={`p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-xl transition-all duration-300 hover:shadow-2xl ${
+            isDarkMode ? "bg-gradient-to-br from-gray-700 to-gray-800 border border-gray-600" : "bg-gradient-to-br from-white to-teal-50 border border-teal-200"
+          }`}>
+            <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 flex items-center justify-center">
+                <span className="text-lg sm:text-xl text-white">👥</span>
+              </div>
+              <h3 className={`text-lg sm:text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                Player Responses
+              </h3>
+            </div>
+            <div className="flex flex-wrap gap-4 justify-center mb-4 sm:mb-6">
+              <div className={`px-4 sm:px-6 py-2 sm:py-3 rounded-2xl flex items-center gap-3 ${
+                isDarkMode ? "bg-green-900 text-green-300" : "bg-green-100 text-green-800"
+              }`}>
+                <span className="text-xl sm:text-2xl">✅</span>
+                <span className="font-bold text-sm sm:text-base">{yesVoters.length} Available</span>
+              </div>
+              <div className={`px-4 sm:px-6 py-2 sm:py-3 rounded-2xl flex items-center gap-3 ${
+                isDarkMode ? "bg-red-900 text-red-300" : "bg-red-100 text-red-800"
+              }`}>
+                <span className="text-xl sm:text-2xl">❌</span>
+                <span className="font-bold text-sm sm:text-base">{noVoters.length} Not Available</span>
+              </div>
+            </div>
+            <VotersList yesVoters={yesVoters} noVoters={noVoters} />
+          </div>
+        );
+
+      case "results":
+        return game.status === "COMPLETED" ? (
+          <div className={`p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-xl transition-all duration-300 hover:shadow-2xl transform hover:scale-[1.02] ${
+            isDarkMode ? "bg-gradient-to-br from-gray-700 to-gray-800 border border-gray-600" : "bg-gradient-to-br from-white to-yellow-50 border border-yellow-200"
+          }`}>
+            <div className="text-center mb-4 sm:mb-6">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 mx-auto flex items-center justify-center mb-3 sm:mb-4">
+                <span className="text-2xl sm:text-3xl">🏆</span>
+              </div>
+              <h3 className={`text-xl sm:text-2xl font-bold mb-3 sm:mb-4 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                Game Results
+              </h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <div className={`p-4 sm:p-6 rounded-2xl text-center ${isDarkMode ? "bg-gray-800" : "bg-blue-100"}`}>
+                <h4 className={`text-base sm:text-lg font-semibold mb-2 ${isDarkMode ? "text-blue-300" : "text-blue-800"}`}>
+                  Final Score
+                </h4>
+                <p className={`text-2xl sm:text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                  {game.score}
+                </p>
+              </div>
+              <div className={`p-4 sm:p-6 rounded-2xl text-center ${isDarkMode ? "bg-gray-800" : "bg-green-100"}`}>
+                <h4 className={`text-base sm:text-lg font-semibold mb-2 ${isDarkMode ? "text-green-300" : "text-green-800"}`}>
+                  Result
+                </h4>
+                <p className={`text-lg sm:text-xl font-bold uppercase tracking-wide ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                  {game.result.replace("_", " ")}
+                </p>
+              </div>
+            </div>
+            <div className={`mt-4 sm:mt-6 p-4 sm:p-6 rounded-2xl text-center ${isDarkMode ? "bg-purple-900" : "bg-purple-100"}`}>
+              <h4 className={`text-base sm:text-lg font-semibold mb-2 ${isDarkMode ? "text-purple-300" : "text-purple-800"}`}>
+                Average Rating
+              </h4>
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-2xl sm:text-3xl">⭐</span>
+                <span className={`text-2xl sm:text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                  {game.averageRating.toFixed(1)}
+                </span>
+                <span className={`text-lg sm:text-xl ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>/10</span>
+              </div>
+            </div>
+          </div>
+        ) : null;
+
+      default:
+        return null;
+    }
   };
 
   /* ─── LOADING / ERROR STATES ───────────────────────────────── */
@@ -247,305 +604,236 @@ export default function GameDetails({ gameId }) {
   /* ──────────────────────────────────────────────────────────── */
   /*  JSX                                                         */
   /* ──────────────────────────────────────────────────────────── */
-  // Modern responsive button style
-  const actionButtonClass =
-    "px-5 py-2 rounded-full font-bold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm mx-1 mb-2 " +
-    "bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-900 active:scale-95 dark:from-gray-500 dark:via-gray-600 dark:to-gray-900 dark:text-white dark:hover:from-gray-600 dark:hover:to-gray-900  ";
+  const statusBadgeClass = (status) => {
+    const baseClass = "px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-bold shadow-lg uppercase tracking-wide transition-all duration-300";
+    switch (status) {
+      case "CONFIRMED":
+        return `${baseClass} bg-gradient-to-r from-green-400 to-green-600 text-white`;
+      case "COMPLETED":
+        return `${baseClass} bg-gradient-to-r from-blue-400 to-blue-600 text-white`;
+      case "CANCELLED":
+        return `${baseClass} bg-gradient-to-r from-red-400 to-red-600 text-white`;
+      case "PENDING":
+        return `${baseClass} bg-gradient-to-r from-yellow-400 to-orange-500 text-white`;
+      default:
+        return `${baseClass} bg-gradient-to-r from-gray-400 to-gray-600 text-white`;
+    }
+  };
 
   return (
-    <div
-      className={`max-w-3xl mx-auto p-4 sm:p-8 rounded-2xl shadow-xl transition-colors duration-300 ${
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-2 sm:p-4 transition-colors duration-300">
+      <div className={`max-w-5xl mx-auto transition-all duration-500 ${
         isDarkMode
-          ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 text-gray-100"
-          : "bg-gradient-to-br from-white via-blue-50 to-green-50 text-gray-900"
-      }`}
-    >
-      {/* Main content swapper */}
-      {!showFormation ? (
-        <div>
-          {/* Top: Game Formation/Game Feedback button */}
-          <div className="flex justify-between mb-4">
-            <button
-              onClick={() => navigate("/game-schedule")}
-              className={actionButtonClass}
-            >
-              <span className="material-icons text-lg"></span>← Game List
-            </button>
-            <button
-              onClick={() => setShowFormation(true)}
-              className={actionButtonClass}
-            >
-              {game.status === "COMPLETED" ? "Show Feedback" : "Show Formation"}
-            </button>
-          </div>
-          {/* INFO */}
-          <div
-            className={`mb-6 p-4 rounded-xl shadow-md flex flex-col gap-2 ${
-              isDarkMode ? "bg-gray-700" : "bg-white/80"
-            }`}
-          >
-            <h3 className="text-sm sm:text-lg font-bold flex flex-wrap gap-4 items-center tracking-tight">
-              <span className="inline-block">
-                <strong className="text-xs sm:text-base">Date:</strong> <span className="font-normal text-xs sm:text-base">{humanDate}</span>
-              </span>
-              <span className="inline-block">
-                <strong className="text-xs sm:text-base">Time:</strong> <span className="font-normal text-xs sm:text-base">{humanTime}</span>
-              </span>
-            </h3>
-            <p className="text-base sm:text-lg font-semibold flex flex-wrap gap-4 items-center text-gray-700 dark:text-gray-200">
-              <span>
-                <strong>Venue:</strong> <span className="font-normal text-base sm:text-lg">{game.venue}</span>
-              </span>
-              <span>
-                <strong>Opponent:</strong> <span className="font-normal text-base sm:text-lg">{game.opponent}</span>
-              </span>
-            </p>
-          </div>
-
-          {/* WEATHER FORECAST */}
-          <WeatherForecast 
-            date={game.date} 
-            venue={game.venue} 
-            isDarkMode={isDarkMode} 
-          />
-
-          {/* NOTES */}
-          <div
-            className={`mb-6 p-4 rounded-xl shadow ${
-              isDarkMode ? "bg-gray-700" : "bg-white/80"
-            }`}
-          >
-            {isCreator ? (
-              <textarea
-                value={updatedNote}
-                onChange={(e) => setUpdatedNote(e.target.value)}
-                rows={3}
-                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-400 dark:bg-gray-800 dark:border-gray-600 transition"
-                placeholder="Update note…"
-              />
-            ) : (
-              <p className="text-base">
-                <strong>Note:</strong>{" "}
-                {game.notes || (
-                  <span className="italic text-gray-400">No notes</span>
-                )}
-              </p>
-            )}
-          </div>
-
-          {/* VOTING (PENDING only) */}
-          {game.status === "PENDING" && (
-            <div className="mb-6 flex flex-wrap gap-4">
-              {currentVote === null ? (
-                <>
-                  <button
-                    onClick={() =>
-                      respondToGame({
-                        variables: { input: { gameId, isAvailable: true } },
-                      })
-                    }
-                    className="px-6 py-2 bg-green-500 text-white rounded-lg font-bold shadow hover:bg-green-600 transition"
-                  >
-                    Yes
-                  </button>
-                  <button
-                    onClick={() =>
-                      respondToGame({
-                        variables: { input: { gameId, isAvailable: false } },
-                      })
-                    }
-                    className="px-6 py-2 bg-red-500 text-white rounded-lg font-bold shadow hover:bg-red-600 transition"
-                  >
-                    No
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() =>
-                      respondToGame({
-                        variables: {
-                          input: { gameId, isAvailable: !currentVote },
-                        },
-                      })
-                    }
-                    className="px-6 py-2 bg-yellow-500 text-white rounded-lg font-bold shadow hover:bg-yellow-600 transition"
-                  >
-                    Change to {currentVote ? "No" : "Yes"}
-                  </button>
-                  <button
-                    onClick={() => unvoteGame({ variables: { gameId } })}
-                    className="px-6 py-2 bg-gray-400 text-white rounded-lg font-bold shadow hover:bg-gray-500 transition"
-                  >
-                    Unvote
-                  </button>
-                </>
-              )}
-            </div>
-          )}
-
-          {/* STATUS */}
-          {game.status !== "PENDING" && (
-            <div className="mb-4 flex items-center gap-2">
-              <span className="font-semibold">Status:</span>
-              <span
-                className={`px-3 py-1 rounded-full font-bold shadow text-xs ${
-                  game.status === "CONFIRMED"
-                    ? "bg-green-200 text-green-800"
-                    : game.status === "COMPLETED"
-                    ? "bg-blue-200 text-blue-800"
-                    : game.status === "CANCELLED"
-                    ? "bg-red-200 text-red-800"
-                    : "bg-yellow-200 text-yellow-800"
-                }`}
+          ? "bg-gradient-to-br from-gray-800 via-gray-900 to-black shadow-2xl shadow-gray-900/50"
+          : "bg-gradient-to-br from-white via-blue-50 to-indigo-50 shadow-2xl shadow-blue-900/20"
+      } rounded-2xl sm:rounded-3xl overflow-hidden`}>
+        
+        {/* Header Section */}
+        <div className={`relative p-4 sm:p-6 md:p-8 ${
+          isDarkMode
+            ? "bg-gradient-to-r from-blue-900 via-purple-900 to-indigo-900"
+            : "bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600"
+        }`}>
+          <div className="absolute inset-0 bg-black/20"></div>
+          <div className="relative z-10">
+            <div className="flex justify-between items-center mb-3 sm:mb-4 md:mb-6">
+              <button
+                onClick={() => navigate("/game-schedule")}
+                className="group flex items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl text-white font-semibold hover:bg-white/30 transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
               >
-                {game.status}
-              </span>
-            </div>
-          )}
-
-          {/* SCORE / RESULT (COMPLETED) */}
-          {game.status === "COMPLETED" && (
-            <div className="mb-6 p-4 rounded-xl shadow bg-gradient-to-r from-yellow-200 via-yellow-100 to-green-100 dark:from-gray-700 dark:via-gray-800 dark:to-gray-700">
-              <p className="mb-2 text-lg font-bold">
-                <strong>Score:</strong>{" "}
-                <span className="text-2xl">{game.score}</span>
-              </p>
-              <p className="mb-2 text-lg font-bold">
-                <strong>Result:</strong>{" "}
-                <span className="uppercase tracking-wide">
-                  {game.result.replace("_", " ")}
+                <span className="text-lg sm:text-xl group-hover:-translate-x-1 transition-transform duration-300">←</span>
+                <span className="hidden sm:inline">Back to Games</span>
+                <span className="sm:hidden">Back</span>
+              </button>
+              <button
+                onClick={() => setShowFormation(!showFormation)}
+                className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl text-white font-semibold hover:bg-white/30 transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
+              >
+                <span className="text-lg sm:text-xl">
+                  {showFormation ? "📋" : game.status === "COMPLETED" ? "📊" : "⚽"}
                 </span>
-              </p>
-              <p className="mt-2 p-2 rounded bg-green-200 dark:bg-green-800 text-green-900 dark:text-green-200 font-semibold text-center">
-                <strong>Avg Rating:</strong> {game.averageRating.toFixed(1)} /
-                10
-              </p>
-            </div>
-          )}
-
-          {/* CREATOR ACTIONS */}
-          {isCreator && (
-            <div className="flex flex-wrap gap-4 mb-6">
-              {/* PENDING or CANCELLED → Confirm */}
-              {(game.status === "PENDING" || game.status === "CANCELLED") && (
-                <button
-                  onClick={() =>
-                    confirmGame({ variables: { gameId, note: updatedNote } })
+                <span className="hidden sm:inline">
+                  {showFormation 
+                    ? "Game Details" 
+                    : game.status === "COMPLETED" ? "Feedback" : "Formation"
                   }
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg font-bold shadow hover:bg-blue-700 transition"
-                >
-                  Confirm
-                </button>
-              )}
+                </span>
+                <span className="sm:hidden">
+                  {showFormation ? "Details" : "More"}
+                </span>
+              </button>
+            </div>
+            
+            {/* Game Title & Status */}
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full bg-white/20 backdrop-blur-sm mb-2 sm:mb-3 md:mb-4">
+                <span className="text-2xl sm:text-3xl md:text-4xl">⚽</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 sm:mb-3 md:mb-4">
+                vs {game.opponent}
+              </h1>
+              <div className="flex justify-center">
+                <span className={statusBadgeClass(game.status) + " text-xs sm:text-sm"}>
+                  {game.status}
+                </span>
+              </div>
+              
+              {/* Navigation Buttons */}
+              <div className="mt-4 sm:mt-6">
+                <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+                  <button
+                    onClick={() => setActiveSection("overview")}
+                    className={`px-3 sm:px-4 py-2 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm flex items-center gap-2 ${
+                      activeSection === "overview"
+                        ? "bg-white text-blue-600 shadow-lg"
+                        : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
+                    }`}
+                  >
+                    <span className="text-sm sm:text-base">📅</span>
+                    <span className="hidden sm:inline">Date & Venue</span>
+                    <span className="sm:hidden">Info</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => setActiveSection("weather")}
+                    className={`px-3 sm:px-4 py-2 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm flex items-center gap-2 ${
+                      activeSection === "weather"
+                        ? "bg-white text-blue-600 shadow-lg"
+                        : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
+                    }`}
+                  >
+                    <span className="text-sm sm:text-base">🌤️</span>
+                    <span className="hidden sm:inline">Weather</span>
+                    <span className="sm:hidden">Weather</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => setActiveSection("notes")}
+                    className={`px-3 sm:px-4 py-2 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm flex items-center gap-2 ${
+                      activeSection === "notes"
+                        ? "bg-white text-blue-600 shadow-lg"
+                        : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
+                    }`}
+                  >
+                    <span className="text-sm sm:text-base">📝</span>
+                    <span className="hidden sm:inline">Game Notes</span>
+                    <span className="sm:hidden">Notes</span>
+                  </button>
+                  
+                  {game.status === "PENDING" && (
+                    <button
+                      onClick={() => setActiveSection("voting")}
+                      className={`px-3 sm:px-4 py-2 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm flex items-center gap-2 ${
+                        activeSection === "voting"
+                          ? "bg-white text-blue-600 shadow-lg"
+                          : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
+                      }`}
+                    >
+                      <span className="text-sm sm:text-base">🗳️</span>
+                      <span className="hidden sm:inline">Vote</span>
+                      <span className="sm:hidden">Vote</span>
+                    </button>
+                  )}
+                  
+                  {isCreator && (
+                    <button
+                      onClick={() => setActiveSection("management")}
+                      className={`px-3 sm:px-4 py-2 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm flex items-center gap-2 ${
+                        activeSection === "management"
+                          ? "bg-white text-blue-600 shadow-lg"
+                          : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
+                      }`}
+                    >
+                      <span className="text-sm sm:text-base">⚙️</span>
+                      <span className="hidden sm:inline">Management</span>
+                      <span className="sm:hidden">Manage</span>
+                    </button>
+                  )}
+                  
+                  <button
+                    onClick={() => setActiveSection("responses")}
+                    className={`px-3 sm:px-4 py-2 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm flex items-center gap-2 ${
+                      activeSection === "responses"
+                        ? "bg-white text-blue-600 shadow-lg"
+                        : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
+                    }`}
+                  >
+                    <span className="text-sm sm:text-base">👥</span>
+                    <span className="hidden sm:inline">Responses</span>
+                    <span className="sm:hidden">Players</span>
+                  </button>
+                  
+                  {game.status === "COMPLETED" && (
+                    <button
+                      onClick={() => setActiveSection("results")}
+                      className={`px-3 sm:px-4 py-2 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm flex items-center gap-2 ${
+                        activeSection === "results"
+                          ? "bg-white text-blue-600 shadow-lg"
+                          : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
+                      }`}
+                    >
+                      <span className="text-sm sm:text-base">🏆</span>
+                      <span className="hidden sm:inline">Results</span>
+                      <span className="sm:hidden">Results</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-              {/* PENDING specific actions */}
-              {game.status === "PENDING" && (
-                <>
-                  <button
-                    onClick={() => setShowUpdate(true)}
-                    className="px-6 py-2 bg-green-600 text-white rounded-lg font-bold shadow hover:bg-green-700 transition"
-                  >
-                    Update
-                  </button>
-                  <button
-                    onClick={() =>
-                      cancelGame({ variables: { gameId, note: updatedNote } })
-                    }
-                    className="px-6 py-2 bg-red-600 text-white rounded-lg font-bold shadow hover:bg-red-700 transition"
-                  >
-                    Cancel
-                  </button>
-                </>
-              )}
-
-              {/* CONFIRMED specific actions */}
-              {game.status === "CONFIRMED" && (
-                <>
-                  <button
-                    onClick={() => setShowComplete(true)}
-                    className="px-6 py-2 bg-purple-600 text-white rounded-lg font-bold shadow hover:bg-purple-700 transition"
-                  >
-                    Complete
-                  </button>
-                  <button
-                    onClick={() =>
-                      cancelGame({ variables: { gameId, note: updatedNote } })
-                    }
-                    className="px-6 py-2 bg-red-600 text-white rounded-lg font-bold shadow hover:bg-red-700 transition"
-                  >
-                    Cancel
-                  </button>
-                </>
+        {/* Content Area */}
+        <div className="p-4 sm:p-6 md:p-8">
+          {!showFormation ? (
+            <div className="space-y-6 sm:space-y-8">
+              {/* Render the active section */}
+              {renderActiveSection()}
+            </div>
+          ) : (
+            <div className="space-y-8">
+              {/* Formation/Feedback View */}
+              {game.status === "PENDING" ? (
+                <div className={`p-12 rounded-3xl shadow-xl text-center transition-all duration-300 hover:shadow-2xl ${
+                  isDarkMode
+                    ? "bg-gradient-to-br from-gray-700 to-gray-800 border border-gray-600"
+                    : "bg-gradient-to-br from-white to-blue-50 border border-blue-200"
+                }`}>
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 mx-auto flex items-center justify-center mb-6">
+                    <span className="text-4xl">⏳</span>
+                  </div>
+                  <h3 className={`text-2xl font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                    Formation Coming Soon
+                  </h3>
+                  <p className={`text-lg leading-relaxed ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
+                    The formation will be displayed here once the game is confirmed.
+                    <br />
+                    Please cast your vote and stay tuned. Thank you!
+                  </p>
+                </div>
+              ) : (
+                <RightColumn
+                  game={game}
+                  formation={formation}
+                  isCreator={isCreator}
+                  showThankYou={showThankYou}
+                  feedbackGiven={feedbackGiven}
+                  startTransition={startTransition}
+                  refetchGame={refetchGame}
+                  setFormation={setFormation}
+                  gameId={gameId}
+                  isDarkMode={isDarkMode}
+                  handleFeedback={handleFeedback}
+                  showFormation={true}
+                  setShowFormation={setShowFormation}
+                />
               )}
             </div>
           )}
-
-          {/* Voters */}
-          <div className="flex flex-wrap gap-4 mb-6 text-base font-medium">
-            <span className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-3 py-1 rounded-full flex items-center gap-1">
-              👍 {yesVoters.length} Available
-            </span>
-            <span className="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-3 py-1 rounded-full flex items-center gap-1">
-              ❌ {noVoters.length} Not Available
-            </span>
-          </div>
-          <div className="mb-6">
-            <VotersList yesVoters={yesVoters} noVoters={noVoters} />
-          </div>
         </div>
-      ) : (
-        <div>
-          {/* Only one button here, always 'Hide' with correct label */}
-          <div className="flex justify-between mb-4">
-            <button
-              onClick={() => navigate("/game-schedule")}
-              className={actionButtonClass}
-            >
-              <span className="material-icons text-lg"></span>← Game List
-            </button>
-            <button
-              onClick={() => setShowFormation(false)}
-              className={actionButtonClass}
-            >
-              {game.status === "COMPLETED" ? "Hide Feedback" : "Hide Formation"}
-            </button>
-          </div>
-          <div>
-            {/* Show message if game is pending, else show RightColumn */}
-            {game.status === "PENDING" ? (
-              <div
-                className={`p-6 rounded-xl shadow text-center text-lg font-medium italic ${
-                  isDarkMode
-                    ? "bg-gray-700 text-gray-100"
-                    : "bg-white/80 text-gray-800"
-                }`}
-              >
-                The formation will be displayed here once the game is confirmed.
-                Please cast your vote and stay tuned. Thank you!
-              </div>
-            ) : (
-              <RightColumn
-                game={game}
-                formation={formation}
-                isCreator={isCreator}
-                showThankYou={showThankYou}
-                feedbackGiven={feedbackGiven}
-                startTransition={startTransition}
-                refetchGame={refetchGame}
-                setFormation={setFormation}
-                gameId={gameId}
-                isDarkMode={isDarkMode}
-                handleFeedback={handleFeedback}
-                showFormation={true}
-                setShowFormation={setShowFormation}
-              />
-            )}
-          </div>
-        </div>
-      )}
+      </div>
 
-      {/* ───────────────── MODALS ─────────────────────────────── */}
+      {/* Modals */}
       {isCreator && showUpdate && (
         <GameUpdate
           gameId={gameId}

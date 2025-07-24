@@ -157,6 +157,7 @@ export const GAME_CREATED_SUBSCRIPTION = gql`
       date
       time
       venue
+      city
       notes
       opponent
       score
@@ -196,6 +197,7 @@ export const GAME_CONFIRMED_SUBSCRIPTION = gql`
       date
       time
       venue
+      city
       opponent
     }
   }
@@ -209,6 +211,7 @@ export const GAME_UPDATED_SUBSCRIPTION = gql`
       date
       time
       venue
+      city
       opponent
     }
   }

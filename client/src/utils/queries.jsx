@@ -442,6 +442,7 @@ export const QUERY_GAMES = gql`
       date
       time
       venue
+      city
       notes
       status
       score
@@ -449,6 +450,15 @@ export const QUERY_GAMES = gql`
       result
       availableCount
       unavailableCount
+      createdAt
+      updatedAt
+      responses {
+        user {
+          _id
+          name
+        }
+        isAvailable
+      }
       feedbacks {
         _id
         user {
@@ -470,6 +480,27 @@ export const QUERY_GAMES = gql`
             name
           }
         }
+        comments {
+          _id
+          commentText
+          commentAuthor
+          user {
+            _id
+            name
+          }
+          likes
+          likedBy {
+            _id
+            name
+          }
+          createdAt
+          updatedAt
+        }
+        likes
+        likedBy {
+          _id
+          name
+        }
       }
     }
   }
@@ -482,11 +513,14 @@ export const QUERY_GAME = gql`
       date
       time
       venue
+      city
       notes
       score
       opponent
       result
       status
+      createdAt
+      updatedAt
       creator {
         _id
         name
@@ -520,6 +554,27 @@ export const QUERY_GAME = gql`
             _id
             name
           }
+        }
+        comments {
+          _id
+          commentText
+          commentAuthor
+          user {
+            _id
+            name
+          }
+          likes
+          likedBy {
+            _id
+            name
+          }
+          createdAt
+          updatedAt
+        }
+        likes
+        likedBy {
+          _id
+          name
         }
       }
     }

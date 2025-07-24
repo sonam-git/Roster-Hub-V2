@@ -89,6 +89,7 @@ const typeDefs = gql`
     date: String!
     time: String!
     venue: String!
+    city: String!
     notes: String
     opponent: String!
     score: String
@@ -180,6 +181,7 @@ const typeDefs = gql`
     date: String!
     time: String!
     venue: String!
+    city: String!
     notes: String
     opponent: String!
   }
@@ -188,6 +190,7 @@ const typeDefs = gql`
     date: String
     time: String
     venue: String
+    city: String
     notes: String
     opponent: String
   }

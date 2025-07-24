@@ -185,14 +185,21 @@ const GameList = ({ onCreateGame }) => {
 
                   {/* Game Details Section */}
                   <div className="space-y-4 mb-6">
-                    {/* Venue and Opponent */}
+                    {/* Venue, City, and Opponent */}
                     <div className={`p-4 rounded-xl ${isDarkMode ? 'bg-gray-800/50' : 'bg-white/80'} border ${isDarkMode ? 'border-gray-700' : 'border-blue-100'}`}>
-                      <div className="grid sm:grid-cols-2 gap-3">
+                      <div className="grid sm:grid-cols-3 gap-3">
                         <div className="flex items-center space-x-3">
                           <span className="text-lg">🏟️</span>
                           <div>
                             <p className="text-xs font-medium opacity-75 uppercase tracking-wide">Venue</p>
                             <p className={`font-bold ${isDarkMode ? 'text-blue-200' : 'text-blue-700'}`}>{game.venue}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <span className="text-lg">🏙️</span>
+                          <div>
+                            <p className="text-xs font-medium opacity-75 uppercase tracking-wide">City</p>
+                            <p className={`font-bold ${isDarkMode ? 'text-blue-200' : 'text-blue-700'}`}>{game.city}</p>
                           </div>
                         </div>
                         <div className="flex items-center space-x-3">

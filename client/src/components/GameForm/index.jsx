@@ -1,9 +1,10 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { CREATE_GAME } from "../../utils/mutations";
 import { QUERY_GAMES } from "../../utils/queries";
 import { ThemeContext } from "../ThemeContext";
+import { filterCities } from "../../utils/usCities";
 import Auth from "../../utils/auth";
 
 const GameForm = ({ onGameCreated, onBackToGames }) => {
@@ -14,12 +15,35 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
     date: "",
     time: "",
     venue: "",
+    city: "",
     notes: "",
     opponent: "",
   });
 
   const [validationErrors, setValidationErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // City autocomplete state
+  const [showCitySuggestions, setShowCitySuggestions] = useState(false);
+  const [citySuggestions, setCitySuggestions] = useState([]);
+  const cityInputRef = useRef(null);
+  const cityDropdownRef = useRef(null);
+
+  // Handle clicking outside city dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        cityDropdownRef.current &&
+        !cityDropdownRef.current.contains(event.target) &&
+        !cityInputRef.current?.contains(event.target)
+      ) {
+        setShowCitySuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const [createGame, { loading, error }] = useMutation(CREATE_GAME, {
     update(cache, { data: { createGame } }) {
@@ -33,30 +57,6 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
         console.error("Error updating cache after creating game", e);
       }
     },
-    optimisticResponse: ({ input }) => {
-      const user = Auth.getProfile().data;
-      return {
-        createGame: {
-          __typename: "Game",
-          _id: `temp-${Math.random().toString(36).substr(2, 9)}`,
-          creator: {
-            __typename: "Profile",
-            _id: user._id,
-            name: user.name,
-          },
-          date: input.date,
-          time: input.time,
-          venue: input.venue,
-          notes: input.notes,
-          opponent: input.opponent,
-          score: "0 - 0",
-          result: "NOT_PLAYED",
-          status: "PENDING",
-          availableCount: 0,
-          unavailableCount: 0,
-        },
-      };
-    },
     refetchQueries: [{ query: QUERY_GAMES }],
     awaitRefetchQueries: true,
   });
@@ -65,19 +65,38 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
     const { name, value } = e.target;
     setFormState(prev => ({ ...prev, [name]: value }));
     
+    // Handle city autocomplete
+    if (name === 'city') {
+      const suggestions = filterCities(value);
+      setCitySuggestions(suggestions);
+      setShowCitySuggestions(suggestions.length > 0 && value.length >= 2);
+    }
+    
     // Clear validation error when user starts typing
     if (validationErrors[name]) {
       setValidationErrors(prev => ({ ...prev, [name]: "" }));
     }
   };
 
+  const handleCitySelect = (selectedCity) => {
+    setFormState(prev => ({ ...prev, city: selectedCity }));
+    setShowCitySuggestions(false);
+    setCitySuggestions([]);
+    
+    // Clear validation error
+    if (validationErrors.city) {
+      setValidationErrors(prev => ({ ...prev, city: "" }));
+    }
+  };
+
   const validateForm = () => {
     const errors = {};
-    const { date, time, venue, opponent } = formState;
+    const { date, time, venue, city, opponent } = formState;
 
     if (!date) errors.date = "Date is required";
     if (!time) errors.time = "Time is required";
     if (!venue.trim()) errors.venue = "Venue is required";
+    if (!city.trim()) errors.city = "City is required";
     if (!opponent.trim()) errors.opponent = "Opponent is required";
 
     // Check if date is in the past
@@ -102,11 +121,11 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
     }
 
     setIsSubmitting(true);
-    const { date, time, venue, notes, opponent } = formState;
+    const { date, time, venue, city, notes, opponent } = formState;
     
     try {
       const { data } = await createGame({
-        variables: { input: { date, time, venue, notes, opponent } },
+        variables: { input: { date, time, venue, city, notes, opponent } },
       });
       
       // Reset form on success
@@ -114,6 +133,7 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
         date: "",
         time: "",
         venue: "",
+        city: "",
         notes: "",
         opponent: "",
       });
@@ -214,34 +234,107 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
           </div>
         </div>
 
-        {/* Venue Field */}
-        <div className="space-y-2">
-          <label className={`flex items-center text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-            <span className="mr-2">📍</span>
-            Venue
-            <span className="text-red-500 ml-1">*</span>
-          </label>
-          <input
-            type="text"
-            name="venue"
-            value={formState.venue}
-            onChange={handleChange}
-            className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200
-              ${validationErrors.venue 
-                ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
-                : isDarkMode 
-                  ? "bg-gray-700 text-gray-100 border-gray-600 hover:border-gray-500" 
-                  : "bg-white border-gray-300 hover:border-gray-400"
-              }`}
-            placeholder="e.g. Central Park Field #3, Community Sports Center"
-            required
-          />
-          {validationErrors.venue && (
-            <p className="text-red-500 text-xs flex items-center">
-              <span className="mr-1">⚠️</span>
-              {validationErrors.venue}
-            </p>
-          )}
+        {/* Venue and City Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Venue Field */}
+          <div className="space-y-2">
+            <label className={`flex items-center text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+              <span className="mr-2">📍</span>
+              Venue
+              <span className="text-red-500 ml-1">*</span>
+            </label>
+            <input
+              type="text"
+              name="venue"
+              value={formState.venue}
+              onChange={handleChange}
+              className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200
+                ${validationErrors.venue 
+                  ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
+                  : isDarkMode 
+                    ? "bg-gray-700 text-gray-100 border-gray-600 hover:border-gray-500" 
+                    : "bg-white border-gray-300 hover:border-gray-400"
+                }`}
+              placeholder="e.g. Central Park Field #3, Community Sports Center"
+              required
+            />
+            {validationErrors.venue && (
+              <p className="text-red-500 text-xs flex items-center">
+                <span className="mr-1">⚠️</span>
+                {validationErrors.venue}
+              </p>
+            )}
+          </div>
+
+          {/* City Field */}
+          <div className="space-y-2 relative">
+            <label className={`flex items-center text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+              <span className="mr-2">🏙️</span>
+              City
+              <span className="text-red-500 ml-1">*</span>
+            </label>
+            <div className="relative">
+              <input
+                ref={cityInputRef}
+                type="text"
+                name="city"
+                value={formState.city}
+                onChange={handleChange}
+                onFocus={() => {
+                  if (formState.city.length >= 2) {
+                    const suggestions = filterCities(formState.city);
+                    setCitySuggestions(suggestions);
+                    setShowCitySuggestions(suggestions.length > 0);
+                  }
+                }}
+                className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200
+                  ${validationErrors.city 
+                    ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
+                    : isDarkMode 
+                      ? "bg-gray-700 text-gray-100 border-gray-600 hover:border-gray-500" 
+                      : "bg-white border-gray-300 hover:border-gray-400"
+                  }`}
+                placeholder="e.g. New York, Los Angeles, Chicago"
+                required
+                autoComplete="off"
+              />
+              
+              {/* City Suggestions Dropdown */}
+              {showCitySuggestions && citySuggestions.length > 0 && (
+                <div
+                  ref={cityDropdownRef}
+                  className={`absolute z-50 w-full mt-1 border-2 rounded-xl shadow-lg max-h-48 overflow-y-auto
+                    ${isDarkMode 
+                      ? "bg-gray-700 border-gray-600 text-gray-100" 
+                      : "bg-white border-gray-300 text-gray-800"
+                    }`}
+                >
+                  {citySuggestions.map((city, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => handleCitySelect(city)}
+                      className={`w-full px-4 py-3 text-left hover:bg-blue-500 hover:text-white transition-colors duration-200 border-b border-opacity-10
+                        ${isDarkMode ? "border-gray-600 hover:bg-blue-600" : "border-gray-200 hover:bg-blue-500"}
+                        ${index === citySuggestions.length - 1 ? 'border-b-0' : ''}
+                      `}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm">🏙️</span>
+                        <span className="font-medium">{city}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            {validationErrors.city && (
+              <p className="text-red-500 text-xs flex items-center">
+                <span className="mr-1">⚠️</span>
+                {validationErrors.city}
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Opponent Field */}

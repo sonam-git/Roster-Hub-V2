@@ -8,6 +8,7 @@ const GameUpdate = ({
   initialDate,
   initialTime,
   initialVenue,
+  initialCity,
   initialNotes,
   initialOpponent,
   onClose,
@@ -17,6 +18,7 @@ const GameUpdate = ({
     date: initialDate || "",
     time: initialTime || "",
     venue: initialVenue || "",
+    city: initialCity || "",
     notes: initialNotes || "",
     opponent: initialOpponent || "",
   });
@@ -38,6 +40,7 @@ const GameUpdate = ({
       date: initialDate || "",
       time: initialTime || "",
       venue: initialVenue || "",
+      city: initialCity || "",
       notes: initialNotes || "",
       opponent: initialOpponent || "",
     });
@@ -54,6 +57,7 @@ const GameUpdate = ({
     if (formState.date     !== initialDate)    input.date     = formState.date;
     if (formState.time     !== initialTime)    input.time     = formState.time;
     if (formState.venue    !== initialVenue)   input.venue    = formState.venue;
+    if (formState.city     !== initialCity)    input.city     = formState.city;
     if (formState.notes    !== initialNotes)   input.notes    = formState.notes;
     if (formState.opponent !== initialOpponent)input.opponent = formState.opponent;
 
@@ -107,6 +111,17 @@ const GameUpdate = ({
               onChange={handleChange}
               className="mt-1 block w-full px-3 py-2 border rounded text-black"
               placeholder="e.g. Central Park Field #3"
+            />
+          </label>
+                 <label className="block mb-2">
+            <span className="font-bold">City</span>
+            <input
+              type="text"
+              name="city"
+              value={formState.city}
+              onChange={handleChange}
+              className="mt-1 block w-full px-3 py-2 border rounded text-black"
+              placeholder="e.g. New York"
             />
           </label>
           <label className="block mb-2">

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const WeatherForecast = ({ date, venue, isDarkMode }) => {
+const WeatherForecast = ({ date, city, isDarkMode }) => {
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -62,7 +62,7 @@ const WeatherForecast = ({ date, venue, isDarkMode }) => {
     setError(null);
 
     try {
-      let lat, lon, locationName = venue;
+      let lat, lon, locationName = city;
 
       // Try to get user's current location first if they allow it
       if (useCurrentLocation && userLocation) {
@@ -76,22 +76,22 @@ const WeatherForecast = ({ date, venue, isDarkMode }) => {
           lon = currentLoc.lon;
           locationName = 'Current Location';
         } catch (geoError) {
-          console.warn('Geolocation failed, falling back to venue geocoding:', geoError.message);
-          // Fall back to venue-based geocoding
+          console.warn('Geolocation failed, falling back to city geocoding:', geoError.message);
+          // Fall back to city-based geocoding
         }
       }
 
-      // If we don't have coordinates yet, use venue geocoding
+      // If we don't have coordinates yet, use city geocoding
       if (!lat || !lon) {
-        if (!venue) {
+        if (!city) {
           setError('No location information available');
           return;
         }
 
-        // Geocode the venue name
+        // Geocode the city name
         const geocodeResponse = await fetch(
           `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
-            venue
+            city
           )}&limit=1&appid=${API_KEY}`
         );
         
@@ -146,7 +146,7 @@ const WeatherForecast = ({ date, venue, isDarkMode }) => {
     } finally {
       setLoading(false);
     }
-  }, [venue, date, API_KEY, useCurrentLocation, userLocation, getCurrentLocation]);
+  }, [city, date, API_KEY, useCurrentLocation, userLocation, getCurrentLocation]);
 
   useEffect(() => {
     // Only fetch weather for future games
@@ -156,7 +156,7 @@ const WeatherForecast = ({ date, venue, isDarkMode }) => {
     if (gameDate >= today) {
       fetchWeather();
     }
-  }, [date, venue, fetchWeather]);
+  }, [date, city, fetchWeather]);
 
   if (loading) {
     return (
@@ -201,17 +201,17 @@ const WeatherForecast = ({ date, venue, isDarkMode }) => {
     <div className={`p-4 rounded-xl shadow-md mb-6 ${isDarkMode ? 'bg-gradient-to-r from-blue-900 to-blue-800' : 'bg-gradient-to-r from-blue-100 to-sky-100'}`}>
       {/* Location Toggle */}
       <div className="flex justify-between items-center mb-3">
-        <h4 className="font-bold text-lg">Weather Forecast</h4>
+        <h4 className="font-bold text-lg dark:text-white">Weather Forecast</h4>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setUseCurrentLocation(!useCurrentLocation)}
             className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
               useCurrentLocation 
                 ? 'bg-green-500 text-white' 
-                : 'bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300'
+                : 'bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-100'
             }`}
           >
-            {useCurrentLocation ? '📍 Current Location' : '📌 Venue Location'}
+            {useCurrentLocation ? '📍 Current Location' : '🏙️ City Location'}
           </button>
         </div>
       </div>
@@ -220,22 +220,22 @@ const WeatherForecast = ({ date, venue, isDarkMode }) => {
         <div className="flex items-center gap-3">
           <span className="text-3xl">{getWeatherIcon(weather.icon)}</span>
           <div>
-            <p className="text-sm opacity-80">{weather.city}{weather.country && `, ${weather.country}`}</p>
+            <p className="text-sm opacity-80 dark:text-white">{weather.city}{weather.country && `, ${weather.country}`}</p>
           </div>
         </div>
         
-        <div className="text-right">
+        <div className="text-right dark:text-white">
           <div className="text-2xl font-bold">{weather.temp}°C</div>
           <div className="text-sm opacity-80 capitalize">{weather.description}</div>
         </div>
       </div>
       
       <div className="flex justify-between mt-3 pt-3 border-t border-white/20 dark:border-gray-600">
-        <div className="text-center">
-          <div className="text-xs opacity-80">Humidity</div>
+        <div className="text-center dark:text-white">
+          <div className="text-xs opacity-80 ">Humidity</div>
           <div className="font-semibold">{weather.humidity}%</div>
         </div>
-        <div className="text-center">
+        <div className="text-center dark:text-white">
           <div className="text-xs opacity-80">Wind</div>
           <div className="font-semibold">{weather.windSpeed} m/s</div>
         </div>

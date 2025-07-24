@@ -1127,15 +1127,16 @@ const resolvers = {
           "You need to be logged in to create a game"
         );
       }
-      const { date, time, venue, notes, opponent } = input;
-      if (!date || !time || !venue || !opponent) {
-        throw new UserInputError("Date, time, opponent and venue are required");
+      const { date, time, venue, city, notes, opponent } = input;
+      if (!date || !time || !venue || !city || !opponent) {
+        throw new UserInputError("Date, time, opponent, venue and city are required");
       }
       const newGame = await Game.create({
         creator: context.user._id,
         date,
         time,
         venue,
+        city,
         notes: notes || "",
         opponent,
         status: "PENDING",
@@ -1291,6 +1292,7 @@ const resolvers = {
       if (input.date !== undefined) game.date = input.date;
       if (input.time !== undefined) game.time = input.time;
       if (input.venue !== undefined) game.venue = input.venue;
+      if (input.city !== undefined) game.city = input.city;
       if (input.notes !== undefined) game.notes = input.notes;
       if (input.opponent !== undefined) game.opponent = input.opponent;
 

@@ -47,6 +47,11 @@ const GameSchema = new Schema(
       trim: true,
       required: true,
     },
+      city: {
+      type: String,
+      trim: true,
+      required: true,
+    },
     notes: {
       type: String,
       trim: true,

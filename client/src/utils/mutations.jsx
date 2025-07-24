@@ -343,6 +343,7 @@ export const CREATE_GAME = gql`
       date
       time
       venue
+      city
       notes
       opponent
       score
@@ -350,6 +351,58 @@ export const CREATE_GAME = gql`
       status
       availableCount
       unavailableCount
+      createdAt
+      updatedAt
+      feedbacks {
+        _id
+        rating
+        comment
+        user {
+          _id
+          name
+        }
+        createdAt
+      }
+      averageRating
+      responses {
+        user {
+          _id
+          name
+        }
+        isAvailable
+      }
+      formation {
+        _id
+        formationType
+        positions {
+          slot
+          player {
+            _id
+            name
+          }
+        }
+        comments {
+          _id
+          commentText
+          commentAuthor
+          user {
+            _id
+            name
+          }
+          likes
+          likedBy {
+            _id
+            name
+          }
+          createdAt
+          updatedAt
+        }
+        likes
+        likedBy {
+          _id
+          name
+        }
+      }
     }
   }
 `;
@@ -358,15 +411,73 @@ export const UPDATE_GAME = gql`
   mutation UpdateGame($gameId: ID!, $input: UpdateGameInput!) {
     updateGame(gameId: $gameId, input: $input) {
       _id
+      creator {
+        _id
+        name
+      }
       date
       time
       venue
+      city
       notes
-      status
       opponent
+      score
+      result
+      status
       availableCount
       unavailableCount
-      creator { _id name }
+      createdAt
+      updatedAt
+      responses {
+        user {
+          _id
+          name
+        }
+        isAvailable
+      }
+      feedbacks {
+        _id
+        rating
+        comment
+        user {
+          _id
+          name
+        }
+        createdAt
+      }
+      averageRating
+      formation {
+        _id
+        formationType
+        positions {
+          slot
+          player {
+            _id
+            name
+          }
+        }
+        comments {
+          _id
+          commentText
+          commentAuthor
+          user {
+            _id
+            name
+          }
+          likes
+          likedBy {
+            _id
+            name
+          }
+          createdAt
+          updatedAt
+        }
+        likes
+        likedBy {
+          _id
+          name
+        }
+      }
     }
   }
 `;
