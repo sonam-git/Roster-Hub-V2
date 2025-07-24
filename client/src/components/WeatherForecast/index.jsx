@@ -8,7 +8,7 @@ const WeatherForecast = ({ date, venue, isDarkMode }) => {
   const [userLocation, setUserLocation] = useState(null);
 
   // You'll need to get an API key from OpenWeatherMap (free)
-  const API_KEY = import.meta.env.VITE_WEATHER_API_KEY || 'a6273b76b847075c6236ad30b6dafa08';
+  const API_KEY = import.meta.env.VITE_WEATHER_API_KEY || 'your-api-key-here';
   
   // Get user's current location
   const getCurrentLocation = React.useCallback(() => {
