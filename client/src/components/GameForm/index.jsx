@@ -18,6 +18,9 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
     opponent: "",
   });
 
+  const [validationErrors, setValidationErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [createGame, { loading, error }] = useMutation(CREATE_GAME, {
     update(cache, { data: { createGame } }) {
       try {
@@ -61,17 +64,58 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormState(prev => ({ ...prev, [name]: value }));
+    
+    // Clear validation error when user starts typing
+    if (validationErrors[name]) {
+      setValidationErrors(prev => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    const { date, time, venue, opponent } = formState;
+
+    if (!date) errors.date = "Date is required";
+    if (!time) errors.time = "Time is required";
+    if (!venue.trim()) errors.venue = "Venue is required";
+    if (!opponent.trim()) errors.opponent = "Opponent is required";
+
+    // Check if date is in the past
+    if (date) {
+      const selectedDate = new Date(date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (selectedDate < today) {
+        errors.date = "Date cannot be in the past";
+      }
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { date, time, venue, notes, opponent } = formState;
-    if (!date || !time || !venue || !opponent) {
-      return alert("Date, time, venue and opponent are required");
+    
+    if (!validateForm()) {
+      return;
     }
+
+    setIsSubmitting(true);
+    const { date, time, venue, notes, opponent } = formState;
+    
     try {
       const { data } = await createGame({
         variables: { input: { date, time, venue, notes, opponent } },
+      });
+      
+      // Reset form on success
+      setFormState({
+        date: "",
+        time: "",
+        venue: "",
+        notes: "",
+        opponent: "",
       });
       
       // If onGameCreated callback is provided, call it instead of navigating
@@ -82,119 +126,237 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
       }
     } catch (err) {
       console.error("Create game failed", err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div
-      className={`max-w-lg mx-auto p-4 rounded-xl shadow-xl border-2 transition-all duration-300
-      ${isDarkMode ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 border-gray-700 text-gray-200" : "bg-gradient-to-br from-white via-blue-50 to-blue-100 border-blue-200 text-gray-800"}
-    `}
+      className={`w-full p-8 rounded-2xl shadow-2xl border transition-all duration-300
+      ${isDarkMode 
+        ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 border-gray-600 text-gray-100" 
+        : "bg-gradient-to-br from-white via-blue-50 to-indigo-50 border-blue-200 text-gray-800"
+      }`}
     >
-      <h2 className={`text-3xl text-center font-extrabold mb-6 tracking-tight drop-shadow-lg ${isDarkMode ? "text-blue-200" : "text-blue-700"}`}>
-      ⚽️ Schedule a Game ⚽️
-      </h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        {/* Date */}
-        <label className={`text-sm font-semibold ${isDarkMode ? "text-blue-200" : "text-blue-700"}`}>
-          Date
-          <input
-            type="date"
-            name="date"
-            value={formState.date}
-            onChange={handleChange}
-            className={`mt-1 block w-full px-3 py-2 border-2 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all
-              ${isDarkMode ? "bg-gray-700 text-gray-200 border-gray-600" : "bg-white border-blue-300"}
-            `}
-            required
-          />
-        </label>
-        {/* Time */}
-        <label className={`text-sm font-semibold ${isDarkMode ? "text-blue-200" : "text-blue-700"}`}>
-          Time
-          <input
-            type="time"
-            name="time"
-            value={formState.time}
-            onChange={handleChange}
-            className={`mt-1 block w-full px-3 py-2 border-2 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all
-              ${isDarkMode ? "bg-gray-700 text-gray-200 border-gray-600" : "bg-white border-blue-300"}
-            `}
-            required
-          />
-        </label>
+      {/* Header */}
+      <div className="text-center mb-8">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 mb-4">
+          <span className="text-2xl">⚽</span>
+        </div>
+        <h2 className={`text-3xl font-bold tracking-tight ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+          Schedule New Game
+        </h2>
+        <p className={`mt-2 text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+          Fill in the details to create a new game for your team
+        </p>
       </div>
-        {/* Venue */}
-        <label className={`text-sm font-semibold w-full block ${isDarkMode ? "text-blue-200" : "text-blue-700"}`}>
-          Venue
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Date and Time Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Date Field */}
+          <div className="space-y-2">
+            <label className={`flex items-center text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+              <span className="mr-2">📅</span>
+              Game Date
+              <span className="text-red-500 ml-1">*</span>
+            </label>
+            <input
+              type="date"
+              name="date"
+              value={formState.date}
+              onChange={handleChange}
+              className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200
+                ${validationErrors.date 
+                  ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
+                  : isDarkMode 
+                    ? "bg-gray-700 text-gray-100 border-gray-600 hover:border-gray-500" 
+                    : "bg-white border-gray-300 hover:border-gray-400"
+                }`}
+              required
+            />
+            {validationErrors.date && (
+              <p className="text-red-500 text-xs flex items-center">
+                <span className="mr-1">⚠️</span>
+                {validationErrors.date}
+              </p>
+            )}
+          </div>
+
+          {/* Time Field */}
+          <div className="space-y-2">
+            <label className={`flex items-center text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+              <span className="mr-2">🕐</span>
+              Game Time
+              <span className="text-red-500 ml-1">*</span>
+            </label>
+            <input
+              type="time"
+              name="time"
+              value={formState.time}
+              onChange={handleChange}
+              className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200
+                ${validationErrors.time 
+                  ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
+                  : isDarkMode 
+                    ? "bg-gray-700 text-gray-100 border-gray-600 hover:border-gray-500" 
+                    : "bg-white border-gray-300 hover:border-gray-400"
+                }`}
+              required
+            />
+            {validationErrors.time && (
+              <p className="text-red-500 text-xs flex items-center">
+                <span className="mr-1">⚠️</span>
+                {validationErrors.time}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Venue Field */}
+        <div className="space-y-2">
+          <label className={`flex items-center text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+            <span className="mr-2">📍</span>
+            Venue
+            <span className="text-red-500 ml-1">*</span>
+          </label>
           <input
             type="text"
             name="venue"
             value={formState.venue}
             onChange={handleChange}
-            className={`mt-1 block w-full px-3 py-2 border-2 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all
-              ${isDarkMode ? "bg-gray-700 text-gray-200 border-gray-600" : "bg-white border-blue-300"}
-            `}
-            placeholder="e.g. Central Park Field #3"
+            className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200
+              ${validationErrors.venue 
+                ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
+                : isDarkMode 
+                  ? "bg-gray-700 text-gray-100 border-gray-600 hover:border-gray-500" 
+                  : "bg-white border-gray-300 hover:border-gray-400"
+              }`}
+            placeholder="e.g. Central Park Field #3, Community Sports Center"
             required
           />
-        </label>
-        {/* Opponent */}
-        <label className={`text-sm font-semibold w-full block ${isDarkMode ? "text-blue-200" : "text-blue-700"}`}>
-          Opponent
+          {validationErrors.venue && (
+            <p className="text-red-500 text-xs flex items-center">
+              <span className="mr-1">⚠️</span>
+              {validationErrors.venue}
+            </p>
+          )}
+        </div>
+
+        {/* Opponent Field */}
+        <div className="space-y-2">
+          <label className={`flex items-center text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+            <span className="mr-2">🥅</span>
+            Opponent Team
+            <span className="text-red-500 ml-1">*</span>
+          </label>
           <input
             type="text"
             name="opponent"
             value={formState.opponent}
             onChange={handleChange}
-            className={`mt-1 block w-full px-3 py-2 border-2 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all
-              ${isDarkMode ? "bg-gray-700 text-gray-200 border-gray-600" : "bg-white border-blue-300"}
-            `}
-            placeholder="e.g. Rockets FC"
+            className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200
+              ${validationErrors.opponent 
+                ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
+                : isDarkMode 
+                  ? "bg-gray-700 text-gray-100 border-gray-600 hover:border-gray-500" 
+                  : "bg-white border-gray-300 hover:border-gray-400"
+              }`}
+            placeholder="e.g. Rockets FC, Thunder United, City Rangers"
             required
           />
-        </label>
-        {/* Notes */}
-        <label className={`italic text-sm font-medium w-full block ${isDarkMode ? "text-blue-100" : "text-blue-600"}`}>
-          Special Notes
+          {validationErrors.opponent && (
+            <p className="text-red-500 text-xs flex items-center">
+              <span className="mr-1">⚠️</span>
+              {validationErrors.opponent}
+            </p>
+          )}
+        </div>
+
+        {/* Notes Field */}
+        <div className="space-y-2">
+          <label className={`flex items-center text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+            <span className="mr-2">📝</span>
+            Special Notes
+            <span className={`ml-2 text-xs font-normal ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
+              (Optional)
+            </span>
+          </label>
           <textarea
             name="notes"
             value={formState.notes}
             onChange={handleChange}
-            className={`mt-1 block w-full px-3 py-2 border-2 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all
-              ${isDarkMode ? "bg-gray-700 text-gray-200 border-gray-600" : "bg-white border-blue-300"}
-            `}
-            placeholder="Any additional details…"
-            rows={3}
+            className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none
+              ${isDarkMode 
+                ? "bg-gray-700 text-gray-100 border-gray-600 hover:border-gray-500" 
+                : "bg-white border-gray-300 hover:border-gray-400"
+              }`}
+            placeholder="Any additional details: dress code, equipment needed, transportation info..."
+            rows={4}
           />
-        </label>
-        {/* Buttons */}
-        <div className={`mt-4 ${onBackToGames ? 'flex gap-3' : ''}`}>
+        </div>
+
+        {/* Error Display */}
+        {error && (
+          <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+            <div className="flex items-center">
+              <span className="text-red-500 mr-2">❌</span>
+              <p className="text-red-700 text-sm font-medium">
+                {error.message || "An error occurred while creating the game"}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className={`pt-6 ${onBackToGames ? 'flex gap-4' : ''}`}>
           {onBackToGames && (
             <button
               type="button"
               onClick={onBackToGames}
-              className={`py-2 px-4 rounded-lg font-bold shadow-lg transition-all duration-200 ${onBackToGames ? 'flex-1' : 'w-full'}
-                ${isDarkMode ? "bg-gray-600 text-white hover:bg-gray-700" : "bg-gray-500 text-white hover:bg-gray-600"}
-                focus:outline-none focus:ring-2 focus:ring-gray-400`
-              }
+              className={`${onBackToGames ? 'flex-1' : 'w-full'} py-3 px-6 rounded-xl font-semibold text-sm transition-all duration-200 
+                ${isDarkMode 
+                  ? "bg-gray-600 text-gray-100 hover:bg-gray-700 border border-gray-500" 
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300"
+                } 
+                focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2`}
             >
-              ← Back to Games
+              <span className="flex items-center justify-center">
+                <span className="mr-2">←</span>
+                Back to Games
+              </span>
             </button>
           )}
+          
           <button
             type="submit"
-            disabled={loading}
-            className={`py-2 rounded-lg font-bold shadow-lg transition-all duration-200 ${onBackToGames ? 'flex-1 px-4' : 'w-full'}
-              ${isDarkMode ? "bg-blue-700 text-white hover:bg-blue-800" : "bg-blue-500 text-white hover:bg-blue-700"}
-              disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-400`
-            }
+            disabled={loading || isSubmitting}
+            className={`${onBackToGames ? 'flex-1' : 'w-full'} py-3 px-6 rounded-xl font-semibold text-sm text-white transition-all duration-200
+              ${(loading || isSubmitting)
+                ? "bg-gray-400 cursor-not-allowed" 
+                : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transform hover:scale-[1.02]"
+              }
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg`}
           >
-            {loading ? "Scheduling…" : "Schedule Game"}
+            <span className="flex items-center justify-center">
+              {(loading || isSubmitting) ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Creating Game...
+                </>
+              ) : (
+                <>
+                  <span className="mr-2">⚽</span>
+                  Schedule Game
+                </>
+              )}
+            </span>
           </button>
         </div>
-        {error && <p className="text-red-600 mt-2">Error: {error.message}</p>}
       </form>
     </div>
   );

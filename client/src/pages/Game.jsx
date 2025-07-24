@@ -59,8 +59,8 @@ const Game = () => {
     if (showCreateGame) {
       return (
         <div className="container mx-auto lg:mt-5 p-3">
-          <div className="flex flex-col items-center">
-            <div className="w-full max-w-2xl">
+          <div className="flex flex-col lg:flex-row lg:space-x-2">
+            <div className="w-full">
               <GameForm 
                 onGameCreated={(game) => {
                   setShowCreateGame(false);
