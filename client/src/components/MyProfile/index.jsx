@@ -66,14 +66,13 @@ const MyProfile = () => {
   return (
     <>
       <div
-        className={`md:flex md:space-x-2 mb-6  p-3 shadow-2xl border border-blue-200 dark:border-gray-700 bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800  ${
-          isDarkMode ? "text-white" : "text-black"
-        }`}
+        className={`md:flex md:space-x-2 mb-6  p-3 ${isDarkMode ? "text-white" : "text-black"
+          }`}
       >
         {/* ─── LEFT COLUMN */}
         <div className="md:w-2/5 p-2">
           <div
-            className={`w-full rounded-2xl overflow-hidden shadow-lg border border-blue-100 dark:border-gray-700 ${
+            className={`w-full rounded-2xl overflow-hidden shadow-lg border border-blue-400 dark:border-gray-100 ${
               isDarkMode ? "bg-gray-700" : "bg-blue-50"
             }`}
           >

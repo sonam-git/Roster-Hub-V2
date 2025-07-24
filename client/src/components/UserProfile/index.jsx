@@ -20,14 +20,14 @@ const UserProfile = ({ profile }) => {
 
       {/* Right Side */}
       <div className="md:w-3/5 p-2">
-        <div className={`w-full h-full rounded-lg shadow-md ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+        <div className={`w-full h-full rounded-lg shadow-md border ${isDarkMode ? 'bg-gray-800 border-white' : 'bg-gray-10 border-black'}`}>
           {/* Buttons row */}
           <div className="flex w-full p-2">
             <button
               className={`w-1/2 px-4 py-2 rounded-l-lg font-bold text-sm transition duration-300 ${
                 activeTab === 'posts'
                   ? 'bg-blue-600 text-white'
-                  : 'bg-white text-dark text-gray-700 dark:bg-gray-800 dark:text-white'
+                  : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-white'
               }`}
               onClick={() => setActiveTab('posts')}
             >
@@ -37,7 +37,7 @@ const UserProfile = ({ profile }) => {
               className={`w-1/2 px-4 py-2 rounded-r-lg font-bold text-sm transition duration-300  ${
                 activeTab === 'skills'
                   ? 'bg-blue-600 text-white'
-                  : 'bg-white text-dark text-gray-700 dark:bg-gray-800 dark:text-white'
+                  : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-white'
               }`}
               onClick={() => setActiveTab('skills')}
             >
@@ -45,7 +45,7 @@ const UserProfile = ({ profile }) => {
             </button>
           </div>
 
-          <div className="p-4 dark:bg-gray-800 rounded-b-lg">
+          <div className="p-4  rounded-b-lg">
             {activeTab === 'skills' ? (
               <div className="w-full flex flex-col gap-4">
                 {profile.skills && profile.skills.length > 0 ? (

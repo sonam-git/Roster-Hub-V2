@@ -72,14 +72,14 @@ export default function CustomComingGames({ isDarkMode }) {
                   : "bg-yellow-200 text-yellow-800 border-yellow-400"}`}>{game.status}</span>
               </div>
               <div className="mb-2 flex flex-col gap-1">
-                <div className={`text-base ${isDarkMode ? 'text-blue-200' : 'text-blue-500'}`}><span className="font-bold">Date:</span> <span className="font-semibold">{humanDate}</span></div>
-                <div className={`text-base ${isDarkMode ? 'text-blue-200' : 'text-blue-500'}`}><span className="font-bold">Time:</span> <span className="font-semibold">{humanTime}</span></div>
-                <div className={`text-base ${isDarkMode ? 'text-blue-200' : 'text-blue-500'}`}><span className="font-bold">Venue:</span> <span className="font-semibold">{game.venue}</span></div>
+                <div className={`text-base ${isDarkMode ? 'text-blue-200' : 'text-blue-500'}`}><span className="font-bold">Date:</span> <span className="font-semibold text-gray-500 dark:text-gray-50">{humanDate}</span></div>
+                <div className={`text-base ${isDarkMode ? 'text-blue-200' : 'text-blue-500'}`}><span className="font-bold">Time:</span> <span className="font-semibold text-gray-500 dark:text-gray-50">{humanTime}</span></div>
+                <div className={`text-base ${isDarkMode ? 'text-blue-200' : 'text-blue-500'}`}><span className="font-bold">Venue:</span> <span className="font-semibold text-gray-500 dark:text-gray-50">{game.venue}</span></div>
                 <div className={`text-base ${isDarkMode ? 'text-blue-200' : 'text-blue-500'}`}>
-                  <span className="font-bold">Notes:</span> <span className="italic">{game.notes ? game.notes : "No note provided for this game."}</span>
+                  <span className="font-bold">Notes:</span> <span className="italic text-gray-500 dark:text-gray-50">{game.notes ? game.notes : "No note provided for this game."}</span>
                 </div>
                 <div className={`text-base ${isDarkMode ? 'text-blue-200' : 'text-blue-500'}`}>
-                  <span className="font-bold">Available Players:</span> <span className="font-semibold">{game.availableCount}</span>
+                  <span className="font-bold">Available Players:</span> <span className="font-semibold text-gray-500 dark:text-gray-50">{game.availableCount}</span>
                 </div>
               </div>
               <button

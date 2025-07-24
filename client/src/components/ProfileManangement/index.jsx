@@ -9,7 +9,7 @@ const ProfileManagement = ({me ,isDarkMode}) => {
 
   return (
       <div className={`rounded-2xl shadow-2xl border border-blue-100 dark:border-gray-700 bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 p-6 max-w-2xl mx-auto ${isDarkMode ? 'text-white' : 'text-black'}`}>
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-2">
+        <div className="flex sm:flex-row justify-between items-center mb-6 gap-2">
           <button
             className={`font-serif text-xs md:text-md lg:text-lg xl:text-xl px-4 py-2 rounded-lg font-bold shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 ${activeComponent === 'userInfo' ? 'bg-blue-600 text-white scale-105' : 'bg-gray-200 text-gray-900 hover:bg-blue-100'}`}
             onClick={() => setActiveComponent('userInfo')}
