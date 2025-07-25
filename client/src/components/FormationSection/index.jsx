@@ -20,7 +20,6 @@ import {
 import AvailablePlayersList from "../AvailablePlayersList";
 import FormationBoard from "../FormationBoard";
 import FormationLikeButton from "../FormationLikeButton";
-import FormationCommentList from "../FormationCommentList";
 
 const FORMATION_TYPES = [
   "1-4-3-3",
@@ -36,6 +35,7 @@ export default function FormationSection({
   isCreator,
   setFormation,
   refetchFormation,
+  isLoading = false,
 }) {
   const [createFormation] = useMutation(CREATE_FORMATION);
   const [updateFormation] = useMutation(UPDATE_FORMATION);
@@ -83,9 +83,13 @@ export default function FormationSection({
   });
   // ─────────────────────────────────────────────────────────────────────────
 
-  const availablePlayers = game.responses
-    .filter(r => r.isAvailable)
-    .map(r => r.user);
+  const availablePlayers = React.useMemo(() => {
+    if (!game?.responses) return [];
+    
+    return game.responses
+      .filter(r => r?.isAvailable && r?.user && r.user._id && r.user.name)
+      .map(r => r.user);
+  }, [game?.responses]);
 
   const formationType = formation?.formationType || selectedFormation;
   const rows = formationType
@@ -111,16 +115,20 @@ export default function FormationSection({
   );
 
   const handleDragStart = event => {
-    const player = availablePlayers.find(p => p._id === event.active.id);
-    setDraggingPlayer(player || null);
+    const player = availablePlayers.find(p => p?._id === event.active.id);
+    if (player && player.name) {
+      setDraggingPlayer(player);
+    } else {
+      setDraggingPlayer(null);
+    }
   };
 
   const handleDragEnd = ({ active, over }) => {
     setDraggingPlayer(null);
     if (!isCreator || !over) return;
 
-    const player = availablePlayers.find(u => u._id === active.id);
-    if (!player) return;
+    const player = availablePlayers.find(u => u?._id === active.id);
+    if (!player || !player.name) return;
 
     const newMap = { ...assignments };
     Object.entries(newMap).forEach(([slot, p]) => {
@@ -163,26 +171,39 @@ export default function FormationSection({
   return (
     <div className="space-y-6">
       {!isFormed && isCreator && (
-        <div className="space-y-2">
-          <label className="block text-sm font-bold">Choose Formation:</label>
-          <div className="flex items-center space-x-4">
-            <select
-              value={selectedFormation}
-              onChange={e => setSelectedFormation(e.target.value)}
-              className="p-2 rounded border dark:bg-gray-600"
-            >
-              <option value="">-- Select --</option>
-              {FORMATION_TYPES.map(ft => (
-                <option key={ft} value={ft}>{ft}</option>
-              ))}
-            </select>
-            {selectedFormation && (
-              <button
-                onClick={() => { setSelectedFormation(""); setAssignments({}); }}
-                className="text-sm text-red-600 border border-red-600 px-3 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900"
+        <div className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-2xl p-6 border border-indigo-200 dark:border-indigo-800">
+          <div className="flex items-center gap-3 mb-4">
+            <span className="text-2xl">⚙️</span>
+            <h3 className="text-lg font-bold text-gray-800 dark:text-white">Formation Setup</h3>
+          </div>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                Choose Formation Type:
+              </label>
+              <select
+                value={selectedFormation}
+                onChange={e => setSelectedFormation(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white font-medium shadow-sm focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-800 transition-all duration-200"
               >
-                Cancel
-              </button>
+                <option value="">-- Select Formation --</option>
+                {FORMATION_TYPES.map(ft => (
+                  <option key={ft} value={ft}>{ft}</option>
+                ))}
+              </select>
+            </div>
+            
+            {selectedFormation && (
+              <div className="flex justify-end">
+                <button
+                  onClick={() => { setSelectedFormation(""); setAssignments({}); }}
+                  className="group relative overflow-hidden bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center gap-2"
+                >
+                  <span className="relative z-10 text-sm">❌</span>
+                  <span className="relative z-10">Cancel Selection</span>
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -199,32 +220,50 @@ export default function FormationSection({
               <AvailablePlayersList
                 players={availablePlayers}
                 isCreator={isCreator}
+                isLoading={isLoading}
               />
             )}
 
-            <FormationBoard rows={rows} assignments={assignments} formationType={formationType} creator={creator} />
+            <FormationBoard 
+              rows={rows} 
+              assignments={assignments} 
+              formationType={formationType} 
+              creator={creator}
+              isLoading={isLoading}
+            />
             <DragOverlay>
               {draggingPlayer && (
-                <div className="p-2 bg-white rounded shadow text-sm font-semibold">
-                  {draggingPlayer.name}
+                <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded-xl shadow-xl border-2 border-white/20 text-sm font-semibold flex items-center gap-2 backdrop-blur-sm">
+                  <span className="text-lg">👤</span>
+                  <span>{draggingPlayer?.name || 'Unknown Player'}</span>
+                  <span className="text-xs opacity-75">• Dragging</span>
                 </div>
               )}
             </DragOverlay>
 
             {isCreator && (
-              <div className="flex flex-col lg:flex-row mt-4 space-y-2 lg:space-y-0 lg:space-x-2">
+              <div className="flex flex-col sm:flex-row gap-3 mt-6">
                 <button
                   onClick={handleSubmitFormation}
-                  className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-900"
+                  className="group relative overflow-hidden bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-2 min-w-[180px]"
                 >
-                  {isFormed ? "Update Formation" : "Create Formation"}
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                  <span className="relative z-10 text-lg">⚽</span>
+                  <span className="relative z-10">
+                    {isFormed ? "Update Formation" : "Create Formation"}
+                  </span>
+                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-200"></div>
                 </button>
+                
                 {isFormed && (
                   <button
                     onClick={handleDelete}
-                    className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-700"
+                    className="group relative overflow-hidden bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-2 min-w-[180px]"
                   >
-                    Delete Formation
+                    <div className="absolute inset-0 bg-gradient-to-r from-red-400 to-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                    <span className="relative z-10 text-lg">🗑️</span>
+                    <span className="relative z-10">Delete Formation</span>
+                    <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-200"></div>
                   </button>
                 )}
               </div>
@@ -241,8 +280,6 @@ export default function FormationSection({
                   setFormation(prev => ({ ...prev, ...partial }))
                 }
               />
-
-              <FormationCommentList gameId={gameId} />
             </div>
           )}
         </>

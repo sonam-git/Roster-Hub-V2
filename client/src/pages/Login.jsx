@@ -186,10 +186,18 @@ const Login = () => {
             <div className="my-4 border-t border-gray-300 dark:border-gray-700 w-full"></div>
             {/* Google Login */}
             <div className="flex justify-center w-full">
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={handleGoogleError}
-              />
+              {import.meta.env.VITE_GOOGLE_CLIENT_ID ? (
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleError}
+                />
+              ) : (
+                <div className="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">
+                    Google OAuth not configured
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Success Message */}

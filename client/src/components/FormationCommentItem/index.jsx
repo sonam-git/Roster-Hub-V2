@@ -71,65 +71,146 @@ export default function FormationCommentItem({ comment, formationId }) {
   });
 
   return (
-    <div className="my-2 p-3 border rounded-xl shadow-sm bg-white/90 dark:bg-gray-800 transition-all flex flex-col justify-between min-h-[90px]">
+    <div className="group p-4 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-200">
       {editing ? (
-        <>
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-xs">
+                {comment.commentAuthor?.charAt(0)?.toUpperCase() || '✏️'}
+              </span>
+            </div>
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Editing comment...
+            </span>
+          </div>
+          
           <textarea
-            rows="2"
-            className="w-full border rounded px-2 py-1 dark:bg-gray-700 focus:ring-2 focus:ring-blue-400"
+            rows="3"
+            className="w-full border-2 border-blue-200 dark:border-blue-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200 resize-none"
             value={text}
             onChange={e => setText(e.target.value)}
+            placeholder="Update your comment..."
           />
-          <div className="mt-2 flex gap-2">
-            <button
-              onClick={() => updateComment()}
-              className="px-4 py-1 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition"
-              disabled={!text.trim()}
-            >
-              Save
-            </button>
-            <button
-              onClick={() => {
-                setEditing(false);
-                setText(comment.commentText);
-              }}
-              className="px-4 py-1 bg-gray-400 text-white rounded shadow hover:bg-gray-500 transition"
-            >
-              Cancel
-            </button>
+          
+          <div className="flex items-center justify-between">
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              {text.length}/500 characters
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => updateComment()}
+                className="flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg text-sm font-medium shadow-sm hover:shadow-md hover:from-green-600 hover:to-green-700 transition-all duration-200 transform hover:scale-105 active:scale-95"
+                disabled={!text.trim()}
+              >
+                <span>💾</span>
+                <span>Save</span>
+              </button>
+              <button
+                onClick={() => {
+                  setEditing(false);
+                  setText(comment.commentText);
+                }}
+                className="flex items-center gap-1 px-3 py-1.5 bg-gray-500 hover:bg-gray-600 text-white rounded-lg text-sm font-medium shadow-sm hover:shadow-md transition-all duration-200 transform hover:scale-105 active:scale-95"
+              >
+                <span>❌</span>
+                <span>Cancel</span>
+              </button>
+            </div>
           </div>
-        </>
+        </div>
       ) : (
-        <>
-          {/* Top: author and date */}
-          <div className="flex justify-between items-center mb-1">
-            <span className="font-semibold text-sm text-indigo-700 dark:text-yellow-200">{comment.commentAuthor}</span>
-            <small className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
-              {new Date(parseInt(comment.createdAt, 10)).toLocaleString()}
-            </small>
-          </div>
-          {/* Middle: comment text */}
-          <div className="text-base leading-snug break-words text-gray-900 dark:text-gray-100 mb-2">
-            {comment.commentText}
-          </div>
-          {/* Bottom: like and actions right */}
-          <div className="flex items-center justify-end gap-4 text-sm mt-auto">
-            <button
-              onClick={() => userId && likeComment()}
-              className={`flex items-center gap-1 px-2 py-1 rounded-full font-semibold transition ${hasLiked ? 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'} hover:scale-105`}
-              title={hasLiked ? 'Unlike' : 'Like'}
-            >
-              <span className="text-lg">♥</span>
-              <span>{comment.likes}</span>
-            </button>
+        <div className="space-y-3 bg-blue-100 dark:bg-gray-800 p-3 rounded-lg">
+          {/* Author Header */}
+          <div className="flex items-center justify-between ">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center shadow-sm">
+                <span className="text-white font-bold text-sm">
+                  {comment.commentAuthor?.charAt(0)?.toUpperCase() || '👤'}
+                </span>
+              </div>
+              <div>
+                <h5 className="font-semibold text-gray-800 dark:text-white text-sm">
+                  {comment.commentAuthor}
+                </h5>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {new Date(parseInt(comment.createdAt, 10)).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </p>
+              </div>
+            </div>
+            
             {isMine && (
-              <>
-                <button onClick={() => setEditing(true)} title="Edit" className="hover:text-blue-600">✏️</button>
-                <button onClick={() => deleteComment()} title="Delete" className="hover:text-red-600">🗑️</button>
-              </>
+              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <button 
+                  onClick={() => setEditing(true)} 
+                  title="Edit comment"
+                  className="p-1.5 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900 text-blue-600 dark:text-blue-400 transition-colors duration-200"
+                >
+                  <span className="text-sm">✏️</span>
+                </button>
+                <button 
+                  onClick={() => deleteComment()} 
+                  title="Delete comment"
+                  className="p-1.5 rounded-lg hover:bg-red-100 dark:hover:bg-red-900 text-red-600 dark:text-red-400 transition-colors duration-200"
+                >
+                  <span className="text-sm">🗑️</span>
+                </button>
+              </div>
             )}
           </div>
-        </>
+          
+          {/* Comment Content */}
+          <div className="pl-11">
+            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 border-l-4 border-indigo-500 dark:border-indigo-400">
+              <p className="text-gray-800 dark:text-gray-200 text-sm leading-relaxed break-words">
+                {comment.commentText}
+              </p>
+            </div>
+          </div>
+          
+          {/* Actions */}
+          <div className="pl-11 flex items-center justify-between">
+            <button
+              onClick={() => userId && likeComment()}
+              className={`group relative overflow-hidden font-semibold px-4 py-2 rounded-xl shadow-sm hover:shadow-md transform hover:scale-105 transition-all duration-200 flex items-center gap-2 ${
+                hasLiked 
+                  ? 'bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white' 
+                  : 'bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-600 dark:to-gray-700 text-gray-700 dark:text-gray-300 hover:from-gray-300 hover:to-gray-400 dark:hover:from-gray-500 dark:hover:to-gray-600'
+              } ${!userId ? 'opacity-50 cursor-not-allowed' : ''}`}
+              title={!userId ? "Please log in to like this comment" : (hasLiked ? 'Unlike this comment' : 'Like this comment')}
+              disabled={!userId}
+            >
+              <div className={`absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${
+                hasLiked 
+                  ? 'from-red-400 to-pink-400' 
+                  : 'from-gray-100 to-gray-200 dark:from-gray-500 dark:to-gray-600'
+              }`}></div>
+              
+              <span className={`relative z-10 text-lg transition-transform duration-200 ${hasLiked ? 'animate-pulse scale-110' : 'group-hover:scale-110'}`}>
+                {hasLiked ? '❤️' : '🤍'}
+              </span>
+              <div className="relative z-10 flex items-center gap-1">
+                <span className="font-bold">{comment.likes}</span>
+                <span className="text-sm hidden sm:inline">
+                  {comment.likes === 1 ? 'like' : 'likes'}
+                </span>
+              </div>
+              
+              <div className="absolute inset-0 bg-white dark:bg-gray-800 opacity-0 group-hover:opacity-10 transition-opacity duration-200"></div>
+            </button>
+            
+            {comment.updatedAt && comment.updatedAt !== comment.createdAt && (
+              <span className="text-xs text-gray-400 dark:text-gray-500 italic">
+                edited
+              </span>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

@@ -106,7 +106,7 @@ const MyProfile = () => {
                     isDarkMode ? "text-white" : "text-blue-900"
                   }`}
                 >
-                  {me.name.charAt(0).toUpperCase() + me.name.slice(1)}
+                  {me?.name ? (me.name.charAt(0).toUpperCase() + me.name.slice(1)) : 'Unknown User'}
                 </h3>
                 <div className="mb-2">{renderStars(me.averageRating)}</div>
 
