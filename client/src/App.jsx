@@ -10,7 +10,7 @@ import {
 } from "@apollo/client";
 
 import { setContext } from "@apollo/client/link/context";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
@@ -38,6 +38,7 @@ import TopHeader from "./components/TopHeader";
 import CustomComingGames from "./components/CustomComingGames";
 import AllSkillsList from "./components/AllSkillsList";
 import About from "./pages/About";
+import fieldImage from "./assets/images/field.webp";
 
 // Define HTTP and WebSocket URIs based on environment
 const httpUri =
@@ -92,11 +93,57 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
   const { isDarkMode } = useContext(ThemeContext);
   const { data } = useQuery(QUERY_ME);
   const currentUser = data?.me;
+  const location = useLocation();
+
+  // Define routes that should have the sport/soccer background
+  const sportsStyleRoutes = ['/login', '/signup', '/'];
+
+  // Check if current route should have sports styling
+  const shouldUseSportsBackground = sportsStyleRoutes.includes(location.pathname);
+
+  const getSportsBackground = () => {
+    const fieldStyle = {
+      backgroundImage: `url(${fieldImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
+    };
+
+    if (isDarkMode) {
+      return {
+        className: `relative overflow-hidden min-h-screen
+                   bg-gradient-to-r from-blue-900 via-blue-800 to-slate-100
+                   before:absolute before:inset-0 before:z-0 before:opacity-25
+                   after:absolute after:inset-0 after:bg-gradient-to-br after:from-blue-900/70 after:via-blue-800/50 after:to-slate-900/60 after:z-[1]
+                   [&>*]:relative [&>*]:z-10`,
+        style: fieldStyle
+      };
+    } else {
+      return {
+        className: `relative overflow-hidden min-h-screen
+                   bg-gradient-to-r from-blue-500 via-blue-400 to-white
+                   before:absolute before:inset-0 before:z-0 before:opacity-20
+                   after:absolute after:inset-0 after:bg-gradient-to-br after:from-blue-500/40 after:via-white/70 after:to-white/90 after:z-[1]
+                   [&>*]:relative [&>*]:z-10`,
+        style: fieldStyle
+      };
+    }
+  };
+
+  const getDefaultBackground = () => {
+    return {
+      className: isDarkMode ? "bg-gray-900" : "bg-gray-50",
+      style: {}
+    };
+  };
+
+  const backgroundConfig = shouldUseSportsBackground ? getSportsBackground() : getDefaultBackground();
 
   return (
     <>
       <div
-        className={`flex min-h-screen bg-gradient-to-b from-white via-blue-50 to-green-50 dark:from-gray-900 dark:via-blue-950 dark:to-green-950 transition-colors duration-300`}
+        className={`flex transition-colors duration-300 ${backgroundConfig.className}`}
+        style={backgroundConfig.style}
       >
         <Header open={sidebarOpen} setOpen={setSidebarOpen} />
         <div className="flex-1  ">

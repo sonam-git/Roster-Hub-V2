@@ -30,7 +30,7 @@ const Hero = () => {
         {/* Left side: hide on mobile after 5s */}
         {(!isMobile || (isMobile && !showRight)) && (
           <div className="md:w-1/2 flex flex-col items-center text-center md:mb-0 p-6">
-            <h1 className="text-5xl font-extrabold pb-2 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-green-600 via-blue-600 to-yellow-400 dark:from-green-300 dark:via-blue-400 dark:to-yellow-200 drop-shadow-lg">
+            <h1 className="text-5xl font-extrabold pb-2 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-gray-100 via-blue-100 to-yellow-400 dark:from-green-300 dark:via-blue-400 dark:to-yellow-200 drop-shadow-lg">
               Roster Hub
             </h1>
             <p className="text-xl mb-3 font-medium text-gray-700 dark:text-gray-200">
