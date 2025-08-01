@@ -9,10 +9,6 @@ import Auth from "../../utils/auth";
 import { ThemeContext } from "../ThemeContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
-
-// import controlImage from "../../assets/images/iconizer-arrow-left.png";
-import lightLogo from "../../assets/images/roster-hub-logo.png";
-import darkLogo from "../../assets/images/dark-logo.png";
 import chartFillImage from "../../assets/images/iconizer-home.png";
 import chatImage from "../../assets/images/iconizer-message.png";
 import skillImage from "../../assets/images/iconizer-skill.png";
@@ -88,10 +84,75 @@ const Header = ({ open, setOpen }) => {
 
   return (
     <div
-      className={`flex min-h-screen ${
+      className={`flex min-h-screen  ${
         isDarkMode ? "bg-gray-50 text-gray-900" : "bg-gray-50 text-gray-900"
       }`}
     >
+      {/* Mobile horizontal auth buttons when not logged in */}
+      {!Auth.loggedIn() && open && (
+        <div className="sm:hidden fixed top-20 left-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-md py-6 shadow-xl border-b border-gray-200 dark:border-gray-700 z-[9999] mt-4">
+          <div className="flex justify-center gap-3 px-4">
+            <Link
+              to="/"
+              className={`group relative overflow-hidden px-8 py-3 font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl hover:no-underline ${
+                location.pathname === "/" 
+                  ? isDarkMode
+                    ? "bg-gradient-to-r from-gray-700 to-gray-800 text-white ring-2 ring-gray-500 ring-offset-2 ring-offset-gray-900" 
+                    : "bg-gradient-to-r from-gray-600 to-gray-700 text-white ring-2 ring-gray-400 ring-offset-2"
+                  : isDarkMode
+                    ? "bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white border border-gray-500"
+                    : "bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white"
+              }`}
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                <span className="text-lg">🏠</span>
+                Home
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </Link>
+            
+            <Link
+              to="/login"
+              className={`group relative overflow-hidden px-8 py-3 font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl hover:no-underline ${
+                location.pathname === "/login" 
+                  ? isDarkMode
+                    ? "bg-gradient-to-r from-blue-700 to-blue-800 text-white ring-2 ring-blue-500 ring-offset-2 ring-offset-gray-900" 
+                    : "bg-gradient-to-r from-blue-600 to-blue-700 text-white ring-2 ring-blue-400 ring-offset-2"
+                  : isDarkMode
+                    ? "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white border border-blue-500"
+                    : "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white"
+              }`}
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                <span className="text-lg">🔐</span>
+                Login
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </Link>
+            
+            <Link
+              to="/signup"
+              className={`group relative overflow-hidden px-8 py-3 font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl hover:no-underline ${
+                location.pathname === "/signup" 
+                  ? isDarkMode
+                    ? "bg-gradient-to-r from-green-700 to-green-800 text-white ring-2 ring-green-500 ring-offset-2 ring-offset-gray-900" 
+                    : "bg-gradient-to-r from-green-600 to-green-700 text-white ring-2 ring-green-400 ring-offset-2"
+                  : isDarkMode
+                    ? "bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white border border-green-500"
+                    : "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
+              }`}
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                <span className="text-lg">✨</span>
+                Signup
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Sidebar - hidden on mobile when not logged in and menu is open */}
       <div
         className={`fixed lg:static top-0 left-0 h-full transition-all duration-300 ease-in-out z-50 ${
           open ? "w-64 translate-x-0" : "w-20 -translate-x-full lg:translate-x-0"
@@ -99,48 +160,10 @@ const Header = ({ open, setOpen }) => {
           isDarkMode 
             ? "bg-gray-900 border-r border-gray-800" 
             : "bg-white border-r border-gray-200"
-        } shadow-lg`}
+        } shadow-lg ${!Auth.loggedIn() && open ? 'hidden sm:block' : ''}`}
       >
-        {/* Logo Section */}
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700 overflow-hidden">
-          <Link
-            to={"/"}
-            className="flex items-center gap-3 no-underline group"
-            style={{ textDecoration: "none" }}
-          >
-            {/* Logo Image - Always present but scaled */}
-            <div className={`relative transition-all duration-300   ${
-              open ? "w-12 h-12" : "w-8 h-8 lg:w-12 lg:h-12"
-            }`}>
-              <img
-                src={isDarkMode ? darkLogo : lightLogo}
-                className="w-full h-full transition-all duration-300 group-hover:scale-110"
-                alt="RosterHub Logo"
-              />
-            </div>
-            
-            {/* Text Branding - Smooth fade in/out */}
-            <div className={`flex flex-col transition-all duration-300 overflow-hidden ${
-              open 
-                ? "opacity-100 translate-x-0 w-auto ml-3 lg:ml-0" 
-                : "opacity-0 -translate-x-4 w-0 ml-0"
-            }`}>
-              <h1 className={`font-bold text-xl transition-colors duration-200 whitespace-nowrap ${
-                isDarkMode ? "text-white" : "text-gray-900"
-              }`}>
-                RosterHub
-              </h1>
-              <p className={`text-xs whitespace-nowrap ${
-                isDarkMode ? "text-gray-400" : "text-gray-500"
-              }`}>
-                Team Management
-              </p>
-            </div>
-          </Link>
-        </div>
-
         {/* Navigation Menu */}
-        <nav className="flex-1 p-4 overflow-hidden">
+        <nav className="flex-1 p-4 overflow-hidden ">
           {/* Theme Toggle */}
           <div className="mb-6">
             <button
@@ -173,7 +196,7 @@ const Header = ({ open, setOpen }) => {
           </div>
 
           {/* Menu Items */}
-          <div className="space-y-2">
+          <div className="space-y-2 ">
             {Menus.map((Menu, index) => {
               const isActive = location.pathname === Menu.path;
               const isLogout = Menu.title === "Logout";
@@ -205,27 +228,29 @@ const Header = ({ open, setOpen }) => {
                             : isActive
                             ? `${
                                 isDarkMode 
-                                  ? "bg-blue-900/30 text-blue-300 border-3 border-blue-500" 
-                                  : "bg-blue-50 text-blue-700 border-3 border-blue-500"
+                                  ? "bg-blue-900/30 text-blue-300 border-3 border-gray-100" 
+                                  : "bg-blue-600 text-white border-3 border-gray-800"
                               }`
                             : `${
                                 isDarkMode 
                                   ? "hover:bg-gray-800 text-gray-300 hover:text-white border border-transparent" 
-                                  : "hover:bg-gray-50 text-gray-600 hover:text-gray-900 border border-transparent"
+                                  : "hover:bg-gray-500 text-gray-600 hover:text-white border border-transparent"
                               }`
                         }`}
                       >
-                        <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors duration-300 ${
+                        
+                        {/* menu icon div */}
+                        <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors duration-300  ${
                           isLogout
                             ? isDarkMode ? "bg-red-800" : "bg-red-100"
                             : isActive
-                            ? isDarkMode ? "bg-blue-700" : "bg-blue-800"
+                            ? isDarkMode ? "bg-blue-100" : "bg-blue-200"
                             : isDarkMode ? "bg-gray-700 group-hover:bg-gray-600" : "bg-gray-100 border border-gray-600 group-hover:bg-gray-400"
                         }`}>
                           <img
                             src={Menu.src}
                             alt={Menu.title}
-                            className="w-4 h-4 opacity-80 transition-opacity duration-300"
+                            className="w-4 h-4 opacity-80 transition-opacity duration-300 "
                           />
                         </div>
                         
@@ -303,19 +328,23 @@ const Header = ({ open, setOpen }) => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1">
+      <div className={`flex-1 ${!Auth.loggedIn() && open ? 'pt-32' : ''}`}>
         {/* Mobile Menu Toggle */}
         <button
-          className={`fixed top-4 left-4 lg:hidden p-3 rounded-lg z-50 transition-all duration-300 ${
-            isDarkMode
-              ? "bg-gray-800 hover:bg-gray-700 text-white border border-gray-700"
-              : "bg-white hover:bg-gray-50 text-gray-900 border border-gray-200 shadow-sm"
+          className={`fixed top-4 left-4 lg:hidden p-3 rounded-2xl z-[70] transition-all duration-300 transform hover:scale-110 active:scale-95 ${
+            open
+              ? isDarkMode
+                ? "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-xl ring-2 ring-red-400 ring-offset-2 ring-offset-gray-900"
+                : "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-xl ring-2 ring-red-300 ring-offset-2"
+              : isDarkMode
+              ? "bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white border border-gray-600 shadow-lg"
+              : "bg-gradient-to-r from-white to-gray-50 hover:from-gray-50 hover:to-gray-100 text-gray-900 border border-gray-200 shadow-lg"
           }`}
           onClick={toggleMenu}
         >
           <FontAwesomeIcon
             icon={open ? faTimes : faBars}
-            className="text-xl transition-transform duration-300"
+            className={`text-xl transition-all duration-300 ${open ? 'rotate-180' : 'rotate-0'}`}
           />
         </button>
 

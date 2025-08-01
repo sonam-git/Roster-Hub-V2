@@ -146,7 +146,7 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
         style={backgroundConfig.style}
       >
         <Header open={sidebarOpen} setOpen={setSidebarOpen} />
-        <div className="flex-1  ">
+        <div className="flex-1 pt-2 md:pt-0 ">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route
@@ -200,7 +200,7 @@ function App() {
               v7_relativeSplatPath: true,
             }}
           >
-            <MainHeader />
+            <MainHeader open={sidebarOpen} setOpen={setSidebarOpen} />
             <TopHeader onToggleMenu={() => setSidebarOpen((v) => !v)} open={sidebarOpen} />
             <AppContent sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
           </Router>

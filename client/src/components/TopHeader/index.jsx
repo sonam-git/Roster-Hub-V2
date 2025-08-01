@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation,Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPersonRunning, faCalendarAlt, faPlus, faInbox, faStar, faHome, faInfoCircle, faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { useQuery } from "@apollo/client";
@@ -8,6 +8,8 @@ import { ThemeContext } from "../ThemeContext";
 import controlImage from "../../assets/images/iconizer-arrow-left.png";
 import Auth from "../../utils/auth";
 import { FaChevronDown } from "react-icons/fa";
+import lightLogo from "../../assets/images/roster-hub-logo.png";
+import darkLogo from "../../assets/images/dark-logo.png";
 
 const BUTTONS = [
   { key: "home", label: "Home", icon: faHome, path: "/" },
@@ -21,24 +23,50 @@ const BUTTONS = [
 export default function TopHeader({ className, onToggleMenu, open }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { data } = useQuery(QUERY_ME);
   const { data: profilesData } = useQuery(QUERY_PROFILES);
-  const username = data?.me?.name || "Player";
   const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
   const isLoggedIn = Auth.loggedIn();
   const [showRosterDropdown, setShowRosterDropdown] = React.useState(false);
 
   return (
-    <div className={`w-full flex flex-col sm:flex-row items-center justify-between bg-gray-200 dark:bg-gray-800 py-2 shadow-md sticky top-0 lg:z-[60] px-4 ${typeof className !== 'undefined' ? className : ''}`}>
-      {/* Left: Username and soccer icon (only if logged in) */}
-      <div className={`hidden sm:flex items-center space-x-2 mb-2 sm:mb-0 w-full sm:w-auto justify-center${isLoggedIn ? '' : ' invisible'}`}>
-        <FontAwesomeIcon icon={faPersonRunning} className="ml-2 text-blue-800 dark:text-gray-200 text-2xl" />
-        <span className="font-extrabold text-2xl italic tracking-wide text-gray-800 dark:text-white drop-shadow-md flex items-center gap-2" style={{ fontFamily: 'cursive, sans-serif' }}>
-          {username}
-        </span>
-      </div>
+    <div className={`w-full flex flex-col sm:flex-row items-center justify-between bg-gray-200 dark:bg-gray-800 py-2 shadow-md sticky top-0  lg:z-[60] px-4 mt-16 sm:mt-0 ${typeof className !== 'undefined' ? className : ''}`}>
+      {/* Left: Logo and Title (always visible, beautiful UI) */}
+      <Link
+        to={"/"}
+        className="hidden sm:flex items-center gap-3 no-underline group"
+        style={{ textDecoration: "none" }}
+      >
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-center py-1 px-2">
+          <div className="relative flex items-center justify-center">
+            <img
+              src={isDarkMode ? darkLogo : lightLogo}
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl shadow-lg border-2 border-blue-400/30 bg-gradient-to-br from-blue-100/60 to-purple-100/40 dark:from-blue-900/40 dark:to-purple-900/30 drop-shadow-xl transition-all duration-500"
+              alt="logo"
+              style={{ objectFit: 'contain', background: 'transparent' }}
+            />
+            {/* Animated ring effect */}
+            <span className="absolute inset-0 rounded-2xl border-2 border-blue-400/40 dark:border-purple-400/40 opacity-30 animate-pulse pointer-events-none"></span>
+          </div>
+          <div className={`flex flex-col transition-all duration-300 overflow-hidden ${
+            open 
+              ? "opacity-100 translate-x-0 w-auto ml-3 lg:ml-0" 
+              : "opacity-0 -translate-x-4 w-0 ml-0"
+          }`}>
+            <h1 className={`font-bold text-xl transition-colors duration-200 whitespace-nowrap ${
+              isDarkMode ? "text-white" : "text-gray-900"
+            }`}>
+              RosterHub
+            </h1>
+            <p className={`text-xs whitespace-nowrap ${
+              isDarkMode ? "text-gray-400" : "text-gray-500"
+            }`}>
+              Team Management
+            </p>
+          </div>
+        </div>
+      </Link>
       {/* Center: Menu buttons or promo text */}
-      <div className={`flex flex-row  flex-wrap sm:flex-nowrap items-center justify-center flex-1 w-full sm:w-auto gap-y-2`}> 
+      <div className={`flex flex-row flex-wrap sm:flex-nowrap items-center justify-center flex-1 w-full sm:w-auto gap-y-2 mt-12 sm:mt-0`}> 
         {isLoggedIn ? (
           <>
             {BUTTONS.map(btn => (
@@ -68,7 +96,7 @@ export default function TopHeader({ className, onToggleMenu, open }) {
                 <FaChevronDown className="ml-2" />
               </button>
               {showRosterDropdown && (
-                <div className="absolute left-0 mt-2 w-56 bg-gray-100 dark:bg-gray-600 border border-blue-200 dark:border-gray-700 rounded-xl shadow-lg z-80">
+                <div className="absolute left-0 mt-2 w-56 bg-gray-100 dark:bg-gray-600 border border-blue-200 dark:border-gray-700 rounded-xl shadow-lg z-[80]">
                   <ul className="py-2">
                     {profilesData?.profiles?.map((player) => (
                       <li key={player._id}>
