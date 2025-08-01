@@ -102,30 +102,35 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
   const shouldUseSportsBackground = sportsStyleRoutes.includes(location.pathname);
 
   const getSportsBackground = () => {
-    const fieldStyle = {
-      backgroundImage: `url(${fieldImage})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat'
-    };
-
+    const isLargeScreen = window.innerWidth >= 1024;
+    
     if (isDarkMode) {
       return {
         className: `relative overflow-hidden min-h-screen
-                   bg-gradient-to-r from-blue-900 via-blue-800 to-slate-100
-                   before:absolute before:inset-0 before:z-0 before:opacity-25
-                   after:absolute after:inset-0 after:bg-gradient-to-br after:from-blue-900/70 after:via-blue-800/50 after:to-slate-900/60 after:z-[1]
-                   [&>*]:relative [&>*]:z-10`,
-        style: fieldStyle
+                   ${isLargeScreen 
+                     ? 'lg:before:absolute lg:before:inset-0 lg:before:z-[-1] lg:before:opacity-25 lg:after:absolute lg:after:inset-0 lg:after:bg-gradient-to-br lg:after:from-blue-900/70 lg:after:via-blue-800/50 lg:after:to-slate-900/60 lg:after:z-[-1]'
+                     : 'bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700'
+                   }`,
+        style: isLargeScreen ? {
+          backgroundImage: `url(${fieldImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        } : {}
       };
     } else {
       return {
         className: `relative overflow-hidden min-h-screen
-                   bg-gradient-to-r from-blue-500 via-blue-400 to-white
-                   before:absolute before:inset-0 before:z-0 before:opacity-20
-                   after:absolute after:inset-0 after:bg-gradient-to-br after:from-blue-500/40 after:via-white/70 after:to-white/90 after:z-[1]
-                   [&>*]:relative [&>*]:z-10`,
-        style: fieldStyle
+                   ${isLargeScreen 
+                     ? 'lg:before:absolute lg:before:inset-0 lg:before:z-[-1] lg:before:opacity-20 lg:after:absolute lg:after:inset-0 lg:after:bg-gradient-to-br lg:after:from-blue-500/40 lg:after:via-white/70 lg:after:to-white/90 lg:after:z-[-1]'
+                     : 'bg-gradient-to-br from-green-400 via-blue-500 to-purple-600'
+                   }`,
+        style: isLargeScreen ? {
+          backgroundImage: `url(${fieldImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        } : {}
       };
     }
   };
@@ -146,7 +151,7 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
         style={backgroundConfig.style}
       >
         <Header open={sidebarOpen} setOpen={setSidebarOpen} />
-        <div className="flex-1 pt-2 md:pt-0 ">
+        <div className="flex-1 pt-2 md:pt-2">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route

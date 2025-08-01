@@ -90,7 +90,7 @@ const Header = ({ open, setOpen }) => {
     >
       {/* Mobile horizontal auth buttons when not logged in */}
       {!Auth.loggedIn() && open && (
-        <div className="sm:hidden fixed top-20 left-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-md py-6 shadow-xl border-b border-gray-200 dark:border-gray-700 z-[9999] mt-4">
+        <div className="sm:hidden fixed top-20 left-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-md py-6 shadow-xl border-b border-gray-200 dark:border-gray-700 z-[200] mt-4">
           <div className="flex justify-center gap-3 px-4">
             <Link
               to="/"
@@ -196,7 +196,7 @@ const Header = ({ open, setOpen }) => {
           </div>
 
           {/* Menu Items */}
-          <div className="space-y-2 ">
+          <div className="space-y-2 mt-10 ">
             {Menus.map((Menu, index) => {
               const isActive = location.pathname === Menu.path;
               const isLogout = Menu.title === "Logout";
@@ -328,10 +328,10 @@ const Header = ({ open, setOpen }) => {
       </div>
 
       {/* Main Content Area */}
-      <div className={`flex-1 ${!Auth.loggedIn() && open ? 'pt-32' : ''}`}>
+      <div className="flex-1">
         {/* Mobile Menu Toggle */}
         <button
-          className={`fixed top-4 left-4 lg:hidden p-3 rounded-2xl z-[70] transition-all duration-300 transform hover:scale-110 active:scale-95 ${
+          className={`fixed top-4 left-4 lg:hidden p-3 rounded-2xl z-[250] transition-all duration-300 transform hover:scale-110 active:scale-95 ${
             open
               ? isDarkMode
                 ? "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-xl ring-2 ring-red-400 ring-offset-2 ring-offset-gray-900"
@@ -349,7 +349,7 @@ const Header = ({ open, setOpen }) => {
         </button>
 
         {/* Mobile Overlay */}
-        {open && (
+        {open && Auth.loggedIn() && (
           <div
             className="fixed inset-0 bg-transparent bg-opacity-50 z-40 lg:hidden transition-opacity duration-300"
             onClick={() => setOpen(false)}

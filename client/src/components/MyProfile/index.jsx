@@ -81,7 +81,7 @@ const MyProfile = () => {
                 isDarkMode ? "bg-gray-800" : "bg-gradient-to-r from-blue-200 via-green-100 to-yellow-100"
               }`}
             >
-              <div className="absolute top-4 right-4 text-xs px-3 py-1 rounded-full bg-blue-500 text-white shadow-md font-bold tracking-wide animate-pulse z-10">
+              <div className="absolute top-4 right-4 text-xs px-3 py-1 rounded-full bg-blue-500 text-white shadow-md font-bold tracking-wide animate-pulse z-1">
                 My Profile
               </div>
               <div className="w-40 h-40 rounded-full bg-white overflow-hidden border-4 border-blue-300 dark:border-gray-600 shadow-lg">
