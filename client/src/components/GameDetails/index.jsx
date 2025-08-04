@@ -722,19 +722,7 @@ export default function GameDetails({ gameId }) {
           <div className="absolute inset-0 bg-black/20"></div>
           <div className="relative z-10">
             {/* Enhanced Navigation Header with Status in Center */}
-            <div className="flex justify-between items-center mb-4 sm:mb-6 md:mb-8 gap-2 sm:gap-4">
-              {/* Back to Games Button */}
-              <button
-                onClick={() => navigate("/game-schedule")}
-                className="group flex items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-2 sm:py-3 bg-white/20 backdrop-blur-sm rounded-lg sm:rounded-xl md:rounded-2xl text-white font-medium hover:bg-white/30 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex-shrink-0"
-              >
-                <span className="text-base sm:text-lg md:text-xl group-hover:-translate-x-1 transition-transform duration-300">🏠</span>
-                <div className="text-left">
-                  <div className="text-xs sm:text-sm md:text-base font-bold">Games</div>
-                  <div className="text-xs opacity-75 hidden md:block">Game Schedule</div>
-                </div>
-              </button>
-
+            <div className="flex justify-center items-center mb-4 sm:mb-6 md:mb-8 gap-2 sm:gap-4">
               {/* Enhanced Status Section with Animation */}
               <div className="flex-1 flex flex-col items-center justify-center mx-1 sm:mx-2 md:mx-4 min-w-0">
                 {/* Animated Icons */}
@@ -792,131 +780,151 @@ export default function GameDetails({ gameId }) {
                   </div>
                 </div>
               </div>
-
-              {/* Formation/Feedback Toggle Button */}
-              <button
-                onClick={() => setShowFormation(!showFormation)}
-                className="group flex items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-2 sm:py-3 bg-white/20 backdrop-blur-sm rounded-lg sm:rounded-xl md:rounded-2xl text-white font-medium hover:bg-white/30 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex-shrink-0"
-              >
-                <div className="text-right">
-                  <div className="text-xs sm:text-sm md:text-base font-bold">
-                    {showFormation 
-                      ? (
-                        <>
-                          <span className="hidden sm:inline">Game Details</span>
-                          <span className="sm:hidden">Details</span>
-                        </>
-                      )
-                      : game.status === "COMPLETED" ? (
-                        <>
-                          <span className="hidden sm:inline">Game Feedback</span>
-                          <span className="sm:hidden">Feedback</span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="hidden sm:inline">Formation</span>
-                          <span className="sm:hidden">Formation</span>
-                        </>
-                      )
-                    }
-                  </div>
-                  <div className="text-xs opacity-75 hidden md:block">
-                    {showFormation 
-                      ? "View Overview" 
-                      : game.status === "COMPLETED" ? "Results & Feedback" : "Tactical Setup"
-                    }
-                  </div>
-                </div>
-                <span className="text-base sm:text-lg md:text-xl group-hover:translate-x-1 transition-transform duration-300">
-                  {showFormation ? "📋" : game.status === "COMPLETED" ? "📊" : "⚽"}
-                </span>
-              </button>
             </div>
             
-            {/* Navigation Buttons */}
+            {/* Unified Navigation Row - All Buttons Always Visible */}
             <div className="mt-2 sm:mt-4 md:mt-6">
               <div className="flex flex-wrap justify-center gap-1 sm:gap-1.5 md:gap-2">
+                {/* Back to Games Button */}
+                <button
+                  onClick={() => navigate("/game-schedule")}
+                  className="px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg font-medium transition-all duration-300 transform hover:scale-105 text-xs flex items-center gap-1 sm:gap-1.5 bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
+                >
+                  <span className="text-xs sm:text-sm">🏠</span>
+                  <span className="hidden sm:inline text-xs">Games</span>
+                  <span className="sm:hidden text-xs">Games</span>
+                </button>
+
+                {/* Formation/Feedback Toggle Button */}
+                <button
+                  onClick={() => setShowFormation(!showFormation)}
+                  className={`px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg font-medium transition-all duration-300 transform hover:scale-105 text-xs flex items-center gap-1 sm:gap-1.5 ${
+                    showFormation
+                      ? "bg-white text-blue-600 shadow-lg"
+                      : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
+                  }`}
+                >
+                  <span className="text-xs sm:text-sm">
+                    {showFormation ? "📋" : game.status === "COMPLETED" ? "📊" : "⚽"}
+                  </span>
+                  <span className="hidden sm:inline text-xs">
+                    {showFormation 
+                      ? "Details" 
+                      : game.status === "COMPLETED" ? "Feedback" : "Formation"
+                    }
+                  </span>
+                  <span className="sm:hidden text-xs">
+                    {showFormation 
+                      ? "Details" 
+                      : game.status === "COMPLETED" ? "Feedback" : "Formation"
+                    }
+                  </span>
+                </button>
+                {/* Overview/Date & Venue Button - Always visible */}
+                <button
+                  onClick={() => { 
+                    if (showFormation) setShowFormation(false);
+                    setActiveSection("overview");
+                  }}
+                  className={`px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg font-medium transition-all duration-300 transform hover:scale-105 text-xs flex items-center gap-1 sm:gap-1.5 ${
+                    !showFormation && activeSection === "overview"
+                      ? "bg-white text-blue-600 shadow-lg"
+                      : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
+                  }`}
+                >
+                  <span className="text-xs sm:text-sm">📅</span>
+                  <span className="hidden sm:inline text-xs">Date & Venue</span>
+                  <span className="sm:hidden text-xs">Info</span>
+                </button>
+                
+                {/* Weather Button - Always visible */}
+                <button
+                  onClick={() => { 
+                    if (showFormation) setShowFormation(false);
+                    setActiveSection("weather");
+                  }}
+                  className={`px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg font-medium transition-all duration-300 transform hover:scale-105 text-xs flex items-center gap-1 sm:gap-1.5 ${
+                    !showFormation && activeSection === "weather"
+                      ? "bg-white text-blue-600 shadow-lg"
+                      : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
+                  }`}
+                >
+                  <span className="text-xs sm:text-sm">🌤️</span>
+                  <span className="hidden sm:inline text-xs">Weather</span>
+                  <span className="sm:hidden text-xs">Weather</span>
+                </button>
+                
+                {/* Game Notes Button - Always visible */}
+                <button
+                  onClick={() => { 
+                    if (showFormation) setShowFormation(false);
+                    setActiveSection("notes");
+                  }}
+                  className={`px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg font-medium transition-all duration-300 transform hover:scale-105 text-xs flex items-center gap-1 sm:gap-1.5 ${
+                    !showFormation && activeSection === "notes"
+                      ? "bg-white text-blue-600 shadow-lg"
+                      : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
+                  }`}
+                >
+                  <span className="text-xs sm:text-sm">📝</span>
+                  <span className="hidden sm:inline text-xs">Game Notes</span>
+                  <span className="sm:hidden text-xs">Notes</span>
+                </button>
+                
+                {/* Management Button - Always visible if user is creator */}
+                {isCreator && (game.status === "PENDING" || game.status === "CONFIRMED" || game.status === "CANCELLED") && (
                   <button
-                    onClick={() => setActiveSection("overview")}
+                    onClick={() => { 
+                      if (showFormation) setShowFormation(false);
+                      setActiveSection("management");
+                    }}
                     className={`px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg font-medium transition-all duration-300 transform hover:scale-105 text-xs flex items-center gap-1 sm:gap-1.5 ${
-                      activeSection === "overview"
+                      !showFormation && activeSection === "management"
                         ? "bg-white text-blue-600 shadow-lg"
                         : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
                     }`}
                   >
-                    <span className="text-xs sm:text-sm">📅</span>
-                    <span className="hidden sm:inline text-xs">Date & Venue</span>
-                    <span className="sm:hidden text-xs">Info</span>
+                    <span className="text-xs sm:text-sm">⚙️</span>
+                    <span className="hidden sm:inline text-xs">Management</span>
+                    <span className="sm:hidden text-xs">Manage</span>
                   </button>
-                  
+                )}
+                
+                {/* Player Responses Button - Always visible */}
+                <button
+                  onClick={() => { 
+                    if (showFormation) setShowFormation(false);
+                    setActiveSection("responses");
+                  }}
+                  className={`px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg font-medium transition-all duration-300 transform hover:scale-105 text-xs flex items-center gap-1 sm:gap-1.5 ${
+                    !showFormation && activeSection === "responses"
+                      ? "bg-white text-blue-600 shadow-lg"
+                      : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
+                  }`}
+                >
+                  <span className="text-xs sm:text-sm">👥</span>
+                  <span className="hidden sm:inline text-xs">Vote & Responses</span>
+                  <span className="sm:hidden text-xs">Players</span>
+                </button>
+                
+                {/* Game Results Button - Always visible if game is completed */}
+                {game.status === "COMPLETED" && (
                   <button
-                    onClick={() => setActiveSection("weather")}
+                    onClick={() => { 
+                      if (showFormation) setShowFormation(false);
+                      setActiveSection("results");
+                    }}
                     className={`px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg font-medium transition-all duration-300 transform hover:scale-105 text-xs flex items-center gap-1 sm:gap-1.5 ${
-                      activeSection === "weather"
+                      !showFormation && activeSection === "results"
                         ? "bg-white text-blue-600 shadow-lg"
                         : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
                     }`}
                   >
-                    <span className="text-xs sm:text-sm">🌤️</span>
-                    <span className="hidden sm:inline text-xs">Weather</span>
-                    <span className="sm:hidden text-xs">Weather</span>
+                    <span className="text-xs sm:text-sm">🏆</span>
+                    <span className="hidden sm:inline text-xs">Results</span>
+                    <span className="sm:hidden text-xs">Results</span>
                   </button>
-                  
-                  <button
-                    onClick={() => setActiveSection("notes")}
-                    className={`px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg font-medium transition-all duration-300 transform hover:scale-105 text-xs flex items-center gap-1 sm:gap-1.5 ${
-                      activeSection === "notes"
-                        ? "bg-white text-blue-600 shadow-lg"
-                        : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
-                    }`}
-                  >
-                    <span className="text-xs sm:text-sm">📝</span>
-                    <span className="hidden sm:inline text-xs">Game Notes</span>
-                    <span className="sm:hidden text-xs">Notes</span>
-                  </button>
-                  
-                  {isCreator && (game.status === "PENDING" || game.status === "CONFIRMED" || game.status === "CANCELLED") && (
-                    <button
-                      onClick={() => setActiveSection("management")}
-                      className={`px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg font-medium transition-all duration-300 transform hover:scale-105 text-xs flex items-center gap-1 sm:gap-1.5 ${
-                        activeSection === "management"
-                          ? "bg-white text-blue-600 shadow-lg"
-                          : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
-                      }`}
-                    >
-                      <span className="text-xs sm:text-sm">⚙️</span>
-                      <span className="hidden sm:inline text-xs">Management</span>
-                      <span className="sm:hidden text-xs">Manage</span>
-                    </button>
-                  )}
-                  
-                  <button
-                    onClick={() => setActiveSection("responses")}
-                    className={`px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg font-medium transition-all duration-300 transform hover:scale-105 text-xs flex items-center gap-1 sm:gap-1.5 ${
-                      activeSection === "responses"
-                        ? "bg-white text-blue-600 shadow-lg"
-                        : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
-                    }`}
-                  >
-                    <span className="text-xs sm:text-sm">👥</span>
-                    <span className="hidden sm:inline text-xs">Vote & Responses</span>
-                    <span className="sm:hidden text-xs">Players</span>
-                  </button>
-                  
-                  {game.status === "COMPLETED" && (
-                    <button
-                      onClick={() => setActiveSection("results")}
-                      className={`px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg font-medium transition-all duration-300 transform hover:scale-105 text-xs flex items-center gap-1 sm:gap-1.5 ${
-                        activeSection === "results"
-                          ? "bg-white text-blue-600 shadow-lg"
-                          : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
-                      }`}
-                    >
-                      <span className="text-xs sm:text-sm">🏆</span>
-                      <span className="hidden sm:inline text-xs">Results</span>
-                      <span className="sm:hidden text-xs">Results</span>
-                    </button>
-                  )}
+                )}
                 </div>
               </div>
             </div>

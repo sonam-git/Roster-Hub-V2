@@ -1,6 +1,6 @@
 // src/components/GameList.jsx
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_GAMES } from "../../utils/queries";
 import { DELETE_GAME } from "../../utils/mutations";
@@ -15,8 +15,9 @@ import {
 import { ThemeContext } from "../ThemeContext";
 import Auth from "../../utils/auth";
 
-const GameList = ({ onCreateGame }) => {
+const GameList = ({ onCreateGame, searchFilters = null }) => {
   const { isDarkMode } = useContext(ThemeContext);
+  const navigate = useNavigate();
 
   // Fetch all games (no status filter)
   const { loading, error, data } = useQuery(QUERY_GAMES, {
@@ -54,10 +55,112 @@ const GameList = ({ onCreateGame }) => {
     return <div className="text-center mt-4 text-xl italic dark:text-white">No games scheduled yet.</div>;
   }
 
-  // Filter games by status
-  const filteredGames = statusFilter === 'ALL'
-    ? games
-    : games.filter(g => g.status === statusFilter);
+  // Apply search filters if provided
+  let filteredGames = games;
+  
+  if (searchFilters) {
+    // Apply advanced search filters
+    if (searchFilters.status !== 'ALL') {
+      filteredGames = filteredGames.filter(game => game.status === searchFilters.status);
+    }
+
+    // Text search (opponent, venue, notes)
+    if (searchFilters.searchText?.trim()) {
+      const searchTerm = searchFilters.searchText.toLowerCase();
+      filteredGames = filteredGames.filter(game => 
+        game.opponent.toLowerCase().includes(searchTerm) ||
+        game.venue.toLowerCase().includes(searchTerm) ||
+        (game.notes && game.notes.toLowerCase().includes(searchTerm))
+      );
+    }
+
+    // Date range filter
+    if (searchFilters.dateFrom) {
+      const fromDate = new Date(searchFilters.dateFrom);
+      filteredGames = filteredGames.filter(game => {
+        const gameDate = new Date(Number(game.date));
+        return gameDate >= fromDate;
+      });
+    }
+
+    if (searchFilters.dateTo) {
+      const toDate = new Date(searchFilters.dateTo);
+      toDate.setHours(23, 59, 59, 999);
+      filteredGames = filteredGames.filter(game => {
+        const gameDate = new Date(Number(game.date));
+        return gameDate <= toDate;
+      });
+    }
+
+    // Time range filter
+    if (searchFilters.timeFrom) {
+      filteredGames = filteredGames.filter(game => game.time >= searchFilters.timeFrom);
+    }
+
+    if (searchFilters.timeTo) {
+      filteredGames = filteredGames.filter(game => game.time <= searchFilters.timeTo);
+    }
+
+    // Venue filter
+    if (searchFilters.venue?.trim()) {
+      const venueTerm = searchFilters.venue.toLowerCase();
+      filteredGames = filteredGames.filter(game => 
+        game.venue.toLowerCase().includes(venueTerm)
+      );
+    }
+
+    // Opponent filter
+    if (searchFilters.opponent?.trim()) {
+      const opponentTerm = searchFilters.opponent.toLowerCase();
+      filteredGames = filteredGames.filter(game => 
+        game.opponent.toLowerCase().includes(opponentTerm)
+      );
+    }
+
+    // Sorting
+    filteredGames.sort((a, b) => {
+      let aValue, bValue;
+      
+      switch (searchFilters.sortBy) {
+        case 'date':
+          aValue = new Date(Number(a.date));
+          bValue = new Date(Number(b.date));
+          break;
+        case 'time':
+          aValue = a.time;
+          bValue = b.time;
+          break;
+        case 'opponent':
+          aValue = a.opponent.toLowerCase();
+          bValue = b.opponent.toLowerCase();
+          break;
+        case 'venue':
+          aValue = a.venue.toLowerCase();
+          bValue = b.venue.toLowerCase();
+          break;
+        case 'status':
+          aValue = a.status;
+          bValue = b.status;
+          break;
+        case 'created':
+          aValue = new Date(a.createdAt || a.date);
+          bValue = new Date(b.createdAt || b.date);
+          break;
+        default:
+          aValue = new Date(Number(a.date));
+          bValue = new Date(Number(b.date));
+      }
+
+      if (aValue < bValue) return searchFilters.sortOrder === 'asc' ? -1 : 1;
+      if (aValue > bValue) return searchFilters.sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+  } else {
+    // Apply basic status filter from status buttons if no search filters
+    filteredGames = statusFilter === 'ALL'
+      ? games
+      : games.filter(g => g.status === statusFilter);
+  }
 
   const totalPages = Math.ceil(filteredGames.length / itemsPerPage);
   const pagedGames = filteredGames.slice(page * itemsPerPage, page * itemsPerPage + itemsPerPage);
@@ -98,14 +201,40 @@ const GameList = ({ onCreateGame }) => {
             Create Game
           </button>
         )}
+        <button
+          onClick={() => navigate('/game-search')}
+          className="px-4 py-2 bg-purple-600 text-white rounded-full font-bold hover:bg-purple-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm flex items-center gap-1"
+        >
+          <span>🔍</span>
+          Search Games
+        </button>
       </div>
+
+      {/* Results Summary - only show when search filters are applied */}
+      {searchFilters && (searchFilters.searchText || searchFilters.status !== 'ALL' || searchFilters.dateFrom || searchFilters.dateTo || searchFilters.venue || searchFilters.opponent) && (
+        <div className={`mb-4 p-3 rounded-lg ${
+          isDarkMode ? "bg-gray-800 text-gray-300" : "bg-blue-50 text-blue-800"
+        }`}>
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">
+              Found {filteredGames.length} game{filteredGames.length !== 1 ? 's' : ''} 
+              {searchFilters.searchText && ` matching "${searchFilters.searchText}"`}
+            </span>
+            <span className="text-xs opacity-75">
+              Sorted by {searchFilters.sortBy || 'date'} ({searchFilters.sortOrder === 'desc' ? 'descending' : 'ascending'})
+            </span>
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-col space-y-4">
         {filteredGames.length === 0 ? (
           <div className="text-center mt-4 text-xl italic dark:text-white">
-            {statusFilter === 'ALL'
-              ? 'No games scheduled.'
-              : `No ${statusFilter.toLowerCase()} game${statusFilter === 'COMPLETED' ? 's' : ''}.`}
+            {searchFilters ? 'No games match your search criteria.' : (
+              statusFilter === 'ALL'
+                ? 'No games scheduled.'
+                : `No ${statusFilter.toLowerCase()} game${statusFilter === 'COMPLETED' ? 's' : ''}.`
+            )}
           </div>
         ) : (
           pagedGames.map(game => {

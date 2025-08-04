@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { useNavigate, useLocation,Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPersonRunning, faCalendarAlt, faPlus, faInbox, faStar, faHome, faInfoCircle, faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
+import { faPersonRunning, faCalendarAlt, faPlus, faInbox, faStar, faHome, faInfoCircle, faMoon, faSun, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useQuery } from "@apollo/client";
 import { QUERY_ME, QUERY_PROFILES } from "../../utils/queries";
 import { ThemeContext } from "../ThemeContext";
@@ -14,6 +14,7 @@ import darkLogo from "../../assets/images/dark-logo.png";
 const BUTTONS = [
   { key: "home", label: "Home", icon: faHome, path: "/" },
   { key: "gameschedule", label: "Upcoming", icon: faCalendarAlt, path: "/games-shortcut" },
+  { key: "search", label: "Search", icon: faSearch, action: "search", path: "/game-search" },
   { key: "creategame", label: "Create Game", icon: faPlus, path: "/game-schedule#create" },
   { key: "messages", label: "Inbox", icon: faInbox, path: "/message" },
   { key: "skilllist", label: "Skills", icon: faStar, path: "/skills-shortcut" },
@@ -29,18 +30,18 @@ export default function TopHeader({ className, onToggleMenu, open }) {
   const [showRosterDropdown, setShowRosterDropdown] = React.useState(false);
 
   return (
-    <div className={`w-full flex flex-col sm:flex-row items-center justify-between bg-gray-200 dark:bg-gray-800 py-2 shadow-md sticky top-0 z-[10] px-4 mt-16 sm:mt-0 ${typeof className !== 'undefined' ? className : ''}`}>
+    <div className={`w-full flex flex-col md:flex-row items-center justify-between bg-gray-100 dark:bg-gray-800 py-2 shadow-md sticky top-0 z-[10] px-2 sm:px-4 mt-16 lg:mt-0 ${typeof className !== 'undefined' ? className : ''}`}>
       {/* Left: Logo and Title (always visible, beautiful UI) */}
       <Link
         to={"/"}
-        className="hidden sm:flex items-center gap-3 no-underline group"
+        className="hidden md:flex items-center gap-3 no-underline group"
         style={{ textDecoration: "none" }}
       >
-        <div className="flex items-center gap-3 w-full sm:w-auto justify-center py-1 px-2">
+        <div className="flex items-center gap-3 w-full md:w-auto justify-center py-1 px-2">
           <div className="relative flex items-center justify-center">
             <img
               src={isDarkMode ? darkLogo : lightLogo}
-              className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl shadow-lg border-2 border-blue-400/30 bg-gradient-to-br from-blue-100/60 to-purple-100/40 dark:from-blue-900/40 dark:to-purple-900/30 drop-shadow-xl transition-all duration-500"
+              className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-2xl shadow-lg border-2 border-blue-400/30 bg-gradient-to-br from-blue-100/60 to-purple-100/40 dark:from-blue-900/40 dark:to-purple-900/30 drop-shadow-xl transition-all duration-500"
               alt="logo"
               style={{ objectFit: 'contain', background: 'transparent' }}
             />
@@ -52,7 +53,7 @@ export default function TopHeader({ className, onToggleMenu, open }) {
               ? "opacity-100 translate-x-0 w-auto ml-3 lg:ml-0" 
               : "opacity-0 -translate-x-4 w-0 ml-0"
           }`}>
-            <h1 className={`font-bold text-xl transition-colors duration-200 whitespace-nowrap ${
+            <h1 className={`font-bold text-lg sm:text-xl transition-colors duration-200 whitespace-nowrap ${
               isDarkMode ? "text-white" : "text-gray-900"
             }`}>
               RosterHub
@@ -66,34 +67,37 @@ export default function TopHeader({ className, onToggleMenu, open }) {
         </div>
       </Link>
       {/* Center: Menu buttons or promo text */}
-      <div className={`flex flex-row flex-wrap sm:flex-nowrap items-center justify-center flex-1 w-full sm:w-auto gap-y-2 mt-12 sm:mt-0`}> 
+      <div className={`flex flex-row flex-wrap md:flex-nowrap items-center justify-center flex-1 w-full md:w-auto gap-y-2 gap-x-1 mt-8 md:mt-0`}> 
         {isLoggedIn ? (
           <>
             {BUTTONS.map(btn => (
               <button
                 key={btn.key}
-                className={`dark:text-gray-900 mx-2 px-4 py-1 rounded-full font-semibold transition-colors text-sm flex items-center gap-2  sm:mb-0 ${location.pathname === btn.path.split('#')[0] ? "bg-blue-600 text-white" : "bg-gray-100 dark:bg-gray-500 text-gray-800 dark:text-white  hover:bg-gray-300 dark:hover:bg-blue-800 hover:bg-opacity-90 dark:hover:bg-opacity-90"}`}
+                className={`dark:text-gray-900 mx-1 sm:mx-2 px-2 sm:px-4 py-1 rounded-full font-semibold transition-colors text-xs sm:text-sm flex items-center gap-1 sm:gap-2 mb-1 md:mb-0 ${location.pathname === btn.path.split('#')[0] ? "bg-blue-600 text-white" : "bg-gray-100 dark:bg-gray-500 text-gray-800 dark:text-white  hover:bg-gray-300 dark:hover:bg-blue-800 hover:bg-opacity-90 dark:hover:bg-opacity-90"}`}
                 onClick={() => {
-                  if (btn.key === "creategame") {
+                  if (btn.action === "search") {
+                    // Navigate to dedicated game search page
+                    navigate("/game-search");
+                  } else if (btn.key === "creategame") {
                     navigate("/game-schedule", { state: { showCreateGame: true } });
                   } else {
                     navigate(btn.path);
                   }
                 }}
               >
-                <FontAwesomeIcon icon={btn.icon} className="mr-1" />
-                <span className="hidden sm:inline">{btn.label}</span>
+                <FontAwesomeIcon icon={btn.icon} className="mr-1 text-xs sm:text-sm" />
+                <span className="hidden md:inline">{btn.label}</span>
               </button>
             ))}
             {/* Roster Dropdown */}
             <div className="relative">
               <button
-                className={`mx-2 px-3 sm:px-4 py-1.5 rounded-full font-medium transition-all duration-300 text-xs sm:text-sm flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-600 dark:to-gray-700 text-gray-800 dark:text-white hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-700 dark:hover:to-blue-800 shadow-md hover:shadow-lg transform hover:scale-105 border border-gray-300 dark:border-gray-500`}
+                className={`mx-1 sm:mx-2 px-2 sm:px-3 md:px-4 py-1.5 rounded-full font-medium transition-all duration-300 text-xs sm:text-sm flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-600 dark:to-gray-700 text-gray-800 dark:text-white hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-700 dark:hover:to-blue-800 shadow-md hover:shadow-lg transform hover:scale-105 border border-gray-300 dark:border-gray-500`}
                 onClick={() => setShowRosterDropdown((prev) => !prev)}
               >
                 <FontAwesomeIcon icon={faPersonRunning} className="text-xs sm:text-sm" />
-                <span className="hidden sm:inline font-medium">Roster</span>
-                <span className="sm:hidden text-xs">Team</span>
+                <span className="hidden md:inline font-medium">Roster</span>
+                <span className="md:hidden text-xs">Team</span>
                 <FaChevronDown 
                   className={`text-xs sm:text-sm transition-transform duration-200 ${
                     showRosterDropdown ? 'rotate-180' : 'rotate-0'
@@ -104,7 +108,7 @@ export default function TopHeader({ className, onToggleMenu, open }) {
               {showRosterDropdown && (
                 <div className={`absolute z-[150] mt-2 shadow-2xl border border-gray-200 dark:border-gray-600 rounded-2xl overflow-hidden backdrop-blur-sm transition-all duration-300 transform ${
                   showRosterDropdown ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 -translate-y-2'
-                } right-0 w-72 max-w-[90vw] sm:max-w-sm bg-white/95 dark:bg-gray-800/95`}>
+                } right-0 md:right-0 left-1/2 md:left-auto transform -translate-x-1/2 md:translate-x-0 w-72 max-w-[90vw] md:max-w-sm bg-white/95 dark:bg-gray-800/95`}>
                   
                   {/* Header */}
                   <div className="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 px-3 sm:px-4 py-2 sm:py-3 border-b border-blue-300 dark:border-blue-500">

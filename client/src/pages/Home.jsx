@@ -37,7 +37,7 @@ const Home = ({ isDarkMode }) => {
   }
 
   return (
-    <main className=" container mx-auto w-full px-2 sm:px-8 xl:max-w-7xl xl:px-16">
+    <main className="container mx-auto w-full px-2 sm:px-4 md:px-6 lg:px-8 xl:max-w-7xl xl:px-16">
       {isLoggedIn ? (
         <>
           {/* Welcome & Hero Section */}
@@ -63,7 +63,7 @@ const Home = ({ isDarkMode }) => {
                     </div>
                   )}
                 </div>
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white drop-shadow-2xl text-center w-full tracking-tight py-2 flex flex-wrap items-center justify-center gap-2">
+                <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-white drop-shadow-2xl text-center w-full tracking-tight py-2 flex flex-wrap items-center justify-center gap-2">
                   {profile.name ? (
                     <>Welcome, <span className="text-yellow-200 animate-pulse">{profile.name}</span>!</>
                   ) : (
@@ -72,8 +72,8 @@ const Home = ({ isDarkMode }) => {
                 </h1>
                 <FaFutbol className="text-yellow-200 text-6xl animate-bounce ml-2" />
               </div>
-              <p className="text-base sm:text-lg md:text-xl text-white/90 font-semibold text-center w-full break-words italic mb-2">
-                <span className="block text-xl sm:text-xl md:text-xl font-bold text-yellow-200 mb-2 tracking-tight animate-fade-in">Connect, play and win together</span>
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white/90 font-semibold text-center w-full break-words italic mb-2">
+                <span className="block text-lg sm:text-xl md:text-xl lg:text-2xl font-bold text-yellow-200 mb-2 tracking-tight animate-fade-in">Connect, play and win together</span>
               </p>
               <div className="w-full flex justify-center mt-4">
                 <div className="w-full max-w-xl bg-white/80 dark:bg-gray-900/80 rounded-xl shadow-lg border-2 border-blue-200 dark:border-blue-900 p-2 flex flex-col items-center gap-2">
@@ -85,7 +85,7 @@ const Home = ({ isDarkMode }) => {
           </section>
 
           {/* Quick Actions */}
-          <section className="w-full grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+          <section className="w-full grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
             <button
               className={`bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all ${activeSection === "newpost" ? "ring-4 ring-blue-300" : ""}`}
               onClick={() => setActiveSection("newpost")}

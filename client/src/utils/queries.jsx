@@ -600,6 +600,28 @@ export const GET_MATCHES = gql`
       awayGoals
       status
       utcDate
+      matchday
+      venue
+      venueCity
+      venueAddress
+      referee
+      duration
+      halfTimeScore {
+        home
+        away
+      }
+      fullTimeScore {
+        home
+        away
+      }
+      extraTimeScore {
+        home
+        away
+      }
+      penaltiesScore {
+        home
+        away
+      }
     }
   }
 `;

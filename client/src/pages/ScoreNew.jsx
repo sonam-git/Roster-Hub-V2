@@ -10,7 +10,7 @@ const ALL_LEAGUES = [
   { code: "CL", name: "Champions League" },
   { code: "EL", name: "Europa League" },
   { code: "BL1", name: "Bundesliga" },
-  { code: "FL1", name: "Ligue 1" }
+  { code: "FL1", name: "Ligue 1" },
 ];
 
 export default function Score() {
@@ -77,7 +77,7 @@ export default function Score() {
               })}
             </div>
           ) : (
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-6 sm:p-8 md:p-12 text-center">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-6 sm:p-8 md:p-12 text-center">
               <div className="text-3xl sm:text-4xl md:text-6xl mb-3 sm:mb-4">📋</div>
               <h3 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900 dark:text-white mb-2">
                 No favorites yet
@@ -98,7 +98,7 @@ export default function Score() {
             </h2>
           </div>
           
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0">
               {ALL_LEAGUES.map(({ code, name }, index) => {
                 const isFav = favorites.includes(code);
@@ -138,8 +138,8 @@ export default function Score() {
                       >
                         {isFav ? (
                           <span className="flex items-center space-x-1">
-                            <span>x</span>
-                            <span className="hidden sm:inline">Remove</span>
+                            <span>✓</span>
+                            <span className="hidden sm:inline">Added</span>
                           </span>
                         ) : (
                           <span className="flex items-center space-x-1">

@@ -165,14 +165,28 @@ const typeDefs = gql`
     createdAt: String!
   }
 
+  type ScoreDetail {
+    home: Int
+    away: Int
+  }
+
   type SoccerScore {
     homeTeam: String!
     awayTeam: String!
     homeGoals: Int
     awayGoals: Int
-    status: String
-    matchday: Int
+    status: String!
     utcDate: String!
+    matchday: Int
+    venue: String
+    venueCity: String
+    venueAddress: String
+    referee: String
+    duration: String
+    halfTimeScore: ScoreDetail
+    fullTimeScore: ScoreDetail
+    extraTimeScore: ScoreDetail
+    penaltiesScore: ScoreDetail
   }
 
   ########## INPUT TYPES ##########

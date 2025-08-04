@@ -40,7 +40,7 @@ const MessageCard = ({
         }`}
       >
     <div className="flex justify-between items-center">
-            <h2 className="text-sm font-bold truncate">
+            <h2 className="text-sm font-bold truncate  ">
               Conversation with {conv.user.name}
             </h2>
             <button

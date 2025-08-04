@@ -8,7 +8,7 @@ import { Link, useNavigate, Outlet, useLocation } from "react-router-dom";
 import Auth from "../../utils/auth";
 import { ThemeContext } from "../ThemeContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faTimes, faSun, faMoon } from "@fortawesome/free-solid-svg-icons";
 import chartFillImage from "../../assets/images/iconizer-home.png";
 import chatImage from "../../assets/images/iconizer-message.png";
 import skillImage from "../../assets/images/iconizer-skill.png";
@@ -84,119 +84,130 @@ const Header = ({ open, setOpen }) => {
 
   return (
     <div
-      className={`flex min-h-screen  ${
-        isDarkMode ? "bg-gray-50 text-gray-900" : "bg-gray-50 text-gray-900"
+      className={`flex min-h-screen ${
+        isDarkMode ? "bg-gray-100 text-gray-900" : "bg-gray-50 text-gray-900"
       }`}
     >
       {/* Mobile horizontal auth buttons when not logged in */}
       {!Auth.loggedIn() && open && (
-        <div className="sm:hidden fixed top-20 left-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-md py-6 shadow-xl border-b border-gray-200 dark:border-gray-700 z-[200] mt-4">
-          <div className="flex justify-center gap-3 px-4">
+        <div className="lg:hidden fixed top-20 left-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl py-3 shadow-2xl border-b border-gray-200 dark:border-gray-700 z-[200] mt-4">
+          <div className="flex flex-col gap-2 px-3">
             <Link
               to="/"
-              className={`group relative overflow-hidden px-8 py-3 font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl hover:no-underline ${
+              className={`group relative overflow-hidden px-4 py-3 font-medium rounded-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-98 shadow-md hover:shadow-lg hover:no-underline w-full text-center ${
                 location.pathname === "/" 
                   ? isDarkMode
-                    ? "bg-gradient-to-r from-gray-700 to-gray-800 text-white ring-2 ring-gray-500 ring-offset-2 ring-offset-gray-900" 
-                    : "bg-gradient-to-r from-gray-600 to-gray-700 text-white ring-2 ring-gray-400 ring-offset-2"
+                    ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white ring-1 ring-blue-400" 
+                    : "bg-gradient-to-r from-blue-500 to-blue-600 text-white ring-1 ring-blue-300"
                   : isDarkMode
-                    ? "bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white border border-gray-500"
-                    : "bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white"
+                    ? "bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-500 hover:to-gray-600 text-white border border-gray-500"
+                    : "bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-500 hover:to-gray-600 text-white border border-gray-400"
               }`}
             >
-              <span className="relative z-10 flex items-center gap-2">
-                <span className="text-lg">🏠</span>
-                Home
+              <span className="relative z-10 flex items-center justify-center gap-3">
+                <span className="text-xl">🏠</span>
+                <span className="text-sm font-semibold">Go to Home</span>
               </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </Link>
             
             <Link
               to="/login"
-              className={`group relative overflow-hidden px-8 py-3 font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl hover:no-underline ${
+              className={`group relative overflow-hidden px-4 py-3 font-medium rounded-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-98 shadow-md hover:shadow-lg hover:no-underline w-full text-center ${
                 location.pathname === "/login" 
                   ? isDarkMode
-                    ? "bg-gradient-to-r from-blue-700 to-blue-800 text-white ring-2 ring-blue-500 ring-offset-2 ring-offset-gray-900" 
-                    : "bg-gradient-to-r from-blue-600 to-blue-700 text-white ring-2 ring-blue-400 ring-offset-2"
+                    ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white ring-1 ring-orange-400" 
+                    : "bg-gradient-to-r from-orange-500 to-orange-600 text-white ring-1 ring-orange-300"
                   : isDarkMode
-                    ? "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white border border-blue-500"
-                    : "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white"
+                    ? "bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-500 hover:to-orange-600 text-white border border-orange-500"
+                    : "bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-500 hover:to-orange-600 text-white border border-orange-400"
               }`}
             >
-              <span className="relative z-10 flex items-center gap-2">
-                <span className="text-lg">🔐</span>
-                Login
+              <span className="relative z-10 flex items-center justify-center gap-3">
+                <span className="text-xl">🔐</span>
+                <span className="text-sm font-semibold">Login to Account</span>
               </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </Link>
             
             <Link
               to="/signup"
-              className={`group relative overflow-hidden px-8 py-3 font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl hover:no-underline ${
+              className={`group relative overflow-hidden px-4 py-3 font-medium rounded-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-98 shadow-md hover:shadow-lg hover:no-underline w-full text-center ${
                 location.pathname === "/signup" 
                   ? isDarkMode
-                    ? "bg-gradient-to-r from-green-700 to-green-800 text-white ring-2 ring-green-500 ring-offset-2 ring-offset-gray-900" 
-                    : "bg-gradient-to-r from-green-600 to-green-700 text-white ring-2 ring-green-400 ring-offset-2"
+                    ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white ring-1 ring-emerald-400" 
+                    : "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white ring-1 ring-emerald-300"
                   : isDarkMode
-                    ? "bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white border border-green-500"
-                    : "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
+                    ? "bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white border border-emerald-500"
+                    : "bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white border border-emerald-400"
               }`}
             >
-              <span className="relative z-10 flex items-center gap-2">
-                <span className="text-lg">✨</span>
-                Signup
+              <span className="relative z-10 flex items-center justify-center gap-3">
+                <span className="text-xl">✨</span>
+                <span className="text-sm font-semibold">Create New Account</span>
               </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </Link>
           </div>
         </div>
       )}
 
-      {/* Sidebar - hidden on mobile when not logged in and menu is open */}
+      {/* Amazon-style Sidebar */}
       <div
         className={`fixed lg:static top-0 left-0 h-full transition-all duration-300 ease-in-out z-50 ${
-          open ? "w-64 translate-x-0" : "w-20 -translate-x-full lg:translate-x-0"
+          open ? "w-64 sm:w-72 translate-x-0" : "w-16 sm:w-20 -translate-x-full lg:translate-x-0"
         } ${
           isDarkMode 
-            ? "bg-gray-900 border-r border-gray-800" 
-            : "bg-white border-r border-gray-200"
-        } shadow-lg ${!Auth.loggedIn() && open ? 'hidden sm:block' : ''}`}
+            ? "bg-gradient-to-b from-gray-900 via-gray-900 to-gray-800 border-r border-gray-700" 
+            : "bg-gray-100 border-r border-gray-300"
+        } shadow-2xl ${!Auth.loggedIn() && open ? 'hidden lg:block' : ''}`}
       >
-        {/* Navigation Menu */}
-        <nav className="flex-1 p-4 overflow-hidden ">
-          {/* Theme Toggle */}
-          <div className="mb-6">
-            <button
-              onClick={toggleDarkMode}
-              className={`w-full flex items-center gap-1 rounded-lg transition-all duration-300 ${
-                isDarkMode 
-                  ? "bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white border-2 border-gray-600" 
-                  : "bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-900 border-2 border-gray-300"
-              } ${!open ? 'justify-center px-4 py-2' : 'px-4 py-2'}`}
-            >
-              <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300  ${
-                isDarkMode ? "bg-yellow-500" : "bg-indigo-500"
-              }`}>
-                <span className="text-white text-sm">
-                  {isDarkMode ? "☀️" : "🌙"}
-                </span>
-              </div>
-              
-              {/* Smooth text transition */}
-              <div className={`transition-all duration-300 overflow-hidden ${
-                open 
-                  ? "opacity-100 translate-x-0 w-auto" 
-                  : "opacity-0 -translate-x-4 w-0"
-              }`}>
-                <span className="font-medium text-sm whitespace-nowrap">
-                  {isDarkMode ? "Light Mode" : "Dark Mode"}
-                </span>
-              </div>
-            </button>
-          </div>
+        {/* Amazon-style Navigation Header */}
+        <div className={`${
+          isDarkMode 
+            ? "bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 border-b border-yellow-500/30" 
+            : "bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 border-b border-gray-400"
+        } px-6 py-4`}>
+          {/* Removed Logo/Brand Section */}
+        </div>
 
+        {/* Navigation Menu */}
+        <nav className="flex-1 px-2 sm:px-4 py-3 overflow-hidden">
           {/* Menu Items */}
-          <div className="space-y-2 mt-10 ">
+          <div className="space-y-1">
+            {/* Theme Toggle - styled like other menu items */}
+            <div>
+              <button
+                onClick={toggleDarkMode}
+                className={`w-full flex items-center ${!open ? 'gap-0 justify-center' : 'gap-3'} rounded-lg transition-all duration-300 group relative overflow-hidden ${
+                  !open ? 'px-2 py-2' : 'px-3 py-2.5'
+                } ${
+                  isDarkMode 
+                    ? "hover:bg-gray-800 text-gray-300 hover:text-white border border-transparent" 
+                    : "hover:bg-gray-200 text-gray-700 hover:text-gray-900 border border-transparent"
+                }`}
+              >
+                {/* Theme icon div */}
+                <div className={`flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center transition-colors duration-300 ${
+                  isDarkMode ? "bg-gray-700 group-hover:bg-gray-600" : "bg-white border border-gray-300 group-hover:bg-gray-50"
+                }`}>
+                  <span className="text-sm sm:text-lg">
+                    {isDarkMode ? "☀️" : "🌙"}
+                  </span>
+                </div>
+                
+                {/* Smooth text transition */}
+                <div className={`transition-all duration-300 overflow-hidden ${
+                  open 
+                    ? "opacity-100 translate-x-0 w-auto" 
+                    : "opacity-0 -translate-x-4 w-0"
+                }`}>
+                  <span className="font-medium text-xs sm:text-sm whitespace-nowrap">
+                    {isDarkMode ? "Light Theme" : "Dark Theme"}
+                  </span>
+                </div>
+              </button>
+            </div>
             {Menus.map((Menu, index) => {
               const isActive = location.pathname === Menu.path;
               const isLogout = Menu.title === "Logout";
@@ -216,8 +227,8 @@ const Header = ({ open, setOpen }) => {
                       }}
                     >
                       <div
-                        className={`flex items-center gap-1 rounded-lg transition-all duration-300 group relative overflow-hidden ${
-                          !open ? 'px-4 py-2 justify-center' : 'px-4 py-2'
+                        className={`flex items-center ${!open ? 'gap-0 justify-center' : 'gap-3'} rounded-lg transition-all duration-300 group relative overflow-hidden ${
+                          !open ? 'px-2 py-2' : 'px-3 py-2.5'
                         } ${
                           isLogout
                             ? `${
@@ -234,23 +245,23 @@ const Header = ({ open, setOpen }) => {
                             : `${
                                 isDarkMode 
                                   ? "hover:bg-gray-800 text-gray-300 hover:text-white border border-transparent" 
-                                  : "hover:bg-gray-500 text-gray-600 hover:text-white border border-transparent"
+                                  : "hover:bg-gray-200 text-gray-700 hover:text-gray-900 border border-transparent"
                               }`
                         }`}
                       >
                         
                         {/* menu icon div */}
-                        <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors duration-300  ${
+                        <div className={`flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center transition-colors duration-300  ${
                           isLogout
                             ? isDarkMode ? "bg-red-800" : "bg-red-100"
                             : isActive
                             ? isDarkMode ? "bg-blue-100" : "bg-blue-200"
-                            : isDarkMode ? "bg-gray-700 group-hover:bg-gray-600" : "bg-gray-100 border border-gray-600 group-hover:bg-gray-400"
+                            : isDarkMode ? "bg-gray-700 group-hover:bg-gray-600" : "bg-white border border-gray-300 group-hover:bg-gray-50"
                         }`}>
                           <img
                             src={Menu.src}
                             alt={Menu.title}
-                            className="w-4 h-4 opacity-80 transition-opacity duration-300 "
+                            className="w-3 h-3 sm:w-4 sm:h-4 opacity-80 transition-opacity duration-300 "
                           />
                         </div>
                         
@@ -260,7 +271,7 @@ const Header = ({ open, setOpen }) => {
                             ? "opacity-100 translate-x-0 w-auto" 
                             : "opacity-0 -translate-x-4 w-0"
                         }`}>
-                          <span className="font-medium text-sm truncate whitespace-nowrap">
+                          <span className="font-medium text-xs sm:text-sm truncate whitespace-nowrap">
                             {Menu.title}
                           </span>
                           {Menu.badge > 0 && (
@@ -280,8 +291,8 @@ const Header = ({ open, setOpen }) => {
                           setOpen(false);
                         }
                       }}
-                      className={`w-full flex items-center gap-1 rounded-lg transition-all duration-300 group overflow-hidden ${
-                        !open ? 'px-4 py-2 justify-center' : 'px-4 py-2'
+                      className={`w-full flex items-center ${!open ? 'gap-0 justify-center' : 'gap-3'} rounded-lg transition-all duration-300 group overflow-hidden ${
+                        !open ? 'px-2 py-2' : 'px-3 py-2.5'
                       } ${
                         isLogout
                           ? `${
@@ -292,19 +303,19 @@ const Header = ({ open, setOpen }) => {
                           : `${
                               isDarkMode 
                                 ? "hover:bg-gray-800 text-gray-300 hover:text-white border border-transparent" 
-                                : "hover:bg-gray-50 text-gray-600 hover:text-gray-900 border border-transparent"
+                                : "hover:bg-gray-200 text-gray-700 hover:text-gray-900 border border-transparent"
                             }`
                       }`}
                     >
-                      <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors duration-300 ${
+                      <div className={`flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center transition-colors duration-300 ${
                         isLogout
                           ? isDarkMode ? "bg-red-800" : "bg-red-100"
-                          : isDarkMode ? "bg-gray-700 group-hover:bg-gray-600" : "bg-gray-100 group-hover:bg-gray-200"
+                          : isDarkMode ? "bg-gray-700 group-hover:bg-gray-600" : "bg-white border border-gray-300 group-hover:bg-gray-50"
                       }`}>
                         <img
                           src={Menu.src}
                           alt={Menu.title}
-                          className="w-4 h-4 opacity-80 transition-opacity duration-300"
+                          className="w-3 h-3 sm:w-4 sm:h-4 opacity-80 transition-opacity duration-300"
                         />
                       </div>
                       
@@ -314,7 +325,7 @@ const Header = ({ open, setOpen }) => {
                           ? "opacity-100 translate-x-0 w-auto" 
                           : "opacity-0 -translate-x-4 w-0"
                       }`}>
-                        <span className="font-medium text-sm whitespace-nowrap">
+                        <span className="font-medium text-xs sm:text-sm whitespace-nowrap">
                           {Menu.title}
                         </span>
                       </div>
@@ -345,6 +356,22 @@ const Header = ({ open, setOpen }) => {
           <FontAwesomeIcon
             icon={open ? faTimes : faBars}
             className={`text-xl transition-all duration-300 ${open ? 'rotate-180' : 'rotate-0'}`}
+          />
+        </button>
+
+        {/* Mobile Theme Toggle */}
+        <button
+          className={`fixed top-4 right-4 lg:hidden p-3 rounded-2xl z-[250] transition-all duration-300 transform hover:scale-110 active:scale-95 ${
+            isDarkMode
+              ? "bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-gray-900 shadow-xl ring-2 ring-yellow-400 ring-offset-2 ring-offset-gray-900"
+              : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white shadow-xl ring-2 ring-blue-400 ring-offset-2"
+          }`}
+          onClick={toggleDarkMode}
+          aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+        >
+          <FontAwesomeIcon
+            icon={isDarkMode ? faSun : faMoon}
+            className="text-xl transition-all duration-300 hover:rotate-180"
           />
         </button>
 

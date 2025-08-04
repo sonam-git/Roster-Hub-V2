@@ -25,24 +25,24 @@ const Hero = () => {
   }, []);
 
   return (
-    <main className="flex items-center justify-center px-2 py-12 font-sans ">
-      <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-7xl">
+    <main className="flex items-center justify-center px-2 sm:px-4 py-8 sm:py-12 font-sans">
+      <div className="flex flex-col lg:flex-row items-center justify-center w-full max-w-7xl gap-6 lg:gap-8">
         {/* Left side: hide on mobile after 5s */}
         {(!isMobile || (isMobile && !showRight)) && (
-          <div className="md:w-1/2 flex flex-col items-center text-center md:mb-0 p-6">
-            <h1 className="text-5xl font-extrabold pb-2 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-gray-100 via-blue-100 to-yellow-400 dark:from-green-300 dark:via-blue-400 dark:to-yellow-200 drop-shadow-lg">
+          <div className="w-full lg:w-1/2 flex flex-col items-center text-center mb-6 lg:mb-0 p-4 lg:p-6">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold pb-2 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-gray-100 via-blue-100 to-yellow-400 dark:from-green-300 dark:via-blue-400 dark:to-yellow-200 drop-shadow-lg">
               Roster Hub
             </h1>
-            <p className="text-xl mb-3 font-medium text-gray-700 dark:text-gray-200">
+            <p className="text-lg sm:text-xl mb-3 font-medium text-gray-700 dark:text-gray-200">
               Create your team's hub with us
             </p>
             <img
               src={isDarkMode ? heroImage : heroImageDark}
               alt="Roster Hub Logo"
-              className="w-56 h-56 md:w-64 md:h-64 animate-bounce mt-4 drop-shadow-xl rounded-full border-4 border-white dark:border-gray-800"
+              className="w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 animate-bounce mt-4 drop-shadow-xl rounded-full border-4 border-white dark:border-gray-800"
             />
             <h4
-              className="text-sm sm:text-sm md:text-md lg:text-xl text-center italic tracking-tight mt-6 mb-6 text-gray-800 dark:text-white drop-shadow"
+              className="text-xs sm:text-sm md:text-base lg:text-xl text-center italic tracking-tight mt-4 sm:mt-6 mb-4 sm:mb-6 text-gray-800 dark:text-white drop-shadow"
             >
               Elevate Your Game, On and Off the Field
             </h4>
@@ -54,17 +54,17 @@ const Hero = () => {
           className={`
             ${(showRight || !isMobile) ? "block" : "hidden"}
             lg:block
-            md:w-1/2 flex flex-col items-center
+            w-full lg:w-1/2 flex flex-col items-center
           `}
         >
-          <div className="bg-gradient-to-br from-green-400 via-blue-400 to-yellow-300 dark:from-green-900 dark:via-blue-900 dark:to-yellow-700 rounded-2xl shadow-2xl p-8 flex flex-col items-center w-full overflow-x-auto mb-6 border border-green-200 dark:border-green-800">
-            <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-3 text-center break-words w-full tracking-tight drop-shadow">
+          <div className="bg-gradient-to-br from-green-400 via-blue-400 to-yellow-300 dark:from-green-900 dark:via-blue-900 dark:to-yellow-700 rounded-2xl shadow-2xl p-4 sm:p-6 lg:p-8 flex flex-col items-center w-full max-w-md lg:max-w-lg overflow-x-auto mb-6 border border-green-200 dark:border-green-800">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white mb-3 text-center break-words w-full tracking-tight drop-shadow">
               Join Roster Hub Today!
             </h2>
-            <p className="text-lg text-gray-800 dark:text-gray-200 mb-5 text-center w-full break-words font-medium">
+            <p className="text-base sm:text-lg text-gray-800 dark:text-gray-200 mb-4 sm:mb-5 text-center w-full break-words font-medium">
               Sign up to connect with your team, track games, and share your soccer journey.
             </p>
-            <ul className="text-base text-gray-900 dark:text-gray-100 mb-6 text-left w-full max-w-lg list-disc list-inside space-y-2 font-normal">
+            <ul className="text-sm sm:text-base text-gray-900 dark:text-gray-100 mb-4 sm:mb-6 text-left w-full max-w-lg list-disc list-inside space-y-1 sm:space-y-2 font-normal">
               <li>
                 <span className="font-semibold text-yellow-700 dark:text-yellow-200">Dynamic profiles</span> with photos, jersey numbers, positions, and more
               </li>
@@ -83,7 +83,7 @@ const Hero = () => {
             </ul>
             <button
               onClick={() => navigate("/signup")}
-              className="px-8 py-3 bg-yellow-400 dark:bg-yellow-300 text-green-900 dark:text-green-900 font-extrabold rounded-full shadow-lg hover:bg-yellow-300 dark:hover:bg-yellow-200 transition hover:no-underline text-lg tracking-wide mt-2"
+              className="px-6 sm:px-8 py-2 sm:py-3 bg-yellow-400 dark:bg-yellow-300 text-green-900 dark:text-green-900 font-extrabold rounded-full shadow-lg hover:bg-yellow-300 dark:hover:bg-yellow-200 transition hover:no-underline text-base sm:text-lg tracking-wide mt-2"
             >
               Get Started
             </button>

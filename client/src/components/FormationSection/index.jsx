@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   DndContext,
   PointerSensor,
@@ -17,6 +17,7 @@ import {
   FORMATION_UPDATED_SUBSCRIPTION,
   FORMATION_DELETED_SUBSCRIPTION,
 } from "../../utils/subscription";
+import { ThemeContext } from "../ThemeContext";
 import AvailablePlayersList from "../AvailablePlayersList";
 import FormationBoard from "../FormationBoard";
 import FormationLikeButton from "../FormationLikeButton";
@@ -37,6 +38,7 @@ export default function FormationSection({
   refetchFormation,
   isLoading = false,
 }) {
+  const { isDarkMode } = useContext(ThemeContext);
   const [createFormation] = useMutation(CREATE_FORMATION);
   const [updateFormation] = useMutation(UPDATE_FORMATION);
   const [deleteFormation] = useMutation(DELETE_FORMATION);
@@ -171,21 +173,38 @@ export default function FormationSection({
   return (
     <div className="space-y-6">
       {!isFormed && isCreator && (
-        <div className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-2xl p-6 border border-indigo-200 dark:border-indigo-800">
-          <div className="flex items-center gap-3 mb-4">
-            <span className="text-2xl">⚙️</span>
-            <h3 className="text-lg font-bold text-gray-800 dark:text-white">Formation Setup</h3>
+        <div className={`rounded-3xl p-6 border-2 transition-all duration-300 hover:shadow-xl transform hover:scale-[1.02] ${
+          isDarkMode 
+            ? "bg-gradient-to-br from-gray-800 via-indigo-900 to-gray-900 border-indigo-700 shadow-lg shadow-indigo-900/20" 
+            : "bg-gradient-to-br from-indigo-50 via-blue-50 to-white border-indigo-200 shadow-lg shadow-indigo-200/50"
+        }`}>
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg">
+              <span className="text-2xl">⚙️</span>
+            </div>
+            <div>
+              <h3 className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                Formation Setup
+              </h3>
+              <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
+                Choose your tactical formation for this match
+              </p>
+            </div>
           </div>
           
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                Choose Formation Type:
+              <label className={`block text-sm font-semibold mb-3 ${isDarkMode ? "text-gray-200" : "text-gray-700"}`}>
+                🎯 Choose Formation Type:
               </label>
               <select
                 value={selectedFormation}
                 onChange={e => setSelectedFormation(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white font-medium shadow-sm focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-800 transition-all duration-200"
+                className={`w-full px-4 py-4 rounded-2xl border-2 font-medium shadow-lg focus:ring-4 focus:ring-indigo-200 dark:focus:ring-indigo-800 transition-all duration-200 text-base ${
+                  isDarkMode 
+                    ? "bg-gray-700 border-gray-600 text-white focus:border-indigo-400" 
+                    : "bg-white border-gray-200 text-gray-800 focus:border-indigo-500"
+                }`}
               >
                 <option value="">-- Select Formation --</option>
                 {FORMATION_TYPES.map(ft => (
@@ -195,13 +214,14 @@ export default function FormationSection({
             </div>
             
             {selectedFormation && (
-              <div className="flex justify-end">
+              <div className="flex justify-end pt-2">
                 <button
                   onClick={() => { setSelectedFormation(""); setAssignments({}); }}
-                  className="group relative overflow-hidden bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center gap-2"
+                  className="group relative overflow-hidden bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold px-5 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2"
                 >
-                  <span className="relative z-10 text-sm">❌</span>
+                  <span className="relative z-10 text-lg">❌</span>
                   <span className="relative z-10">Cancel Selection</span>
+                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-200"></div>
                 </button>
               </div>
             )}
@@ -217,39 +237,80 @@ export default function FormationSection({
             onDragEnd={handleDragEnd}
           >
             {isCreator && (
-              <AvailablePlayersList
-                players={availablePlayers}
-                isCreator={isCreator}
-                isLoading={isLoading}
-              />
+              <div className={`rounded-3xl p-6 border-2 transition-all duration-300 hover:shadow-xl ${
+                isDarkMode 
+                  ? "bg-gradient-to-br from-gray-800 via-blue-900 to-gray-900 border-blue-700 shadow-lg shadow-blue-900/20" 
+                  : "bg-gradient-to-br from-blue-50 via-green-50 to-white border-blue-200 shadow-lg shadow-blue-200/50"
+              }`}>
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-r from-blue-500 to-green-500 flex items-center justify-center shadow-lg">
+                    <span className="text-2xl">👥</span>
+                  </div>
+                  <div>
+                    <h3 className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                      Available Players
+                    </h3>
+                    <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
+                      Drag players to positions on the formation board
+                    </p>
+                  </div>
+                </div>
+                <AvailablePlayersList
+                  players={availablePlayers}
+                  isCreator={isCreator}
+                  isLoading={isLoading}
+                />
+              </div>
             )}
 
-            <FormationBoard 
-              rows={rows} 
-              assignments={assignments} 
-              formationType={formationType} 
-              creator={creator}
-              isLoading={isLoading}
-            />
+            <div className={`rounded-3xl p-6 border-2 transition-all duration-300 hover:shadow-xl ${
+              isDarkMode 
+                ? "bg-gradient-to-br from-gray-800 via-green-900 to-gray-900 border-green-700 shadow-lg shadow-green-900/20" 
+                : "bg-gradient-to-br from-green-50 via-teal-50 to-white border-green-200 shadow-lg shadow-green-200/50"
+            }`}>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-r from-green-500 to-teal-500 flex items-center justify-center shadow-lg">
+                  <span className="text-2xl">⚽</span>
+                </div>
+                <div>
+                  <h3 className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                    Formation Board - {formationType}
+                  </h3>
+                  <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
+                    {isCreator ? "Drop players onto positions" : "Current tactical setup"}
+                  </p>
+                </div>
+              </div>
+              <FormationBoard 
+                rows={rows} 
+                assignments={assignments} 
+                formationType={formationType} 
+                creator={creator}
+                isLoading={isLoading}
+              />
+            </div>
+
             <DragOverlay>
               {draggingPlayer && (
-                <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded-xl shadow-xl border-2 border-white/20 text-sm font-semibold flex items-center gap-2 backdrop-blur-sm">
-                  <span className="text-lg">👤</span>
-                  <span>{draggingPlayer?.name || 'Unknown Player'}</span>
-                  <span className="text-xs opacity-75">• Dragging</span>
+                <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-2xl shadow-2xl border-2 border-white/30 text-sm font-semibold flex items-center gap-3 backdrop-blur-sm transform scale-110">
+                  <span className="text-2xl">👤</span>
+                  <div>
+                    <div className="font-bold">{draggingPlayer?.name || 'Unknown Player'}</div>
+                    <div className="text-xs opacity-75">• Dragging to position</div>
+                  </div>
                 </div>
               )}
             </DragOverlay>
 
             {isCreator && (
-              <div className="flex flex-col sm:flex-row gap-3 mt-6">
+              <div className="flex flex-col sm:flex-row gap-4 mt-8">
                 <button
                   onClick={handleSubmitFormation}
-                  className="group relative overflow-hidden bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-2 min-w-[180px]"
+                  className="group relative overflow-hidden bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-3 min-w-[200px]"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-                  <span className="relative z-10 text-lg">⚽</span>
-                  <span className="relative z-10">
+                  <span className="relative z-10 text-2xl">⚽</span>
+                  <span className="relative z-10 text-lg">
                     {isFormed ? "Update Formation" : "Create Formation"}
                   </span>
                   <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-200"></div>
@@ -258,11 +319,11 @@ export default function FormationSection({
                 {isFormed && (
                   <button
                     onClick={handleDelete}
-                    className="group relative overflow-hidden bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-2 min-w-[180px]"
+                    className="group relative overflow-hidden bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-3 min-w-[200px]"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-red-400 to-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-                    <span className="relative z-10 text-lg">🗑️</span>
-                    <span className="relative z-10">Delete Formation</span>
+                    <span className="relative z-10 text-2xl">🗑️</span>
+                    <span className="relative z-10 text-lg">Delete Formation</span>
                     <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-200"></div>
                   </button>
                 )}
@@ -271,7 +332,24 @@ export default function FormationSection({
           </DndContext>
 
           {formation && (
-            <div className="mt-6 space-y-4">
+            <div className={`mt-8 rounded-3xl p-6 border-2 transition-all duration-300 hover:shadow-xl ${
+              isDarkMode 
+                ? "bg-gradient-to-br from-gray-800 via-purple-900 to-gray-900 border-purple-700 shadow-lg shadow-purple-900/20" 
+                : "bg-gradient-to-br from-purple-50 via-pink-50 to-white border-purple-200 shadow-lg shadow-purple-200/50"
+            }`}>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
+                  <span className="text-2xl">❤️</span>
+                </div>
+                <div>
+                  <h3 className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                    Formation Feedback
+                  </h3>
+                  <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
+                    Show your appreciation for this tactical setup
+                  </p>
+                </div>
+              </div>
               <FormationLikeButton
                 formationId={formation._id}
                 likes={formation.likes}

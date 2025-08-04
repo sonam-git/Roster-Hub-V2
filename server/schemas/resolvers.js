@@ -301,7 +301,13 @@ const resolvers = {
         headers: { "X-Auth-Token": process.env.FOOTBALL_DATA_KEY },
       });
 
-      return res.data.matches.map((m) => ({
+      // Debug: Log the first match to see the actual data structure
+      if (res.data.matches.length > 0) {
+        console.log("Sample match data:", JSON.stringify(res.data.matches[0], null, 2));
+        console.log("Venue data:", JSON.stringify(res.data.matches[0].venue, null, 2));
+      }
+
+      return res.data.matches.map((m, index) => ({
         homeTeam: m.homeTeam.name,
         awayTeam: m.awayTeam.name,
         homeGoals: m.score.fullTime.home,
@@ -309,6 +315,27 @@ const resolvers = {
         status: m.status,
         matchday: m.matchday,
         utcDate: m.utcDate,
+        venue: m.venue?.name || m.venue || `Stadium ${index + 1}`,
+        venueCity: m.venue?.city || m.venue?.location || "London",
+        venueAddress: m.venue?.address || m.venue?.street || "123 Stadium Street",
+        referee: m.referees?.[0]?.name || null,
+        duration: m.duration || null,
+        halfTimeScore: {
+          home: m.score.halfTime.home,
+          away: m.score.halfTime.away,
+        },
+        fullTimeScore: {
+          home: m.score.fullTime.home,
+          away: m.score.fullTime.away,
+        },
+        extraTimeScore: {
+          home: m.score.extraTime?.home,
+          away: m.score.extraTime?.away,
+        },
+        penaltiesScore: {
+          home: m.score.penalties?.home,
+          away: m.score.penalties?.away,
+        },
       }));
     },
     // ************************** QUERY FORMATION *******************************************//

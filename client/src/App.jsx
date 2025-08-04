@@ -26,6 +26,7 @@ import Roster from "./pages/Roster";
 import Message from "./pages/Message";
 import Skill from "./pages/Skill";
 import Game from "./pages/Game";
+import GameSearch from "./pages/GameSearch";
 import Score from "./pages/Score";
 import ForgotPassword from "./pages/ForgetPassword";
 import PasswordReset from "./pages/PasswordReset";
@@ -175,6 +176,7 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<PasswordReset />} />
             <Route path="/game-schedule" element={<Game />} />
+            <Route path="/game-search" element={<GameSearch />} />
             <Route
               path="/game-schedule/:gameId"
               element={<Game isDarkMode={isDarkMode} />}
@@ -205,7 +207,7 @@ function App() {
               v7_relativeSplatPath: true,
             }}
           >
-            <MainHeader open={sidebarOpen} setOpen={setSidebarOpen} />
+            <MainHeader />
             <TopHeader onToggleMenu={() => setSidebarOpen((v) => !v)} open={sidebarOpen} />
             <AppContent sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
           </Router>

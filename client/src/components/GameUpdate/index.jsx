@@ -44,7 +44,7 @@ const GameUpdate = ({
       notes: initialNotes || "",
       opponent: initialOpponent || "",
     });
-  }, [initialDate, initialTime, initialVenue, initialNotes, initialOpponent]);
+  }, [initialDate, initialTime, initialVenue, initialCity, initialNotes, initialOpponent]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -74,95 +74,185 @@ const GameUpdate = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-300 bg-opacity-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div
-        className={`p-6 rounded-lg shadow-lg w-11/12 max-w-md ${
-          isDarkMode ? "bg-gray-800 text-gray-200" : "bg-white text-gray-800"
+        className={`relative w-11/12 max-w-lg mx-4 rounded-3xl shadow-2xl border-2 transition-all duration-300 transform scale-100 ${
+          isDarkMode 
+            ? "bg-gradient-to-br from-gray-800 via-gray-900 to-black border-gray-600" 
+            : "bg-gradient-to-br from-white via-gray-50 to-white border-gray-200"
         }`}
       >
-        <h2 className="text-xl font-bold mb-4">Update Game Info</h2>
-        <form onSubmit={handleSubmit}>
-          <label className="block mb-2">
-            <span className="font-bold">Date</span>
-            <input
-              type="date"
-              name="date"
-              value={formState.date}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border rounded text-black"
-            />
-          </label>
-          <label className="block mb-2">
-            <span className="font-bold">Time</span>
-            <input
-              type="time"
-              name="time"
-              value={formState.time}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border rounded text-black"
-            />
-          </label>
-          <label className="block mb-2">
-            <span className="font-bold">Venue</span>
-            <input
-              type="text"
-              name="venue"
-              value={formState.venue}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border rounded text-black"
-              placeholder="e.g. Central Park Field #3"
-            />
-          </label>
-                 <label className="block mb-2">
-            <span className="font-bold">City</span>
-            <input
-              type="text"
-              name="city"
-              value={formState.city}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border rounded text-black"
-              placeholder="e.g. New York"
-            />
-          </label>
-          <label className="block mb-2">
-            <span className="font-bold">Opponent</span>
-            <input
-              type="text"
-              name="opponent"
-              value={formState.opponent}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border rounded text-black"
-              placeholder="e.g. Rockets FC"
-            />
-          </label>
-          <label className="block mb-4">
-            <span className="font-bold">Notes</span>
-            <textarea
-              name="notes"
-              value={formState.notes}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border rounded text-black"
-              rows={3}
-            />
-          </label>
+        {/* Header with icon */}
+        <div className={`p-6 pb-4 border-b ${isDarkMode ? "border-gray-700" : "border-gray-200"}`}>
+          <div className="flex items-center justify-center mb-4">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-green-500 flex items-center justify-center shadow-lg">
+              <span className="text-3xl">⚽</span>
+            </div>
+          </div>
+          <h2 className={`text-2xl font-bold text-center ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+            Update Game Info
+          </h2>
+          <p className={`text-center mt-2 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
+            Make changes to your game details
+          </p>
+        </div>
 
-          <div className="flex justify-end space-x-3">
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="p-6">
+          <div className="space-y-5">
+            {/* Date & Time Row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <label className="block">
+                <span className={`font-semibold mb-2 flex items-center gap-2 ${isDarkMode ? "text-gray-200" : "text-gray-700"}`}>
+                  📅 <span>Date</span>
+                </span>
+                <input
+                  type="date"
+                  name="date"
+                  value={formState.date}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-3 rounded-xl border-2 shadow-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 ${
+                    isDarkMode 
+                      ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" 
+                      : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+                  }`}
+                />
+              </label>
+              <label className="block">
+                <span className={`font-semibold mb-2 flex items-center gap-2 ${isDarkMode ? "text-gray-200" : "text-gray-700"}`}>
+                  ⏰ <span>Time</span>
+                </span>
+                <input
+                  type="time"
+                  name="time"
+                  value={formState.time}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-3 rounded-xl border-2 shadow-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 ${
+                    isDarkMode 
+                      ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" 
+                      : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+                  }`}
+                />
+              </label>
+            </div>
+
+            {/* Venue & City Row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <label className="block">
+                <span className={`font-semibold mb-2 flex items-center gap-2 ${isDarkMode ? "text-gray-200" : "text-gray-700"}`}>
+                  🏟️ <span>Venue</span>
+                </span>
+                <input
+                  type="text"
+                  name="venue"
+                  value={formState.venue}
+                  onChange={handleChange}
+                  placeholder="e.g. Central Park Field #3"
+                  className={`w-full px-4 py-3 rounded-xl border-2 shadow-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 ${
+                    isDarkMode 
+                      ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" 
+                      : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+                  }`}
+                />
+              </label>
+              <label className="block">
+                <span className={`font-semibold mb-2 flex items-center gap-2 ${isDarkMode ? "text-gray-200" : "text-gray-700"}`}>
+                  🌍 <span>City</span>
+                </span>
+                <input
+                  type="text"
+                  name="city"
+                  value={formState.city}
+                  onChange={handleChange}
+                  placeholder="e.g. New York"
+                  className={`w-full px-4 py-3 rounded-xl border-2 shadow-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 ${
+                    isDarkMode 
+                      ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" 
+                      : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+                  }`}
+                />
+              </label>
+            </div>
+
+            {/* Opponent */}
+            <label className="block">
+              <span className={`font-semibold mb-2 flex items-center gap-2 ${isDarkMode ? "text-gray-200" : "text-gray-700"}`}>
+                🏃‍♂️ <span>Opponent</span>
+              </span>
+              <input
+                type="text"
+                name="opponent"
+                value={formState.opponent}
+                onChange={handleChange}
+                placeholder="e.g. Rockets FC"
+                className={`w-full px-4 py-3 rounded-xl border-2 shadow-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 ${
+                  isDarkMode 
+                    ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" 
+                    : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+                }`}
+              />
+            </label>
+
+            {/* Notes */}
+            <label className="block">
+              <span className={`font-semibold mb-2 flex items-center gap-2 ${isDarkMode ? "text-gray-200" : "text-gray-700"}`}>
+                📝 <span>Notes</span>
+              </span>
+              <textarea
+                name="notes"
+                value={formState.notes}
+                onChange={handleChange}
+                placeholder="Add any additional notes or special instructions..."
+                rows={3}
+                className={`w-full px-4 py-3 rounded-xl border-2 shadow-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 resize-none ${
+                  isDarkMode 
+                    ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" 
+                    : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+                }`}
+              />
+            </label>
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mt-4 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+              <div className="flex items-center gap-2">
+                <span className="text-red-500 text-lg">⚠️</span>
+                <p className="text-red-600 dark:text-red-400 font-medium">
+                  Error: {error.message}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 mt-8">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+              className="group relative overflow-hidden bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-2"
             >
-              Cancel
+              <span className="text-lg">❌</span>
+              <span>Cancel</span>
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+              className="group relative overflow-hidden bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              {loading ? "Updating…" : "Update Game"}
+              {loading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>Updating...</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-lg">✅</span>
+                  <span>Update Game</span>
+                </>
+              )}
             </button>
           </div>
-          {error && <p className="text-red-600 mt-3">Error: {error.message}</p>}
         </form>
       </div>
     </div>
