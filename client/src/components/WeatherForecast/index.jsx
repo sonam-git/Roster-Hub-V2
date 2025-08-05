@@ -160,21 +160,41 @@ const WeatherForecast = ({ date, city, isDarkMode }) => {
 
   if (loading) {
     return (
-      <div className={`p-4 rounded-xl shadow ${isDarkMode ? 'bg-gray-700' : 'bg-white/80'} mb-6`}>
-        <div className="flex items-center gap-2">
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
-          <span className="text-sm">Loading weather forecast...</span>
+      <div className={`p-6 rounded-2xl text-center transition-all duration-300 ${
+        isDarkMode ? "bg-gray-800 border border-gray-600" : "bg-gray-50 border border-gray-200"
+      }`}>
+        <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 mx-auto flex items-center justify-center mb-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
         </div>
+        <h4 className={`text-lg font-bold mb-2 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+          Loading Weather Forecast
+        </h4>
+        <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
+          Fetching weather data for game day...
+        </p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className={`p-4 rounded-xl shadow ${isDarkMode ? 'bg-gray-700' : 'bg-white/80'} mb-6`}>
-        <div className="flex items-center gap-2 text-yellow-600 dark:text-yellow-400">
-          <span className="text-lg">⚠️</span>
-          <span className="text-sm">Weather forecast unavailable</span>
+      <div className={`p-6 rounded-2xl text-center transition-all duration-300 ${
+        isDarkMode ? "bg-gray-800 border border-gray-600" : "bg-gray-50 border border-gray-200"
+      }`}>
+        <div className="w-16 h-16 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 mx-auto flex items-center justify-center mb-4">
+          <span className="text-2xl">🌤️</span>
+        </div>
+        <h4 className={`text-lg font-bold mb-2 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+          No Weather Forecast Available
+        </h4>
+        <p className={`text-sm mb-4 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
+          We couldn't retrieve weather data for this location and date.
+        </p>
+        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm ${
+          isDarkMode ? "bg-yellow-900/30 text-yellow-300" : "bg-yellow-100 text-yellow-800"
+        }`}>
+          <span className="text-base">ℹ️</span>
+          <span>Please check weather conditions manually before the game</span>
         </div>
       </div>
     );
@@ -198,7 +218,7 @@ const WeatherForecast = ({ date, city, isDarkMode }) => {
   };
 
   return (
-    <div className={`p-4 rounded-xl shadow-md mb-6 ${isDarkMode ? 'bg-gradient-to-r from-blue-900 to-blue-800' : 'bg-gradient-to-r from-blue-100 to-sky-100'}`}>
+    <div className={`p-4 rounded-xl shadow-md ${isDarkMode ? 'bg-gradient-to-r from-blue-900 to-blue-800' : 'bg-gradient-to-r from-blue-100 to-sky-100'}`}>
       {/* Location Toggle */}
       <div className="flex justify-between items-center mb-3">
         <h4 className="font-bold text-lg dark:text-white">Weather Forecast</h4>

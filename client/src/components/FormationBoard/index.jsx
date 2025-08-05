@@ -11,7 +11,7 @@ export default function FormationBoard({ rows, assignments, formationType, creat
   return (
     <div className="bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-600 overflow-hidden">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-green-600 to-green-700 dark:from-green-700 dark:to-green-800 p-4 text-white">
+      <div className="bg-gradient-to-r from-green-600 to-green-700 dark:from-green-700 dark:to-green-800 p-3 sm:p-4 text-white">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
           <div className="flex items-center gap-2">
             <span className="text-xl">⚽</span>
@@ -31,8 +31,8 @@ export default function FormationBoard({ rows, assignments, formationType, creat
       </div>
 
       {/* Football Field */}
-      <div className="p-6">
-        <div className="relative w-full h-[500px] mx-auto rounded-xl overflow-hidden shadow-inner border-4 border-white" 
+      <div className="p-2 sm:p-4 lg:p-6">
+        <div className="relative w-full h-[400px] sm:h-[450px] lg:h-[500px] mx-auto rounded-xl overflow-hidden shadow-inner border-2 sm:border-4 border-white" 
              style={{
                background: `
                  linear-gradient(to bottom, 
@@ -52,35 +52,35 @@ export default function FormationBoard({ rows, assignments, formationType, creat
 
           {/* Field Markings */}
           {/* Goal Area (18-yard box) */}
-          <div className="absolute top-0 left-[15%] w-[70%] h-[140px] border-l-4 border-r-4 border-b-4 border-white opacity-80" />
+          <div className="absolute top-0 left-[15%] w-[70%] h-[120px] sm:h-[140px] border-l-2 border-r-2 border-b-2 sm:border-l-4 sm:border-r-4 sm:border-b-4 border-white opacity-80" />
           
           {/* Small Box (6-yard box) */}
-          <div className="absolute top-0 left-1/2 w-[140px] h-[70px] border-l-4 border-r-4 border-b-4 border-white opacity-80 transform -translate-x-1/2" />
+          <div className="absolute top-0 left-1/2 w-[120px] sm:w-[140px] h-[60px] sm:h-[70px] border-l-2 border-r-2 border-b-2 sm:border-l-4 sm:border-r-4 sm:border-b-4 border-white opacity-80 transform -translate-x-1/2" />
           
           {/* Center Circle */}
-          <div className="absolute top-1/2 left-1/2 w-24 h-24 border-4 border-white opacity-60 rounded-full transform -translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute top-1/2 left-1/2 w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 border-2 sm:border-4 border-white opacity-60 rounded-full transform -translate-x-1/2 -translate-y-1/2" />
           
           {/* Center Line */}
-          <div className="absolute top-1/2 left-0 w-full h-1 bg-white opacity-60 transform -translate-y-1/2" />
+          <div className="absolute top-1/2 left-0 w-full h-0.5 sm:h-1 bg-white opacity-60 transform -translate-y-1/2" />
           
           {/* Goal Area (bottom) */}
-          <div className="absolute bottom-0 left-[15%] w-[70%] h-[140px] border-l-4 border-r-4 border-t-4 border-white opacity-80" />
+          <div className="absolute bottom-0 left-[15%] w-[70%] h-[120px] sm:h-[140px] border-l-2 border-r-2 border-t-2 sm:border-l-4 sm:border-r-4 sm:border-t-4 border-white opacity-80" />
           
           {/* Small Box (bottom) */}
-          <div className="absolute bottom-0 left-1/2 w-[140px] h-[70px] border-l-4 border-r-4 border-t-4 border-white opacity-80 transform -translate-x-1/2" />
+          <div className="absolute bottom-0 left-1/2 w-[120px] sm:w-[140px] h-[60px] sm:h-[70px] border-l-2 border-r-2 border-t-2 sm:border-l-4 sm:border-r-4 sm:border-t-4 border-white opacity-80 transform -translate-x-1/2" />
 
           {/* Corner Arcs */}
-          <div className="absolute top-0 left-0 w-8 h-8 border-b-4 border-r-4 border-white opacity-60 rounded-br-full" />
-          <div className="absolute top-0 right-0 w-8 h-8 border-b-4 border-l-4 border-white opacity-60 rounded-bl-full" />
-          <div className="absolute bottom-0 left-0 w-8 h-8 border-t-4 border-r-4 border-white opacity-60 rounded-tr-full" />
-          <div className="absolute bottom-0 right-0 w-8 h-8 border-t-4 border-l-4 border-white opacity-60 rounded-tl-full" />
+          <div className="absolute top-0 left-0 w-6 h-6 sm:w-8 sm:h-8 border-b-2 border-r-2 sm:border-b-4 sm:border-r-4 border-white opacity-60 rounded-br-full" />
+          <div className="absolute top-0 right-0 w-6 h-6 sm:w-8 sm:h-8 border-b-2 border-l-2 sm:border-b-4 sm:border-l-4 border-white opacity-60 rounded-bl-full" />
+          <div className="absolute bottom-0 left-0 w-6 h-6 sm:w-8 sm:h-8 border-t-2 border-r-2 sm:border-t-4 sm:border-r-4 border-white opacity-60 rounded-tr-full" />
+          <div className="absolute bottom-0 right-0 w-6 h-6 sm:w-8 sm:h-8 border-t-2 border-l-2 sm:border-t-4 sm:border-l-4 border-white opacity-60 rounded-tl-full" />
 
           {/* Player Rows */}
-          <div className="absolute inset-0 flex flex-col justify-between p-8 py-12">
+          <div className="absolute inset-0 flex flex-col justify-between p-3 py-6 sm:p-6 sm:py-8 lg:p-8 lg:py-12">
             {rows.map(({ rowIndex, slotIds }) => (
               <FadeInOut key={rowIndex} show={true} duration={200}>
                 <div
-                  className="flex justify-center space-x-4 sm:space-x-6"
+                  className="flex justify-center space-x-2 sm:space-x-4 lg:space-x-6"
                   style={{ zIndex: 10 + rowIndex }}
                 >
                   {slotIds.map((slotId) => (
@@ -93,18 +93,18 @@ export default function FormationBoard({ rows, assignments, formationType, creat
         </div>
         
         {/* Field Info */}
-        <div className="mt-4 flex items-center justify-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+        <div className="mt-2 sm:mt-4 flex items-center justify-center gap-2 sm:gap-4 text-xs text-gray-500 dark:text-gray-400 px-2">
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-            <span>Assigned Players</span>
+            <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-blue-500"></div>
+            <span className="text-xs sm:text-sm">Assigned</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full border-2 border-gray-400 bg-white"></div>
-            <span>Empty Positions</span>
+            <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full border border-gray-400 sm:border-2 bg-white"></div>
+            <span className="text-xs sm:text-sm">Empty</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-            <span>Drop Zone</span>
+            <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-400"></div>
+            <span className="text-xs sm:text-sm">Drop Zone</span>
           </div>
         </div>
       </div>
@@ -140,7 +140,7 @@ function Slot({ slotId, player }) {
     >
       {/* Player Circle */}
       <div
-        className={`w-14 h-14 rounded-full border-4 flex flex-col items-center justify-center text-xs font-bold transition-all duration-300 shadow-lg ${
+        className={`w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full border-2 sm:border-4 flex flex-col items-center justify-center text-xs font-bold transition-all duration-300 shadow-lg ${
           isOver
             ? 'bg-yellow-400 border-yellow-600 text-yellow-900 shadow-yellow-400/50'
             : hasPlayer
@@ -150,13 +150,13 @@ function Slot({ slotId, player }) {
       >
         {hasPlayer ? (
           <>
-            <span className="font-bold text-lg leading-none">{initial}</span>
-            <span className="text-[8px] leading-none mt-0.5 opacity-90">
+            <span className="font-bold text-sm sm:text-lg leading-none">{initial}</span>
+            <span className="text-[6px] sm:text-[8px] leading-none mt-0.5 opacity-90">
               {firstName.length > 6 ? firstName.substring(0, 6) : firstName}
             </span>
           </>
         ) : (
-          <span className="text-2xl text-gray-400">+</span>
+          <span className="text-lg sm:text-2xl text-gray-400">+</span>
         )}
       </div>
 

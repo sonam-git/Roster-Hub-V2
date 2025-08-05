@@ -1,4 +1,4 @@
-import React, { useEffect, useState, startTransition, Suspense } from "react";
+import { useEffect, useState, startTransition, Suspense } from "react";
 import { useQuery, useSubscription } from "@apollo/client";
 import {
   FORMATION_COMMENT_ADDED_SUBSCRIPTION,
@@ -106,9 +106,9 @@ function CommentsPane({ gameId }) {
             </p>
           </div>
         ) : (
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-600 shadow-sm overflow-hidden">
+          <div className="bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-600 shadow-sm overflow-hidden">
             {/* Comments Header */}
-            <div className="sticky top-0 z-10 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600 border-b border-gray-200 dark:border-gray-600 px-4 py-3">
+            <div className="sticky top-0 z-1 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600 border-b border-gray-200 dark:border-gray-600 px-4 py-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="text-lg">💭</span>
@@ -125,13 +125,13 @@ function CommentsPane({ gameId }) {
             </div>
             
             {/* Comments List */}
-            <div className="min-h-[500px] max-h-[600px] sm:max-h-[650px] lg:max-h-[700px] overflow-y-auto custom-scrollbar">
+            <div className="min-h-[500px] max-h-[800px] sm:max-h-[650px] lg:max-h-[800px] overflow-y-auto custom-scrollbar">
               <div className="divide-y divide-gray-100 dark:divide-gray-700">
                 {sorted.map((comment, index) => (
                   <div key={comment._id} className={`transition-colors duration-200 ${
                     index % 2 === 0 
-                      ? 'bg-white dark:bg-gray-800' 
-                      : 'bg-gray-50 dark:bg-gray-750'
+                      ? 'bg-gray-100 dark:bg-gray-600' 
+                      : 'bg-gray-500 dark:bg-gray-750'
                   }`}>
                     <FormationCommentItem
                       comment={comment}

@@ -1,12 +1,15 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { ThemeContext } from "../ThemeContext";
-import lightLogo from "../../assets/images/roster-hub-logo.png";
-import darkLogo from "../../assets/images/dark-logo.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars, faTimes, faSun, faMoon } from "@fortawesome/free-solid-svg-icons";
 
-const MainHeader = () => {
-  const { isDarkMode } = useContext(ThemeContext);
+const MainHeader = ({ open, setOpen }) => {
+  const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
+
+  const toggleMenu = () => {
+    setOpen(!open);
+  };
 
   return (
     <div className="w-full py-6 bg-gradient-to-r from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-blue-950 dark:to-emerald-950 shadow-xl lg:hidden fixed top-0 left-0 right-0 z-[250] border-b-2 border-blue-200 dark:border-blue-800 transition-all duration-500 backdrop-blur-sm">
@@ -14,23 +17,25 @@ const MainHeader = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-blue-100/20 via-transparent to-green-100/20 dark:from-blue-900/20 dark:to-emerald-900/20"></div>
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-green-500 to-yellow-500 dark:from-blue-400 dark:via-green-400 dark:to-yellow-400"></div>
       
-      <div className="relative flex items-center justify-center px-6">
-        {/* Logo Section - Hidden on small screens */}
-        <div className="relative hidden">
-          <img 
-            src={isDarkMode ? darkLogo : lightLogo} 
-            alt="Roster Hub Logo" 
-            className={`h-14 w-14 rounded-full border-3 shadow-lg p-1 transition-all duration-300 ${
-              isDarkMode
-                ? "border-blue-400 bg-gray-800 ring-4 ring-blue-500/30 shadow-blue-500/50"
-                : "border-green-500 bg-white ring-4 ring-green-500/30 shadow-green-500/50"
-            }`}
+      <div className="relative flex items-center justify-between px-4">
+        {/* Left: Hamburger Menu Button */}
+        <button
+          className={`lg:hidden p-2 rounded-xl transition-all duration-300 transform hover:scale-110 active:scale-95 ${
+            open
+              ? isDarkMode
+                ? "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-lg"
+                : "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg"
+              : isDarkMode
+              ? "bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white shadow-lg"
+              : "bg-gradient-to-r from-white to-gray-50 hover:from-gray-50 hover:to-gray-100 text-gray-900 shadow-lg border border-gray-200"
+          }`}
+          onClick={toggleMenu}
+        >
+          <FontAwesomeIcon
+            icon={open ? faTimes : faBars}
+            className={`text-lg transition-all duration-300 ${open ? 'rotate-180' : 'rotate-0'}`}
           />
-          {/* Animated pulse ring */}
-          <div className={`absolute inset-0 rounded-full border-2 animate-ping opacity-30 ${
-            isDarkMode ? "border-blue-400" : "border-green-500"
-          }`}></div>
-        </div>
+        </button>
 
         {/* Center: Title Section */}
         <Link to="/" className="flex flex-col items-center group transition-transform duration-300 hover:scale-105">
@@ -47,6 +52,22 @@ const MainHeader = () => {
             Team Management
           </span>
         </Link>
+
+        {/* Right: Theme Toggle Button */}
+        <button
+          className={`lg:hidden p-2 rounded-xl transition-all duration-300 transform hover:scale-110 active:scale-95 ${
+            isDarkMode
+              ? "bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-gray-900 shadow-lg"
+              : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white shadow-lg"
+          }`}
+          onClick={toggleDarkMode}
+          aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+        >
+          <FontAwesomeIcon
+            icon={isDarkMode ? faSun : faMoon}
+            className="text-lg transition-all duration-300 hover:rotate-0 hover:scale-110 active:scale-95"
+          />
+        </button>
       </div>
 
       {/* Bottom gradient line */}

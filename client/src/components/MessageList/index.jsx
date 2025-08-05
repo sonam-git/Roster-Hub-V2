@@ -129,6 +129,10 @@ const handleSendMessage = async (recipientId) => {
             conv={conv}
             loggedInUser={loggedInUser}
             isLoggedInUser={isLoggedInUser}
+            inputValue={inputValues[conv.user._id] || ""}
+            onInputChange={(userId, value) => {
+              setInputValues((prev) => ({ ...prev, [userId]: value }));
+            }}
             onSend={handleSendMessage}
             onDelete={handleDeleteMessage}
             onDeleteConversation={() => handleDeleteConversation(conv.user._id)}

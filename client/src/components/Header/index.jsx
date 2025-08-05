@@ -7,8 +7,6 @@ import { QUERY_ME, QUERY_GAMES } from "../../utils/queries";
 import { Link, useNavigate, Outlet, useLocation } from "react-router-dom";
 import Auth from "../../utils/auth";
 import { ThemeContext } from "../ThemeContext";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faTimes, faSun, faMoon } from "@fortawesome/free-solid-svg-icons";
 import chartFillImage from "../../assets/images/iconizer-home.png";
 import chatImage from "../../assets/images/iconizer-message.png";
 import skillImage from "../../assets/images/iconizer-skill.png";
@@ -78,10 +76,6 @@ const Header = ({ open, setOpen }) => {
         { title: "Signup", src: signupImage, path: "/signup" },
       ];
 
-  const toggleMenu = () => {
-    setOpen(!open);
-  };
-
   return (
     <div
       className={`flex min-h-screen ${
@@ -90,7 +84,7 @@ const Header = ({ open, setOpen }) => {
     >
       {/* Mobile horizontal auth buttons when not logged in */}
       {!Auth.loggedIn() && open && (
-        <div className="lg:hidden fixed top-20 left-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl py-3 shadow-2xl border-b border-gray-200 dark:border-gray-700 z-[200] mt-4">
+        <div className="lg:hidden fixed top-20 left-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl py-3 shadow-2xl border-b border-gray-200 dark:border-gray-700 z-[50] mt-4">
           <div className="flex flex-col gap-2 px-3">
             <Link
               to="/"
@@ -154,7 +148,7 @@ const Header = ({ open, setOpen }) => {
 
       {/* Amazon-style Sidebar */}
       <div
-        className={`fixed lg:static top-0 left-0 h-full transition-all duration-300 ease-in-out z-50 ${
+        className={`fixed top-0 left-0 h-full transition-all duration-300 ease-in-out z-[5] pt-16 lg:pt-16 ${
           open ? "w-64 sm:w-72 translate-x-0" : "w-16 sm:w-20 -translate-x-full lg:translate-x-0"
         } ${
           isDarkMode 
@@ -162,17 +156,8 @@ const Header = ({ open, setOpen }) => {
             : "bg-gray-100 border-r border-gray-300"
         } shadow-2xl ${!Auth.loggedIn() && open ? 'hidden lg:block' : ''}`}
       >
-        {/* Amazon-style Navigation Header */}
-        <div className={`${
-          isDarkMode 
-            ? "bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 border-b border-yellow-500/30" 
-            : "bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 border-b border-gray-400"
-        } px-6 py-4`}>
-          {/* Removed Logo/Brand Section */}
-        </div>
-
         {/* Navigation Menu */}
-        <nav className="flex-1 px-2 sm:px-4 py-3 overflow-hidden">
+        <nav className="flex-1 px-2 sm:px-4 py-3 overflow-hidden mt-4">
           {/* Menu Items */}
           <div className="space-y-1">
             {/* Theme Toggle - styled like other menu items */}
@@ -208,12 +193,28 @@ const Header = ({ open, setOpen }) => {
                 </div>
               </button>
             </div>
+            
+            {/* Divider after theme toggle */}
+            {open && Auth.loggedIn() && (
+              <div className={`my-3 border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-300'}`}></div>
+            )}
+            
             {Menus.map((Menu, index) => {
               const isActive = location.pathname === Menu.path;
               const isLogout = Menu.title === "Logout";
               
               return (
                 <div key={index}>
+                  {/* Divider before each menu item (except first one) */}
+                  {index > 0 && open && (
+                    <div className={`my-2 border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-300'}`}></div>
+                  )}
+                  
+                  {/* Additional divider before logout for extra separation */}
+                  {isLogout && open && (
+                    <div className={`my-3 border-t-2 ${isDarkMode ? 'border-gray-600' : 'border-gray-400'}`}></div>
+                  )}
+                  
                   {Menu.path ? (
                     <Link
                       to={Menu.path}
@@ -255,7 +256,7 @@ const Header = ({ open, setOpen }) => {
                           isLogout
                             ? isDarkMode ? "bg-red-800" : "bg-red-100"
                             : isActive
-                            ? isDarkMode ? "bg-blue-100" : "bg-blue-200"
+                            ? isDarkMode ? "bg-gray-700 border-2 border-blue-400" : "bg-white border-2 border-blue-500"
                             : isDarkMode ? "bg-gray-700 group-hover:bg-gray-600" : "bg-white border border-gray-300 group-hover:bg-gray-50"
                         }`}>
                           <img
@@ -339,50 +340,11 @@ const Header = ({ open, setOpen }) => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1">
-        {/* Mobile Menu Toggle */}
-        <button
-          className={`fixed top-4 left-4 lg:hidden p-3 rounded-2xl z-[250] transition-all duration-300 transform hover:scale-110 active:scale-95 ${
-            open
-              ? isDarkMode
-                ? "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-xl ring-2 ring-red-400 ring-offset-2 ring-offset-gray-900"
-                : "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-xl ring-2 ring-red-300 ring-offset-2"
-              : isDarkMode
-              ? "bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white border border-gray-600 shadow-lg"
-              : "bg-gradient-to-r from-white to-gray-50 hover:from-gray-50 hover:to-gray-100 text-gray-900 border border-gray-200 shadow-lg"
-          }`}
-          onClick={toggleMenu}
-        >
-          <FontAwesomeIcon
-            icon={open ? faTimes : faBars}
-            className={`text-xl transition-all duration-300 ${open ? 'rotate-180' : 'rotate-0'}`}
-          />
-        </button>
-
-        {/* Mobile Theme Toggle */}
-        <button
-          className={`fixed top-4 right-4 lg:hidden p-3 rounded-2xl z-[250] transition-all duration-300 transform hover:scale-110 active:scale-95 ${
-            isDarkMode
-              ? "bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-gray-900 shadow-xl ring-2 ring-yellow-400 ring-offset-2 ring-offset-gray-900"
-              : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white shadow-xl ring-2 ring-blue-400 ring-offset-2"
-          }`}
-          onClick={toggleDarkMode}
-          aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
-        >
-          <FontAwesomeIcon
-            icon={isDarkMode ? faSun : faMoon}
-            className="text-xl transition-all duration-300 hover:rotate-180"
-          />
-        </button>
-
-        {/* Mobile Overlay */}
-        {open && Auth.loggedIn() && (
-          <div
-            className="fixed inset-0 bg-transparent bg-opacity-50 z-40 lg:hidden transition-opacity duration-300"
-            onClick={() => setOpen(false)}
-          />
-        )}
-
+      <div className={`flex-1 transition-all duration-300 ease-in-out ${
+        open 
+          ? "lg:ml-64 xl:ml-72" 
+          : "lg:ml-16 xl:ml-20"
+      }`}>
         <Outlet />
       </div>
     </div>

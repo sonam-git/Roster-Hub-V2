@@ -207,7 +207,7 @@ function App() {
               v7_relativeSplatPath: true,
             }}
           >
-            <MainHeader />
+            <MainHeader open={sidebarOpen} setOpen={setSidebarOpen} />
             <TopHeader onToggleMenu={() => setSidebarOpen((v) => !v)} open={sidebarOpen} />
             <AppContent sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
           </Router>

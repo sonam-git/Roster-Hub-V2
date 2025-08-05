@@ -353,11 +353,23 @@ export default function GameDetails({ gameId }) {
 
       case "weather":
         return (
-          <WeatherForecast 
-            date={game.date} 
-            city={game.city} 
-            isDarkMode={isDarkMode} 
-          />
+          <div className={`p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-xl transition-all duration-300 hover:shadow-2xl ${
+            isDarkMode ? "bg-gradient-to-br from-gray-700 to-gray-800 border border-gray-600" : "bg-gradient-to-br from-white to-blue-50 border border-blue-200"
+          }`}>
+            <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
+                <span className="text-lg sm:text-xl text-white">🌤️</span>
+              </div>
+              <h3 className={`text-lg sm:text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                Weather Forecast
+              </h3>
+            </div>
+            <WeatherForecast 
+              date={game.date} 
+              city={game.city} 
+              isDarkMode={isDarkMode} 
+            />
+          </div>
         );
 
       case "notes":
@@ -706,51 +718,51 @@ export default function GameDetails({ gameId }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-2 sm:p-4 transition-colors duration-300">
-      <div className={`max-w-5xl mx-auto transition-all duration-500 ${
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-1 sm:p-2 lg:p-4 transition-colors duration-300">
+      <div className={`max-w-7xl mx-auto transition-all duration-500 ${
         isDarkMode
           ? "bg-gradient-to-br from-gray-800 via-gray-900 to-black shadow-2xl shadow-gray-900/50"
           : "bg-gradient-to-br from-white via-blue-50 to-indigo-50 shadow-2xl shadow-blue-900/20"
       } rounded-2xl sm:rounded-3xl overflow-hidden`}>
         
-        {/* Header Section */}
-        <div className={`relative px-2 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 md:py-6 lg:py-8 ${
+        {/* Header Section - Full Width */}
+        <div className={`relative px-1 sm:px-2 md:px-4 lg:px-6 py-3 sm:py-4 md:py-6 lg:py-8 ${
           isDarkMode
             ? "bg-gradient-to-r from-blue-900 via-purple-900 to-indigo-900"
             : "bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600"
         }`}>
           <div className="absolute inset-0 bg-black/20"></div>
-          <div className="relative z-10">
+          <div className="relative z-1">
             {/* Enhanced Navigation Header with Status in Center */}
             <div className="flex justify-center items-center mb-4 sm:mb-6 md:mb-8 gap-2 sm:gap-4">
               {/* Enhanced Status Section with Animation */}
               <div className="flex-1 flex flex-col items-center justify-center mx-1 sm:mx-2 md:mx-4 min-w-0">
                 {/* Animated Icons */}
-                <div className="flex items-center gap-1 sm:gap-2 md:gap-3 mb-1 sm:mb-2 md:mb-3">
+                <div className="flex items-center gap-2 sm:gap-3 md:gap-4 mb-2 sm:mb-3 md:mb-4">
                   <div className="animate-bounce">
-                    <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl">🏃‍♂️</span>
+                    <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl">🏃‍♂️</span>
                   </div>
                   <div className="animate-spin" style={{ animationDuration: '3s' }}>
-                    <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl">⚽</span>
+                    <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl">⚽</span>
                   </div>
                   <div className="animate-bounce" style={{ animationDelay: '0.1s' }}>
-                    <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl">🏃‍♀️</span>
+                    <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl">🏃‍♀️</span>
                   </div>
                 </div>
                 
                 {/* Game Description */}
                 <div className="text-center">
-                  <div className="text-xs sm:text-sm md:text-lg lg:text-xl font-bold text-white mb-1">
+                  <div className="text-sm sm:text-base md:text-xl lg:text-2xl font-bold text-white mb-2">
                     <span className="hidden sm:inline">The Game is Against</span>
                     <span className="sm:hidden">VS</span>
                   </div>
-                  <div className="text-sm sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-extrabold text-yellow-300 mb-1 sm:mb-2 animate-pulse truncate">
+                  <div className="text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-extrabold text-yellow-300 mb-2 sm:mb-3 animate-pulse">
                     {game.opponent}
                   </div>
                   
                   {/* Status Badge with Enhanced Styling */}
                   <div className="flex justify-center">
-                    <span className={`${statusBadgeClass(game.status)} text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-full font-bold shadow-lg transform hover:scale-105 transition-all duration-300`}>
+                    <span className={`${statusBadgeClass(game.status)} text-sm sm:text-base md:text-lg px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full font-bold shadow-xl transform hover:scale-105 transition-all duration-300`}>
                       {game.status === 'PENDING' && (
                         <>
                           <span className="hidden sm:inline">⏳ PENDING</span>
@@ -782,149 +794,144 @@ export default function GameDetails({ gameId }) {
               </div>
             </div>
             
-            {/* Unified Navigation Row - All Buttons Always Visible */}
-            <div className="mt-2 sm:mt-4 md:mt-6">
-              <div className="flex flex-wrap justify-center gap-1 sm:gap-1.5 md:gap-2">
-                {/* Back to Games Button */}
-                <button
-                  onClick={() => navigate("/game-schedule")}
-                  className="px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg font-medium transition-all duration-300 transform hover:scale-105 text-xs flex items-center gap-1 sm:gap-1.5 bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
-                >
-                  <span className="text-xs sm:text-sm">🏠</span>
-                  <span className="hidden sm:inline text-xs">Games</span>
-                  <span className="sm:hidden text-xs">Games</span>
-                </button>
+            {/* Enhanced Navigation Row - All Buttons Always Visible */}
+            <div className="mt-4 sm:mt-6 md:mt-8 z-1">
+              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-2 sm:p-3 md:p-4 shadow-2xl border border-white/20">
+                <div className="flex flex-wrap justify-center gap-2 sm:gap-3 md:gap-4">
+                  {/* Back to Games Button */}
+                  <button
+                    onClick={() => navigate("/game-schedule")}
+                    className="px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 shadow-lg hover:shadow-xl"
+                  >
+                    <span className="text-sm sm:text-base">🏠</span>
+                    <span>Games</span>
+                  </button>
 
-                {/* Formation/Feedback Toggle Button */}
-                <button
-                  onClick={() => setShowFormation(!showFormation)}
-                  className={`px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg font-medium transition-all duration-300 transform hover:scale-105 text-xs flex items-center gap-1 sm:gap-1.5 ${
-                    showFormation
-                      ? "bg-white text-blue-600 shadow-lg"
-                      : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
-                  }`}
-                >
-                  <span className="text-xs sm:text-sm">
-                    {showFormation ? "📋" : game.status === "COMPLETED" ? "📊" : "⚽"}
-                  </span>
-                  <span className="hidden sm:inline text-xs">
-                    {showFormation 
-                      ? "Details" 
-                      : game.status === "COMPLETED" ? "Feedback" : "Formation"
-                    }
-                  </span>
-                  <span className="sm:hidden text-xs">
-                    {showFormation 
-                      ? "Details" 
-                      : game.status === "COMPLETED" ? "Feedback" : "Formation"
-                    }
-                  </span>
-                </button>
-                {/* Overview/Date & Venue Button - Always visible */}
-                <button
-                  onClick={() => { 
-                    if (showFormation) setShowFormation(false);
-                    setActiveSection("overview");
-                  }}
-                  className={`px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg font-medium transition-all duration-300 transform hover:scale-105 text-xs flex items-center gap-1 sm:gap-1.5 ${
-                    !showFormation && activeSection === "overview"
-                      ? "bg-white text-blue-600 shadow-lg"
-                      : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
-                  }`}
-                >
-                  <span className="text-xs sm:text-sm">📅</span>
-                  <span className="hidden sm:inline text-xs">Date & Venue</span>
-                  <span className="sm:hidden text-xs">Info</span>
-                </button>
-                
-                {/* Weather Button - Always visible */}
-                <button
-                  onClick={() => { 
-                    if (showFormation) setShowFormation(false);
-                    setActiveSection("weather");
-                  }}
-                  className={`px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg font-medium transition-all duration-300 transform hover:scale-105 text-xs flex items-center gap-1 sm:gap-1.5 ${
-                    !showFormation && activeSection === "weather"
-                      ? "bg-white text-blue-600 shadow-lg"
-                      : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
-                  }`}
-                >
-                  <span className="text-xs sm:text-sm">🌤️</span>
-                  <span className="hidden sm:inline text-xs">Weather</span>
-                  <span className="sm:hidden text-xs">Weather</span>
-                </button>
-                
-                {/* Game Notes Button - Always visible */}
-                <button
-                  onClick={() => { 
-                    if (showFormation) setShowFormation(false);
-                    setActiveSection("notes");
-                  }}
-                  className={`px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg font-medium transition-all duration-300 transform hover:scale-105 text-xs flex items-center gap-1 sm:gap-1.5 ${
-                    !showFormation && activeSection === "notes"
-                      ? "bg-white text-blue-600 shadow-lg"
-                      : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
-                  }`}
-                >
-                  <span className="text-xs sm:text-sm">📝</span>
-                  <span className="hidden sm:inline text-xs">Game Notes</span>
-                  <span className="sm:hidden text-xs">Notes</span>
-                </button>
-                
-                {/* Management Button - Always visible if user is creator */}
-                {isCreator && (game.status === "PENDING" || game.status === "CONFIRMED" || game.status === "CANCELLED") && (
+                  {/* Formation/Feedback Toggle Button */}
                   <button
-                    onClick={() => { 
-                      if (showFormation) setShowFormation(false);
-                      setActiveSection("management");
-                    }}
-                    className={`px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg font-medium transition-all duration-300 transform hover:scale-105 text-xs flex items-center gap-1 sm:gap-1.5 ${
-                      !showFormation && activeSection === "management"
-                        ? "bg-white text-blue-600 shadow-lg"
+                    onClick={() => setShowFormation(!showFormation)}
+                    className={`px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm flex items-center gap-2 shadow-lg hover:shadow-xl ${
+                      showFormation
+                        ? "bg-white text-blue-600 shadow-white/20"
                         : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
                     }`}
                   >
-                    <span className="text-xs sm:text-sm">⚙️</span>
-                    <span className="hidden sm:inline text-xs">Management</span>
-                    <span className="sm:hidden text-xs">Manage</span>
+                    <span className="text-sm sm:text-base">
+                      {showFormation ? "📋" : game.status === "COMPLETED" ? "📊" : "⚽"}
+                    </span>
+                    <span>
+                      {showFormation 
+                        ? "Details" 
+                        : game.status === "COMPLETED" ? "Feedback" : "Formation"
+                      }
+                    </span>
                   </button>
-                )}
-                
-                {/* Player Responses Button - Always visible */}
-                <button
-                  onClick={() => { 
-                    if (showFormation) setShowFormation(false);
-                    setActiveSection("responses");
-                  }}
-                  className={`px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg font-medium transition-all duration-300 transform hover:scale-105 text-xs flex items-center gap-1 sm:gap-1.5 ${
-                    !showFormation && activeSection === "responses"
-                      ? "bg-white text-blue-600 shadow-lg"
-                      : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
-                  }`}
-                >
-                  <span className="text-xs sm:text-sm">👥</span>
-                  <span className="hidden sm:inline text-xs">Vote & Responses</span>
-                  <span className="sm:hidden text-xs">Players</span>
-                </button>
-                
-                {/* Game Results Button - Always visible if game is completed */}
-                {game.status === "COMPLETED" && (
+                  
+                  {/* Overview/Date & Venue Button - Always visible */}
                   <button
                     onClick={() => { 
                       if (showFormation) setShowFormation(false);
-                      setActiveSection("results");
+                      setActiveSection("overview");
                     }}
-                    className={`px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg font-medium transition-all duration-300 transform hover:scale-105 text-xs flex items-center gap-1 sm:gap-1.5 ${
-                      !showFormation && activeSection === "results"
-                        ? "bg-white text-blue-600 shadow-lg"
+                    className={`px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm flex items-center gap-2 shadow-lg hover:shadow-xl ${
+                      !showFormation && activeSection === "overview"
+                        ? "bg-white text-blue-600 shadow-white/20"
                         : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
                     }`}
                   >
-                    <span className="text-xs sm:text-sm">🏆</span>
-                    <span className="hidden sm:inline text-xs">Results</span>
-                    <span className="sm:hidden text-xs">Results</span>
+                    <span className="text-sm sm:text-base">📅</span>
+                    <span className="hidden sm:inline">Date & Venue</span>
+                    <span className="sm:hidden">Info</span>
                   </button>
-                )}
+                  
+                  {/* Weather Button - Always visible */}
+                  <button
+                    onClick={() => { 
+                      if (showFormation) setShowFormation(false);
+                      setActiveSection("weather");
+                    }}
+                    className={`px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm flex items-center gap-2 shadow-lg hover:shadow-xl ${
+                      !showFormation && activeSection === "weather"
+                        ? "bg-white text-blue-600 shadow-white/20"
+                        : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
+                    }`}
+                  >
+                    <span className="text-sm sm:text-base">🌤️</span>
+                    <span className="hidden sm:inline">Weather</span>
+                    <span className="sm:hidden">Weather</span>
+                  </button>
+                  
+                  {/* Game Notes Button - Always visible */}
+                  <button
+                    onClick={() => { 
+                      if (showFormation) setShowFormation(false);
+                      setActiveSection("notes");
+                    }}
+                    className={`px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm flex items-center gap-2 shadow-lg hover:shadow-xl ${
+                      !showFormation && activeSection === "notes"
+                        ? "bg-white text-blue-600 shadow-white/20"
+                        : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
+                    }`}
+                  >
+                    <span className="text-sm sm:text-base">📝</span>
+                    <span className="hidden sm:inline">Game Notes</span>
+                    <span className="sm:hidden">Notes</span>
+                  </button>
+                  
+                  {/* Management Button - Always visible if user is creator */}
+                  {isCreator && (game.status === "PENDING" || game.status === "CONFIRMED" || game.status === "CANCELLED") && (
+                    <button
+                      onClick={() => { 
+                        if (showFormation) setShowFormation(false);
+                        setActiveSection("management");
+                      }}
+                      className={`px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm flex items-center gap-2 shadow-lg hover:shadow-xl ${
+                        !showFormation && activeSection === "management"
+                          ? "bg-white text-blue-600 shadow-white/20"
+                          : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
+                      }`}
+                    >
+                      <span className="text-sm sm:text-base">⚙️</span>
+                      <span className="hidden sm:inline">Management</span>
+                      <span className="sm:hidden">Manage</span>
+                    </button>
+                  )}
+                  
+                  {/* Player Responses Button - Always visible */}
+                  <button
+                    onClick={() => { 
+                      if (showFormation) setShowFormation(false);
+                      setActiveSection("responses");
+                    }}
+                    className={`px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm flex items-center gap-2 shadow-lg hover:shadow-xl ${
+                      !showFormation && activeSection === "responses"
+                        ? "bg-white text-blue-600 shadow-white/20"
+                        : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
+                    }`}
+                  >
+                    <span className="text-sm sm:text-base">👥</span>
+                    <span className="hidden sm:inline">Vote & Responses</span>
+                    <span className="sm:hidden">Players</span>
+                  </button>
+                  
+                  {/* Game Results Button - Always visible if game is completed */}
+                  {game.status === "COMPLETED" && (
+                    <button
+                      onClick={() => { 
+                        if (showFormation) setShowFormation(false);
+                        setActiveSection("results");
+                      }}
+                      className={`px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm flex items-center gap-2 shadow-lg hover:shadow-xl ${
+                        !showFormation && activeSection === "results"
+                          ? "bg-white text-blue-600 shadow-white/20"
+                          : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
+                      }`}
+                    >
+                      <span className="text-sm sm:text-base">🏆</span>
+                      <span className="hidden sm:inline">Results</span>
+                      <span className="sm:hidden">Results</span>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -1002,7 +1009,7 @@ export default function GameDetails({ gameId }) {
                             <p className="text-sm mt-2 opacity-80">The formation will appear here once the creator sets it up.</p>
                           </div>
                         ) : (
-                          <div className="transform scale-75 origin-top">
+                          <div className="transform scale-90 origin-top w-full">
                             <FormationSection
                               game={game}
                               formation={formation}
@@ -1333,6 +1340,7 @@ export default function GameDetails({ gameId }) {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

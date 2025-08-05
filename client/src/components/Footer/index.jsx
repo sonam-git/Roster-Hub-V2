@@ -9,7 +9,7 @@ const Footer = ({ className = "" }) => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className={`w-full bg-gray-800 text-white py-6 ${className}`}>
+    <footer className={`w-full bg-gray-800 text-white py-6 relative z-[300] ${className}`}>
       <div className="container mx-auto flex flex-col md:flex-row items-center justify-between px-4 gap-3">
         <div className="flex flex-col md:flex-row items-center gap-3">
           {!isHome && (

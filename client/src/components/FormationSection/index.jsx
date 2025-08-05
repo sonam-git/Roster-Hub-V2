@@ -93,7 +93,7 @@ export default function FormationSection({
       .map(r => r.user);
   }, [game?.responses]);
 
-  const formationType = formation?.formationType || selectedFormation;
+  const formationType = formation?.formationType.slice(2) || selectedFormation;
   const rows = formationType
     .split("-")
     .map((n, idx) => ({
@@ -274,7 +274,7 @@ export default function FormationSection({
                 </div>
                 <div>
                   <h3 className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
-                    Formation Board - {formationType}
+                    Formation Board 
                   </h3>
                   <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
                     {isCreator ? "Drop players onto positions" : "Current tactical setup"}
