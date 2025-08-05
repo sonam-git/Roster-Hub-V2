@@ -21,7 +21,7 @@ const BUTTONS = [
   { key: "about", label: "About", icon: faInfoCircle, path: "/about" },
 ];
 
-export default function TopHeader({ className, onToggleMenu, open }) {
+export default function TopHeader({ className, onToggleMenu, open, isVisible = true }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { data: profilesData } = useQuery(QUERY_PROFILES);
@@ -30,7 +30,7 @@ export default function TopHeader({ className, onToggleMenu, open }) {
   const [showRosterDropdown, setShowRosterDropdown] = React.useState(false);
 
   return (
-    <div className={`w-full flex flex-col md:flex-row items-center justify-between bg-gray-100 dark:bg-gray-800 py-2 shadow-md sticky top-0 z-[10] px-2 sm:px-4 mt-16 lg:mt-0 ${typeof className !== 'undefined' ? className : ''}`}>
+    <div className={`w-full flex flex-col md:flex-row items-center justify-between bg-gray-100 dark:bg-gray-800 py-2 shadow-md sticky top-0 z-[10] px-2 sm:px-4 ${isVisible ? 'mt-32' : 'mt-0'} lg:mt-0 ${typeof className !== 'undefined' ? className : ''}`}>
       {/* Left: Logo and Title (always visible, beautiful UI) */}
       <Link
         to={"/"}

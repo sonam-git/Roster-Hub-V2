@@ -1,22 +1,25 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import MessageBox from '../MessageBox';
 import { AiOutlineMessage, AiFillStar } from 'react-icons/ai'; 
-import {  RiProfileLine, RiTShirt2Line} from 'react-icons/ri';
-import { FaUser } from 'react-icons/fa';
+import { RiProfileLine, RiTShirt2Line } from 'react-icons/ri';
+import { FaUser, FaUsers, FaChevronLeft, FaChevronRight, FaHeart, FaRegHeart } from 'react-icons/fa';
+import { HiSparkles } from 'react-icons/hi';
+import { BsPersonCheck, BsPersonPlus } from 'react-icons/bs';
 import Auth from '../../utils/auth';
 import ProfileAvatar from '../../assets/images/profile-avatar.png';
-import { ThemeContext } from '../ThemeContext';
 import RatingModal from '../RatingModal'; 
 import renderStars from "../../utils/renderStars";
 
-const ProfileList = ({ profiles, title }) => {
-  const { isDarkMode } = useContext(ThemeContext);
+const ProfileList = ({ profiles, title, isDarkMode }) => {
+  console.log(isDarkMode)
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [ratingProfile, setRatingProfile] = useState(null); // State for rating modal
+  const [ratingProfile, setRatingProfile] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const profilesPerPage = 6;
+  const [favorites, setFavorites] = useState(new Set());
+  const [following, setFollowing] = useState(new Set());
+  const profilesPerPage = 8;
 
   const handleChatClick = (user) => {
     setSelectedUser(user);
@@ -24,9 +27,8 @@ const ProfileList = ({ profiles, title }) => {
   };
 
   const handleModalClose = () => {
-    setSelectedUser(null); // Reset selectedUser state when modal is closed
+    setSelectedUser(null);
     setShowModal(false);
-    // Redirect to /message after sending a message
     window.location.href = '/message';
   };
 
@@ -35,12 +37,32 @@ const ProfileList = ({ profiles, title }) => {
   };
 
   const handleRatingModalClose = () => {
-    setRatingProfile(null); // Reset ratingProfile state when rating modal is closed
+    setRatingProfile(null);
   };
 
-  if (!profiles.length) {
-    return <h3 className='dark:text-white'>No Profiles Yet</h3>;
-  }
+  const handleFavoriteToggle = (profileId) => {
+    setFavorites(prev => {
+      const newFavorites = new Set(prev);
+      if (newFavorites.has(profileId)) {
+        newFavorites.delete(profileId);
+      } else {
+        newFavorites.add(profileId);
+      }
+      return newFavorites;
+    });
+  };
+
+  const handleFollowToggle = (profileId) => {
+    setFollowing(prev => {
+      const newFollowing = new Set(prev);
+      if (newFollowing.has(profileId)) {
+        newFollowing.delete(profileId);
+      } else {
+        newFollowing.add(profileId);
+      }
+      return newFollowing;
+    });
+  };
 
   // Get the ID of the logged-in user
   const loggedInUserId = Auth.loggedIn() && Auth.getProfile().data._id;
@@ -48,115 +70,290 @@ const ProfileList = ({ profiles, title }) => {
   // Filter out the logged-in user from the profiles list
   const filteredProfiles = profiles?.filter((profile) => profile._id !== loggedInUserId);
 
-  // Calculate the total number of pages
-  const totalPages = Math.ceil(filteredProfiles.length / profilesPerPage);
+  if (!filteredProfiles.length) {
+    return (
+      <div className="text-center py-16">
+        <div className={`max-w-md mx-auto p-8 rounded-2xl shadow-xl ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
+          <FaUsers className={`mx-auto mb-4 text-6xl ${isDarkMode ? 'text-gray-400' : 'text-gray-300'}`} />
+          <h3 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            No Team Members Yet
+          </h3>
+          <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            Be the first to join the team!
+          </p>
+        </div>
+      </div>
+    );
+  }
 
-  // Get the profiles to display for the current page
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredProfiles.length / profilesPerPage);
   const currentProfiles = filteredProfiles.slice(
     (currentPage - 1) * profilesPerPage,
     currentPage * profilesPerPage
   );
 
-
-
   return (
-    <div>
-      <h3 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center text-blue-700 dark:text-blue-200 mb-6 tracking-tight drop-shadow-lg mt-5">{title}</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 my-6">
+    <div className="space-y-8">
+      {/* Header Section */}
+      <div className="text-center mt-8">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <HiSparkles className={`text-3xl ${isDarkMode ? 'text-yellow-400' : 'text-yellow-500'}`} />
+          <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            {title}
+          </h2>
+          <HiSparkles className={`text-3xl ${isDarkMode ? 'text-yellow-400' : 'text-yellow-500'}`} />
+        </div>
+        <p className={`text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} max-w-2xl mx-auto`}>
+          {filteredProfiles.length} talented team member{filteredProfiles.length !== 1 ? 's' : ''} ready to make a difference
+        </p>
+      </div>
+
+      {/* Grid Layout */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {currentProfiles?.map((profile) => (
           <div
             key={profile._id}
-            className={`rounded-2xl shadow-2xl border border-blue-100 dark:border-gray-700 p-6 bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 transition-transform duration-200 hover:scale-[1.02] ${isDarkMode ? 'text-white' : 'text-black'}`}
+            className={`group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 ${
+              isDarkMode 
+                ? 'bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 border border-gray-700' 
+                : 'bg-gradient-to-br from-white via-blue-50 to-purple-50 border border-gray-200'
+            }`}
           >
-            <div className="grid grid-cols-2 items-center gap-2">
-              {/* Column 1: Name and Jersey Number */}
-              <div>
-                <div className="flex items-center mb-1">
-                  <h4 className="text-lg md:text-xl lg:text-2xl xl:text-2xl font-bold tracking-tight drop-shadow">{profile.name}</h4>
-                </div>
-                {profile.position && profile.jerseyNumber ? (
-                  <div className="mt-2">
-                    <div className="font-bold flex items-center gap-2">
-                      <RiTShirt2Line className="text-xl text-green-700 dark:text-green-300" />
-                      <span className="text-lg text-blue-900 dark:text-blue-200">#{profile.jerseyNumber}</span>
-                    </div>
-                    <div className="font-bold flex items-center gap-2 mt-1">
-                      <FaUser className="text-xl text-blue-700 dark:text-blue-200" />
-                      <span className="text-base text-gray-900 dark:text-white">{profile.position}</span>
-                    </div>
-                  </div>
-                ) : null}
+            {/* Animated Background Effect */}
+            <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${
+              isDarkMode 
+                ? 'bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-gray-900/20' 
+                : 'bg-gradient-to-br from-blue-100/30 via-purple-100/30 to-pink-100/30'
+            }`}></div>
+
+            <div className="relative p-6">
+              {/* Top Action Bar */}
+              <div className="absolute top-4 right-4 flex gap-2">
+                <button
+                  onClick={() => handleFavoriteToggle(profile._id)}
+                  className={`p-2 rounded-full transition-all duration-200 hover:scale-110 ${
+                    favorites.has(profile._id)
+                      ? isDarkMode 
+                        ? 'bg-red-900/50 text-red-400 hover:bg-red-800/70' 
+                        : 'bg-red-100 text-red-500 hover:bg-red-200'
+                      : isDarkMode 
+                        ? 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/70 hover:text-red-400' 
+                        : 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-500'
+                  }`}
+                  title={favorites.has(profile._id) ? 'Remove from favorites' : 'Add to favorites'}
+                >
+                  {favorites.has(profile._id) ? 
+                    <FaHeart className="text-sm" /> : 
+                    <FaRegHeart className="text-sm" />
+                  }
+                </button>
+                
+                <button
+                  onClick={() => handleFollowToggle(profile._id)}
+                  className={`p-2 rounded-full transition-all duration-200 hover:scale-110 ${
+                    following.has(profile._id)
+                      ? isDarkMode 
+                        ? 'bg-green-900/50 text-green-400 hover:bg-green-800/70' 
+                        : 'bg-green-100 text-green-500 hover:bg-green-200'
+                      : isDarkMode 
+                        ? 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/70 hover:text-green-400' 
+                        : 'bg-gray-100 text-gray-500 hover:bg-green-50 hover:text-green-500'
+                  }`}
+                  title={following.has(profile._id) ? 'Unfollow' : 'Follow'}
+                >
+                  {following.has(profile._id) ? 
+                    <BsPersonCheck className="text-sm" /> : 
+                    <BsPersonPlus className="text-sm" />
+                  }
+                </button>
               </div>
-              {/* Column 2: Image */}
-              <div className="flex justify-end items-center">
-                <div className="flex flex-col items-center">
+
+              {/* Profile Image Section */}
+              <div className="flex justify-center mb-4">
+                <div className="relative">
                   <img
                     src={profile?.profilePic || ProfileAvatar}
-                    alt="Profile"
-                    className="rounded-full w-24 h-24 sm:w-20 sm:h-20 md:w-16 md:h-16 lg:w-24 lg:h-24 border-4 border-blue-200 dark:border-gray-700 shadow-lg"
+                    alt={`${profile.name}'s profile`}
+                    className="w-24 h-24 rounded-full object-cover border-4 border-gradient-to-r from-blue-400 to-purple-400 shadow-lg group-hover:scale-110 transition-transform duration-300"
                   />
-                  {/* Display star rating and value under profile pic */}
-                  <div className="mt-2 text-sm font-bold">
-                    {renderStars(profile.averageRating)}
-                  </div>
+                  {/* Online indicator */}
+                  <div className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 ${isDarkMode ? 'border-gray-800' : 'border-white'} ${Math.random() > 0.5 ? 'bg-green-500' : 'bg-gray-400'}`}></div>
                 </div>
               </div>
-            </div>
-            {/* Icons */}
-            <div className="flex flex-col sm:flex-row justify-between mt-6 gap-2 sm:gap-0">
-              {/* Chat button */}
-              <button
-                className="flex items-center px-3 py-1 rounded-full bg-blue-100 dark:bg-gray-800 shadow hover:bg-blue-200 dark:hover:bg-blue-900 transition-colors w-full sm:w-auto justify-center"
-                onClick={() => handleChatClick(profile)}
-              >
-                <AiOutlineMessage className={`mr-2 text-2xl ${isDarkMode ? 'text-white ' : 'text-black'}`} />
-                <span className='text-base font-semibold hover:underline underline-offset-4'>{isDarkMode ? 'Text' : 'Text'}</span>
-              </button>
-              {/* Rate button */}
-              <button
-                className="flex items-center px-3 py-1 rounded-full bg-yellow-100 dark:bg-gray-800 shadow hover:bg-yellow-200 dark:hover:bg-yellow-900 transition-colors w-full sm:w-auto justify-center mt-2 sm:mt-0"
-                onClick={() => handleRatingClick(profile)}
-              >
-                <AiFillStar className={`mr-2 text-2xl  ${isDarkMode ? 'text-white' : 'text-black'}`} />
-                <span className='text-base font-semibold hover:underline underline-offset-4'>{isDarkMode ? 'Rate' : 'Rate'}</span>
-              </button>
-              {/* Player info button */}
-              <Link
-                className={`flex items-center px-3 py-1 rounded-full bg-green-100 dark:bg-gray-800 shadow hover:bg-green-200 dark:hover:bg-green-900 transition-colors font-semibold hover:underline-offset-4 w-full sm:w-auto justify-center mt-2 sm:mt-0 ${isDarkMode ? 'text-white '  : 'text-black'} `}
-                to={`/profiles/${profile._id}`}
-              >
-                <RiProfileLine className={`mr-2 text-2xl`} />
-                <span className={`text-base`}>
-                  {isDarkMode ? 'View Profile' : 'View Profile'}
-                </span>
-              </Link>
+
+              {/* Name and Title */}
+              <div className="text-center mb-4">
+                <h3 className={`text-xl font-bold mb-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  {profile.name}
+                </h3>
+                
+                {/* Jersey and Position */}
+                <div className="flex items-center justify-center gap-4 text-sm">
+                  {profile.jerseyNumber && (
+                    <div className={`flex items-center gap-1 px-2 py-1 rounded-full ${isDarkMode ? 'bg-blue-900/50 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
+                      <RiTShirt2Line className="text-sm" />
+                      <span className="font-semibold">#{profile.jerseyNumber}</span>
+                    </div>
+                  )}
+                  {profile.position && (
+                    <div className={`flex items-center gap-1 px-2 py-1 rounded-full ${isDarkMode ? 'bg-purple-900/50 text-purple-300' : 'bg-purple-100 text-purple-700'}`}>
+                      <FaUser className="text-xs" />
+                      <span className="font-medium">{profile.position}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Rating */}
+              <div className="flex justify-center mb-6">
+                <div className={`px-3 py-1 rounded-full ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                  {renderStars(profile.averageRating)}
+                </div>
+              </div>
+
+              {/* Enhanced Action Buttons */}
+              <div className="grid grid-cols-3 gap-3">
+                <button
+                  onClick={() => handleChatClick(profile)}
+                  className={`group/btn flex flex-col items-center gap-2 p-4 rounded-2xl transition-all duration-300 hover:scale-110 hover:shadow-xl transform relative overflow-hidden ${
+                    isDarkMode 
+                      ? 'bg-gradient-to-br from-blue-900/40 to-blue-800/60 hover:from-blue-800/60 hover:to-blue-700/80 text-blue-300 hover:text-blue-100 border border-blue-700/30 hover:border-blue-500/50' 
+                      : 'bg-gradient-to-br from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300 text-blue-700 hover:text-blue-800 border border-blue-200/50 hover:border-blue-300/70'
+                  }`}
+                  title="Send Message"
+                >
+                  {/* Animated background glow */}
+                  <div className={`absolute inset-0 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300 ${
+                    isDarkMode 
+                      ? 'bg-gradient-to-br from-blue-600/20 to-transparent' 
+                      : 'bg-gradient-to-br from-blue-300/30 to-transparent'
+                  }`}></div>
+                  
+                  <div className="relative z-10 flex flex-col items-center gap-2">
+                    <div className={`p-2 rounded-full transition-all duration-200 group-hover/btn:scale-110 ${
+                      isDarkMode 
+                        ? 'bg-blue-800/50 group-hover/btn:bg-blue-700/70' 
+                        : 'bg-blue-200/80 group-hover/btn:bg-blue-300/90'
+                    }`}>
+                      <AiOutlineMessage className="text-xl" />
+                    </div>
+                    <span className="text-xs font-semibold tracking-wide">Message</span>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => handleRatingClick(profile)}
+                  className={`group/btn flex flex-col items-center gap-2 p-4 rounded-2xl transition-all duration-300 hover:scale-110 hover:shadow-xl transform relative overflow-hidden ${
+                    isDarkMode 
+                      ? 'bg-gradient-to-br from-yellow-900/40 to-amber-800/60 hover:from-yellow-800/60 hover:to-amber-700/80 text-yellow-300 hover:text-yellow-100 border border-yellow-700/30 hover:border-yellow-500/50' 
+                      : 'bg-gradient-to-br from-yellow-100 to-amber-200 hover:from-yellow-200 hover:to-amber-300 text-yellow-700 hover:text-yellow-800 border border-yellow-200/50 hover:border-yellow-300/70'
+                  }`}
+                  title="Rate Player"
+                >
+                  {/* Animated background glow */}
+                  <div className={`absolute inset-0 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300 ${
+                    isDarkMode 
+                      ? 'bg-gradient-to-br from-yellow-600/20 to-transparent' 
+                      : 'bg-gradient-to-br from-yellow-300/30 to-transparent'
+                  }`}></div>
+                  
+                  <div className="relative z-10 flex flex-col items-center gap-2">
+                    <div className={`p-2 rounded-full transition-all duration-200 group-hover/btn:scale-110 group-hover/btn:rotate-12 ${
+                      isDarkMode 
+                        ? 'bg-yellow-800/50 group-hover/btn:bg-yellow-700/70' 
+                        : 'bg-yellow-200/80 group-hover/btn:bg-yellow-300/90'
+                    }`}>
+                      <AiFillStar className="text-xl" />
+                    </div>
+                    <span className="text-xs font-semibold tracking-wide">Rate</span>
+                  </div>
+                </button>
+
+                <Link
+                  to={`/profiles/${profile._id}`}
+                  className={`group/btn flex flex-col items-center gap-2 p-4 rounded-2xl transition-all duration-300 hover:scale-110 hover:shadow-xl transform relative overflow-hidden no-underline ${
+                    isDarkMode 
+                      ? 'bg-gradient-to-br from-green-900/40 to-emerald-800/60 hover:from-green-800/60 hover:to-emerald-700/80 text-green-300 hover:text-green-100 border border-green-700/30 hover:border-green-500/50' 
+                      : 'bg-gradient-to-br from-green-100 to-emerald-200 hover:from-green-200 hover:to-emerald-300 text-green-700 hover:text-green-800 border border-green-200/50 hover:border-green-300/70'
+                  }`}
+                  title="View Profile"
+                >
+                  {/* Animated background glow */}
+                  <div className={`absolute inset-0 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300 ${
+                    isDarkMode 
+                      ? 'bg-gradient-to-br from-green-600/20 to-transparent' 
+                      : 'bg-gradient-to-br from-green-300/30 to-transparent'
+                  }`}></div>
+                  
+                  <div className="relative z-10 flex flex-col items-center gap-2">
+                    <div className={`p-2 rounded-full transition-all duration-200 group-hover/btn:scale-110 ${
+                      isDarkMode 
+                        ? 'bg-green-800/50 group-hover/btn:bg-green-700/70' 
+                        : 'bg-green-200/80 group-hover/btn:bg-green-300/90'
+                    }`}>
+                      <RiProfileLine className="text-xl" />
+                    </div>
+                    <span className="text-xs font-semibold tracking-wide">Profile</span>
+                  </div>
+                </Link>
+              </div>
             </div>
           </div>
         ))}
       </div>
-      {/* Pagination controls */}
-      <div className="flex justify-center mt-4">
-        <button
-          className={`px-4 py-2 mx-1 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-gray-400 rounded-lg shadow-xl'} ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : ''}`}
-          onClick={() => setCurrentPage(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </button>
-        <span className="px-4 py-2 mx-1">{currentPage}</span>
-        <button
-          className={`px-4 py-2 mx-1 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-gray-400 rounded-lg shadow-xl'} ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : ''}`}
-          onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
-      </div>
-      {/* Render the chat box if a user is selected */}
-      {selectedUser &&  showModal && (
+
+      {/* Modern Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-4 mt-12">
+          <button
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+              currentPage === 1
+                ? isDarkMode 
+                  ? 'bg-gray-800 text-gray-500 cursor-not-allowed' 
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : isDarkMode
+                  ? 'bg-gray-700 hover:bg-gray-600 text-white hover:scale-105 shadow-lg'
+                  : 'bg-white hover:bg-gray-50 text-gray-700 hover:scale-105 shadow-lg border border-gray-200'
+            }`}
+          >
+            <FaChevronLeft className="text-sm" />
+            Previous
+          </button>
+
+          <div className={`px-4 py-2 rounded-xl font-bold ${
+            isDarkMode 
+              ? 'bg-blue-900/50 text-blue-300 border border-blue-700' 
+              : 'bg-blue-100 text-blue-700 border border-blue-200'
+          }`}>
+            {currentPage} of {totalPages}
+          </div>
+
+          <button
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+              currentPage === totalPages
+                ? isDarkMode 
+                  ? 'bg-gray-800 text-gray-500 cursor-not-allowed' 
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : isDarkMode
+                  ? 'bg-gray-700 hover:bg-gray-600 text-white hover:scale-105 shadow-lg'
+                  : 'bg-white hover:bg-gray-50 text-gray-700 hover:scale-105 shadow-lg border border-gray-200'
+            }`}
+          >
+            Next
+            <FaChevronRight className="text-sm" />
+          </button>
+        </div>
+      )}
+
+      {/* Modals */}
+      {selectedUser && showModal && (
         <MessageBox recipient={selectedUser} onCloseModal={handleModalClose} isDarkMode={isDarkMode} />
       )}
-      {/* Render the rating modal if a profile is selected for rating */}
       {ratingProfile && (
         <RatingModal profile={ratingProfile} onClose={handleRatingModalClose} isDarkMode={isDarkMode} />
       )}

@@ -38,7 +38,7 @@ export default function Score() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 mt-4">
       {/* Header Section */}
       <div className="bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-gray-800 dark:to-gray-700 py-6 sm:py-8 md:py-12">
         <div className="container mx-auto px-3 sm:px-4 md:px-6">

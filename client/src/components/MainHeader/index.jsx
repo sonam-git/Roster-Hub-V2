@@ -2,13 +2,17 @@ import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { ThemeContext } from "../ThemeContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faTimes, faSun, faMoon } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faTimes, faSun, faMoon, faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 
-const MainHeader = ({ open, setOpen }) => {
+const MainHeader = ({ open, setOpen, showTopHeader, setShowTopHeader }) => {
   const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
 
   const toggleMenu = () => {
     setOpen(!open);
+  };
+
+  const toggleTopHeader = () => {
+    setShowTopHeader(!showTopHeader);
   };
 
   return (
@@ -38,20 +42,47 @@ const MainHeader = ({ open, setOpen }) => {
         </button>
 
         {/* Center: Title Section */}
-        <Link to="/" className="flex flex-col items-center group transition-transform duration-300 hover:scale-105">
-          <span className={`text-2xl font-bold tracking-tight transition-all duration-300 group-hover:scale-105 ${
-            isDarkMode
-              ? "bg-gradient-to-r from-blue-300 via-green-300 to-yellow-300 bg-clip-text text-transparent drop-shadow-lg"
-              : "bg-gradient-to-r from-blue-700 via-green-700 to-yellow-600 bg-clip-text text-transparent drop-shadow-md"
-          }`}>
-            Roster Hub
-          </span>
-          <span className={`text-xs font-medium tracking-wide ${
-            isDarkMode ? "text-gray-400" : "text-gray-600"
-          }`}>
-            Team Management
-          </span>
-        </Link>
+        <div className="flex flex-col items-center">
+          <Link to="/" className="flex flex-col items-center group transition-transform duration-300 hover:scale-105">
+            <span className={`text-2xl font-bold tracking-tight transition-all duration-300 group-hover:scale-105 ${
+              isDarkMode
+                ? "bg-gradient-to-r from-blue-300 via-green-300 to-yellow-300 bg-clip-text text-transparent drop-shadow-lg"
+                : "bg-gradient-to-r from-blue-700 via-green-700 to-yellow-600 bg-clip-text text-transparent drop-shadow-md"
+            }`}>
+              Roster Hub
+            </span>
+            <span className={`text-xs font-medium tracking-wide ${
+              isDarkMode ? "text-gray-400" : "text-gray-600"
+            }`}>
+              Team Management
+            </span>
+          </Link>
+          
+          {/* Dropdown Icon for TopHeader - Only visible on small screens */}
+          <button
+            className={`mt-3 lg:hidden px-3 py-2 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 shadow-md hover:shadow-lg ${
+              showTopHeader
+                ? isDarkMode
+                  ? "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white border border-blue-400"
+                  : "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white border border-blue-300"
+                : isDarkMode
+                  ? "bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-500 hover:to-gray-600 text-gray-200 hover:text-white border border-gray-500"
+                  : "bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400 text-gray-700 hover:text-gray-900 border border-gray-400"
+            }`}
+            onClick={toggleTopHeader}
+            aria-label={showTopHeader ? "Hide navigation" : "Show navigation"}
+          >
+            <div className="flex items-center gap-2">
+              <FontAwesomeIcon
+                icon={showTopHeader ? faChevronUp : faChevronDown}
+                className={`text-sm transition-all duration-300 ${showTopHeader ? 'rotate-180' : 'rotate-0'}`}
+              />
+              <span className="text-xs font-medium">
+                {showTopHeader ? "Hide Menu" : "Show Menu"}
+              </span>
+            </div>
+          </button>
+        </div>
 
         {/* Right: Theme Toggle Button */}
         <button

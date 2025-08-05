@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_ME, QUERY_PROFILES } from "../../utils/queries";
 import { REMOVE_MESSAGE, SEND_MESSAGE ,DELETE_CONVERSATION,} from "../../utils/mutations";
-import { MailIcon, PlusIcon } from "@heroicons/react/solid";
+import { HiMail, HiPlus, HiChatAlt2 } from "react-icons/hi";
+import { FaUsers, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import MessageBox from "../MessageBox";
 import UserListModal from "../UserListModal";
 import MessageCard from "../MessageCard";
@@ -95,33 +96,83 @@ const handleSendMessage = async (recipientId) => {
     }
   };
 
-  const PER_PAGE = 9;
+  const PER_PAGE = 6; // Reduced for better visual balance
   const pageConvs = conversations.slice(page * PER_PAGE, (page + 1) * PER_PAGE);
 
-  return (
-    <>
-      <div className="text-center py-8">
-        <h1 className="text-xl font-bold dark:text-white mb-2">Message Box</h1>
-        <div className="flex justify-center items-center space-x-2">
-          <MailIcon className="h-6 w-6 text-white dark:text-gray-300" />
-          <span className="font-bold dark:text-white">
-            {loggedInUser.receivedMessages?.length || 0}
-          </span>
+  if (conversations.length === 0) {
+    return (
+      <div className="text-center py-16">
+        <div className={`max-w-md mx-auto p-8 rounded-2xl shadow-xl ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
+          <HiChatAlt2 className={`mx-auto mb-4 text-6xl ${isDarkMode ? 'text-gray-400' : 'text-gray-300'}`} />
+          <h3 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            No Conversations Yet
+          </h3>
+          <p className={`mb-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            Start chatting with your team members!
+          </p>
           {isLoggedInUser && (
             <button
               onClick={() => setShowUserListModal(true)}
-              className={`ml-4 flex items-center px-3 py-1 rounded-md ${
-                isDarkMode ? "bg-gray-700 text-white hover:bg-gray-500" : "bg-gray-200 text-gray-800 hover:bg-blue-500 hover:text-gray-100"
-              }  hover:text-white transition`}
+              className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 ${
+                isDarkMode
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                  : 'bg-blue-500 hover:bg-blue-600 text-white'
+              }`}
             >
-              <PlusIcon className="h-5 w-5 mr-1" />
-              New
+              <HiPlus className="inline-block w-5 h-5 mr-2" />
+              Start New Conversation
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {/* Header Section */}
+      <div className="text-center mb-8">
+        <div className={`inline-flex items-center gap-4 px-6 py-4 rounded-2xl shadow-lg ${
+          isDarkMode 
+            ? 'bg-gradient-to-r from-gray-800 to-gray-700 border border-gray-600' 
+            : 'bg-gradient-to-r from-white to-gray-50 border border-gray-200'
+        }`}>
+          <div className="flex items-center gap-3">
+            <div className={`p-3 rounded-full ${
+              isDarkMode ? 'bg-blue-900/50' : 'bg-blue-100'
+            }`}>
+              <HiMail className={`w-6 h-6 ${
+                isDarkMode ? 'text-blue-400' : 'text-blue-600'
+              }`} />
+            </div>
+            <div className="text-left">
+              <h2 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                Message Center
+              </h2>
+              <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                {loggedInUser.receivedMessages?.length || 0} total messages
+              </p>
+            </div>
+          </div>
+          
+          {isLoggedInUser && (
+            <button
+              onClick={() => setShowUserListModal(true)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 hover:scale-105 ${
+                isDarkMode 
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg' 
+                  : 'bg-blue-500 hover:bg-blue-600 text-white shadow-lg'
+              }`}
+            >
+              <HiPlus className="w-5 h-5" />
+              <span className="hidden sm:block">New Chat</span>
             </button>
           )}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4">
+      {/* Messages Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
         {pageConvs.map((conv) => (
           <MessageCard
             isDarkMode={isDarkMode}
@@ -145,22 +196,52 @@ const handleSendMessage = async (recipientId) => {
         ))}
       </div>
 
-      <div className="mt-6 flex justify-center space-x-4">
-        <button
-          disabled={page === 0}
-          onClick={() => setPage((p) => p - 1)}
-          className="px-3 py-1 border rounded disabled:opacity-50 dark:text-white"
-        >
-          Prev
-        </button>
-        <button
-          disabled={(page + 1) * PER_PAGE >= conversations.length}
-          onClick={() => setPage((p) => p + 1)}
-          className="px-3 py-1 border rounded disabled:opacity-50 dark:text-white"
-        >
-          Next
-        </button>
-      </div>
+      {/* Modern Pagination */}
+      {Math.ceil(conversations.length / PER_PAGE) > 1 && (
+        <div className="flex items-center justify-center gap-4">
+          <button
+            disabled={page === 0}
+            onClick={() => setPage((p) => p - 1)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+              page === 0
+                ? isDarkMode 
+                  ? 'bg-gray-800 text-gray-500 cursor-not-allowed' 
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : isDarkMode
+                  ? 'bg-gray-700 hover:bg-gray-600 text-white hover:scale-105 shadow-lg'
+                  : 'bg-white hover:bg-gray-50 text-gray-700 hover:scale-105 shadow-lg border border-gray-200'
+            }`}
+          >
+            <FaChevronLeft className="text-sm" />
+            Previous
+          </button>
+
+          <div className={`px-4 py-2 rounded-xl font-bold ${
+            isDarkMode 
+              ? 'bg-blue-900/50 text-blue-300 border border-blue-700' 
+              : 'bg-blue-100 text-blue-700 border border-blue-200'
+          }`}>
+            {page + 1} of {Math.ceil(conversations.length / PER_PAGE)}
+          </div>
+
+          <button
+            disabled={(page + 1) * PER_PAGE >= conversations.length}
+            onClick={() => setPage((p) => p + 1)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+              (page + 1) * PER_PAGE >= conversations.length
+                ? isDarkMode 
+                  ? 'bg-gray-800 text-gray-500 cursor-not-allowed' 
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : isDarkMode
+                  ? 'bg-gray-700 hover:bg-gray-600 text-white hover:scale-105 shadow-lg'
+                  : 'bg-white hover:bg-gray-50 text-gray-700 hover:scale-105 shadow-lg border border-gray-200'
+            }`}
+          >
+            Next
+            <FaChevronRight className="text-sm" />
+          </button>
+        </div>
+      )}
 
       <UserListModal
         show={showUserListModal}
@@ -194,6 +275,7 @@ const handleSendMessage = async (recipientId) => {
         show={showDeleteModal}
         onConfirm={confirmDeleteMessage}
         onCancel={cancelDeleteMessage}
+        isDarkMode={isDarkMode}
       />
     </>
   );

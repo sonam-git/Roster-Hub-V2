@@ -39,14 +39,6 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
   const [gameToDelete, setGameToDelete] = useState(null);
   const [statusFilter, setStatusFilter] = useState('ALL');
 
-  const STATUS_OPTIONS = [
-    { key: 'ALL', label: 'All', color: 'bg-gray-400 text-white border-2 border-black hover:bg-gray-500 dark:bg-gray-600 dark:text-white dark:border-black' },
-    { key: 'PENDING', label: 'Pending', color: 'bg-orange-400 text-white hover:bg-orange-700' },
-    { key: 'CONFIRMED', label: 'Confirmed', color: 'bg-green-500 text-white hover:bg-green-700' },
-    { key: 'CANCELLED', label: 'Cancelled', color: 'bg-red-500 text-white hover:bg-red-700' },
-    { key: 'COMPLETED', label: 'Completed', color: 'bg-purple-500 text-white hover:bg-purple-700' },
-  ];
-
   if (loading) return <div className="text-center mt-4">Loading games...</div>;
   if (error) return <div className="text-center mt-4 text-red-600">Error: {error.message}</div>;
 
@@ -54,6 +46,54 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
   if (!games.length) {
     return <div className="text-center mt-4 text-xl italic dark:text-white">No games scheduled yet.</div>;
   }
+
+  // Calculate counts for each status
+  const statusCounts = {
+    ALL: games.length,
+    PENDING: games.filter(g => g.status === 'PENDING').length,
+    CONFIRMED: games.filter(g => g.status === 'CONFIRMED').length,
+    CANCELLED: games.filter(g => g.status === 'CANCELLED').length,
+    COMPLETED: games.filter(g => g.status === 'COMPLETED').length,
+  };
+
+  // Update STATUS_OPTIONS with counts and modern styling
+  const STATUS_OPTIONS = [
+    { 
+      key: 'ALL', 
+      label: 'All', 
+      count: statusCounts.ALL,
+      color: 'bg-gradient-to-r from-gray-500 to-gray-600 text-white hover:from-gray-600 hover:to-gray-700 shadow-lg hover:shadow-xl',
+      darkColor: 'dark:from-gray-600 dark:to-gray-700 dark:hover:from-gray-700 dark:hover:to-gray-800'
+    },
+    { 
+      key: 'PENDING', 
+      label: 'Pending', 
+      count: statusCounts.PENDING,
+      color: 'bg-gradient-to-r from-orange-400 to-orange-500 text-white hover:from-orange-500 hover:to-orange-600 shadow-lg hover:shadow-xl',
+      darkColor: 'dark:from-orange-500 dark:to-orange-600 dark:hover:from-orange-600 dark:hover:to-orange-700'
+    },
+    { 
+      key: 'CONFIRMED', 
+      label: 'Confirmed', 
+      count: statusCounts.CONFIRMED,
+      color: 'bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 shadow-lg hover:shadow-xl',
+      darkColor: 'dark:from-green-600 dark:to-green-700 dark:hover:from-green-700 dark:hover:to-green-800'
+    },
+    { 
+      key: 'CANCELLED', 
+      label: 'Cancelled', 
+      count: statusCounts.CANCELLED,
+      color: 'bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 shadow-lg hover:shadow-xl',
+      darkColor: 'dark:from-red-600 dark:to-red-700 dark:hover:from-red-700 dark:hover:to-red-800'
+    },
+    { 
+      key: 'COMPLETED', 
+      label: 'Completed', 
+      count: statusCounts.COMPLETED,
+      color: 'bg-gradient-to-r from-purple-500 to-purple-600 text-white hover:from-purple-600 hover:to-purple-700 shadow-lg hover:shadow-xl',
+      darkColor: 'dark:from-purple-600 dark:to-purple-700 dark:hover:from-purple-700 dark:hover:to-purple-800'
+    },
+  ];
 
   // Apply search filters if provided
   let filteredGames = games;
@@ -178,36 +218,72 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
   return (
     <>
       {/* Status filter buttons and Create Game button */}
-      <div className="flex flex-wrap justify-center gap-2 mb-6">
-        {STATUS_OPTIONS.map(opt => (
+      <div className="mb-6">
+        {/* Status filter buttons - 3 per row on mobile/tablet, all in one row on large screens */}
+        <div className="grid grid-cols-3 md:flex md:flex-wrap md:justify-center gap-2 mb-3 md:mb-0">
+          {STATUS_OPTIONS.map(opt => (
+            <button
+              key={opt.key}
+              onClick={() => setStatusFilter(opt.key)}
+              className={`relative px-3 py-2 md:px-4 rounded-full font-bold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-xs md:text-sm transform hover:scale-105 hover:-translate-y-0.5
+                ${statusFilter === opt.key
+                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white scale-105 ring-2 ring-blue-400 shadow-lg' // Active state
+                  : `${opt.color} ${opt.darkColor}`}
+              `}
+            >
+              <div className="flex items-center justify-center gap-2">
+                <span>{opt.label}</span>
+                <div className={`px-2 py-0.5 rounded-full text-xs font-bold min-w-[1.5rem] flex items-center justify-center ${
+                  statusFilter === opt.key 
+                    ? 'bg-white/20 text-white backdrop-blur-sm'
+                    : 'bg-black/10 text-white backdrop-blur-sm shadow-sm'
+                }`}>
+                  {opt.count}
+                </div>
+              </div>
+            </button>
+          ))}
+          
+          {/* Action buttons - inline with status buttons on large screens */}
+          {onCreateGame && (
+            <button
+              onClick={onCreateGame}
+              className="px-3 py-2 md:px-4 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-xs md:text-sm flex items-center justify-center gap-1"
+            >
+              <span>+</span>
+              <span className="hidden sm:inline">Create Game</span>
+              <span className="sm:hidden">Create</span>
+            </button>
+          )}
           <button
-            key={opt.key}
-            onClick={() => setStatusFilter(opt.key)}
-            className={`px-4 py-2 rounded-full font-bold shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm
-              ${statusFilter === opt.key
-                ? 'bg-blue-500 text-white scale-105 ring-2 ring-blue-400' // Use blue for active
-                : opt.color}
-            `}
+            onClick={() => navigate('/game-search')}
+            className="px-3 py-2 md:px-4 bg-purple-600 text-white rounded-full font-bold hover:bg-purple-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 text-xs md:text-sm flex items-center justify-center gap-1"
           >
-            {opt.label}
+            <span>🔍</span>
+            <span className="hidden sm:inline">Search Games</span>
+            <span className="sm:hidden">Search</span>
           </button>
-        ))}
-        {onCreateGame && (
+        </div>
+        
+        {/* Action buttons - separate row for mobile/tablet only */}
+        <div className="flex flex-col sm:flex-row sm:justify-center gap-2 md:hidden">
+          {onCreateGame && (
+            <button
+              onClick={onCreateGame}
+              className="px-4 py-2 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm flex items-center justify-center gap-1"
+            >
+              <span>+</span>
+              Create Game
+            </button>
+          )}
           <button
-            onClick={onCreateGame}
-            className="px-4 py-2 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm flex items-center gap-1"
+            onClick={() => navigate('/game-search')}
+            className="px-4 py-2 bg-purple-600 text-white rounded-full font-bold hover:bg-purple-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm flex items-center justify-center gap-1"
           >
-            <span>+</span>
-            Create Game
+            <span>🔍</span>
+            Search Games
           </button>
-        )}
-        <button
-          onClick={() => navigate('/game-search')}
-          className="px-4 py-2 bg-purple-600 text-white rounded-full font-bold hover:bg-purple-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm flex items-center gap-1"
-        >
-          <span>🔍</span>
-          Search Games
-        </button>
+        </div>
       </div>
 
       {/* Results Summary - only show when search filters are applied */}

@@ -4,6 +4,8 @@ import { SEND_MESSAGE } from "../../utils/mutations";
 import Modal from "../Modal";
 import MessageSentModal from "../MessageSentModal";
 import { QUERY_ME } from "../../utils/queries";
+import { HiPaperAirplane, HiX, HiUser, HiReply, HiExclamationCircle } from "react-icons/hi";
+import ProfileAvatar from "../../assets/images/profile-avatar.png";
 
 const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode }) => {
   const [message, setMessage] = useState("");
@@ -49,26 +51,57 @@ const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode }) =>
       <>
         {!messageSent && (
           <Modal showModal={true} onClose={handleCloseModal}>
-            <div
-              className={`rounded-lg shadow-lg p-6 border ${
-                isDarkMode
-                  ? "bg-gray-800 text-white border-gray-700"
-                  : "bg-white text-gray-900 border-gray-300"
-              }`}
-            >
-              <h3
-                className={`text-lg md:text-xl font-bold mb-4 p-3 rounded-md ${
-                  isDarkMode ? "bg-gray-700 text-white" : "bg-gray-100 text-black"
-                }`}
-              >
-                {selectedMessage
-                  ? `Reply to ${recipient.name[0].toUpperCase() + recipient.name.slice(1)}`
-                  : `Message ${recipient.name[0].toUpperCase() + recipient.name.slice(1)}`}
-              </h3>
+            <div className={`rounded-2xl shadow-2xl p-8 border max-w-2xl w-full mx-4 ${
+              isDarkMode
+                ? "bg-gradient-to-br from-gray-800 to-gray-900 text-white border-gray-700"
+                : "bg-gradient-to-br from-white to-gray-50 text-gray-900 border-gray-200"
+            }`}>
+              {/* Header */}
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <img
+                      src={recipient.profilePic || ProfileAvatar}
+                      alt={recipient.name}
+                      className="w-12 h-12 rounded-full object-cover border-2 border-blue-400 shadow-md"
+                    />
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+                  </div>
+                  <div>
+                    <h3 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                      {selectedMessage ? (
+                        <span className="flex items-center gap-2">
+                          <HiReply className="w-5 h-5 text-blue-500" />
+                          Reply to {recipient.name}
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-2">
+                          <HiUser className="w-5 h-5 text-blue-500" />
+                          Message {recipient.name}
+                        </span>
+                      )}
+                    </h3>
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                      {selectedMessage ? 'Replying to a message' : 'Starting a new conversation'}
+                    </p>
+                  </div>
+                </div>
+                
+                <button
+                  onClick={handleCloseModal}
+                  className={`p-2 rounded-full transition-all duration-200 hover:scale-110 ${
+                    isDarkMode 
+                      ? 'text-gray-400 hover:bg-gray-700 hover:text-white' 
+                      : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                  }`}
+                >
+                  <HiX className="w-6 h-6" />
+                </button>
+              </div>
 
               {selectedMessage ? (
                 <div
-                  className={`p-3 rounded-md mb-4 max-h-56 overflow-y-auto ${
+                  className={`p-3 rounded-md mb-4 max-h-56 overflow-y-auto message-scroll-container scrollbar-thin ${
                     isDarkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-black"
                   }`}
                 >
@@ -103,40 +136,44 @@ const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode }) =>
                   }
                 }}
                 placeholder="Type your message..."
-                rows={3}
-                className={`w-full p-2 rounded-md border focus:outline-none mb-1 ${
-                  isDarkMode
-                    ? `bg-gray-700 text-white placeholder-gray-400 ${
-                        error ? "border-red-500" : "border-gray-600"
-                      }`
-                    : `bg-white text-black placeholder-gray-500 ${
-                        error ? "border-red-500" : "border-gray-300"
-                      }`
+                rows={4}
+                className={`w-full p-4 rounded-2xl border-2 focus:outline-none focus:ring-2 transition-all duration-200 resize-none ${
+                  error 
+                    ? isDarkMode
+                      ? "border-red-500 focus:border-red-400 focus:ring-red-400/20 bg-gray-700 text-white placeholder-gray-400"
+                      : "border-red-500 focus:border-red-400 focus:ring-red-400/20 bg-white text-gray-900 placeholder-gray-500"
+                    : isDarkMode
+                      ? "border-gray-600 focus:border-blue-400 focus:ring-blue-400/20 bg-gray-700 text-white placeholder-gray-400"
+                      : "border-gray-300 focus:border-blue-400 focus:ring-blue-400/20 bg-white text-gray-900 placeholder-gray-500"
                 }`}
               />
 
               {error && (
-                <p className="text-sm text-red-500 mb-4">
-                  Write your message first.
-                </p>
+                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg mb-4 ${
+                  isDarkMode ? 'bg-red-900/20 border border-red-800/30' : 'bg-red-50 border border-red-200'
+                }`}>
+                  <HiExclamationCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                  <p className="text-sm text-red-500">Please write your message first.</p>
+                </div>
               )}
 
-              <div className="flex justify-end gap-2">
+              <div className="flex gap-3 pt-2">
                 <button
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md"
-                  onClick={handleSendMessage}
-                >
-                  Send
-                </button>
-                <button
-                  className={`px-4 py-2 rounded-md ${
-                    isDarkMode
-                      ? "bg-gray-600 hover:bg-gray-700 text-white"
-                      : "bg-gray-300 hover:bg-gray-400 text-black"
-                  }`}
                   onClick={handleCloseModal}
+                  className={`flex-1 px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 ${
+                    isDarkMode
+                      ? 'bg-gray-700 hover:bg-gray-600 text-white'
+                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                  }`}
                 >
                   Cancel
+                </button>
+                <button
+                  onClick={handleSendMessage}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-medium transition-all duration-200 hover:scale-105 flex items-center justify-center gap-2 shadow-lg hover:shadow-blue-500/25"
+                >
+                  <HiPaperAirplane className="w-4 h-4 transform rotate-90" />
+                  Send Message
                 </button>
               </div>
             </div>

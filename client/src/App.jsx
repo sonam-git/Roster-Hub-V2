@@ -90,7 +90,7 @@ const client = new ApolloClient({
 });
 
 // ─── App Content ───
-function AppContent({ sidebarOpen, setSidebarOpen }) {
+function AppContent({ sidebarOpen, setSidebarOpen, showTopHeader }) {
   const { isDarkMode } = useContext(ThemeContext);
   const { data } = useQuery(QUERY_ME);
   const currentUser = data?.me;
@@ -152,7 +152,7 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
         style={backgroundConfig.style}
       >
         <Header open={sidebarOpen} setOpen={setSidebarOpen} />
-        <div className="flex-1 pt-2 md:pt-2">
+        <div className={`flex-1 transition-all duration-300 ${showTopHeader ? 'pt-2 md:pt-2' : 'pt-32 md:pt-2'} lg:pt-2`}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route
@@ -197,6 +197,8 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
 // ─── Main App ───
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showTopHeader, setShowTopHeader] = useState(false);
+  
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <ApolloProvider client={client}>
@@ -207,9 +209,25 @@ function App() {
               v7_relativeSplatPath: true,
             }}
           >
-            <MainHeader open={sidebarOpen} setOpen={setSidebarOpen} />
-            <TopHeader onToggleMenu={() => setSidebarOpen((v) => !v)} open={sidebarOpen} />
-            <AppContent sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+            <MainHeader 
+              open={sidebarOpen} 
+              setOpen={setSidebarOpen} 
+              showTopHeader={showTopHeader}
+              setShowTopHeader={setShowTopHeader}
+            />
+            {/* TopHeader - conditionally rendered on small screens, always visible on large screens */}
+            <div className={`${showTopHeader ? 'block' : 'hidden'} lg:block`}>
+              <TopHeader 
+                onToggleMenu={() => setSidebarOpen((v) => !v)} 
+                open={sidebarOpen} 
+                isVisible={showTopHeader}
+              />
+            </div>
+            <AppContent 
+              sidebarOpen={sidebarOpen} 
+              setSidebarOpen={setSidebarOpen} 
+              showTopHeader={showTopHeader}
+            />
           </Router>
         </ThemeProvider>
       </ApolloProvider>

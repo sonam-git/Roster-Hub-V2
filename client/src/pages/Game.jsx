@@ -58,7 +58,7 @@ const Game = () => {
     // Show only GameForm if user clicked "Create Game"
     if (showCreateGame) {
       return (
-        <div className="container mx-auto lg:mt-5 p-3">
+        <div className="container mx-auto mt-6 lg:mt-5 p-3">
           <div className="flex flex-col lg:flex-row lg:space-x-2">
             <div className="w-full">
               <GameForm 
@@ -79,9 +79,18 @@ const Game = () => {
     
     // Show GameList by default when no gameId
     return (
-      <div className="container mx-auto lg:mt-5 p-3">
+      <div className="container mx-auto mt-6 lg:mt-5 p-3">
         <div className="flex flex-col lg:flex-row lg:space-x-2">
           <div className="w-full">
+            {/* Game Schedule Header */}
+            <div className={`mb-6 text-center ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+              <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                Game Schedule
+              </h1>
+              <p className={`text-sm md:text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                Manage your team's upcoming games and track their status
+              </p>
+            </div>
             <GameList onCreateGame={() => setShowCreateGame(true)} />
           </div>
         </div>

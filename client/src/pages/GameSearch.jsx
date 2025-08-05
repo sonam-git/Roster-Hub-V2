@@ -22,7 +22,7 @@ const GameSearchPage = () => {
   };
 
   return (
-    <div className="container mx-auto lg:mt-5 p-3">
+    <div className="container mx-auto mt-6 lg:mt-5 p-3">
       <div className="flex flex-col space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -38,7 +38,7 @@ const GameSearchPage = () => {
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
+              </svg> back
             </button>
             <div>
               <h1 className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>

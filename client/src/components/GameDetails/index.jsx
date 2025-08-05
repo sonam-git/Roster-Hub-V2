@@ -719,6 +719,15 @@ export default function GameDetails({ gameId }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-1 sm:p-2 lg:p-4 transition-colors duration-300">
+      {/* Game Schedule Heading */}
+      <div className="max-w-7xl mx-auto mb-4 sm:mb-6">
+        <h1 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center ${
+          isDarkMode ? 'text-white' : 'text-gray-800'
+        } drop-shadow-lg`}>
+          Game Schedule
+        </h1>
+      </div>
+      
       <div className={`max-w-7xl mx-auto transition-all duration-500 ${
         isDarkMode
           ? "bg-gradient-to-br from-gray-800 via-gray-900 to-black shadow-2xl shadow-gray-900/50"
