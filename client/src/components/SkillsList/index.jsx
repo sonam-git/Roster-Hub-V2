@@ -25,7 +25,6 @@ const SkillsList = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [isPending, startTransition] = useTransition();
   const [localSkills, setLocalSkills] = useState(initialSkills);
-  const [showReactionModal, setShowReactionModal] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(null);
 
   // keep localSkills in sync
@@ -130,94 +129,148 @@ const SkillsList = ({
   );
 
   if (!filteredSkills.length) {
-    return <h3 className="text-center italic">You have No endorsed skill yet </h3>;
+    return (
+      <div className={`text-center p-8 rounded-2xl shadow-lg ${
+        isDarkMode ? 'bg-gray-800/50 text-gray-400' : 'bg-gray-50 text-gray-500'
+      }`}>
+        <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
+          isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
+        }`}>
+          <span className="text-2xl">🎯</span>
+        </div>
+        <h3 className="text-lg font-semibold mb-2">No Skills Yet</h3>
+        <p className="text-sm">No endorsed skills to display</p>
+      </div>
+    );
   }
 
   return (
     <>
-      {!isLoggedInUser && (
-        <h2 className=" text-xs font-thin dark:text-white">
-          {profile.name}'s friends have endorsed {profile.skills?.length ?? 0}{" "}
-          skill
-          {profile.skills?.length === 1 ? "" : "s"}
-        </h2>
-      )}
-
       {isPending && (
-        <div className="text-center text-gray-500 mb-2 animate-pulse">
-          Updating…
+        <div className={`text-center py-3 px-4 mb-4 rounded-lg ${
+          isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700'
+        } animate-pulse`}>
+          <span className="inline-flex items-center gap-2">
+            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+            Updating skills...
+          </span>
         </div>
       )}
 
       <div
         className={`grid grid-cols-1${
           columns === 2 ? " sm:grid-cols-2" : columns > 1 ? ` sm:grid-cols-${columns}` : ""
-        } gap-4`}
+        } gap-4 sm:gap-6`}
       >
         {deferredSkills.map((skill) => {
           return (
             <div
               key={skill._id}
-              className="shadow rounded overflow-hidden flex flex-col justify-between h-32"
+              className={`group relative rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] overflow-hidden border ${
+                isDarkMode 
+                  ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 hover:border-gray-600' 
+                  : 'bg-gradient-to-br from-white to-blue-50 border-gray-200 hover:border-blue-300'
+              }`}
             >
+              {/* Modern header with glassmorphism effect */}
               <div
-                className={`px-3 py-2 text-xs font-semibold tracking-wide border-b ${
+                className={`px-4 py-3 backdrop-blur-sm border-b relative ${
                   isDarkMode
-                    ? "bg-gray-700 text-gray-100"
-                    : "bg-blue-100 text-blue-800"
+                    ? "bg-gray-800/80 text-gray-100 border-gray-700"
+                    : "bg-white/80 text-gray-800 border-gray-200"
                 }`}
-                style={{ letterSpacing: "0.05em" }}
               >
-                <span className="inline-block align-middle">
-                  {skill.skillAuthor[0].toUpperCase() + skill.skillAuthor.slice(1)}
-                </span>
-                <span className="ml-1 text-gray-400 font-normal">endorsed </span>
-                <span className="text-xs text-gray-500 italic">
-                  {skill.recipient?._id === Auth.getProfile()?.data?._id
-                    ? <strong>You</strong>
-                    : skill.recipient?.name
-                      ? <strong>{skill.recipient.name}</strong>
-                      : "—"}
-                </span>
-              </div>
-              <div
-                className={`flex-1 flex items-center justify-between text-lg font-bold ${
-                  isDarkMode ? "bg-gray-800 text-gray-100" : "bg-blue-200 text-gray-900"
-                }`}
-                style={{ minHeight: "2.5rem" }}
-              >
-                <span className="text-left w-1/2 pl-2 truncate">{skill.skillText[0].toUpperCase() + skill.skillText.slice(1)}</span>
-                <div className="flex items-center justify-end w-1/2">
-                  {skill.reactions && skill.reactions.length > 0 && (
-                    <div className="flex space-x-1 mr-2">
-                      {skill.reactions.map((r, i) => (
-                        <span key={i} title={r.user?.name || ""} className="text-xl">{r.emoji}</span>
-                      ))}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                      isDarkMode ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white'
+                    }`}>
+                      {skill.skillAuthor[0].toUpperCase()}
                     </div>
-                  )}
+                    <div>
+                      <span className="font-semibold text-sm">
+                        {skill.skillAuthor[0].toUpperCase() + skill.skillAuthor.slice(1)}
+                      </span>
+                      <span className={`ml-1 text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                        endorsed
+                      </span>
+                    </div>
+                  </div>
+                  <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'
+                  }`}>
+                    {skill.recipient?._id === Auth.getProfile()?.data?._id
+                      ? "You"
+                      : skill.recipient?.name || "—"}
+                  </div>
                 </div>
               </div>
-              <div className={`flex items-center justify-between px-3 py-2 border-t ${isDarkMode ? "bg-gray-700" : "bg-blue-50"}`}> 
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold shadow ${isDarkMode ? "bg-gray-700 text-gray-100" : "bg-blue-300 text-blue-900"}`}>{skill.createdAt}</span>
-                <div className="flex items-center ml-2">
-                  {/* React button for skill view, improved style */}
+
+              {/* Skill content with modern typography */}
+              <div
+                className={`flex-1 flex items-center justify-between p-4 min-h-[80px] ${
+                  isDarkMode ? "bg-gradient-to-r from-gray-800 to-gray-900" : "bg-gradient-to-r from-blue-50 to-white"
+                }`}
+              >
+                <div className="flex-1">
+                  <h3 className={`text-lg font-bold leading-tight ${
+                    isDarkMode ? 'text-white' : 'text-gray-800'
+                  }`}>
+                    {skill.skillText[0].toUpperCase() + skill.skillText.slice(1)}
+                  </h3>
+                </div>
+                {skill.reactions && skill.reactions.length > 0 && (
+                  <div className="flex items-center gap-1 ml-3">
+                    <div className="flex -space-x-1">
+                      {skill.reactions.slice(0, 3).map((r, i) => (
+                        <span 
+                          key={i} 
+                          title={r.user?.name || ""} 
+                          className="text-2xl bg-white rounded-full shadow-sm border-2 border-white"
+                        >
+                          {r.emoji}
+                        </span>
+                      ))}
+                    </div>
+                    {skill.reactions.length > 3 && (
+                      <span className={`text-xs font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                        +{skill.reactions.length - 3}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Modern footer with actions */}
+              <div className={`px-4 py-3 border-t flex items-center justify-between ${
+                isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-gray-50/80 border-gray-200'
+              }`}>
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-white text-gray-600 shadow-sm'
+                }`}>
+                  {skill.createdAt}
+                </span>
+                <div className="flex items-center gap-2">
                   <SkillReaction
-                    onReact={emoji => apolloClient.mutate({ mutation: REACT_TO_SKILL, variables: { skillId: skill._id, emoji } })}
-                    buttonClass={`transition-colors duration-150 px-3 py-1 rounded-full font-semibold shadow focus:outline-none focus:ring-2 focus:ring-gray-400 hover:bg-gray-500 hover:text-white ${isDarkMode ? 'bg-gray-600 text-gray-100' : 'bg-blue-300 text-blue-900'}`}
+                    onReact={emoji => apolloClient.mutate({ 
+                      mutation: REACT_TO_SKILL, 
+                      variables: { skillId: skill._id, emoji } 
+                    })}
+                    isDarkMode={isDarkMode}
+                    skillId={skill._id}
                   />
-                  {/* Delete button logic remains unchanged */}
                   {isLoggedInUser && (
                     <button
                       onClick={() => handleRemoveSkill(skill._id)}
                       disabled={isPending}
                       title="Delete skill"
-                      className={`transition ml-2 ${
+                      className={`p-2 rounded-lg transition-all duration-200 hover:scale-110 ${
                         isDarkMode
-                          ? "text-red-400 hover:text-red-200"
-                          : "text-red-600 hover:text-red-800"
+                          ? "text-red-400 hover:text-red-300 hover:bg-red-900/30"
+                          : "text-red-500 hover:text-red-600 hover:bg-red-50"
                       }`}
                     >
-                      <AiOutlineDelete size={18} />
+                      <AiOutlineDelete size={16} />
                     </button>
                   )}
                 </div>
@@ -226,122 +279,131 @@ const SkillsList = ({
           );
         })}
       </div>
-      {/* Pagination controls */}
+      {/* Modern Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-4 mt-6">
+        <div className="flex items-center justify-center gap-3 mt-8">
           <button
-            className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white font-semibold shadow disabled:opacity-50"
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+              currentPage === 1
+                ? isDarkMode 
+                  ? 'bg-gray-800 text-gray-500 cursor-not-allowed' 
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : isDarkMode
+                  ? 'bg-gray-700 hover:bg-gray-600 text-white hover:scale-105 shadow-lg'
+                  : 'bg-white hover:bg-gray-50 text-gray-700 hover:scale-105 shadow-lg border border-gray-200'
+            }`}
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             disabled={currentPage === 1}
           >
-            Prev
+            <span className="text-sm">←</span>
+            <span className="hidden sm:inline">Previous</span>
           </button>
-          <span className="font-bold text-base">Page {currentPage} of {totalPages}</span>
+
+          <div className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold ${
+            isDarkMode 
+              ? 'bg-blue-900/50 text-blue-300 border border-blue-700' 
+              : 'bg-blue-100 text-blue-700 border border-blue-200'
+          }`}>
+            <span className="text-sm">Page</span>
+            <span>{currentPage}</span>
+            <span className="text-sm">of</span>
+            <span>{totalPages}</span>
+          </div>
+
           <button
-            className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white font-semibold shadow disabled:opacity-50"
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+              currentPage === totalPages
+                ? isDarkMode 
+                  ? 'bg-gray-800 text-gray-500 cursor-not-allowed' 
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : isDarkMode
+                  ? 'bg-gray-700 hover:bg-gray-600 text-white hover:scale-105 shadow-lg'
+                  : 'bg-white hover:bg-gray-50 text-gray-700 hover:scale-105 shadow-lg border border-gray-200'
+            }`}
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
           >
-            Next
+            <span className="hidden sm:inline">Next</span>
+            <span className="text-sm">→</span>
           </button>
         </div>
       )}
 
       {error && (
-        <div className="my-3 p-3 bg-red-500 text-white rounded">
-          {error.message}
-        </div>
-      )}
-
-      {/* Single emoji modal for all skills, centered and only shown when showReactionModal is set */}
-      {showReactionModal && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center">
-          <div
-            className="absolute inset-0 bg-gradient-to-br from-blue-200 via-green-100 to-yellow-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 opacity-70 backdrop-blur-sm"
-            onClick={() => setShowReactionModal(null)}
-          />
-          <div className="relative flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 p-4 rounded-3xl shadow-2xl border-4 border-blue-300 dark:border-blue-800 max-w-md w-full animate-fade-in mx-4">
-            <h3 className="text-lg font-bold mb-4 text-gray-700 dark:text-gray-200">
-              React with an Emoji
-            </h3>
-            <div className="flex flex-wrap justify-center gap-3 mb-4">
-              {[
-                { emoji: "👍", label: "Thumbs Up" },
-                { emoji: "🔥", label: "Fire" },
-                { emoji: "👏", label: "Clap" },
-                { emoji: "😍", label: "Love" },
-                { emoji: "💯", label: "100" },
-                { emoji: "🎉", label: "Party Popper" },
-                { emoji: "😄", label: "Smile" },
-                { emoji: "😢", label: "Sad" },
-                { emoji: "🤔", label: "Thinking" },
-                { emoji: "🙌", label: "Hands Up" },
-                { emoji: "💪", label: "Flexed Biceps" },
-                { emoji: "😎", label: "Cool" },
-                { emoji: "🤩", label: "Star-Struck" },
-                { emoji: "🤗", label: "Hugging Face" },
-                { emoji: "😇", label: "Smiling Face with Halo" },
-              ].map(({ emoji, label }) => (
-                <button
-                  key={label}
-                  className="px-4 py-2 text-3xl rounded-full bg-blue-100 dark:bg-blue-900 hover:bg-blue-300 dark:hover:bg-blue-700 shadow-lg transition-transform focus:outline-none border-2 border-blue-200 dark:border-blue-700 hover:scale-125 focus:ring-2 focus:ring-blue-400"
-                  title={label}
-                  aria-label={label}
-                  onClick={async () => {
-                    await apolloClient.mutate({
-                      mutation: REACT_TO_SKILL,
-                      variables: { skillId: showReactionModal, emoji },
-                    });
-                    setShowReactionModal(null);
-                  }}
-                  type="button"
-                >
-                  {emoji}
-                </button>
-              ))}
+        <div className={`mt-4 p-4 rounded-xl shadow-lg border ${
+          isDarkMode 
+            ? 'bg-red-900/30 text-red-200 border-red-700' 
+            : 'bg-red-100 text-red-800 border-red-200'
+        }`}>
+          <div className="flex items-center gap-3">
+            <span className="text-xl">⚠️</span>
+            <div>
+              <h4 className="font-semibold">Error occurred</h4>
+              <p className="text-sm">{error.message}</p>
             </div>
-            <button
-              className="absolute top-3 right-4 text-gray-500 hover:text-red-500 text-2xl font-bold"
-              onClick={() => setShowReactionModal(null)}
-              aria-label="Close"
-            >
-              ×
-            </button>
-            <button
-              className="mt-2 px-6 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 font-semibold shadow"
-              onClick={() => setShowReactionModal(null)}
-            >
-              Cancel
-            </button>
           </div>
         </div>
       )}
 
       {showDeleteModal && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-gradient-to-br from-red-200 via-yellow-100 to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 opacity-70 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in"
             onClick={() => setShowDeleteModal(null)}
           />
-          <div className="relative flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 p-4 rounded-3xl shadow-2xl border-4 border-red-300 dark:border-red-800 max-w-md w-full animate-fade-in mx-4">
-            <h3 className="text-lg font-bold mb-4 text-gray-700 dark:text-gray-200">
-              Confirm Skill Deletion
-            </h3>
-            <p className="mb-4 text-gray-600 dark:text-gray-300">Are you sure you want to delete this skill endorsement?</p>
-            <div className="flex gap-4">
+          <div className={`relative flex flex-col items-center justify-center p-6 rounded-3xl shadow-2xl border-2 max-w-md w-full animate-modal-pop ${
+            isDarkMode 
+              ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-600' 
+              : 'bg-gradient-to-br from-white to-red-50 border-red-200'
+          }`}>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center">
+                <span className="text-xl text-white">⚠️</span>
+              </div>
+              <h3 className={`text-xl font-bold ${
+                isDarkMode ? 'text-white' : 'text-gray-800'
+              }`}>
+                Delete Skill?
+              </h3>
+            </div>
+            
+            <p className={`text-center mb-6 ${
+              isDarkMode ? 'text-gray-300' : 'text-gray-600'
+            }`}>
+              Are you sure you want to delete this skill endorsement? This action cannot be undone.
+            </p>
+            
+            <div className="flex gap-3 w-full">
               <button
-                className="px-6 py-2 rounded-full bg-red-500 text-white font-semibold shadow hover:bg-red-600"
+                className="flex-1 px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition-all duration-200 hover:scale-105"
                 onClick={() => confirmRemoveSkill(showDeleteModal)}
               >
                 Delete
               </button>
               <button
-                className="px-6 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 font-semibold shadow"
+                className={`flex-1 px-4 py-2 rounded-xl font-medium transition-all duration-200 hover:scale-105 ${
+                  isDarkMode 
+                    ? 'bg-gray-700 hover:bg-gray-600 text-white' 
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                }`}
                 onClick={() => setShowDeleteModal(null)}
               >
                 Cancel
               </button>
             </div>
+            
+            {/* Close button */}
+            <button
+              className={`absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 ${
+                isDarkMode 
+                  ? 'text-gray-400 hover:text-white hover:bg-gray-700' 
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+              }`}
+              onClick={() => setShowDeleteModal(null)}
+              aria-label="Close"
+            >
+              ×
+            </button>
           </div>
         </div>
       )}

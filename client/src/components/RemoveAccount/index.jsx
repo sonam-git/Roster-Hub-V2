@@ -3,8 +3,9 @@ import { useMutation } from '@apollo/client';
 import { DELETE_PROFILE } from '../../utils/mutations';
 import Auth from '../../utils/auth';
 import FarewellModal from '../FareWellModal';
+import { FaTrash, FaExclamationTriangle } from 'react-icons/fa';
 
-const RemoveAccount = ({ profileId }) => {
+const RemoveAccount = ({ profileId, isDarkMode }) => {
   const [showModal, setShowModal] = useState(false);
   const [showFarewell, setShowFarewell] = useState(false);
   const [deleteProfile] = useMutation(DELETE_PROFILE);
@@ -37,35 +38,73 @@ const RemoveAccount = ({ profileId }) => {
     <div>
       <button
         onClick={() => setShowModal(true)}
-        className="w-full sm:w-auto text-sm sm:text-base bg-red-400 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md mt-4 sm:mt-0"
+        className={`w-full sm:w-auto px-5 sm:px-6 py-3 sm:py-4 rounded-2xl text-sm sm:text-base font-bold text-white 
+          shadow-xl transition-all duration-300 transform hover:scale-[1.02]
+          bg-gradient-to-r from-red-600 via-pink-600 to-red-700 hover:from-red-500 hover:via-pink-500 hover:to-red-600
+          hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-red-300/50
+          relative overflow-hidden group min-w-[150px]`}
       >
-        Delete Account Permanently ?
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+        <span className="flex items-center justify-center gap-2 relative z-10">
+          <FaTrash className="text-sm" />
+          Delete Account
+        </span>
       </button>
       {showModal && (
-        <div className="fixed z-10 inset-0 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen">
-            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
-            <div className="bg-gray-100 rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
-              <div className="bg-gray-100 dark:bg-gray-800  p-4">
-                <p className="text-lg text-gray-700 dark:text-white">
-                  Are you sure you want to delete your account? This action cannot be undone.
-                </p>
-                <div className="mt-4 flex justify-end">
-                  <button
-                    onClick={() => setShowModal(false)}
-                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-md mr-2"
-                    disabled={deleting}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleDelete}
-                    className="bg-red-400 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md"
-                    disabled={deleting}
-                  >
-                    {deleting ? 'Deleting...' : 'Yes, Delete'}
-                  </button>
-                </div>
+        <div className="fixed z-50 inset-0 overflow-y-auto backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/60 transition-opacity" onClick={() => setShowModal(false)}></div>
+          <div className={`relative bg-gradient-to-br rounded-3xl overflow-hidden shadow-2xl transform transition-all w-full max-w-md border
+            ${isDarkMode 
+              ? 'from-gray-800 to-gray-900 border-gray-600/50' 
+              : 'from-white to-gray-50 border-gray-200/50'
+            }`}>
+            <div className="p-6 sm:p-8">
+              <div className="flex items-center justify-center w-14 h-14 mx-auto mb-4 bg-gradient-to-br from-red-500 to-pink-600 rounded-full">
+                <FaExclamationTriangle className="text-white text-xl" />
+              </div>
+              <h3 className={`text-lg sm:text-xl font-bold text-center mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                Delete Account?
+              </h3>
+              <p className={`text-sm sm:text-base text-center mb-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                Are you sure you want to permanently delete your account? This action cannot be undone and all your data will be lost.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={() => setShowModal(false)}
+                  className={`flex-1 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-300 transform hover:scale-[1.02]
+                    ${isDarkMode 
+                      ? 'bg-gray-700 hover:bg-gray-600 text-white' 
+                      : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
+                    }
+                    shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-gray-300/50`}
+                  disabled={deleting}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="flex-1 px-4 py-3 rounded-2xl text-sm font-bold text-white 
+                    bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500
+                    shadow-xl transition-all duration-300 transform hover:scale-[1.02]
+                    hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-red-300/50
+                    disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                  disabled={deleting}
+                >
+                  {deleting ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" className="opacity-25" />
+                        <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" className="opacity-75" />
+                      </svg>
+                      Deleting...
+                    </span>
+                  ) : (
+                    <span className="flex items-center justify-center gap-2">
+                      <FaTrash className="text-sm" />
+                      Yes, Delete
+                    </span>
+                  )}
+                </button>
               </div>
             </div>
           </div>

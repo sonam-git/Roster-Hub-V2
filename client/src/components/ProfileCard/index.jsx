@@ -1,25 +1,14 @@
 // src/components/ProfileCard.jsx
-import React, { useState } from "react";
+import React from "react";
 import ProfileAvatar from "../../assets/images/profile-avatar.png";
-import { FaUser, FaPhone, FaRegCommentDots, FaTwitter,
+import { FaUser, FaPhone, FaTwitter,
   FaFacebookF,
   FaLinkedinIn,
 } from "react-icons/fa";
 import { RiTShirt2Line } from "react-icons/ri";
 import renderStars from "../../utils/renderStars";
-import MessageBox from "../MessageBox";
-import RatingModal from "../RatingModal";  // ← import your rating modal
 
 const ProfileCard = ({ profile, isDarkMode }) => {
-  const [showMessageModal, setShowMessageModal] = useState(false);
-  const [showRatingModal,  setShowRatingModal]  = useState(false);
-
-  const handleMessageClick = () => setShowMessageModal(true);
-  const handleCloseMessage  = () => setShowMessageModal(false);
-
-  const handleRateClick     = () => setShowRatingModal(true);
-  const handleCloseRating   = () => setShowRatingModal(false);
-
   // Restore the renderSocialMediaIcons function
   const renderSocialMediaIcons = () =>
     profile.socialMediaLinks.map((social) => {
@@ -95,48 +84,8 @@ const ProfileCard = ({ profile, isDarkMode }) => {
               <FaPhone className="w-4 h-5" />
             </a>
           </div>
-
-          {/* Button row */}
-          <div className="flex flex-col sm:flex-row justify-between px-4 gap-2 sm:gap-0 mt-4">
-            {/* Rate Button (left) */}
-            <button
-              onClick={handleRateClick}
-              className={`flex items-center space-x-1 transition px-3 py-2 rounded-full font-bold shadow bg-yellow-400 text-black hover:bg-yellow-300 w-full sm:w-auto justify-center`}
-              title="Rate Player"
-            >
-              ⭐  <span className="text-sm font-medium ml-2">Rate</span>
-            </button>
-
-            {/* Send Message Button (right) */}
-            <button
-              onClick={handleMessageClick}
-              className={`flex items-center space-x-1 transition px-3 py-2 rounded-full font-bold shadow bg-indigo-500 text-white hover:bg-indigo-400 w-full sm:w-auto justify-center mt-2 sm:mt-0`}
-              title="Send Message"
-            >
-              <FaRegCommentDots className="text-xl w-4 h-5" />
-              <span className="text-sm font-medium">Message</span>
-            </button>
-          </div>
         </div>
       </div>
-
-      {/* Chat Modal */}
-      {showMessageModal && (
-        <MessageBox
-          recipient={profile}
-          onCloseModal={handleCloseMessage}
-          isDarkMode={isDarkMode}
-        />
-      )}
-
-      {/* Rating Modal */}
-      {showRatingModal && (
-        <RatingModal
-          profile={profile}
-          onClose={handleCloseRating}
-          isDarkMode={isDarkMode}
-        />
-      )}
     </div>
   );
 };

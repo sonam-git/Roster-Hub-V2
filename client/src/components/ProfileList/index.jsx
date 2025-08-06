@@ -109,8 +109,8 @@ const ProfileList = ({ profiles, title, isDarkMode }) => {
         </p>
       </div>
 
-      {/* Grid Layout */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {/* Grid Layout - 2 profiles per row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {currentProfiles?.map((profile) => (
           <div
             key={profile._id}
@@ -212,90 +212,63 @@ const ProfileList = ({ profiles, title, isDarkMode }) => {
                 </div>
               </div>
 
-              {/* Enhanced Action Buttons */}
-              <div className="grid grid-cols-3 gap-3">
+              {/* Modern Action Buttons */}
+              <div className="grid grid-cols-3 gap-2">
                 <button
                   onClick={() => handleChatClick(profile)}
-                  className={`group/btn flex flex-col items-center gap-2 p-4 rounded-2xl transition-all duration-300 hover:scale-110 hover:shadow-xl transform relative overflow-hidden ${
+                  className={`group/btn flex flex-col items-center gap-1 p-2.5 rounded-xl transition-all duration-300 hover:scale-105 transform relative overflow-hidden ${
                     isDarkMode 
-                      ? 'bg-gradient-to-br from-blue-900/40 to-blue-800/60 hover:from-blue-800/60 hover:to-blue-700/80 text-blue-300 hover:text-blue-100 border border-blue-700/30 hover:border-blue-500/50' 
-                      : 'bg-gradient-to-br from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300 text-blue-700 hover:text-blue-800 border border-blue-200/50 hover:border-blue-300/70'
-                  }`}
+                      ? 'bg-blue-900/30 hover:bg-blue-800/50 text-blue-300 hover:text-blue-100 border border-blue-700/30 hover:border-blue-500/50' 
+                      : 'bg-blue-50 hover:bg-blue-100 text-blue-700 hover:text-blue-800 border border-blue-200/50 hover:border-blue-300'
+                  } shadow-sm hover:shadow-md`}
                   title="Send Message"
                 >
-                  {/* Animated background glow */}
-                  <div className={`absolute inset-0 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300 ${
+                  <div className={`p-1.5 rounded-lg transition-all duration-200 group-hover/btn:scale-110 ${
                     isDarkMode 
-                      ? 'bg-gradient-to-br from-blue-600/20 to-transparent' 
-                      : 'bg-gradient-to-br from-blue-300/30 to-transparent'
-                  }`}></div>
-                  
-                  <div className="relative z-10 flex flex-col items-center gap-2">
-                    <div className={`p-2 rounded-full transition-all duration-200 group-hover/btn:scale-110 ${
-                      isDarkMode 
-                        ? 'bg-blue-800/50 group-hover/btn:bg-blue-700/70' 
-                        : 'bg-blue-200/80 group-hover/btn:bg-blue-300/90'
-                    }`}>
-                      <AiOutlineMessage className="text-xl" />
-                    </div>
-                    <span className="text-xs font-semibold tracking-wide">Message</span>
+                      ? 'bg-blue-800/40 group-hover/btn:bg-blue-700/60' 
+                      : 'bg-blue-100 group-hover/btn:bg-blue-200'
+                  }`}>
+                    <AiOutlineMessage className="text-base" />
                   </div>
+                  <span className="text-[10px] font-medium">Message</span>
                 </button>
 
                 <button
                   onClick={() => handleRatingClick(profile)}
-                  className={`group/btn flex flex-col items-center gap-2 p-4 rounded-2xl transition-all duration-300 hover:scale-110 hover:shadow-xl transform relative overflow-hidden ${
+                  className={`group/btn flex flex-col items-center gap-1 p-2.5 rounded-xl transition-all duration-300 hover:scale-105 transform relative overflow-hidden ${
                     isDarkMode 
-                      ? 'bg-gradient-to-br from-yellow-900/40 to-amber-800/60 hover:from-yellow-800/60 hover:to-amber-700/80 text-yellow-300 hover:text-yellow-100 border border-yellow-700/30 hover:border-yellow-500/50' 
-                      : 'bg-gradient-to-br from-yellow-100 to-amber-200 hover:from-yellow-200 hover:to-amber-300 text-yellow-700 hover:text-yellow-800 border border-yellow-200/50 hover:border-yellow-300/70'
-                  }`}
+                      ? 'bg-yellow-900/30 hover:bg-yellow-800/50 text-yellow-300 hover:text-yellow-100 border border-yellow-700/30 hover:border-yellow-500/50' 
+                      : 'bg-yellow-50 hover:bg-yellow-100 text-yellow-700 hover:text-yellow-800 border border-yellow-200/50 hover:border-yellow-300'
+                  } shadow-sm hover:shadow-md`}
                   title="Rate Player"
                 >
-                  {/* Animated background glow */}
-                  <div className={`absolute inset-0 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300 ${
+                  <div className={`p-1.5 rounded-lg transition-all duration-200 group-hover/btn:scale-110 group-hover/btn:rotate-12 ${
                     isDarkMode 
-                      ? 'bg-gradient-to-br from-yellow-600/20 to-transparent' 
-                      : 'bg-gradient-to-br from-yellow-300/30 to-transparent'
-                  }`}></div>
-                  
-                  <div className="relative z-10 flex flex-col items-center gap-2">
-                    <div className={`p-2 rounded-full transition-all duration-200 group-hover/btn:scale-110 group-hover/btn:rotate-12 ${
-                      isDarkMode 
-                        ? 'bg-yellow-800/50 group-hover/btn:bg-yellow-700/70' 
-                        : 'bg-yellow-200/80 group-hover/btn:bg-yellow-300/90'
-                    }`}>
-                      <AiFillStar className="text-xl" />
-                    </div>
-                    <span className="text-xs font-semibold tracking-wide">Rate</span>
+                      ? 'bg-yellow-800/40 group-hover/btn:bg-yellow-700/60' 
+                      : 'bg-yellow-100 group-hover/btn:bg-yellow-200'
+                  }`}>
+                    <AiFillStar className="text-base" />
                   </div>
+                  <span className="text-[10px] font-medium">Rate</span>
                 </button>
 
                 <Link
                   to={`/profiles/${profile._id}`}
-                  className={`group/btn flex flex-col items-center gap-2 p-4 rounded-2xl transition-all duration-300 hover:scale-110 hover:shadow-xl transform relative overflow-hidden no-underline ${
+                  className={`group/btn flex flex-col items-center gap-1 p-2.5 rounded-xl transition-all duration-300 hover:scale-105 transform relative overflow-hidden no-underline ${
                     isDarkMode 
-                      ? 'bg-gradient-to-br from-green-900/40 to-emerald-800/60 hover:from-green-800/60 hover:to-emerald-700/80 text-green-300 hover:text-green-100 border border-green-700/30 hover:border-green-500/50' 
-                      : 'bg-gradient-to-br from-green-100 to-emerald-200 hover:from-green-200 hover:to-emerald-300 text-green-700 hover:text-green-800 border border-green-200/50 hover:border-green-300/70'
-                  }`}
+                      ? 'bg-green-900/30 hover:bg-green-800/50 text-green-300 hover:text-green-100 border border-green-700/30 hover:border-green-500/50' 
+                      : 'bg-green-50 hover:bg-green-100 text-green-700 hover:text-green-800 border border-green-200/50 hover:border-green-300'
+                  } shadow-sm hover:shadow-md`}
                   title="View Profile"
                 >
-                  {/* Animated background glow */}
-                  <div className={`absolute inset-0 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300 ${
+                  <div className={`p-1.5 rounded-lg transition-all duration-200 group-hover/btn:scale-110 ${
                     isDarkMode 
-                      ? 'bg-gradient-to-br from-green-600/20 to-transparent' 
-                      : 'bg-gradient-to-br from-green-300/30 to-transparent'
-                  }`}></div>
-                  
-                  <div className="relative z-10 flex flex-col items-center gap-2">
-                    <div className={`p-2 rounded-full transition-all duration-200 group-hover/btn:scale-110 ${
-                      isDarkMode 
-                        ? 'bg-green-800/50 group-hover/btn:bg-green-700/70' 
-                        : 'bg-green-200/80 group-hover/btn:bg-green-300/90'
-                    }`}>
-                      <RiProfileLine className="text-xl" />
-                    </div>
-                    <span className="text-xs font-semibold tracking-wide">Profile</span>
+                      ? 'bg-green-800/40 group-hover/btn:bg-green-700/60' 
+                      : 'bg-green-100 group-hover/btn:bg-green-200'
+                  }`}>
+                    <RiProfileLine className="text-base" />
                   </div>
+                  <span className="text-[10px] font-medium">Profile</span>
                 </Link>
               </div>
             </div>
