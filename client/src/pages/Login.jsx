@@ -10,11 +10,8 @@ import { ThemeContext } from "../components/ThemeContext";
 import heroImage from "../assets/images/dark-logo.png";
 import heroImageDark from "../assets/images/roster-hub-logo.png";
 
-
-
 const Login = () => {
   const { isDarkMode } = useContext(ThemeContext);
-
   const [formState, setFormState] = useState({ email: "", password: "" });
   const [login] = useMutation(LOGIN_USER);
   const [loginWithGoogle] = useMutation(LOGIN_WITH_GOOGLE);
@@ -78,51 +75,106 @@ const Login = () => {
   };
 
   return (
-    <main className="flex items-center justify-center px-3 sm:px-4 py-2 sm:py-4 lg:py-8 min-h-screen">
-      <div className="flex flex-col lg:flex-row items-center justify-center w-full max-w-7xl gap-4 sm:gap-6 lg:gap-8">
-        {/* Hero Section - Hidden on small screens, shown on large */}
-        <div className="hidden lg:flex lg:w-1/2 flex-col items-center text-center mb-6 lg:mb-0 p-4 lg:p-6">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold pb-2 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-green-600 via-blue-600 to-yellow-400 dark:from-green-300 dark:via-blue-400 dark:to-yellow-200 drop-shadow-lg">
-            Roster Hub
-          </h1>
-          <p className="text-lg sm:text-xl mb-3 font-medium text-gray-700 dark:text-gray-200">
-            Create your team's hub with us
-          </p>
-          <img
-            src={isDarkMode ? heroImage : heroImageDark}
-            alt="Roster Hub Logo"
-            className="w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 animate-bounce mt-4 drop-shadow-xl rounded-full border-4 border-white dark:border-gray-800"
-          />
-          <h4
-              className="text-xs sm:text-sm md:text-base lg:text-xl text-center italic tracking-tight mt-4 sm:mt-6 mb-4 sm:mb-6 text-gray-800 dark:text-white drop-shadow"
-            >
-            Elevate Your Game, On and Off the Field
-          </h4>
+    <main className="relative overflow-hidden min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+      {/* Fully Transparent Animated Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-20 sm:opacity-30 dark:opacity-10 sm:dark:opacity-20"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}
+        ></div>
+        {/* Floating Soccer Ball Animation - More subtle on small screens */}
+        <div className="absolute top-10 left-10 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-r from-green-400 to-blue-500 opacity-30 sm:opacity-60 animate-ping"></div>
+        <div className="absolute top-32 right-16 w-4 h-4 sm:w-6 sm:h-6 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 opacity-25 sm:opacity-50 animate-bounce"></div>
+        <div className="absolute bottom-20 left-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-purple-400 to-pink-500 opacity-20 sm:opacity-40 animate-pulse"></div>
+        <div className="absolute bottom-32 right-10 w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 opacity-30 sm:opacity-60 animate-ping"></div>
+      </div>
+
+      <div className="relative z-10 flex flex-col lg:flex-row items-center justify-center w-full max-w-7xl gap-8 lg:gap-12">
+        {/* Left side: Logo and branding - Hidden on small screens */}
+        <div className="hidden lg:flex lg:w-1/2 flex-col items-center text-center mb-8 lg:mb-0 p-6 lg:p-8">
+          {/* Main Title with Sport Theme - Enhanced blur background */}
+          <div className="relative mb-6 bg-white/20 dark:bg-black/20 backdrop-blur-md rounded-3xl p-4 sm:p-6 border border-white/30 dark:border-white/20">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-blue-700 dark:text-blue-300 drop-shadow-2xl animate-pulse">
+              👤 Welcome Back!
+            </h1>
+            <div className="absolute -top-2 -left-2 w-full h-full bg-gradient-to-r from-blue-600/20 to-green-600/20 blur-xl -z-10 animate-pulse"></div>
+          </div>
+
+          {/* Subtitle with Sport Icons */}
+          <div className="flex items-center gap-2 mb-6 bg-white/20 dark:bg-black/20 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-white/30 dark:border-white/20">
+            <span className="text-2xl animate-bounce">⚽</span>
+            <p className="text-lg sm:text-xl lg:text-xl font-bold text-gray-800 dark:text-gray-100">
+              Ready to dominate the field?
+            </p>
+            <span className="text-2xl animate-bounce delay-150">🏆</span>
+          </div>
+
+          {/* Logo with Enhanced Animation */}
+          <div className="relative mb-8 bg-white/10 dark:bg-black/15 backdrop-blur-sm rounded-full p-4 sm:p-6 border border-white/20 dark:border-white/10">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/30 to-green-400/30 rounded-full blur-2xl animate-pulse"></div>
+              <img
+                src={isDarkMode ? heroImage : heroImageDark}
+                alt="Roster Hub Logo"
+                className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 animate-bounce drop-shadow-2xl rounded-full border-4 border-white dark:border-gray-700 shadow-2xl transform hover:scale-105 transition-transform duration-300"
+              />
+            </div>
+          </div>
+
+          {/* Motivational Quote */}
+          <div className="bg-white/25 dark:bg-gray-800/25 backdrop-blur-md rounded-2xl p-4 sm:p-6 shadow-xl border border-blue-200/50 dark:border-blue-700/30">
+            <h4 className="text-sm sm:text-base lg:text-lg font-bold text-center text-blue-700 dark:text-blue-300 mb-2">
+              🚀 "Great players never stop playing"
+            </h4>
+            <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 text-center italic font-medium">
+              Login and continue your championship journey
+            </p>
+          </div>
         </div>
 
-        {/* Login Form Section - Optimized for small screens */}
-        <div className="w-full lg:w-1/2 flex flex-col items-center px-3 sm:px-4">
-          <div className="bg-gradient-to-br from-green-400 via-blue-400 to-yellow-300 dark:from-green-900 dark:via-blue-900 dark:to-yellow-700 rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl p-4 sm:p-6 lg:p-8 flex flex-col items-center w-full max-w-sm sm:max-w-md lg:max-w-lg mb-4 sm:mb-6 border border-green-200 dark:border-green-800">
-            <h4 className="text-center text-xl sm:text-2xl lg:text-3xl font-extrabold text-gray-900 dark:text-white mb-3 sm:mb-4 lg:mb-6 tracking-tight drop-shadow">
-              Login
-            </h4>
-            {/* Error Alert - show under Login title */}
+        {/* Right side: Login Form - Full width on small screens */}
+        <div className="w-full lg:w-1/2 flex flex-col items-center">
+          <div className="bg-gradient-to-br from-blue-400/90 via-green-400/90 to-yellow-300/90 dark:from-blue-900/90 dark:via-green-900/90 dark:to-yellow-700/90 backdrop-blur-xl rounded-3xl shadow-2xl p-6 sm:p-8 flex flex-col items-center w-full max-w-lg border-2 border-blue-200/50 dark:border-blue-800/50">
+            <div className="flex items-center justify-center w-full mb-6">
+              <h4 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight drop-shadow">
+                👤 Login
+              </h4>
+            </div>
+
+            {/* Error Alert - Enhanced styling */}
             {error && (
-              <div className="w-full flex justify-center mb-4">
-                <div className="bg-gradient-to-r from-red-200 via-red-100 to-red-300 dark:from-red-900 dark:via-red-800 dark:to-red-700 border-l-4 border-red-500 text-red-900 dark:text-red-200 px-4 py-3 rounded-lg shadow font-semibold text-sm flex items-center gap-2 animate-shake">
-                  <svg className="w-5 h-5 text-red-500 dark:text-red-300 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" /></svg>
+              <div className="w-full mb-6">
+                <div className="bg-red-400/20 dark:bg-red-900/30 backdrop-blur-md border border-red-400/50 dark:border-red-700/50 text-red-800 dark:text-red-200 px-4 py-3 rounded-xl shadow-lg font-semibold text-sm flex items-center gap-2 animate-pulse">
+                  <svg
+                    className="w-5 h-5 text-red-600 dark:text-red-400"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 8v4m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"
+                    />
+                  </svg>
                   <span>{error.message}</span>
                 </div>
               </div>
             )}
-            <form onSubmit={handleFormSubmit} className="space-y-4 sm:space-y-6 w-full">
+            <form
+              onSubmit={handleFormSubmit}
+              className="space-y-4 sm:space-y-6 w-full"
+            >
               {/* Email */}
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-xs sm:text-sm font-semibold leading-5 sm:leading-6 text-gray-900 dark:text-white mb-1"
+                  className="block text-sm font-bold leading-6 text-gray-900 dark:text-white mb-2"
                 >
-                  Email address
+                  📧 Email address
                 </label>
                 <input
                   id="email"
@@ -131,18 +183,19 @@ const Login = () => {
                   value={formState.email}
                   onChange={handleChange}
                   required
-                  className="form-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-400 focus:ring focus:ring-blue-200 focus:ring-opacity-50 bg-white dark:bg-gray-900 text-gray-900 dark:text-black placeholder-gray-400 dark:placeholder-gray-500 transition text-sm sm:text-base py-2.5 sm:py-3"
+                  className="w-full px-4 py-3 rounded-xl border border-white/30 bg-white/20 dark:bg-black/20 backdrop-blur-md text-gray-900 dark:text-white placeholder-gray-600 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 transition-all duration-300"
                   placeholder="you@example.com"
                   disabled={isSubmitting}
                 />
               </div>
+
               {/* Password */}
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-xs sm:text-sm font-semibold leading-5 sm:leading-6 text-gray-900 dark:text-white mb-1"
+                  className="block text-sm font-bold leading-6 text-gray-900 dark:text-white mb-2"
                 >
-                  Password
+                  🔒 Password
                 </label>
                 <input
                   id="password"
@@ -151,43 +204,66 @@ const Login = () => {
                   value={formState.password}
                   onChange={handleChange}
                   required
-                  className="form-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-400 focus:ring focus:ring-blue-200 focus:ring-opacity-50 bg-white dark:bg-gray-900 text-gray-900 dark:text-black placeholder-gray-400 dark:placeholder-gray-500 transition text-sm sm:text-base py-2.5 sm:py-3"
+                  className="w-full px-4 py-3 rounded-xl border border-white/30 bg-white/20 dark:bg-black/20 backdrop-blur-md text-gray-900 dark:text-white placeholder-gray-600 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 transition-all duration-300"
                   placeholder="••••••••"
                   disabled={isSubmitting}
                 />
               </div>
-              {/* Primary Submit Button - Full width on mobile, left-aligned on desktop */}
-              <div className="mt-4 sm:mt-6">
+              {/* Submit Button */}
+              <div className="mt-6">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full sm:w-auto bg-yellow-400 dark:bg-yellow-300 text-green-900 dark:text-green-900 font-extrabold py-3 sm:py-2.5 px-8 sm:px-6 rounded-full shadow hover:bg-yellow-300 dark:hover:bg-yellow-200 transition disabled:opacity-50 text-sm sm:text-base min-h-[48px] touch-manipulation"
+                  className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-300 hover:to-orange-400 text-gray-900 font-black py-3 px-6 rounded-full shadow-lg hover:shadow-yellow-400/50 transition-all duration-300 text-base tracking-wide transform hover:scale-105 active:scale-95 border-2 border-white/40 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? "Logging in..." : "Login"}
+                  {isSubmitting ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Logging in...
+                    </span>
+                  ) : (
+                    "⚡ Login"
+                  )}
                 </button>
               </div>
-              
-              {/* Secondary Action Links */}
-              <div className="flex flex-col sm:flex-row justify-between mt-4 sm:mt-3 gap-3 sm:gap-0 text-xs sm:text-sm">
+
+              {/* Navigation Links */}
+              <div className="flex flex-col sm:flex-row justify-between mt-4 gap-3 text-sm bg-white/15 dark:bg-black/25 backdrop-blur-md rounded-xl p-3 border border-white/25">
                 <Link
                   to="/signup"
-                  className="text-blue-700 dark:text-blue-300 hover:underline hover:underline-offset-4 text-center sm:text-left py-3 sm:py-2 min-h-[44px] flex items-center justify-center sm:justify-start font-medium transition-colors hover:text-blue-800 dark:hover:text-blue-200 order-2 sm:order-1"
+                  className="text-blue-700 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-200 font-semibold text-center py-2 transition-colors hover:underline"
                 >
-                  New User? Sign up here
+                  🆕 New User? Sign up here
                 </Link>
                 <Link
                   to="/forgot-password"
-                  className="text-blue-700 hover:underline hover:underline-offset-4 dark:text-blue-300 text-center sm:text-right py-3 sm:py-2 min-h-[44px] flex items-center justify-center sm:justify-end font-medium transition-colors hover:text-blue-800 dark:hover:text-blue-200 order-1 sm:order-2"
+                  className="text-blue-700 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-200 font-semibold text-center py-2 transition-colors hover:underline"
                 >
-                  Forgot Password?
+                  🔑 Forgot Password?
                 </Link>
               </div>
             </form>
+
             {/* Divider */}
-            <div className="my-3 sm:my-4 border-t border-gray-300 dark:border-gray-700 w-full"></div>
+            <div className="my-4 w-full">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-white/30"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-3 bg-white/20 dark:bg-black/30 backdrop-blur-md rounded-lg text-gray-700 dark:text-gray-300 font-medium">
+                    Or continue with
+                  </span>
+                </div>
+              </div>
+            </div>
+
             {/* Google Login */}
             <div className="flex justify-center w-full">
-              <div className="transform scale-90 sm:scale-100">
+              <div className="bg-white/20 dark:bg-black/30 backdrop-blur-md rounded-xl p-2 border border-white/30">
                 <GoogleLogin
                   onSuccess={handleGoogleSuccess}
                   onError={handleGoogleError}
@@ -197,9 +273,9 @@ const Login = () => {
 
             {/* Success Message */}
             {Auth.loggedIn() && (
-              <p className="mt-4 text-center text-green-600">
-                Success! You are now logged in.
-              </p>
+              <div className="mt-4 bg-green-400/20 dark:bg-green-900/30 backdrop-blur-md border border-green-400/50 text-green-800 dark:text-green-200 px-4 py-3 rounded-xl text-center font-semibold">
+                🎉 Success! You are now logged in.
+              </div>
             )}
           </div>
         </div>
@@ -209,9 +285,6 @@ const Login = () => {
 };
 
 export default Login;
-
-
-
 
 //  ############################# THIS CODE BELOW IS REACT 19  #############################
 // import React, { useState, useContext } from "react";
@@ -295,14 +368,14 @@ export default Login;
 //     sm:text-lg     /* from 640px up: larger */
 //     md:text-xl     /* from 768px up: even larger */
 //     lg:text-2xl    /* from 1024px up: biggest */
-//     text-center 
-//     font-extrabold 
-//     tracking-tight 
-//     text-gray-900 
-//     dark:text-white 
-//     mb-6 
-//     bg-gradient-to-r from-green-500 via-blue-500 to-red-500 
-//     bg-clip-text 
+//     text-center
+//     font-extrabold
+//     tracking-tight
+//     text-gray-900
+//     dark:text-white
+//     mb-6
+//     bg-gradient-to-r from-green-500 via-blue-500 to-red-500
+//     bg-clip-text
 //     text-transparent
 //   "
 //           >

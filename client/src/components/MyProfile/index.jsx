@@ -90,7 +90,7 @@ const MyProfile = () => {
               <div className="absolute inset-0 bg-black/10"></div>
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16 animate-pulse"></div>
               <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12 animate-pulse"></div>
-              
+
               <div className="absolute top-6 right-6 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white font-bold text-sm shadow-lg animate-pulse z-10 border border-white/30">
                 ✨ My Profile
               </div>

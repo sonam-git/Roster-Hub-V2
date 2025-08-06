@@ -110,7 +110,7 @@ function AppContent({ sidebarOpen, setSidebarOpen, showTopHeader }) {
         className: `relative overflow-hidden min-h-screen
                    ${isLargeScreen 
                      ? 'lg:before:absolute lg:before:inset-0 lg:before:z-[-1] lg:before:opacity-25 lg:after:absolute lg:after:inset-0 lg:after:bg-gradient-to-br lg:after:from-blue-900/70 lg:after:via-blue-800/50 lg:after:to-slate-900/60 lg:after:z-[-1]'
-                     : 'bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700'
+                     : 'bg-gradient-to-br from-green-600 via-gray-600 to-blue-700'
                    }`,
         style: isLargeScreen ? {
           backgroundImage: `url(${fieldImage})`,
@@ -124,7 +124,7 @@ function AppContent({ sidebarOpen, setSidebarOpen, showTopHeader }) {
         className: `relative overflow-hidden min-h-screen
                    ${isLargeScreen 
                      ? 'lg:before:absolute lg:before:inset-0 lg:before:z-[-1] lg:before:opacity-20 lg:after:absolute lg:after:inset-0 lg:after:bg-gradient-to-br lg:after:from-blue-500/40 lg:after:via-white/70 lg:after:to-white/90 lg:after:z-[-1]'
-                     : 'bg-gradient-to-br from-green-400 via-blue-500 to-purple-600'
+                     : 'bg-gradient-to-br from-green-400 via-blue-500 to-gray-600'
                    }`,
         style: isLargeScreen ? {
           backgroundImage: `url(${fieldImage})`,

@@ -37,7 +37,7 @@ const MainHeader = ({ open, setOpen, showTopHeader, setShowTopHeader }) => {
         >
           <FontAwesomeIcon
             icon={open ? faTimes : faBars}
-            className={`text-lg transition-all duration-300 ${open ? 'rotate-180' : 'rotate-0'}`}
+            className={`text-2xl transition-all duration-300 ${open ? 'rotate-180' : 'rotate-0'}`}
           />
         </button>
 
@@ -96,7 +96,7 @@ const MainHeader = ({ open, setOpen, showTopHeader, setShowTopHeader }) => {
         >
           <FontAwesomeIcon
             icon={isDarkMode ? faSun : faMoon}
-            className="text-lg transition-all duration-300 hover:rotate-0 hover:scale-110 active:scale-95"
+            className="text-2xl transition-all duration-300 hover:rotate-0 hover:scale-110 active:scale-95"
           />
         </button>
       </div>
