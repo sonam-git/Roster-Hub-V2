@@ -37,7 +37,7 @@ const Home = ({ isDarkMode }) => {
   }
 
   return (
-    <main className="container mx-auto w-full px-2 sm:px-4 md:px-6 lg:px-8 xl:max-w-7xl xl:px-16">
+    <main className="mx-auto w-full px-2 sm:px-4 md:px-6 lg:px-8 xl:max-w-7xl xl:px-16">
       {isLoggedIn ? (
         <>
           {/* Welcome & Hero Section */}
