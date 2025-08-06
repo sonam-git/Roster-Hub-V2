@@ -153,7 +153,7 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
 
   return (
     <div
-      className={`w-full p-8 rounded-2xl shadow-2xl border transition-all duration-300
+      className={`w-full p-8 mb-4 rounded-2xl shadow-2xl border transition-all duration-300
       ${isDarkMode 
         ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 border-gray-600 text-gray-100" 
         : "bg-gradient-to-br from-white via-blue-50 to-indigo-50 border-blue-200 text-gray-800"

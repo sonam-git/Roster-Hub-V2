@@ -60,7 +60,7 @@ const Skill = ({ isDarkMode }) => {
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16 animate-pulse"></div>
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12 animate-pulse"></div>
           
-          <div className="relative z-10 text-center">
+          <div className="relative z-1 text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
               <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
                 isDarkMode ? 'bg-blue-600' : 'bg-blue-500'

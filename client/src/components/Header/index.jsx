@@ -84,11 +84,11 @@ const Header = ({ open, setOpen }) => {
     >
       {/* Mobile horizontal auth buttons when not logged in */}
       {!Auth.loggedIn() && open && (
-        <div className="lg:hidden fixed top-20 left-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl py-3 shadow-2xl border-b border-gray-200 dark:border-gray-700 z-[50] mt-4">
-          <div className="flex flex-col gap-2 px-3">
+        <div className="lg:hidden fixed top-32 left-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl py-4 shadow-2xl border-b border-gray-200 dark:border-gray-700 z-[50] mt-4">
+          <div className="flex flex-row gap-1 px-2">
             <Link
               to="/"
-              className={`group relative overflow-hidden px-4 py-3 font-medium rounded-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-98 shadow-md hover:shadow-lg hover:no-underline w-full text-center ${
+              className={`group relative overflow-hidden px-2 py-2 font-medium rounded-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-98 shadow-md hover:shadow-lg hover:no-underline flex-1 text-center ${
                 location.pathname === "/" 
                   ? isDarkMode
                     ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white ring-1 ring-blue-400" 
@@ -98,16 +98,16 @@ const Header = ({ open, setOpen }) => {
                     : "bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-500 hover:to-gray-600 text-white border border-gray-400"
               }`}
             >
-              <span className="relative z-10 flex items-center justify-center gap-3">
-                <span className="text-xl">🏠</span>
-                <span className="text-sm font-semibold">Go to Home</span>
+              <span className="relative z-10 flex items-center justify-center gap-1">
+                <span className="text-sm">🏠</span>
+                <span className="text-xs font-semibold">Home</span>
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </Link>
             
             <Link
               to="/login"
-              className={`group relative overflow-hidden px-4 py-3 font-medium rounded-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-98 shadow-md hover:shadow-lg hover:no-underline w-full text-center ${
+              className={`group relative overflow-hidden px-2 py-2 font-medium rounded-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-98 shadow-md hover:shadow-lg hover:no-underline flex-1 text-center ${
                 location.pathname === "/login" 
                   ? isDarkMode
                     ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white ring-1 ring-orange-400" 
@@ -117,16 +117,16 @@ const Header = ({ open, setOpen }) => {
                     : "bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-500 hover:to-orange-600 text-white border border-orange-400"
               }`}
             >
-              <span className="relative z-10 flex items-center justify-center gap-3">
-                <span className="text-xl">🔐</span>
-                <span className="text-sm font-semibold">Login to Account</span>
+              <span className="relative z-10 flex items-center justify-center gap-1">
+                <span className="text-sm">🔐</span>
+                <span className="text-xs font-semibold">Login</span>
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </Link>
             
             <Link
               to="/signup"
-              className={`group relative overflow-hidden px-4 py-3 font-medium rounded-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-98 shadow-md hover:shadow-lg hover:no-underline w-full text-center ${
+              className={`group relative overflow-hidden px-2 py-2 font-medium rounded-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-98 shadow-md hover:shadow-lg hover:no-underline flex-1 text-center ${
                 location.pathname === "/signup" 
                   ? isDarkMode
                     ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white ring-1 ring-emerald-400" 
@@ -136,9 +136,9 @@ const Header = ({ open, setOpen }) => {
                     : "bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white border border-emerald-400"
               }`}
             >
-              <span className="relative z-10 flex items-center justify-center gap-3">
-                <span className="text-xl">✨</span>
-                <span className="text-sm font-semibold">Create New Account</span>
+              <span className="relative z-10 flex items-center justify-center gap-1">
+                <span className="text-sm">✨</span>
+                <span className="text-xs font-semibold">SignUp</span>
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </Link>

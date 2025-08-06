@@ -252,12 +252,12 @@ const SkillsList = ({
                 </span>
                 <div className="flex items-center gap-2">
                   <SkillReaction
-                    onReact={emoji => apolloClient.mutate({ 
-                      mutation: REACT_TO_SKILL, 
-                      variables: { skillId: skill._id, emoji } 
+                    onReact={emoji => apolloClient.mutate({
+                      mutation: REACT_TO_SKILL,
+                      variables: { skillId: skill._id, emoji }
                     })}
                     isDarkMode={isDarkMode}
-                    skillId={skill._id}
+                    buttonClass={`transition-colors duration-150 px-3 py-1 rounded-full font-semibold shadow focus:outline-none focus:ring-2 focus:ring-yellow-400 hover:bg-yellow-400 hover:text-white border-2 ${isDarkMode ? 'bg-yellow-500 text-white border-yellow-300' : 'bg-yellow-300 text-yellow-900 border-yellow-500'}`}
                   />
                   {isLoggedInUser && (
                     <button

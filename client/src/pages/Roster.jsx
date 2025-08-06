@@ -19,7 +19,7 @@ const { isDarkMode } = React.useContext(ThemeContext);
   }
 
   return (
-    <main className="container mx-auto lg:mt-5"> 
+    <main className="w-full mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 lg:mt-5 max-w-7xl"> 
       <div className="flex-row justify-center">
         <div className="col-12 ">
           {/* Conditional rendering based on authentication status */}

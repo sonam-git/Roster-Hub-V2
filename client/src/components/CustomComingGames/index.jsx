@@ -1,8 +1,10 @@
 import { useQuery, useSubscription } from "@apollo/client";
+import { useState } from "react";
 import { QUERY_GAMES } from "../../utils/queries";
 import { GAME_CREATED_SUBSCRIPTION, GAME_CONFIRMED_SUBSCRIPTION, GAME_UPDATED_SUBSCRIPTION, GAME_COMPLETED_SUBSCRIPTION, GAME_CANCELLED_SUBSCRIPTION, GAME_DELETED_SUBSCRIPTION } from "../../utils/subscription";
 
 export default function CustomComingGames({ isDarkMode }) {
+  const [selectedCategory, setSelectedCategory] = useState("ALL");
   const { loading, error, data } = useQuery(QUERY_GAMES);
 
   // Subscribe to all relevant game events for real-time updates
@@ -28,15 +30,95 @@ export default function CustomComingGames({ isDarkMode }) {
   if (loading) return <div className="text-center mt-4">Loading games...</div>;
   if (error) return <div className="text-center mt-4 text-red-600">Error: {error.message}</div>;
 
-  const games = (data?.games || []).filter(g => g.status === "PENDING" || g.status === "CONFIRMED");
-  if (!games.length) {
+  const allGames = (data?.games || []).filter(g => g.status === "PENDING" || g.status === "CONFIRMED");
+  
+  // Filter games based on selected category
+  const filteredGames = selectedCategory === "ALL" 
+    ? allGames 
+    : allGames.filter(g => g.status === selectedCategory);
+
+  const categories = [
+    { key: "ALL", label: "All Games", icon: "🎯", count: allGames.length },
+    { key: "PENDING", label: "Pending", icon: "⏳", count: allGames.filter(g => g.status === "PENDING").length },
+    { key: "CONFIRMED", label: "Confirmed", icon: "✅", count: allGames.filter(g => g.status === "CONFIRMED").length }
+  ];
+
+  if (!allGames.length) {
     return <div className="text-center italic dark:text-white mt-4">No upcoming games.</div>;
   }
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 mt-6 mb-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {games.map(game => {
+    <div className="w-full  mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 mt-8 mb-6 max-w-7xl">
+      {/* Header Section */}
+      <div className="mb-8">
+        <div className="text-center mb-6">
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-r from-green-500 to-blue-500 flex items-center justify-center shadow-lg">
+              <span className="text-xl text-white">⚽</span>
+            </div>
+            <h2 className={`text-2xl md:text-3xl font-bold ${
+              isDarkMode 
+                ? "bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent" 
+                : "bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent"
+            }`}>
+              🏆 Upcoming Games
+            </h2>
+          </div>
+          <p className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            Stay updated with your scheduled matches and game status
+          </p>
+        </div>
+
+        {/* Category Filter Buttons */}
+        <div className="flex justify-center gap-1 sm:gap-4">
+          {categories.map((category) => (
+            <button
+              key={category.key}
+              onClick={() => setSelectedCategory(category.key)}
+              className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg flex-1 sm:flex-initial justify-center ${
+                selectedCategory === category.key
+                  ? isDarkMode
+                    ? "bg-gradient-to-r from-green-600 to-blue-600 text-white shadow-green-500/30"
+                    : "bg-gradient-to-r from-green-500 to-blue-500 text-white shadow-green-500/30"
+                  : isDarkMode
+                    ? "bg-gray-700 hover:bg-gray-600 text-gray-200 border border-gray-600"
+                    : "bg-white hover:bg-gray-50 text-gray-700 border border-gray-200"
+              }`}
+            >
+              <span className="text-sm sm:text-base">{category.icon}</span>
+              <span className="hidden sm:inline">{category.label}</span>
+              <span className="sm:hidden text-xs">{category.key === "ALL" ? "All" : category.key.charAt(0) + category.key.slice(1).toLowerCase()}</span>
+              {category.count > 0 && (
+                <span className={`px-1.5 sm:px-2 py-0.5 rounded-full text-xs font-bold ${
+                  selectedCategory === category.key
+                    ? "bg-white/20 text-white"
+                    : isDarkMode
+                      ? "bg-gray-600 text-gray-300"
+                      : "bg-gray-100 text-gray-600"
+                }`}>
+                  {category.count}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Games Grid */}
+      {filteredGames.length === 0 ? (
+        <div className="text-center py-12">
+          <div className={`inline-flex items-center gap-3 px-6 py-4 rounded-xl ${
+            isDarkMode ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'
+          }`}>
+            <span className="text-2xl">🔍</span>
+            <p className="font-medium">
+              No {selectedCategory === "ALL" ? "upcoming" : selectedCategory.toLowerCase()} games found.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {filteredGames.map(game => {
           // Format date and time like GameDetails
           let humanDate = game.date;
           let humanTime = game.time;
@@ -181,7 +263,8 @@ export default function CustomComingGames({ isDarkMode }) {
             </div>
           );
         })}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

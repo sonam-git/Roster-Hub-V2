@@ -58,7 +58,7 @@ const Game = () => {
     // Show only GameForm if user clicked "Create Game"
     if (showCreateGame) {
       return (
-        <div className="container mx-auto mt-6 lg:mt-5 p-3">
+        <div className="w-full mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 mt-6 lg:mt-5 max-w-7xl">
           <div className="flex flex-col lg:flex-row lg:space-x-2">
             <div className="w-full">
               <GameForm 
@@ -79,7 +79,7 @@ const Game = () => {
     
     // Show GameList by default when no gameId
     return (
-      <div className="container mx-auto mt-6 lg:mt-5 p-3">
+      <div className="w-full mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 mt-6 lg:mt-5 max-w-7xl">
         <div className="flex flex-col lg:flex-row lg:space-x-2">
           <div className="w-full">
             {/* Game Schedule Header */}
@@ -121,7 +121,7 @@ const Game = () => {
   }
 
   return (
-    <div className="container mx-auto lg:mt-5 pt-4">
+    <div className="w-full mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 lg:mt-5 pt-4 max-w-7xl">
       <div className="flex flex-col lg:flex-row lg:space-x-6">
         <div className=" w-full mb-2">
           <GameDetails gameId={gameId} isDarkMode={isDarkMode} />

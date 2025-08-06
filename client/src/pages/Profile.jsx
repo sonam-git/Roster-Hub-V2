@@ -47,7 +47,7 @@ const Profile = () => {
   }
 
   return (
-    <main className="container mx-auto lg:mt-5">
+    <main className="w-full mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 lg:mt-5 max-w-7xl">
       {profileId ? (
         <UserProfile profile={profile} />
       ) : (

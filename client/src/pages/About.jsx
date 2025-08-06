@@ -3,7 +3,7 @@ import sjImage from "../assets/images/sj.jpg";
 
 export default function About() {
   return (
-    <div className="container mx-auto px-4 sm:px-8 md:px-12 lg:px-20 xl:px-32 py-8 font-sans" style={{ fontFamily: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif' }}>
+    <div className="w-full mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 py-8 max-w-7xl font-sans" style={{ fontFamily: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif' }}>
       <h1 className="text-2xl sm:text-3xl md:text-3xl font-extrabold mb-4 text-green-700 dark:text-green-300 flex items-center gap-3" style={{ fontFamily: 'Poppins, Inter, sans-serif' }}>
         <span role="img" aria-label="soccer">⚽️</span> About Roster Hub
       </h1>

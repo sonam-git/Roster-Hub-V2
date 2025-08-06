@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_ME, QUERY_PROFILES } from "../../utils/queries";
-import { REMOVE_MESSAGE, SEND_MESSAGE ,DELETE_CONVERSATION,} from "../../utils/mutations";
-import { HiMail, HiPlus, HiChatAlt2 } from "react-icons/hi";
-import { FaUsers, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { REMOVE_MESSAGE, SEND_MESSAGE, DELETE_CONVERSATION } from "../../utils/mutations";
+import { HiMail, HiPlus, HiChatAlt2, HiUsers } from "react-icons/hi";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import MessageBox from "../MessageBox";
 import UserListModal from "../UserListModal";
 import MessageCard from "../MessageCard";
@@ -11,8 +11,8 @@ import DeleteMessageModal from "../DeleteMessageModal";
 import { getDateFromObjectId } from "../../utils/MessageUtils";
 
 const MessageList = ({ isLoggedInUser = false, isDarkMode }) => {
-  const { data: userData } = useQuery(QUERY_ME);
-  const { data: profileData } = useQuery(QUERY_PROFILES);
+  const { data: userData, loading: userLoading, error: userError } = useQuery(QUERY_ME);
+  const { data: profileData, loading: profilesLoading, error: profilesError } = useQuery(QUERY_PROFILES);
   const [removeMessage] = useMutation(REMOVE_MESSAGE);
   const [sendMessage] = useMutation(SEND_MESSAGE);
   const [deleteConversation] = useMutation(DELETE_CONVERSATION, {
@@ -52,6 +52,27 @@ const MessageList = ({ isLoggedInUser = false, isDarkMode }) => {
   const [page, setPage] = useState(0);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteMessageId, setDeleteMessageId] = useState(null);
+
+  // Show error state if there's an issue loading essential data
+  if (userError || profilesError) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className={`text-center p-8 rounded-2xl shadow-xl ${
+          isDarkMode ? 'bg-red-900/20 border border-red-700' : 'bg-red-100 border border-red-200'
+        }`}>
+          <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-red-500 flex items-center justify-center">
+            <span className="text-xl text-white">⚠️</span>
+          </div>
+          <p className={`font-semibold mb-2 ${isDarkMode ? 'text-red-200' : 'text-red-800'}`}>
+            Error Loading Messages
+          </p>
+          <p className={`text-sm ${isDarkMode ? 'text-red-300' : 'text-red-600'}`}>
+            {userError?.message || profilesError?.message || 'Something went wrong'}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
 
 const handleSendMessage = async (recipientId) => {
@@ -96,30 +117,47 @@ const handleSendMessage = async (recipientId) => {
     }
   };
 
-  const PER_PAGE = 6; // Reduced for better visual balance
+  const PER_PAGE = 9; // Increased to show more messages with 3 per row layout
   const pageConvs = conversations.slice(page * PER_PAGE, (page + 1) * PER_PAGE);
 
+  // Show loading state when essential data is still loading
+  if (userLoading || profilesLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className={`text-center p-8 rounded-2xl shadow-xl ${
+          isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
+        }`}>
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className={`font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            Loading messages and users...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show empty state when no conversations exist
   if (conversations.length === 0) {
     return (
-      <div className="text-center py-16">
-        <div className={`max-w-md mx-auto p-8 rounded-2xl shadow-xl ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
-          <HiChatAlt2 className={`mx-auto mb-4 text-6xl ${isDarkMode ? 'text-gray-400' : 'text-gray-300'}`} />
-          <h3 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+      <div className="text-center py-20">
+        <div className={`max-w-lg mx-auto p-10 rounded-3xl shadow-2xl ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
+          <HiChatAlt2 className={`mx-auto mb-6 text-7xl ${isDarkMode ? 'text-gray-400' : 'text-gray-300'}`} />
+          <h3 className={`text-3xl font-bold mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
             No Conversations Yet
           </h3>
-          <p className={`mb-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <p className={`mb-8 text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
             Start chatting with your team members!
           </p>
           {isLoggedInUser && (
             <button
               onClick={() => setShowUserListModal(true)}
-              className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 ${
+              className={`px-8 py-4 rounded-xl font-medium text-lg transition-all duration-200 hover:scale-105 ${
                 isDarkMode
                   ? 'bg-blue-600 hover:bg-blue-700 text-white'
                   : 'bg-blue-500 hover:bg-blue-600 text-white'
               }`}
             >
-              <HiPlus className="inline-block w-5 h-5 mr-2" />
+              <HiPlus className="inline-block w-6 h-6 mr-3" />
               Start New Conversation
             </button>
           )}
@@ -130,23 +168,23 @@ const handleSendMessage = async (recipientId) => {
 
   return (
     <>
-      {/* Header Section */}
-      <div className="text-center mb-8">
-        <div className={`inline-flex items-center gap-4 px-6 py-4 rounded-2xl shadow-lg ${
+      {/* Modern Header Section */}
+      <div className="text-center mb-12">
+        <div className={`inline-flex items-center gap-4 px-8 py-5 rounded-3xl shadow-2xl ${
           isDarkMode 
             ? 'bg-gradient-to-r from-gray-800 to-gray-700 border border-gray-600' 
             : 'bg-gradient-to-r from-white to-gray-50 border border-gray-200'
         }`}>
-          <div className="flex items-center gap-3">
-            <div className={`p-3 rounded-full ${
+          <div className="flex items-center gap-4">
+            <div className={`p-4 rounded-full ${
               isDarkMode ? 'bg-blue-900/50' : 'bg-blue-100'
             }`}>
-              <HiMail className={`w-6 h-6 ${
+              <HiMail className={`w-8 h-8 ${
                 isDarkMode ? 'text-blue-400' : 'text-blue-600'
               }`} />
             </div>
             <div className="text-left">
-              <h2 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                 Message Center
               </h2>
               <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -158,7 +196,7 @@ const handleSendMessage = async (recipientId) => {
           {isLoggedInUser && (
             <button
               onClick={() => setShowUserListModal(true)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 hover:scale-105 ${
+              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 ${
                 isDarkMode 
                   ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg' 
                   : 'bg-blue-500 hover:bg-blue-600 text-white shadow-lg'
@@ -171,8 +209,8 @@ const handleSendMessage = async (recipientId) => {
         </div>
       </div>
 
-      {/* Messages Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+      {/* Messages Grid - Full Width with 3 Columns */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12 max-w-none">
         {pageConvs.map((conv) => (
           <MessageCard
             isDarkMode={isDarkMode}
@@ -198,11 +236,11 @@ const handleSendMessage = async (recipientId) => {
 
       {/* Modern Pagination */}
       {Math.ceil(conversations.length / PER_PAGE) > 1 && (
-        <div className="flex items-center justify-center gap-4">
+        <div className="flex items-center justify-center gap-6 mt-12">
           <button
             disabled={page === 0}
             onClick={() => setPage((p) => p - 1)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+            className={`flex items-center gap-3 px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
               page === 0
                 ? isDarkMode 
                   ? 'bg-gray-800 text-gray-500 cursor-not-allowed' 
@@ -213,10 +251,10 @@ const handleSendMessage = async (recipientId) => {
             }`}
           >
             <FaChevronLeft className="text-sm" />
-            Previous
+            <span>Previous</span>
           </button>
 
-          <div className={`px-4 py-2 rounded-xl font-bold ${
+          <div className={`px-6 py-3 rounded-xl font-bold text-lg ${
             isDarkMode 
               ? 'bg-blue-900/50 text-blue-300 border border-blue-700' 
               : 'bg-blue-100 text-blue-700 border border-blue-200'
@@ -227,7 +265,7 @@ const handleSendMessage = async (recipientId) => {
           <button
             disabled={(page + 1) * PER_PAGE >= conversations.length}
             onClick={() => setPage((p) => p + 1)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+            className={`flex items-center gap-3 px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
               (page + 1) * PER_PAGE >= conversations.length
                 ? isDarkMode 
                   ? 'bg-gray-800 text-gray-500 cursor-not-allowed' 
@@ -237,7 +275,7 @@ const handleSendMessage = async (recipientId) => {
                   : 'bg-white hover:bg-gray-50 text-gray-700 hover:scale-105 shadow-lg border border-gray-200'
             }`}
           >
-            Next
+            <span>Next</span>
             <FaChevronRight className="text-sm" />
           </button>
         </div>

@@ -14,18 +14,54 @@ const Message = ({ isDarkMode }) => {
     }
   );
 
-  if (loading) return <div className="text-center mt-4">Loading...</div>;
-  if (error) return <div className="text-center mt-4">Error: {error.message}</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className={`text-center p-8 rounded-2xl shadow-xl ${
+          isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
+        }`}>
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className={`font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            Loading messages...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className={`text-center p-8 rounded-2xl shadow-xl ${
+          isDarkMode ? 'bg-red-900/20 border border-red-700' : 'bg-red-100 border border-red-200'
+        }`}>
+          <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-red-500 flex items-center justify-center">
+            <span className="text-xl text-white">⚠️</span>
+          </div>
+          <p className={`font-semibold mb-2 ${isDarkMode ? 'text-red-200' : 'text-red-800'}`}>
+            Error Loading Messages
+          </p>
+          <p className={`text-sm ${isDarkMode ? 'text-red-300' : 'text-red-600'}`}>
+            {error.message}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const profile = data?.me || data?.profile || {};
 
   return (
-    <div className="container mx-auto px-2 lg:mt-5">
-      <MessageList
-        messages={profile?.messages || []}
-        isLoggedInUser={!profileId}
-        isDarkMode={isDarkMode}
-      />
+    <div className={`min-h-screen transition-colors duration-200 ${
+      isDarkMode ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' : 'bg-gradient-to-br from-blue-50 via-white to-indigo-50'
+    }`}>
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 py-8">
+        <MessageList
+          messages={profile?.messages || []}
+          isLoggedInUser={!profileId}
+          isDarkMode={isDarkMode}
+        />
+      </div>
     </div>
   );
 };
