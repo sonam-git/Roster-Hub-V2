@@ -1,13 +1,10 @@
-import React, { useState, useContext } from "react";
+import React, { useState} from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
-import { ThemeContext } from "../components/ThemeContext";
 import { SEND_RESET_PASSWORD_EMAIL } from "../utils/mutations";
-import heroImage from "../assets/images/dark-logo.png";
-import heroImageDark from "../assets/images/roster-hub-logo.png";
+import sketchImage from "../assets/images/sketch-removebg.png"; 
 
 const ForgotPassword = () => {
-  const { isDarkMode } = useContext(ThemeContext);
   const [email, setEmail] = useState("");
   const [sendEmail, { data, error }] = useMutation(SEND_RESET_PASSWORD_EMAIL);
 
@@ -35,11 +32,16 @@ const ForgotPassword = () => {
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           }}
         ></div>
-        {/* Floating Soccer Ball Animation - More subtle on small screens */}
-        <div className="absolute top-10 left-10 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-r from-green-400 to-blue-500 opacity-30 sm:opacity-60 animate-ping"></div>
-        <div className="absolute top-32 right-16 w-4 h-4 sm:w-6 sm:h-6 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 opacity-25 sm:opacity-50 animate-bounce"></div>
-        <div className="absolute bottom-20 left-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-purple-400 to-pink-500 opacity-20 sm:opacity-40 animate-pulse"></div>
-        <div className="absolute bottom-32 right-10 w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 opacity-30 sm:opacity-60 animate-ping"></div>
+        {/* Enhanced Floating Soccer Ball Animation - More interactive */}
+        <div className="absolute top-10 left-10 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-r from-green-400 to-blue-500 opacity-40 sm:opacity-70 animate-ping hover:opacity-90 hover:scale-150 transition-all duration-300 cursor-pointer"></div>
+        <div className="absolute top-32 right-16 w-4 h-4 sm:w-6 sm:h-6 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 opacity-35 sm:opacity-60 animate-bounce hover:opacity-90 hover:scale-150 transition-all duration-300 cursor-pointer"></div>
+        <div className="absolute bottom-20 left-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-purple-400 to-pink-500 opacity-30 sm:opacity-50 animate-pulse hover:opacity-90 hover:scale-150 transition-all duration-300 cursor-pointer"></div>
+        <div className="absolute bottom-32 right-10 w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 opacity-40 sm:opacity-70 animate-ping hover:opacity-90 hover:scale-150 transition-all duration-300 cursor-pointer"></div>
+        
+        {/* Additional floating particles for more dynamic feel */}
+        <div className="absolute top-1/2 left-1/4 w-2 h-2 rounded-full bg-gradient-to-r from-green-300 to-blue-300 opacity-30 animate-float"></div>
+        <div className="absolute top-1/3 right-1/3 w-1 h-1 rounded-full bg-gradient-to-r from-yellow-300 to-red-300 opacity-40 animate-pulse"></div>
+        <div className="absolute bottom-1/3 right-1/4 w-3 h-3 rounded-full bg-gradient-to-r from-purple-300 to-pink-300 opacity-25 animate-bounce"></div>
       </div>
 
       <div className="relative z-10 flex flex-col lg:flex-row items-center justify-center w-full max-w-7xl gap-8 lg:gap-12">
@@ -61,18 +63,14 @@ const ForgotPassword = () => {
             </p>
             <span className="text-2xl animate-bounce delay-150">⚽</span>
           </div>
-
-          {/* Logo with Enhanced Animation */}
-          <div className="relative mb-8 bg-white/10 dark:bg-black/15 backdrop-blur-sm rounded-full p-4 sm:p-6 border border-white/20 dark:border-white/10">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-green-400/30 to-blue-400/30 rounded-full blur-2xl animate-pulse"></div>
+          {/* Sketch Image */}
+            <div className="relative mb-8 group">
               <img
-                src={isDarkMode ? heroImage : heroImageDark}
-                alt="Roster Hub Logo"
-                className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 animate-bounce drop-shadow-2xl rounded-full border-4 border-white dark:border-gray-700 shadow-2xl transform hover:scale-105 transition-transform duration-300"
+                src={sketchImage}
+                alt="Team Strategy Sketch"
+                className="w-full h-48 sm:h-56 md:h-64 lg:h-72 object-contain rounded-2xl transform transition-all duration-500 group-hover:scale-105 drop-shadow-2xl"
               />
             </div>
-          </div>
 
           {/* Motivational Quote */}
           <div className="bg-white/25 dark:bg-gray-800/25 backdrop-blur-md rounded-2xl p-4 sm:p-6 shadow-xl border border-green-200/50 dark:border-green-700/30">

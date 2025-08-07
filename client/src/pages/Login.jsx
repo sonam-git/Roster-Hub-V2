@@ -1,17 +1,15 @@
 // src/pages/Login.jsx
 
-import React, { useState, useContext } from "react";
+import React, { useState, } from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { GoogleLogin } from "@react-oauth/google";
 import { LOGIN_USER, LOGIN_WITH_GOOGLE } from "../utils/mutations";
 import Auth from "../utils/auth";
-import { ThemeContext } from "../components/ThemeContext";
-import heroImage from "../assets/images/dark-logo.png";
-import heroImageDark from "../assets/images/roster-hub-logo.png";
+import sketchImage from "../assets/images/sketch-removebg.png"; 
 
 const Login = () => {
-  const { isDarkMode } = useContext(ThemeContext);
+  
   const [formState, setFormState] = useState({ email: "", password: "" });
   const [login] = useMutation(LOGIN_USER);
   const [loginWithGoogle] = useMutation(LOGIN_WITH_GOOGLE);
@@ -112,16 +110,14 @@ const Login = () => {
           </div>
 
           {/* Logo with Enhanced Animation */}
-          <div className="relative mb-8 bg-white/10 dark:bg-black/15 backdrop-blur-sm rounded-full p-4 sm:p-6 border border-white/20 dark:border-white/10">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/30 to-green-400/30 rounded-full blur-2xl animate-pulse"></div>
+             {/* Sketch Image */}
+            <div className="relative mb-8 group">
               <img
-                src={isDarkMode ? heroImage : heroImageDark}
-                alt="Roster Hub Logo"
-                className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 animate-bounce drop-shadow-2xl rounded-full border-4 border-white dark:border-gray-700 shadow-2xl transform hover:scale-105 transition-transform duration-300"
+                src={sketchImage}
+                alt="Team Strategy Sketch"
+                className="w-full h-48 sm:h-56 md:h-64 lg:h-72 object-contain rounded-2xl transform transition-all duration-500 group-hover:scale-105 drop-shadow-2xl"
               />
             </div>
-          </div>
 
           {/* Motivational Quote */}
           <div className="bg-white/25 dark:bg-gray-800/25 backdrop-blur-md rounded-2xl p-4 sm:p-6 shadow-xl border border-blue-200/50 dark:border-blue-700/30">

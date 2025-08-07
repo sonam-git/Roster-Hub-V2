@@ -2,6 +2,7 @@ import { useQuery, useSubscription } from "@apollo/client";
 import { useState } from "react";
 import { QUERY_GAMES } from "../../utils/queries";
 import { GAME_CREATED_SUBSCRIPTION, GAME_CONFIRMED_SUBSCRIPTION, GAME_UPDATED_SUBSCRIPTION, GAME_COMPLETED_SUBSCRIPTION, GAME_CANCELLED_SUBSCRIPTION, GAME_DELETED_SUBSCRIPTION } from "../../utils/subscription";
+import { categorizeGamesByStatus, getGameEffectiveStatus } from "../../utils/gameExpiration";
 
 export default function CustomComingGames({ isDarkMode }) {
   const [selectedCategory, setSelectedCategory] = useState("ALL");
@@ -30,20 +31,26 @@ export default function CustomComingGames({ isDarkMode }) {
   if (loading) return <div className="text-center mt-4">Loading games...</div>;
   if (error) return <div className="text-center mt-4 text-red-600">Error: {error.message}</div>;
 
-  const allGames = (data?.games || []).filter(g => g.status === "PENDING" || g.status === "CONFIRMED");
+  // Get all games and categorize them by effective status (including expired)
+  const allGames = data?.games || [];
+  const gameCategories = categorizeGamesByStatus(allGames);
+  
+  // Filter to show only PENDING, CONFIRMED, and EXPIRED games (no COMPLETED or CANCELLED in upcoming view)
+  const upcomingGames = [...gameCategories.PENDING, ...gameCategories.CONFIRMED, ...gameCategories.EXPIRED];
   
   // Filter games based on selected category
   const filteredGames = selectedCategory === "ALL" 
-    ? allGames 
-    : allGames.filter(g => g.status === selectedCategory);
+    ? upcomingGames 
+    : upcomingGames.filter(g => getGameEffectiveStatus(g) === selectedCategory);
 
   const categories = [
-    { key: "ALL", label: "All Games", icon: "🎯", count: allGames.length },
-    { key: "PENDING", label: "Pending", icon: "⏳", count: allGames.filter(g => g.status === "PENDING").length },
-    { key: "CONFIRMED", label: "Confirmed", icon: "✅", count: allGames.filter(g => g.status === "CONFIRMED").length }
+    { key: "ALL", label: "All Games", icon: "🎯", count: upcomingGames.length },
+    { key: "PENDING", label: "Pending", icon: "⏳", count: gameCategories.PENDING.length },
+    { key: "CONFIRMED", label: "Confirmed", icon: "✅", count: gameCategories.CONFIRMED.length },
+    { key: "EXPIRED", label: "Expired", icon: "⌛", count: gameCategories.EXPIRED.length }
   ];
 
-  if (!allGames.length) {
+  if (!upcomingGames.length) {
     return <div className="text-center italic dark:text-white mt-4">No upcoming games.</div>;
   }
 
@@ -119,6 +126,7 @@ export default function CustomComingGames({ isDarkMode }) {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredGames.map(game => {
+          const effectiveStatus = getGameEffectiveStatus(game);
           // Format date and time like GameDetails
           let humanDate = game.date;
           let humanTime = game.time;
@@ -143,8 +151,9 @@ export default function CustomComingGames({ isDarkMode }) {
                   ? 'from-gray-900 via-gray-800 to-gray-700 border-gray-600 text-gray-100 hover:border-gray-500' 
                   : 'from-white via-blue-50 to-indigo-50 border-blue-200 text-gray-800 hover:border-blue-300'}
                 transform hover:scale-[1.02] hover:-translate-y-1
-                ${game.status === 'CONFIRMED' ? (isDarkMode ? 'hover:border-green-400 hover:shadow-green-400/20' : 'hover:border-green-500 hover:shadow-green-500/20') : ''}
-                ${game.status === 'PENDING' ? (isDarkMode ? 'hover:border-orange-400 hover:shadow-orange-400/20' : 'hover:border-orange-500 hover:shadow-orange-500/20') : ''}
+                ${effectiveStatus === 'CONFIRMED' ? (isDarkMode ? 'hover:border-green-400 hover:shadow-green-400/20' : 'hover:border-green-500 hover:shadow-green-500/20') : ''}
+                ${effectiveStatus === 'PENDING' ? (isDarkMode ? 'hover:border-orange-400 hover:shadow-orange-400/20' : 'hover:border-orange-500 hover:shadow-orange-500/20') : ''}
+                ${effectiveStatus === 'EXPIRED' ? (isDarkMode ? 'hover:border-gray-400 hover:shadow-gray-400/20' : 'hover:border-gray-500 hover:shadow-gray-500/20') : ''}
               `}
             >
               {/* Header Section with Opponent and Status */}
@@ -165,13 +174,15 @@ export default function CustomComingGames({ isDarkMode }) {
                   </div>
                   
                   <div className={`px-3 py-2 rounded-full text-xs font-bold shadow-sm
-                    ${game.status === 'CONFIRMED' 
+                    ${effectiveStatus === 'CONFIRMED' 
                       ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200' 
+                      : effectiveStatus === 'EXPIRED'
+                      ? 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-200'
                       : 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-200'}
                   `}>
                     <span className="flex items-center gap-1">
-                      {game.status === 'CONFIRMED' ? '✅ ' : '⏳ '}
-                      {game.status}
+                      {effectiveStatus === 'CONFIRMED' ? '✅ ' : effectiveStatus === 'EXPIRED' ? '⌛ ' : '⏳ '}
+                      {effectiveStatus}
                     </span>
                   </div>
                 </div>
@@ -259,7 +270,11 @@ export default function CustomComingGames({ isDarkMode }) {
               </div>
 
               {/* Decorative accent line */}
-              <div className={`h-1 w-full ${game.status === 'CONFIRMED' ? 'bg-green-500' : 'bg-orange-500'}`}></div>
+              <div className={`h-1 w-full ${
+                effectiveStatus === 'CONFIRMED' ? 'bg-green-500' : 
+                effectiveStatus === 'EXPIRED' ? 'bg-gray-500' : 
+                'bg-orange-500'
+              }`}></div>
             </div>
           );
         })}

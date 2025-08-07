@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { QUERY_GAMES } from "../../utils/queries";
 import { ThemeContext } from "../ThemeContext";
 import Auth from "../../utils/auth";
+import { getGameEffectiveStatus } from "../../utils/gameExpiration";
 
 const MyGames = () => {
   const { isDarkMode } = useContext(ThemeContext);
@@ -43,11 +44,13 @@ const MyGames = () => {
 
   const games = data?.games || [];
   
-  // Filter games where the current user has voted and status is PENDING or CONFIRMED
-  const myVotedGames = games.filter(game => 
-    game.responses.some(response => response.user._id === userId) &&
-    (game.status === 'PENDING' || game.status === 'CONFIRMED')
-  );
+  // Filter games where the current user has voted and effective status is PENDING, CONFIRMED, or EXPIRED
+  // Keep COMPLETED games as they have valuable feedback
+  const myVotedGames = games.filter(game => {
+    if (!game.responses.some(response => response.user._id === userId)) return false;
+    const effectiveStatus = getGameEffectiveStatus(game);
+    return ['PENDING', 'CONFIRMED', 'EXPIRED'].includes(effectiveStatus) || game.status === 'COMPLETED';
+  });
 
   // Filter games based on user's availability vote
   const filteredGames = myVotedGames.filter(game => {
@@ -167,6 +170,7 @@ const MyGames = () => {
           const userResponse = game.responses.find(response => response.user._id === userId);
           const gameDate = new Date(+game.date);
           const humanDate = gameDate.toLocaleDateString();
+          const effectiveStatus = getGameEffectiveStatus(game);
           
           // Format time to 12-hour format
           const [h, m] = game.time.split(":").map(Number);
@@ -184,6 +188,8 @@ const MyGames = () => {
                 return isDarkMode ? 'bg-red-900/30 text-red-200 border-red-700' : 'bg-red-100 text-red-800 border-red-200';
               case 'COMPLETED':
                 return isDarkMode ? 'bg-purple-900/30 text-purple-200 border-purple-700' : 'bg-purple-100 text-purple-800 border-purple-200';
+              case 'EXPIRED':
+                return isDarkMode ? 'bg-gray-900/30 text-gray-200 border-gray-700' : 'bg-gray-100 text-gray-800 border-gray-200';
               default:
                 return isDarkMode ? 'bg-gray-900/30 text-gray-200 border-gray-700' : 'bg-gray-100 text-gray-800 border-gray-200';
             }
@@ -222,8 +228,8 @@ const MyGames = () => {
                     </div>
                   </div>
                   <div className="flex flex-col xs:flex-row gap-1 xs:gap-2">
-                    <div className={`px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-bold border ${getStatusColor(game.status)}`}>
-                      {game.status}
+                    <div className={`px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-bold border ${getStatusColor(effectiveStatus)}`}>
+                      {effectiveStatus}
                     </div>
                     <div className={`px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-bold border flex items-center gap-1 ${getVoteColor(userResponse.isAvailable)}`}>
                       <span>{userResponse.isAvailable ? '✅' : '❌'}</span>

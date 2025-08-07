@@ -11,9 +11,11 @@ import {
   faClock,
   faTrash,
   faCheckCircle,
+  faCalendarTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import { ThemeContext } from "../ThemeContext";
 import Auth from "../../utils/auth";
+import { getStatusCounts, filterGamesByStatus, getGameEffectiveStatus } from "../../utils/gameExpiration";
 
 const GameList = ({ onCreateGame, searchFilters = null }) => {
   const { isDarkMode } = useContext(ThemeContext);
@@ -47,14 +49,8 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
     return <div className="text-center mt-4 text-xl italic dark:text-white">No games scheduled yet.</div>;
   }
 
-  // Calculate counts for each status
-  const statusCounts = {
-    ALL: games.length,
-    PENDING: games.filter(g => g.status === 'PENDING').length,
-    CONFIRMED: games.filter(g => g.status === 'CONFIRMED').length,
-    CANCELLED: games.filter(g => g.status === 'CANCELLED').length,
-    COMPLETED: games.filter(g => g.status === 'COMPLETED').length,
-  };
+  // Calculate counts for each status including expired games
+  const statusCounts = getStatusCounts(games);
 
   // Update STATUS_OPTIONS with counts and modern styling
   const STATUS_OPTIONS = [
@@ -93,6 +89,13 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
       color: 'bg-gradient-to-r from-purple-500 to-purple-600 text-white hover:from-purple-600 hover:to-purple-700 shadow-lg hover:shadow-xl',
       darkColor: 'dark:from-purple-600 dark:to-purple-700 dark:hover:from-purple-700 dark:hover:to-purple-800'
     },
+    { 
+      key: 'EXPIRED', 
+      label: 'Expired', 
+      count: statusCounts.EXPIRED,
+      color: 'bg-gradient-to-r from-gray-600 to-gray-700 text-white hover:from-gray-700 hover:to-gray-800 shadow-lg hover:shadow-xl',
+      darkColor: 'dark:from-gray-700 dark:to-gray-800 dark:hover:from-gray-800 dark:hover:to-gray-900'
+    },
   ];
 
   // Apply search filters if provided
@@ -101,7 +104,7 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
   if (searchFilters) {
     // Apply advanced search filters
     if (searchFilters.status !== 'ALL') {
-      filteredGames = filteredGames.filter(game => game.status === searchFilters.status);
+      filteredGames = filteredGames.filter(game => getGameEffectiveStatus(game) === searchFilters.status);
     }
 
     // Text search (opponent, venue, notes)
@@ -179,8 +182,8 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
           bValue = b.venue.toLowerCase();
           break;
         case 'status':
-          aValue = a.status;
-          bValue = b.status;
+          aValue = getGameEffectiveStatus(a);
+          bValue = getGameEffectiveStatus(b);
           break;
         case 'created':
           aValue = new Date(a.createdAt || a.date);
@@ -197,9 +200,7 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
     });
   } else {
     // Apply basic status filter from status buttons if no search filters
-    filteredGames = statusFilter === 'ALL'
-      ? games
-      : games.filter(g => g.status === statusFilter);
+    filteredGames = filterGamesByStatus(games, statusFilter);
   }
 
   const totalPages = Math.ceil(filteredGames.length / itemsPerPage);
@@ -318,15 +319,20 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
             const humanDate = isNaN(dateObj) ? game.date : dateObj.toLocaleDateString();
             const isCreator = game.creator._id === userId;
 
-            // Determine status display, now including COMPLETED
+            // Determine status display, including expired games
+            const effectiveStatus = getGameEffectiveStatus(game);
             let statusIcon, statusText;
-            if (game.status === "COMPLETED") {
+            
+            if (effectiveStatus === "EXPIRED") {
+              statusIcon = faCalendarTimes ? <FontAwesomeIcon icon={faCalendarTimes} /> : null;
+              statusText = "Expired";
+            } else if (effectiveStatus === "COMPLETED") {
               statusIcon = faCheckCircle ? <FontAwesomeIcon icon={faCheckCircle} /> : null;
               statusText = "Completed";
-            } else if (game.status === "CONFIRMED") {
+            } else if (effectiveStatus === "CONFIRMED") {
               statusIcon = faCheck ? <FontAwesomeIcon icon={faCheck} /> : null;
               statusText = "Confirmed";
-            } else if (game.status === "CANCELLED") {
+            } else if (effectiveStatus === "CANCELLED") {
               statusIcon = faTimes ? <FontAwesomeIcon icon={faTimes} /> : null;
               statusText = "Cancelled";
             } else {
@@ -354,10 +360,11 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
                       ? `from-gray-900 via-gray-800 to-gray-700 border-gray-600 text-gray-100 hover:shadow-2xl hover:border-gray-500`
                       : `from-white via-blue-50 to-indigo-50 border-blue-200 text-gray-800 hover:shadow-2xl hover:border-blue-300`}
                     transform transition-transform hover:scale-[1.02] hover:-translate-y-1
-                    ${game.status === 'PENDING' ? (isDarkMode ? 'hover:border-orange-400 hover:shadow-orange-400/20' : 'hover:border-orange-500 hover:shadow-orange-500/20') : ''}
-                    ${game.status === 'CONFIRMED' ? (isDarkMode ? 'hover:border-green-400 hover:shadow-green-400/20' : 'hover:border-green-500 hover:shadow-green-500/20') : ''}
-                    ${game.status === 'CANCELLED' ? (isDarkMode ? 'hover:border-red-400 hover:shadow-red-400/20' : 'hover:border-red-500 hover:shadow-red-500/20') : ''}
-                    ${game.status === 'COMPLETED' ? (isDarkMode ? 'hover:border-purple-400 hover:shadow-purple-400/20' : 'hover:border-purple-500 hover:shadow-purple-500/20') : ''}
+                    ${effectiveStatus === 'PENDING' ? (isDarkMode ? 'hover:border-orange-400 hover:shadow-orange-400/20' : 'hover:border-orange-500 hover:shadow-orange-500/20') : ''}
+                    ${effectiveStatus === 'CONFIRMED' ? (isDarkMode ? 'hover:border-green-400 hover:shadow-green-400/20' : 'hover:border-green-500 hover:shadow-green-500/20') : ''}
+                    ${effectiveStatus === 'CANCELLED' ? (isDarkMode ? 'hover:border-red-400 hover:shadow-red-400/20' : 'hover:border-red-500 hover:shadow-red-500/20') : ''}
+                    ${effectiveStatus === 'COMPLETED' ? (isDarkMode ? 'hover:border-purple-400 hover:shadow-purple-400/20' : 'hover:border-purple-500 hover:shadow-purple-500/20') : ''}
+                    ${effectiveStatus === 'EXPIRED' ? (isDarkMode ? 'hover:border-gray-400 hover:shadow-gray-400/20' : 'hover:border-gray-500 hover:shadow-gray-500/20') : ''}
                   `}
                 >
                   {/* Header Section with Date/Time and Status */}
@@ -378,10 +385,11 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
                       </div>
                     </div>
                     <div className={`flex items-center space-x-2 mt-3 sm:mt-0 px-3 py-2 rounded-full text-sm font-bold
-                      ${game.status === 'PENDING' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-200' : ''}
-                      ${game.status === 'CONFIRMED' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200' : ''}
-                      ${game.status === 'CANCELLED' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200' : ''}
-                      ${game.status === 'COMPLETED' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-200' : ''}
+                      ${effectiveStatus === 'PENDING' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-200' : ''}
+                      ${effectiveStatus === 'CONFIRMED' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200' : ''}
+                      ${effectiveStatus === 'CANCELLED' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200' : ''}
+                      ${effectiveStatus === 'COMPLETED' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-200' : ''}
+                      ${effectiveStatus === 'EXPIRED' ? 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-200' : ''}
                     `}>
                       <span className="text-lg">{statusIcon}</span>
                       <span>{statusText}</span>

@@ -16,6 +16,7 @@ import logoutImage from "../../assets/images/iconizer-logout.png";
 import loginImage from "../../assets/images/iconizer-login.png";
 import signupImage from "../../assets/images/iconizer-signup.png";
 import calenderImage from "../../assets/images/iconizer-calender.png";
+import scheduleImage from "../../assets/images/soccer-ball.png";
 
 const Header = ({ open, setOpen }) => {
   const navigate = useNavigate();
@@ -68,7 +69,7 @@ const Header = ({ open, setOpen }) => {
           path: "/game-schedule",
           badge: gameBadgeCount,
         },
-        { title: "ScoreBoard", src: skillImage, path: "/scoreboard" },
+        { title: "ScoreBoard", src: scheduleImage, path: "/scoreboard" },
         { title: "Logout", src: logoutImage, action: handleLogout },
       ]
     : [

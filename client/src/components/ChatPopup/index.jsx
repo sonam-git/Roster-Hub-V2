@@ -1,16 +1,14 @@
 // src/components/ChatPopup.jsx
 
-import  { useState, useEffect, useRef, useContext } from 'react';
-import { FaTrash } from 'react-icons/fa';
+import React, { useState, useEffect, useRef, useContext } from 'react';
+import { FaTrash, FaPaperPlane, FaComments, FaChevronDown, FaChevronUp, FaTimes, FaArrowLeft } from 'react-icons/fa';
 import { useQuery, useMutation, useSubscription, useApolloClient } from '@apollo/client';
 import { Link } from 'react-router-dom';
 import { QUERY_PROFILES, GET_CHAT_BY_USER } from '../../utils/queries';
 import { CREATE_CHAT, DELETE_CONVERSATION } from '../../utils/mutations';
 import { CHAT_SUBSCRIPTION } from '../../utils/subscription';
 import ChatMessage from '../ChatMessage';
-import { FaPaperPlane } from 'react-icons/fa';
 import ProfileAvatar from "../../assets/images/profile-avatar.png";
-import chatBox from "../../assets/images/iconizer-message.png";
 import { ThemeContext } from "../ThemeContext";
 import Auth from "../../utils/auth";
 import { formatDate } from '../../utils/MessageUtils';
@@ -94,7 +92,8 @@ const ChatPopup = ({ currentUser }) => {
     fetchPolicy: "network-only", // Always fetch latest data from server
     onCompleted: data => {
       setMessages(data.getChatByUser);
-      setNotifications(prev => ({ ...prev, [selectedUserId]: 0 }));
+      // Don't auto-clear notifications here, let user interaction control it
+      console.log('💬 Chat loaded for user:', selectedUser?.name);
     },
   });
 
@@ -111,6 +110,14 @@ const ChatPopup = ({ currentUser }) => {
       const { from, to } = chatData;
       const isFromMe = from._id === userId;
 
+      console.log('🔔 New message received:', {
+        from: from.name,
+        to: to.name,
+        isFromMe,
+        selectedUserId,
+        chatPopupOpen
+      });
+
       // Only remove optimistic messages if the real message is from the current user
       if (isFromMe) {
         setMessages(prev => prev.filter(m => !m.id?.startsWith('optimistic-')));
@@ -123,14 +130,41 @@ const ChatPopup = ({ currentUser }) => {
          (to._id === selectedUserId && from._id === userId))
       ) {
         setMessages(prev => [...prev, chatData]);
+        // Only clear notification if user is actively viewing the chat and it's open
+        if (!isFromMe && chatPopupOpen) {
+          console.log('🔕 Clearing notification for active chat:', from.name);
+          setNotifications(prev => ({ ...prev, [from._id]: 0 }));
+        }
       }
 
-      // Bump badge for others (only if not from me)
+      // Bump badge for others (if not from me and either no chat selected or different user)
       if (!isFromMe && from._id !== selectedUserId) {
-        setNotifications(prev => ({
-          ...prev,
-          [from._id]: (prev[from._id] || 0) + 1,
-        }));
+        console.log('📈 Adding notification for user:', from.name);
+        setNotifications(prev => {
+          const newNotifications = {
+            ...prev,
+            [from._id]: (prev[from._id] || 0) + 1,
+          };
+          console.log('📱 Updated notifications:', newNotifications);
+          // Force immediate localStorage update for real-time sync
+          localStorage.setItem('chat_notifications', JSON.stringify(newNotifications));
+          return newNotifications;
+        });
+      }
+
+      // Also bump badge if chat is closed (even for current selected user)
+      if (!isFromMe && from._id === selectedUserId && !chatPopupOpen) {
+        console.log('📈 Adding notification for selected user (chat closed):', from.name);
+        setNotifications(prev => {
+          const newNotifications = {
+            ...prev,
+            [from._id]: (prev[from._id] || 0) + 1,
+          };
+          console.log('📱 Updated notifications:', newNotifications);
+          // Force immediate localStorage update for real-time sync
+          localStorage.setItem('chat_notifications', JSON.stringify(newNotifications));
+          return newNotifications;
+        });
       }
 
       // Scroll
@@ -170,13 +204,17 @@ const ChatPopup = ({ currentUser }) => {
       markChatAsSeen({ variables: { userId: selectedUserId } }).then(() => {
         refetchChat({ to: selectedUserId, fetchPolicy: 'network-only' }).then(result => {
           setMessages(result.data.getChatByUser || []);
-          setNotifications(prev => ({ ...prev, [selectedUserId]: 0 }));
+          // Only clear notification if chat is actually open
+          if (chatPopupOpen) {
+            console.log('🔕 Marked as seen, clearing notifications for:', selectedUser?.name);
+            setNotifications(prev => ({ ...prev, [selectedUserId]: 0 }));
+          }
           // Debug: log messages to check seen status after marking as seen
           // console.log('Chat messages after markChatAsSeen:', result.data.getChatByUser);
         });
       });
     }
-  }, [selectedUserId, isLoggedIn, markChatAsSeen, refetchChat]);
+  }, [selectedUserId, isLoggedIn, markChatAsSeen, refetchChat, chatPopupOpen, selectedUser?.name]);
 
   // Refined: Mark as seen only when chat popup is open and user is viewing the conversation
   useEffect(() => {
@@ -204,20 +242,55 @@ const ChatPopup = ({ currentUser }) => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Persist notifications in localStorage
-  useEffect(() => {
-    localStorage.setItem('chat_notifications', JSON.stringify(notifications));
-  }, [notifications]);
-
   // Load notifications from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem('chat_notifications');
     if (saved) {
-      setNotifications(JSON.parse(saved));
+      try {
+        const parsedNotifications = JSON.parse(saved);
+        setNotifications(parsedNotifications);
+        console.log('📱 Loaded notifications from localStorage:', parsedNotifications);
+      } catch (error) {
+        console.error('❌ Error parsing notifications from localStorage:', error);
+        // Reset to empty object if parsing fails
+        setNotifications({});
+        localStorage.removeItem('chat_notifications');
+      }
+    } else {
+      console.log('📱 No saved notifications found, starting fresh');
+      setNotifications({});
     }
   }, []);
 
-  const handleUserSelect = user => setSelectedUser(user);
+  // Persist notifications in localStorage
+  useEffect(() => {
+    if (Object.keys(notifications).length >= 0) { // Changed from > 0 to >= 0 to handle clearing
+      localStorage.setItem('chat_notifications', JSON.stringify(notifications));
+      console.log('💾 Saved notifications to localStorage:', notifications);
+    }
+  }, [notifications]);
+
+  // Clear notifications when chat popup is opened and user is selected
+  useEffect(() => {
+    if (chatPopupOpen && selectedUserId) {
+      console.log('🔕 Chat opened, clearing notifications for selected user:', selectedUser?.name);
+      setNotifications(prev => ({ ...prev, [selectedUserId]: 0 }));
+    }
+  }, [chatPopupOpen, selectedUserId, selectedUser?.name]);
+
+  const handleUserSelect = user => {
+    console.log('👤 User selected:', user.name);
+    setSelectedUser(user);
+    // Only clear notifications when actually opening the chat
+    if (chatPopupOpen) {
+      console.log('🔕 Clearing notifications for:', user.name);
+      setNotifications(prev => {
+        const updated = { ...prev, [user._id]: 0 };
+        localStorage.setItem('chat_notifications', JSON.stringify(updated));
+        return updated;
+      });
+    }
+  };
 
   const handleSend = async () => {
     if (!text.trim()) {
@@ -263,6 +336,26 @@ const ChatPopup = ({ currentUser }) => {
   };
 
   const totalNotifications = Object.values(notifications).reduce((a, b) => a + b, 0);
+  
+  // Testing function to add dummy notification (remove in production)
+  const _addTestNotification = () => {
+    if (profiles.length > 0) {
+      const testUser = profiles.find(p => p._id !== userId);
+      if (testUser) {
+        console.log('🧪 Adding test notification for:', testUser.name);
+        setNotifications(prev => ({
+          ...prev,
+          [testUser._id]: (prev[testUser._id] || 0) + 1,
+        }));
+      }
+    }
+  };
+
+  // Debug logging for notifications
+  useEffect(() => {
+    console.log('📊 Current notifications state:', notifications);
+    console.log('📊 Total notifications:', totalNotifications);
+  }, [notifications, totalNotifications]);
 
   // Find the last message sent by the current user
   const lastFromCurrentUserId = (() => {
@@ -274,126 +367,236 @@ const ChatPopup = ({ currentUser }) => {
   })();
 
   return (
-    <div className="fixed bottom-0 right-2 w-80">
-      {/* Header */}
+    <div className="fixed bottom-0 right-4 w-80 chat-popup-container">
+      {/* Modern Header */}
       <div
-        className={`flex items-center justify-between p-2 rounded-t-lg cursor-pointer ${
-          isDarkMode ? 'bg-gray-700 text-white' : 'bg-green-800 text-white'
+        className={`flex items-center justify-between p-4 rounded-t-2xl cursor-pointer shadow-2xl backdrop-blur-sm border-t border-x transition-all duration-300 hover:shadow-lg chat-popup-header ${
+          isDarkMode 
+            ? 'bg-gradient-to-r from-gray-800 to-gray-900 border-gray-700 text-white' 
+            : 'bg-gradient-to-r from-blue-600 to-blue-700 border-blue-500 text-white'
         }`}
         onClick={() => setChatPopupOpen(o => !o)}
+        onKeyPress={e => e.key === 'Enter' && setChatPopupOpen(o => !o)}
       >
-        <span className="flex items-center gap-2">
-          <img src={chatBox} alt="Chat" className="h-6 w-6 rounded-full" />
-          ChatBox
+        <div className="flex items-center gap-3">
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center relative ${
+            isDarkMode ? 'bg-blue-600' : 'bg-blue-500'
+          } shadow-lg`}>
+            <FaComments className="text-lg text-white" />
+            {/* Primary notification badge */}
+            {totalNotifications > 0 && (
+              <div className="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center shadow-lg animate-pulse border-2 border-white">
+                {totalNotifications > 99 ? '99+' : totalNotifications}
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col">
+            <span className="font-bold text-sm">ChatBox</span>
+            {totalNotifications > 0 && (
+              <span className="text-xs opacity-75">
+                {totalNotifications} new message{totalNotifications > 1 ? 's' : ''}
+              </span>
+            )}
+          </div>
+          {/* Secondary notification badge (for emphasis) */}
           {totalNotifications > 0 && (
-            <span className="bg-red-500 text-white text-xs font-bold rounded-full px-2 ml-2">
-              {totalNotifications}
-            </span>
+            <div className="bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold rounded-full min-w-[24px] h-6 flex items-center justify-center shadow-lg animate-pulse border border-white ml-auto">
+              {totalNotifications > 99 ? '99+' : totalNotifications}
+            </div>
           )}
-        </span>
-        <span>{chatPopupOpen ? '▼' : '▲'}</span>
+        </div>
+        <div className="transition-transform duration-200">
+          {chatPopupOpen ? <FaChevronDown className="text-sm" /> : <FaChevronUp className="text-sm" />}
+        </div>
       </div>
 
-      {/* Body */}
+      {/* Modern Body */}
       {chatPopupOpen && (
-        <div className={`flex flex-col border-x border-b rounded-b-lg overflow-hidden ${
-          isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'
-        }`}>
+        <div className={`flex flex-col border-x border-b rounded-b-2xl overflow-hidden shadow-2xl backdrop-blur-sm animate-chat-popup chat-popup-body ${
+          isDarkMode 
+            ? 'bg-gradient-to-b from-gray-900/95 to-gray-800/95 border-gray-700 text-white' 
+            : 'bg-gradient-to-b from-white/95 to-gray-50/95 border-gray-200 text-gray-800'
+        }`} style={{ height: '500px' }}>
+          
           {/* Not logged in */}
           {!isLoggedIn && (
-            <div className="p-4 text-center">
-              <p>
-                Please <Link className="text-blue-500 underline" to="/login">login</Link> to chat.
+            <div className="flex flex-col items-center justify-center h-full p-6">
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${
+                isDarkMode ? 'bg-gray-700' : 'bg-blue-100'
+              }`}>
+                <FaComments className={`text-2xl ${isDarkMode ? 'text-gray-400' : 'text-blue-500'}`} />
+              </div>
+              <h3 className="font-semibold mb-2">Welcome to ChatBox</h3>
+              <p className="text-center text-sm opacity-75 mb-4">
+                Connect with your teammates and share your thoughts
               </p>
+              <Link 
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors duration-200 shadow-lg"
+                to="/login"
+              >
+                Login to Chat
+              </Link>
             </div>
           )}
 
           {/* Players List */}
           {isLoggedIn && !selectedUserId && (
-            <div className="p-2 overflow-y-auto flex-1">
-              <h3 className="font-semibold mb-2">Players List</h3>
-              {profiles
-                .filter(u => u._id !== userId) // Exclude logged-in user from player list
-                .map(user => (
-                  <div
-                    key={user._id}
-                    role="button"
-                    tabIndex={0}
-                    onClick={e => { e.stopPropagation(); handleUserSelect(user); }}
-                    onKeyPress={e => e.key === 'Enter' && handleUserSelect(user)}
-                    className={`flex items-center p-1 mb-1 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 ${
-                      selectedUserId === user._id ? 'bg-gray-200' : ''
-                    }`}
-                  >
-                    <img
-                      src={user.profilePic || ProfileAvatar}
-                      alt={user.name}
-                      className="w-8 h-8 rounded-full mr-2"
-                    />
-                    <span className="flex-1 flex items-center gap-2">
-                      {user.name}
-                      {user.online ? (
-                        <>
-                          <span title="Online" className="inline-block w-2 h-2 rounded-full bg-green-500 ml-1"></span>
-                          <span className="text-green-600 text-xs font-semibold ml-1">Online</span>
-                        </>
-                      ) : (
-                        <span className="flex items-center gap-1 ml-1">
-                          <span className="inline-block w-2 h-2 rounded-full bg-gray-400" title="Offline"></span>
-                          <span className="text-gray-500 text-xs font-semibold">Offline</span>
-                        </span>
-                      )}
-                    </span>
-                    {notifications[user._id] > 0 && (
-                      <span className="bg-red-500 text-white text-xs font-bold rounded-full px-2">
-                        {notifications[user._id]}
-                      </span>
-                    )}
+            <div className="flex flex-col h-full">
+              <div className={`p-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+                <h3 className="font-bold text-lg flex items-center gap-2">
+                  <FaComments className="text-blue-500" />
+                  Team Members
+                </h3>
+                <p className="text-sm opacity-75 mt-1">Choose someone to start chatting</p>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto p-2 space-y-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+                {profiles
+                  .filter(u => u._id !== userId)
+                  .map(user => (
+                    <div
+                      key={user._id}
+                      role="button"
+                      tabIndex={0}
+                      onClick={e => { e.stopPropagation(); handleUserSelect(user); }}
+                      onKeyPress={e => e.key === 'Enter' && handleUserSelect(user)}
+                      className={`group flex items-center p-3 rounded-xl cursor-pointer transition-all duration-200 hover:scale-[1.02] ${
+                        isDarkMode 
+                          ? 'hover:bg-gray-700/50 border border-gray-700/30 hover:border-gray-600' 
+                          : 'hover:bg-blue-50 border border-gray-100 hover:border-blue-200 hover:shadow-md'
+                      } ${selectedUserId === user._id ? 'bg-blue-100 border-blue-300' : ''}`}
+                    >
+                      <div className="relative">
+                        <img
+                          src={user.profilePic || ProfileAvatar}
+                          alt={user.name}
+                          className="w-12 h-12 rounded-full border-2 border-white shadow-md"
+                        />
+                        <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${
+                          user.online ? 'bg-green-500' : 'bg-gray-400'
+                        }`} />
+                      </div>
+                      
+                      <div className="flex-1 ml-3 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-semibold text-sm truncate">{user.name}</h4>
+                          {notifications[user._id] > 0 && (
+                            <div className="bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center shadow-lg animate-pulse border border-white">
+                              {notifications[user._id] > 9 ? '9+' : notifications[user._id]}
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className={`text-xs font-medium ${
+                            user.online 
+                              ? 'text-green-600 dark:text-green-400' 
+                              : isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                          }`}>
+                            {user.online ? 'Online' : 'Offline'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                
+                {profiles.filter(u => u._id !== userId).length === 0 && (
+                  <div className="text-center py-8">
+                    <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${
+                      isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
+                    }`}>
+                      <FaComments className={`text-2xl ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+                    </div>
+                    <p className="text-sm opacity-75">No team members online</p>
                   </div>
-                ))}
+                )}
+              </div>
             </div>
           )}
 
-          {/* Chat View */}
+          {/* Modern Chat View */}
           {isLoggedIn && selectedUserId && (
-            <div className="flex flex-col flex-1">
-              <div className="flex items-center justify-between p-2 border-b">
-                <div className="flex items-center">
-                  <img
-                    src={selectedUser.profilePic || ProfileAvatar}
-                    alt={selectedUser.name}
-                    className="w-8 h-8 rounded-full mr-2"
-                  />
-                  <span className="font-semibold flex items-center gap-1">
-                    {selectedUser.name}
-                    {selectedUser.online && (
-                      <span title="Online" className="inline-block w-2 h-2 rounded-full bg-green-500 ml-1"></span>
-                    )}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  {/* Delete icon */}
+            <div className="flex flex-col h-full">
+              {/* Chat Header */}
+              <div className={`flex items-center justify-between p-4 border-b backdrop-blur-sm ${
+                isDarkMode ? 'border-gray-700 bg-gray-800/50' : 'border-gray-200 bg-white/50'
+              }`}>
+                <div className="flex items-center gap-3">
                   <button
-                    onClick={() => setShowDeleteModal(true)}
-                    className="text-xl text-gray-500 hover:text-red-600 p-1"
-                    title="Delete conversation"
+                    onClick={() => setSelectedUser(null)}
+                    className={`p-2 rounded-full transition-colors duration-200 ${
+                      isDarkMode 
+                        ? 'hover:bg-gray-700 text-gray-400 hover:text-white' 
+                        : 'hover:bg-gray-100 text-gray-500 hover:text-gray-800'
+                    }`}
+                    title="Back to contacts"
                   >
-                       <FaTrash />
+                    <FaArrowLeft className="text-sm" />
                   </button>
-                  {/* Close icon */}
-                  <button onClick={() => setSelectedUser(null)} className="text-2xl text-red-600 hover:text-red-800 p-1">×</button>
+                  
+                  <div className="relative">
+                    <img
+                      src={selectedUser.profilePic || ProfileAvatar}
+                      alt={selectedUser.name}
+                      className="w-10 h-10 rounded-full border-2 border-white shadow-md"
+                    />
+                    <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${
+                      selectedUser.online ? 'bg-green-500' : 'bg-gray-400'
+                    }`} />
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-bold text-sm">{selectedUser.name}</h4>
+                    <p className={`text-xs ${
+                      selectedUser.online 
+                        ? 'text-green-600 dark:text-green-400' 
+                        : isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>
+                      {selectedUser.online ? 'Online now' : 'Offline'}
+                    </p>
+                  </div>
                 </div>
+                
+                <button
+                  onClick={() => setShowDeleteModal(true)}
+                  className={`p-2 rounded-full transition-colors duration-200 ${
+                    isDarkMode 
+                      ? 'hover:bg-red-900/30 text-gray-400 hover:text-red-400' 
+                      : 'hover:bg-red-50 text-gray-500 hover:text-red-600'
+                  }`}
+                  title="Delete conversation"
+                >
+                  <FaTrash className="text-sm" />
+                </button>
               </div>
+              
+              {/* Messages Area */}
               <div
-                className="flex-1 overflow-y-auto p-2 space-y-2"
-                style={{ maxHeight: 'calc(100vh - 240px)' }}
+                className={`flex-1 overflow-y-auto p-4 space-y-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent ${
+                  isDarkMode ? 'bg-gray-900/30' : 'bg-gray-50/30'
+                }`}
+                style={{ maxHeight: '320px' }}
               >
                 {chatLoading ? (
-                  <p>Loading...</p>
+                  <div className="flex items-center justify-center h-full">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                      <p className="text-sm opacity-75">Loading messages...</p>
+                    </div>
+                  </div>
                 ) : messages.length === 0 ? (
-                  <p className="text-center text-gray-500">
-                    No conversation history yet, start your conversation.
-                  </p>
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center">
+                      <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${
+                        isDarkMode ? 'bg-gray-700' : 'bg-blue-100'
+                      }`}>
+                        <FaComments className={`text-2xl ${isDarkMode ? 'text-gray-400' : 'text-blue-500'}`} />
+                      </div>
+                      <h4 className="font-semibold mb-2">Start the conversation</h4>
+                      <p className="text-sm opacity-75">
+                        Say hello to {selectedUser.name}
+                      </p>
+                    </div>
+                  </div>
                 ) : (
                   // Group messages by date
                   (() => {
@@ -411,7 +614,15 @@ const ChatPopup = ({ currentUser }) => {
                     });
                     return Object.entries(groups).map(([date, msgs]) => (
                       <div key={date}>
-                        <div className="text-center text-xs text-gray-400 my-2">{date}</div>
+                        <div className={`text-center text-xs font-medium py-2 my-4 ${
+                          isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                        }`}>
+                          <span className={`px-3 py-1 rounded-full ${
+                            isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200 shadow-sm'
+                          }`}>
+                            {date}
+                          </span>
+                        </div>
                         {msgs.map((c) => (
                           <ChatMessage
                             key={c.id}
@@ -428,57 +639,103 @@ const ChatPopup = ({ currentUser }) => {
                 )}
                 <div ref={chatEndRef} />
               </div>
+              
+              {/* Modern Input Area */}
+              <div className={`p-4 border-t backdrop-blur-sm ${
+                isDarkMode ? 'border-gray-700 bg-gray-800/50' : 'border-gray-200 bg-white/50'
+              }`}>
+                <div className="flex items-end gap-3">
+                  <div className="flex-1">
+                    <textarea
+                      rows={1}
+                      value={text}
+                      onChange={e => { setText(e.target.value); setErrorMessage(""); }}
+                      onKeyPress={e => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSend();
+                        }
+                      }}
+                      className={`w-full px-4 py-3 rounded-2xl border resize-none transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        isDarkMode 
+                          ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                          : 'bg-white border-gray-200 text-gray-800 placeholder-gray-500'
+                      }`}
+                      placeholder="Type your message..."
+                      disabled={!isLoggedIn || !selectedUserId}
+                      style={{ maxHeight: '120px', minHeight: '48px' }}
+                    />
+                  </div>
+                  <button
+                    onClick={handleSend}
+                    className={`p-3 rounded-2xl transition-all duration-200 shadow-lg hover:shadow-xl ${
+                      isLoggedIn && selectedUserId && text.trim()
+                        ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 transform hover:scale-105"
+                        : isDarkMode 
+                          ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                          : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    }`}
+                    disabled={!isLoggedIn || !selectedUserId || !text.trim()}
+                    title="Send message"
+                  >
+                    <FaPaperPlane className="text-sm" />
+                  </button>
+                </div>
+                
+                {errorMessage && (
+                  <div className="mt-3 p-3 bg-red-100 border border-red-200 text-red-700 rounded-lg text-sm">
+                    {errorMessage}
+                  </div>
+                )}
+              </div>
             </div>
           )}
-
-          {/* Input & Send */}
-          <div className="p-2 border-t flex items-center gap-2">
-            <textarea
-              rows={2}
-              value={text}
-              onChange={e => { setText(e.target.value); setErrorMessage(""); }}
-              className="flex-1 p-2 border rounded-lg resize-none dark:text-black"
-              placeholder={
-                isLoggedIn
-                  ? (selectedUserId ? "Type a message..." : "Select a user to chat")
-                  : "Log in to chat"
-              }
-              disabled={!isLoggedIn || !selectedUserId}
-            />
-            <button
-              onClick={handleSend}
-              className={`p-2 rounded-lg ${
-                isLoggedIn && selectedUserId
-                  ? "bg-blue-600 text-white hover:bg-blue-700"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
-              disabled={!isLoggedIn || !selectedUserId}
-            >
-              <FaPaperPlane />
-            </button>
-          </div>
-
-          {errorMessage && <p className="text-red-500 p-2">{errorMessage}</p>}
         </div>
       )}
-      {/* Delete Confirmation Modal */}
+      
+      {/* Modern Delete Confirmation Modal */}
       {showDeleteModal && (
         <Modal showModal={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
-          <div className="p-4 bg-gray-200 dark:bg-gray-800 rounded-lg">
-            <h2 className="text-lg font-semibold mb-4">Delete Conversation</h2>
-            <p>Are you sure you want to delete conversation history?</p>
-            <div className="flex justify-end gap-2 mt-4">
+          <div className={`p-6 rounded-2xl shadow-2xl backdrop-blur-sm border chat-modal-overlay ${
+            isDarkMode 
+              ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700' 
+              : 'bg-gradient-to-br from-white to-gray-50 border-gray-200'
+          }`}>
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                <FaTrash className="text-red-600 text-lg" />
+              </div>
+              <div>
+                <h2 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                  Delete Conversation
+                </h2>
+                <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                  This action cannot be undone
+                </p>
+              </div>
+            </div>
+            
+            <p className={`mb-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              Are you sure you want to delete your conversation with <strong>{selectedUser?.name}</strong>? 
+              All messages will be permanently removed.
+            </p>
+            
+            <div className="flex justify-end gap-3">
               <button
-                className="bg-gray-400 px-4 py-2 rounded hover:bg-gray-400"
+                className={`px-6 py-2 rounded-xl font-medium transition-all duration-200 hover:scale-105 ${
+                  isDarkMode 
+                    ? 'bg-gray-700 hover:bg-gray-600 text-white' 
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                }`}
                 onClick={() => setShowDeleteModal(false)}
               >
                 Cancel
               </button>
               <button
-                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-2 rounded-xl font-medium transition-all duration-200 hover:from-red-600 hover:to-red-700 hover:scale-105 shadow-lg"
                 onClick={handleDeleteConversation}
               >
-                Yes, Delete
+                Delete Conversation
               </button>
             </div>
           </div>

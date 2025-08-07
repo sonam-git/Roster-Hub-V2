@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 const EMOJIS = [
   { emoji: "👍", label: "Thumbs Up" },
@@ -20,10 +21,39 @@ const EMOJIS = [
 
 export default function SkillReaction({ onReact, isDarkMode }) {
   const [showEmojiModal, setShowEmojiModal] = useState(false);
+  const [isReacting, setIsReacting] = useState(false);
 
-  const handleReact = (emoji) => {
+  // Handle escape key to close modal
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && showEmojiModal) {
+        setShowEmojiModal(false);
+      }
+    };
+
+    if (showEmojiModal) {
+      document.addEventListener('keydown', handleEscape);
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [showEmojiModal]);
+
+  const handleReact = async (emoji) => {
+    setIsReacting(true);
     setShowEmojiModal(false);
-    if (onReact) onReact(emoji);
+    
+    try {
+      if (onReact) await onReact(emoji);
+    } catch (error) {
+      console.error('Error reacting to skill:', error);
+    } finally {
+      setIsReacting(false);
+    }
   };
 
   const closeEmojiModal = () => {
@@ -33,24 +63,36 @@ export default function SkillReaction({ onReact, isDarkMode }) {
   return (
     <div className="relative">
       <button
-        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-105 shadow-sm ${
+        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-105 shadow-sm flex items-center gap-1 ${
           isDarkMode 
             ? 'bg-blue-800/50 hover:bg-blue-700/70 text-blue-300 hover:text-blue-100 border border-blue-700/30' 
             : 'bg-blue-100 hover:bg-blue-200 text-blue-700 hover:text-blue-800 border border-blue-200'
-        }`}
+        } ${isReacting ? 'opacity-70 cursor-not-allowed' : ''}`}
         onClick={() => setShowEmojiModal(true)}
         type="button"
+        disabled={isReacting}
       >
+        {isReacting && (
+          <div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin"></div>
+        )}
         React
       </button>
       
-      {showEmojiModal && (
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4" data-modal="skill-reaction">
+      {showEmojiModal && createPortal(
+        <div 
+          className="fixed inset-0 flex items-center justify-center p-4" 
+          style={{ zIndex: 99999 }}
+          data-modal="skill-reaction"
+          role="dialog"
+          aria-labelledby="reaction-modal-title"
+          aria-modal="true"
+        >
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in"
             onClick={closeEmojiModal}
+            aria-hidden="true"
           />
-          <div className={`relative flex flex-col items-center justify-center p-6 rounded-3xl shadow-2xl border-2 max-w-md w-full animate-modal-pop ${
+          <div className={`relative flex flex-col items-center justify-center p-6 rounded-3xl shadow-2xl border-2 max-w-md w-full mx-auto animate-modal-pop ${
             isDarkMode 
               ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-600' 
               : 'bg-gradient-to-br from-white to-blue-50 border-blue-200'
@@ -61,9 +103,12 @@ export default function SkillReaction({ onReact, isDarkMode }) {
               }`}>
                 <span className="text-xl text-white">😊</span>
               </div>
-              <h3 className={`text-xl font-bold ${
-                isDarkMode ? 'text-white' : 'text-gray-800'
-              }`}>
+              <h3 
+                id="reaction-modal-title"
+                className={`text-xl font-bold ${
+                  isDarkMode ? 'text-white' : 'text-gray-800'
+                }`}
+              >
                 React to Skill
               </h3>
             </div>
@@ -110,7 +155,8 @@ export default function SkillReaction({ onReact, isDarkMode }) {
               ×
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

@@ -46,7 +46,7 @@ const Skill = ({ isDarkMode }) => {
 
   return (
     <main className="w-full px-4 sm:px-6 lg:px-8 mx-auto transition-all duration-300">
-      <div className="max-w-6xl mx-auto space-y-6 mt-6 mb-8">
+      <div className="max-w-6xl mx-auto space-y-6 mt-8 mb-8">
         {/* Modern Header */}
         <div
           className={`relative rounded-3xl shadow-2xl p-6 sm:p-8 border-2 overflow-hidden ${
@@ -61,7 +61,7 @@ const Skill = ({ isDarkMode }) => {
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12 animate-pulse"></div>
           
           <div className="relative z-1 text-center">
-            <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="flex items-center justify-center gap-3 mb-4 ">
               <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
                 isDarkMode ? 'bg-blue-600' : 'bg-blue-500'
               }`}>

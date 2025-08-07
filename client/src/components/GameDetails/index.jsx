@@ -29,6 +29,7 @@ import {
 
 import Auth from "../../utils/auth";
 import { ThemeContext } from "../ThemeContext";
+import { getGameEffectiveStatus } from "../../utils/gameExpiration";
 import VotersList from "../VotersList";
 import GameUpdate from "../GameUpdate";
 import GameComplete from "../GameComplete";
@@ -37,6 +38,7 @@ import GameFeedbackList from "../GameFeedbackList";
 import FormationSection from "../FormationSection";
 import FormationCommentList from "../FormationCommentList";
 import WeatherForecast from "../WeatherForecast";
+import SketchImage from "../../assets/images/sketch-removebg.png";
 
 function RightColumn({
   game,
@@ -681,6 +683,17 @@ export default function GameDetails({ gameId }) {
     return <p className="text-center mt-4 text-red-600">Game not found.</p>;
 
   const game = gameData.game;
+  const effectiveStatus = getGameEffectiveStatus(game);
+  
+  // Debug logging to verify expiration logic
+  console.log('🎮 GameDetails Debug:', {
+    gameId: game._id,
+    originalStatus: game.status,
+    effectiveStatus: effectiveStatus,
+    gameDate: game.date,
+    isExpired: effectiveStatus === 'EXPIRED'
+  });
+  
   const isCreator = game.creator._id === userId;
 
   /* ─── Human-friendly date/time ─────────────────────────────── */
@@ -712,6 +725,8 @@ export default function GameDetails({ gameId }) {
         return `${baseClass} bg-gradient-to-r from-red-400 to-red-600 text-white`;
       case "PENDING":
         return `${baseClass} bg-gradient-to-r from-yellow-400 to-orange-500 text-white`;
+      case "EXPIRED":
+        return `${baseClass} bg-gradient-to-r from-gray-500 to-gray-700 text-white`;
       default:
         return `${baseClass} bg-gradient-to-r from-gray-400 to-gray-600 text-white`;
     }
@@ -719,15 +734,6 @@ export default function GameDetails({ gameId }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-1 sm:p-2 lg:p-4 transition-colors duration-300">
-      {/* Game Schedule Heading */}
-      <div className="max-w-7xl mx-auto mb-4 sm:mb-6">
-        <h1 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center ${
-          isDarkMode ? 'text-white' : 'text-gray-800'
-        } drop-shadow-lg`}>
-          Game Schedule
-        </h1>
-      </div>
-      
       <div className={`max-w-7xl mx-auto transition-all duration-500 ${
         isDarkMode
           ? "bg-gradient-to-br from-gray-800 via-gray-900 to-black shadow-2xl shadow-gray-900/50"
@@ -737,68 +743,191 @@ export default function GameDetails({ gameId }) {
         {/* Header Section - Full Width */}
         <div className={`relative px-1 sm:px-2 md:px-4 lg:px-6 py-3 sm:py-4 md:py-6 lg:py-8 ${
           isDarkMode
-            ? "bg-gradient-to-r from-blue-900 via-purple-900 to-indigo-900"
-            : "bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600"
+            ? "bg-gradient-to-r from-blue-900 via-green-900 to-indigo-900"
+            : "bg-gradient-to-r from-blue-600 via-green-600 to-indigo-600"
         }`}>
           <div className="absolute inset-0 bg-black/20"></div>
           <div className="relative z-1">
-            {/* Enhanced Navigation Header with Status in Center */}
-            <div className="flex justify-center items-center mb-4 sm:mb-6 md:mb-8 gap-2 sm:gap-4">
-              {/* Enhanced Status Section with Animation */}
-              <div className="flex-1 flex flex-col items-center justify-center mx-1 sm:mx-2 md:mx-4 min-w-0">
-                {/* Animated Icons */}
-                <div className="flex items-center gap-2 sm:gap-3 md:gap-4 mb-2 sm:mb-3 md:mb-4">
-                  <div className="animate-bounce">
-                    <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl">🏃‍♂️</span>
+            {/* Modern Three-Column Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 xl:gap-8 mb-4 sm:mb-6 md:mb-8">
+              
+              {/* Left Column - Enhanced Game Info & Status */}
+              <div className="flex flex-col justify-start space-y-4">
+                {/* Header */}
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg">
+                    <span className="text-xl sm:text-2xl">⚽</span>
                   </div>
-                  <div className="animate-spin" style={{ animationDuration: '3s' }}>
-                    <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl">⚽</span>
-                  </div>
-                  <div className="animate-bounce" style={{ animationDelay: '0.1s' }}>
-                    <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl">🏃‍♀️</span>
+                  <div>
+                    <h3 className="text-base sm:text-lg md:text-xl font-bold text-white">
+                      Match Day
+                    </h3>
+                    <p className="text-xs sm:text-sm text-white/70">
+                      Game Details
+                    </p>
                   </div>
                 </div>
-                
-                {/* Game Description */}
-                <div className="text-center">
-                  <div className="text-sm sm:text-base md:text-xl lg:text-2xl font-bold text-white mb-2">
-                    <span className="hidden sm:inline">The Game is Against</span>
-                    <span className="sm:hidden">VS</span>
-                  </div>
-                  <div className="text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-extrabold text-yellow-300 mb-2 sm:mb-3 animate-pulse">
-                    {game.opponent}
+
+                {/* Game Details Container */}
+                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 sm:p-5 border border-white/20 space-y-4">
+                  {/* Opponent Section */}
+                  <div>
+                    <p className="text-xs sm:text-sm text-white/80 mb-1 font-medium">
+                      Playing Against
+                    </p>
+                    <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-yellow-300 leading-tight">
+                      {game.opponent}
+                    </h1>
                   </div>
                   
-                  {/* Status Badge with Enhanced Styling */}
-                  <div className="flex justify-center">
-                    <span className={`${statusBadgeClass(game.status)} text-sm sm:text-base md:text-lg px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full font-bold shadow-xl transform hover:scale-105 transition-all duration-300`}>
-                      {game.status === 'PENDING' && (
+                  {/* Status Badge Section */}
+                  <div className="pt-3 border-t border-white/10">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-indigo-400 to-purple-500 flex items-center justify-center">
+                        <span className="text-lg sm:text-xl">📊</span>
+                      </div>
+                      <div>
+                        <p className="text-xs sm:text-sm text-white/80 font-medium">Current Status</p>
+                      </div>
+                    </div>
+                    <span className={`${statusBadgeClass(effectiveStatus)} text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold shadow-xl transform hover:scale-105 transition-all duration-300 inline-block w-full text-center`}>
+                      {effectiveStatus === 'PENDING' && (
                         <>
                           <span className="hidden sm:inline">⏳ PENDING</span>
                           <span className="sm:hidden">⏳ PENDING</span>
                         </>
                       )}
-                      {game.status === 'CONFIRMED' && (
+                      {effectiveStatus === 'CONFIRMED' && (
                         <>
                           <span className="hidden sm:inline">✅ CONFIRMED</span>
                           <span className="sm:hidden">✅ LIVE</span>
                         </>
                       )}
-                      {game.status === 'COMPLETED' && (
+                      {effectiveStatus === 'COMPLETED' && (
                         <>
                           <span className="hidden sm:inline">🏆 COMPLETED</span>
                           <span className="sm:hidden">🏆 DONE</span>
                         </>
                       )}
-                      {game.status === 'CANCELLED' && (
+                      {effectiveStatus === 'CANCELLED' && (
                         <>
                           <span className="hidden sm:inline">❌ CANCELLED</span>
                           <span className="sm:hidden">❌ CANCELLED</span>
                         </>
                       )}
-                      {!['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'].includes(game.status) && game.status}
+                      {effectiveStatus === 'EXPIRED' && (
+                        <>
+                          <span className="hidden sm:inline">⏰ EXPIRED</span>
+                          <span className="sm:hidden">⏰ EXPIRED</span>
+                        </>
+                      )}
+                      {!['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED', 'EXPIRED'].includes(effectiveStatus) && effectiveStatus}
                     </span>
                   </div>
+                </div>
+              </div>
+
+              {/* Middle Column - Sketch Image with Enhanced Animation */}
+              <div className="flex items-center justify-center">
+                <div className="relative">
+                  {/* Enhanced Background Glow Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/30 via-orange-500/30 to-red-500/30 rounded-full blur-3xl scale-125 animate-pulse"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-purple-500/20 to-pink-500/20 rounded-full blur-2xl scale-110 animate-pulse" style={{ animationDelay: '1s' }}></div>
+                  
+                  {/* Floating Animation Container */}
+                  <div className="relative transform hover:scale-110 transition-all duration-700 ease-out">
+                    <img 
+                      src={SketchImage} 
+                      alt="Football Game Illustration" 
+                      className="w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 lg:w-48 lg:h-48 xl:w-56 xl:h-56 object-contain filter drop-shadow-2xl animate-float"
+                      style={{
+                        animation: 'float 6s ease-in-out infinite'
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Enhanced Decorative Elements */}
+                  <div className="absolute -top-3 -right-3 w-5 h-5 bg-yellow-400 rounded-full animate-ping shadow-lg"></div>
+                  <div className="absolute -bottom-3 -left-3 w-4 h-4 bg-orange-500 rounded-full animate-ping shadow-lg" style={{ animationDelay: '1s' }}></div>
+                  <div className="absolute top-1/2 -left-4 w-3 h-3 bg-red-400 rounded-full animate-ping shadow-lg" style={{ animationDelay: '2s' }}></div>
+                  <div className="absolute top-1/4 -right-2 w-2 h-2 bg-pink-400 rounded-full animate-ping shadow-lg" style={{ animationDelay: '0.5s' }}></div>
+                </div>
+              </div>
+
+              {/* Right Column - Game Notice & Guidelines */}
+              <div className="flex flex-col justify-start space-y-4">
+                {/* Header */}
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-green-400 to-teal-500 flex items-center justify-center shadow-lg">
+                    <span className="text-xl sm:text-2xl">📋</span>
+                  </div>
+                  <div>
+                    <h3 className="text-base sm:text-lg md:text-xl font-bold text-white">
+                      Game Guidelines
+                    </h3>
+                    <p className="text-xs sm:text-sm text-white/70">
+                      Important reminders
+                    </p>
+                  </div>
+                </div>
+
+                {/* Guidelines List */}
+                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 sm:p-5 border border-white/20 space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-xs text-white">ℹ️</span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
+                      <span className="font-medium">Be informed</span> about time, venue, and opponent
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-cyan-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-xs text-white">💧</span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
+                      <span className="font-medium">Stay hydrated</span> before and during the game
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-yellow-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-xs text-white">⏰</span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
+                      <span className="font-medium">Arrive 30 minutes</span> before kick-off
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-xs text-white">🏃</span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
+                      <span className="font-medium">Team warm-up</span> before kick-off
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-xs text-white">🎯</span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
+                      <span className="font-medium">Know the game plan</span> and formation
+                    </p>
+                  </div>
+                </div>
+
+                {/* Additional Info */}
+                <div className="bg-gradient-to-r from-green-500/20 to-teal-500/20 backdrop-blur-sm rounded-xl p-3 border border-green-400/30">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-green-300">✨</span>
+                    <p className="text-xs font-medium text-green-200">Good Luck!</p>
+                  </div>
+                  <p className="text-xs text-green-100/80 leading-relaxed">
+                    Play with passion, respect your teammates and opponents
+                  </p>
                 </div>
               </div>
             </div>

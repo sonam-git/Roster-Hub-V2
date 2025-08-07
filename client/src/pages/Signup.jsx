@@ -1,14 +1,11 @@
-import { useEffect, useState, useTransition, useContext } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
-import { ThemeContext } from "../components/ThemeContext";
 import { ADD_PROFILE } from "../utils/mutations";
 import Auth from "../utils/auth";
-import heroImage from "../assets/images/dark-logo.png";
-import heroImageDark from "../assets/images/roster-hub-logo.png";
+import sketchImage from "../assets/images/sketch-removebg.png"; 
 
 const Signup = () => {
-  const { isDarkMode } = useContext(ThemeContext);
   const [formState, setFormState] = useState({
     name: "",
     email: "",
@@ -86,18 +83,14 @@ const Signup = () => {
             </p>
             <span className="text-2xl animate-bounce delay-150">⚽</span>
           </div>
-
-          {/* Logo with Enhanced Animation */}
-          <div className="relative mb-8 bg-white/10 dark:bg-black/15 backdrop-blur-sm rounded-full p-4 sm:p-6 border border-white/20 dark:border-white/10">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-green-400/30 to-yellow-400/30 rounded-full blur-2xl animate-pulse"></div>
+          {/* Sketch Image */}
+            <div className="relative mb-8 group">
               <img
-                src={isDarkMode ? heroImage : heroImageDark}
-                alt="Roster Hub Logo"
-                className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 animate-bounce drop-shadow-2xl rounded-full border-4 border-white dark:border-gray-700 shadow-2xl transform hover:scale-105 transition-transform duration-300"
+                src={sketchImage}
+                alt="Team Strategy Sketch"
+                className="w-full h-48 sm:h-56 md:h-64 lg:h-72 object-contain rounded-2xl transform transition-all duration-500 group-hover:scale-105 drop-shadow-2xl"
               />
             </div>
-          </div>
 
           {/* Motivational Quote */}
           <div className="bg-white/25 dark:bg-gray-800/25 backdrop-blur-md rounded-2xl p-4 sm:p-6 shadow-xl border border-green-200/50 dark:border-green-700/30">
@@ -112,7 +105,7 @@ const Signup = () => {
 
         {/* Right side: Signup Form - Full width on small screens */}
         <div className="w-full lg:w-1/2 flex flex-col items-center">
-          <div className="bg-gradient-to-br from-green-400/90 via-yellow-400/90 to-orange-300/90 dark:from-green-900/90 dark:via-yellow-900/90 dark:to-orange-700/90 backdrop-blur-xl rounded-3xl shadow-2xl p-6 sm:p-8 flex flex-col items-center w-full max-w-lg border-2 border-green-200/50 dark:border-green-800/50">
+          <div className="bg-gradient-to-br from-blue-400/90 via-green-400/90 to-yellow-300/90 dark:from-blue-900/90 dark:via-green-900/90 dark:to-yellow-700/90 backdrop-blur-xl rounded-3xl shadow-2xl p-6 sm:p-8 flex flex-col items-center w-full max-w-lg border-2 border-blue-200/50 dark:border-blue-800/50">
             <div className="flex items-center justify-center w-full mb-6">
               <h4 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight drop-shadow">
                 🌟 Sign Up

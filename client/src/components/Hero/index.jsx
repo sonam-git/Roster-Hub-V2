@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ThemeContext } from "../ThemeContext";
 import heroImage from "../../assets/images/dark-logo.png";
 import heroImageDark from "../../assets/images/roster-hub-logo.png";
-import sketchImage from "../../assets/images/sketch.jpg";
+import sketchImage from "../../assets/images/sketch-removebg.png";
 
 const Hero = () => {
   const { isDarkMode } = useContext(ThemeContext);
@@ -136,55 +136,13 @@ const Hero = () => {
               </div>
             </div>
 
-            {/* Sketch Image with Advanced Styling */}
+            {/* Sketch Image */}
             <div className="relative mb-8 group">
-              <div className="bg-gradient-to-br from-white/15 to-white/5 dark:from-black/25 dark:to-black/15 backdrop-blur-2xl rounded-3xl p-6 border-2 border-white/40 dark:border-white/30 shadow-2xl transform transition-all duration-700 hover:scale-105 overflow-hidden">
-                
-                {/* Multiple animated background layers */}
-                <div className="absolute inset-0 opacity-40">
-                  <div className="absolute inset-0 bg-gradient-to-r from-green-400/15 via-blue-400/15 to-yellow-400/15 rounded-3xl blur-2xl animate-pulse"></div>
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-400/10 via-pink-400/10 to-orange-400/10 rounded-3xl blur-xl animate-pulse delay-700"></div>
-                </div>
-                
-                <div className="relative">
-                  {/* Enhanced glow effects around image */}
-                  <div className="absolute -inset-4 bg-gradient-to-r from-green-500/20 via-blue-500/20 to-yellow-500/20 rounded-3xl blur-3xl animate-pulse group-hover:opacity-80 transition-opacity duration-500"></div>
-                  <div className="absolute -inset-2 bg-gradient-to-br from-cyan-400/15 via-emerald-400/15 to-amber-400/15 rounded-2xl blur-2xl animate-pulse delay-500"></div>
-                  
-                  {/* Image container with advanced effects */}
-                  <div className="relative overflow-hidden rounded-2xl border-4 border-white/60 dark:border-white/40 shadow-2xl transform transition-all duration-500 group-hover:border-white/80 dark:group-hover:border-white/60">
-                    <img
-                      src={sketchImage}
-                      alt="Team Strategy Sketch"
-                      className="w-full h-48 sm:h-56 md:h-64 lg:h-72 object-cover transform transition-all duration-700 group-hover:scale-110 filter group-hover:brightness-110 group-hover:contrast-110 group-hover:saturate-110"
-                    />
-                    
-                    {/* Animated overlay effects */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500"></div>
-                    <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 via-transparent to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                    
-                    {/* Floating particles over image */}
-                    <div className="absolute top-4 right-4 w-3 h-3 bg-green-400 rounded-full animate-ping opacity-60 group-hover:opacity-90"></div>
-                    <div className="absolute bottom-6 left-6 w-2 h-2 bg-blue-400 rounded-full animate-pulse opacity-70 group-hover:opacity-90"></div>
-                    <div className="absolute top-8 left-8 w-2.5 h-2.5 bg-yellow-400 rounded-full animate-bounce opacity-60 group-hover:opacity-90"></div>
-                    <div className="absolute bottom-8 right-8 w-1.5 h-1.5 bg-purple-400 rounded-full animate-pulse delay-300 opacity-50 group-hover:opacity-80"></div>
-                    
-                    {/* Shimmer effect on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
-                  </div>
-                  
-                  {/* Corner decorative elements */}
-                  <div className="absolute -top-2 -left-2 w-4 h-4 bg-gradient-to-br from-green-400 to-blue-400 rounded-full opacity-60 animate-pulse"></div>
-                  <div className="absolute -top-2 -right-2 w-4 h-4 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-full opacity-60 animate-pulse delay-150"></div>
-                  <div className="absolute -bottom-2 -left-2 w-4 h-4 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full opacity-60 animate-pulse delay-300"></div>
-                  <div className="absolute -bottom-2 -right-2 w-4 h-4 bg-gradient-to-br from-cyan-400 to-emerald-400 rounded-full opacity-60 animate-pulse delay-450"></div>
-                </div>
-                
-                {/* Interactive label */}
-                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-black/40 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-xs font-semibold opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                  ⚡ Strategy in Action
-                </div>
-              </div>
+              <img
+                src={sketchImage}
+                alt="Team Strategy Sketch"
+                className="w-full h-48 sm:h-56 md:h-64 lg:h-72 object-contain rounded-2xl transform transition-all duration-500 group-hover:scale-105 drop-shadow-2xl"
+              />
             </div>
 
             {/* Enhanced Stats with Hover Effects */}

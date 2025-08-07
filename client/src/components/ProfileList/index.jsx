@@ -110,14 +110,14 @@ const ProfileList = ({ profiles, title, isDarkMode }) => {
       </div>
 
       {/* Grid Layout - 2 profiles per row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
         {currentProfiles?.map((profile) => (
           <div
             key={profile._id}
             className={`group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 ${
               isDarkMode 
                 ? 'bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 border border-gray-700' 
-                : 'bg-gradient-to-br from-white via-blue-50 to-purple-50 border border-gray-200'
+                : 'bg-gradient-to-br from-white via-blue-100 to-purple-100 border border-gray-800'
             }`}
           >
             {/* Animated Background Effect */}
@@ -207,7 +207,7 @@ const ProfileList = ({ profiles, title, isDarkMode }) => {
 
               {/* Rating */}
               <div className="flex justify-center mb-6">
-                <div className={`px-3 py-1 rounded-full ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                <div className={`px-3 py-1 rounded-full ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-100'}`}>
                   {renderStars(profile.averageRating)}
                 </div>
               </div>
@@ -219,7 +219,7 @@ const ProfileList = ({ profiles, title, isDarkMode }) => {
                   className={`group/btn flex flex-col items-center gap-1 p-2.5 rounded-xl transition-all duration-300 hover:scale-105 transform relative overflow-hidden ${
                     isDarkMode 
                       ? 'bg-blue-900/30 hover:bg-blue-800/50 text-blue-300 hover:text-blue-100 border border-blue-700/30 hover:border-blue-500/50' 
-                      : 'bg-blue-50 hover:bg-blue-100 text-blue-700 hover:text-blue-800 border border-blue-200/50 hover:border-blue-300'
+                      : 'bg-blue-50 hover:bg-blue-100 text-blue-700 hover:text-blue-800 border border-blue-600 hover:border-blue-300 '
                   } shadow-sm hover:shadow-md`}
                   title="Send Message"
                 >
@@ -238,7 +238,7 @@ const ProfileList = ({ profiles, title, isDarkMode }) => {
                   className={`group/btn flex flex-col items-center gap-1 p-2.5 rounded-xl transition-all duration-300 hover:scale-105 transform relative overflow-hidden ${
                     isDarkMode 
                       ? 'bg-yellow-900/30 hover:bg-yellow-800/50 text-yellow-300 hover:text-yellow-100 border border-yellow-700/30 hover:border-yellow-500/50' 
-                      : 'bg-yellow-50 hover:bg-yellow-100 text-yellow-700 hover:text-yellow-800 border border-yellow-200/50 hover:border-yellow-300'
+                      : 'bg-yellow-50 hover:bg-yellow-100 text-yellow-700 hover:text-yellow-800 border hover:border-yellow-300 border-yellow-600'
                   } shadow-sm hover:shadow-md`}
                   title="Rate Player"
                 >
@@ -254,10 +254,10 @@ const ProfileList = ({ profiles, title, isDarkMode }) => {
 
                 <Link
                   to={`/profiles/${profile._id}`}
-                  className={`group/btn flex flex-col items-center gap-1 p-2.5 rounded-xl transition-all duration-300 hover:scale-105 transform relative overflow-hidden no-underline ${
+                  className={`group/btn flex flex-col items-center gap-1 p-2.5 rounded-xl transition-all duration-300 hover:scale-105 transform relative overflow-hidden hover:no-underline ${
                     isDarkMode 
                       ? 'bg-green-900/30 hover:bg-green-800/50 text-green-300 hover:text-green-100 border border-green-700/30 hover:border-green-500/50' 
-                      : 'bg-green-50 hover:bg-green-100 text-green-700 hover:text-green-800 border border-green-200/50 hover:border-green-300'
+                      : 'bg-green-50 hover:bg-green-100 text-green-700 hover:text-green-800 border border-green-600 hover:border-green-300'
                   } shadow-sm hover:shadow-md`}
                   title="View Profile"
                 >

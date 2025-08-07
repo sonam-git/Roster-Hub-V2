@@ -150,7 +150,7 @@ export default function AllSkillsList({ isDarkMode }) {
                       <span 
                         key={i} 
                         title={r.user?.name || ""} 
-                        className="text-2xl bg-white rounded-full shadow-sm border-2 border-white"
+                        className="text-2xl bg-white rounded-full shadow-sm border-2 border-white mr-1"
                       >
                         {r.emoji}
                       </span>
