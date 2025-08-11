@@ -734,6 +734,15 @@ export default function GameDetails({ gameId }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-1 sm:p-2 lg:p-4 transition-colors duration-300">
+      {/* Game Schedule Heading */}
+      <div className="max-w-7xl mx-auto mb-4 sm:mb-6">
+        <h1 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center ${
+          isDarkMode ? 'text-white' : 'text-gray-800'
+        } drop-shadow-lg`}>
+          Game Schedule
+        </h1>
+      </div>
+      
       <div className={`max-w-7xl mx-auto transition-all duration-500 ${
         isDarkMode
           ? "bg-gradient-to-br from-gray-800 via-gray-900 to-black shadow-2xl shadow-gray-900/50"
@@ -743,8 +752,8 @@ export default function GameDetails({ gameId }) {
         {/* Header Section - Full Width */}
         <div className={`relative px-1 sm:px-2 md:px-4 lg:px-6 py-3 sm:py-4 md:py-6 lg:py-8 ${
           isDarkMode
-            ? "bg-gradient-to-r from-blue-900 via-green-900 to-indigo-900"
-            : "bg-gradient-to-r from-blue-600 via-green-600 to-indigo-600"
+            ? "bg-gradient-to-r from-blue-900 via-purple-900 to-indigo-900"
+            : "bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600"
         }`}>
           <div className="absolute inset-0 bg-black/20"></div>
           <div className="relative z-1">
@@ -752,26 +761,25 @@ export default function GameDetails({ gameId }) {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 xl:gap-8 mb-4 sm:mb-6 md:mb-8">
               
               {/* Left Column - Enhanced Game Info & Status */}
-              <div className="flex flex-col justify-start space-y-4">
-                {/* Header */}
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg">
-                    <span className="text-xl sm:text-2xl">⚽</span>
+              <div className="flex flex-col justify-center space-y-4 sm:space-y-5">
+                {/* Game Header with Enhanced Styling */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg">
+                      <span className="text-xl sm:text-2xl">⚽</span>
+                    </div>
+                    <div>
+                      <h2 className="text-base sm:text-lg md:text-xl font-bold text-white">
+                        Football Match
+                      </h2>
+                      <p className="text-xs sm:text-sm text-white/70">
+                        Game Details
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-base sm:text-lg md:text-xl font-bold text-white">
-                      Match Day
-                    </h3>
-                    <p className="text-xs sm:text-sm text-white/70">
-                      Game Details
-                    </p>
-                  </div>
-                </div>
-
-                {/* Game Details Container */}
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 sm:p-5 border border-white/20 space-y-4">
+                  
                   {/* Opponent Section */}
-                  <div>
+                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
                     <p className="text-xs sm:text-sm text-white/80 mb-1 font-medium">
                       Playing Against
                     </p>
@@ -779,50 +787,75 @@ export default function GameDetails({ gameId }) {
                       {game.opponent}
                     </h1>
                   </div>
-                  
-                  {/* Status Badge Section */}
-                  <div className="pt-3 border-t border-white/10">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-indigo-400 to-purple-500 flex items-center justify-center">
-                        <span className="text-lg sm:text-xl">📊</span>
-                      </div>
-                      <div>
-                        <p className="text-xs sm:text-sm text-white/80 font-medium">Current Status</p>
-                      </div>
+                </div>
+                
+                {/* Status Badge Section */}
+                <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-indigo-400 to-purple-500 flex items-center justify-center">
+                      <span className="text-lg sm:text-xl">📊</span>
                     </div>
-                    <span className={`${statusBadgeClass(effectiveStatus)} text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold shadow-xl transform hover:scale-105 transition-all duration-300 inline-block w-full text-center`}>
-                      {effectiveStatus === 'PENDING' && (
-                        <>
-                          <span className="hidden sm:inline">⏳ PENDING</span>
-                          <span className="sm:hidden">⏳ PENDING</span>
-                        </>
-                      )}
-                      {effectiveStatus === 'CONFIRMED' && (
-                        <>
-                          <span className="hidden sm:inline">✅ CONFIRMED</span>
-                          <span className="sm:hidden">✅ LIVE</span>
-                        </>
-                      )}
-                      {effectiveStatus === 'COMPLETED' && (
-                        <>
-                          <span className="hidden sm:inline">🏆 COMPLETED</span>
-                          <span className="sm:hidden">🏆 DONE</span>
-                        </>
-                      )}
-                      {effectiveStatus === 'CANCELLED' && (
-                        <>
-                          <span className="hidden sm:inline">❌ CANCELLED</span>
-                          <span className="sm:hidden">❌ CANCELLED</span>
-                        </>
-                      )}
-                      {effectiveStatus === 'EXPIRED' && (
-                        <>
-                          <span className="hidden sm:inline">⏰ EXPIRED</span>
-                          <span className="sm:hidden">⏰ EXPIRED</span>
-                        </>
-                      )}
-                      {!['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED', 'EXPIRED'].includes(effectiveStatus) && effectiveStatus}
-                    </span>
+                    <div>
+                      <p className="text-xs sm:text-sm text-white/80 font-medium">Current Status</p>
+                    </div>
+                  </div>
+                  <span className={`${statusBadgeClass(effectiveStatus)} text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold shadow-xl transform hover:scale-105 transition-all duration-300 inline-block w-full text-center`}>
+                    {effectiveStatus === 'PENDING' && (
+                      <>
+                        <span className="hidden sm:inline">⏳ PENDING</span>
+                        <span className="sm:hidden">⏳ PENDING</span>
+                      </>
+                    )}
+                    {effectiveStatus === 'CONFIRMED' && (
+                      <>
+                        <span className="hidden sm:inline">✅ CONFIRMED</span>
+                        <span className="sm:hidden">✅ LIVE</span>
+                      </>
+                    )}
+                    {effectiveStatus === 'COMPLETED' && (
+                      <>
+                        <span className="hidden sm:inline">🏆 COMPLETED</span>
+                        <span className="sm:hidden">🏆 DONE</span>
+                      </>
+                    )}
+                    {effectiveStatus === 'CANCELLED' && (
+                      <>
+                        <span className="hidden sm:inline">❌ CANCELLED</span>
+                        <span className="sm:hidden">❌ CANCELLED</span>
+                      </>
+                    )}
+                    {effectiveStatus === 'EXPIRED' && (
+                      <>
+                        <span className="hidden sm:inline">⏰ EXPIRED</span>
+                        <span className="sm:hidden">⏰ EXPIRED</span>
+                      </>
+                    )}
+                    {!['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED', 'EXPIRED'].includes(effectiveStatus) && effectiveStatus}
+                  </span>
+                </div>
+
+                {/* Quick Info Grid */}
+                <div className="grid grid-cols-1 gap-2">
+                  <div className="flex items-center gap-3 bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10">
+                    <span className="text-xl">📅</span>
+                    <div>
+                      <p className="text-xs text-white/70">Date</p>
+                      <p className="text-sm sm:text-base font-medium text-white">{humanDate}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10">
+                    <span className="text-xl">⏰</span>
+                    <div>
+                      <p className="text-xs text-white/70">Kick-off</p>
+                      <p className="text-sm sm:text-base font-medium text-white">{humanTime}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10">
+                    <span className="text-xl">📍</span>
+                    <div>
+                      <p className="text-xs text-white/70">Venue</p>
+                      <p className="text-sm sm:text-base font-medium text-white">{game.venue}</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -855,7 +888,7 @@ export default function GameDetails({ gameId }) {
               </div>
 
               {/* Right Column - Game Notice & Guidelines */}
-              <div className="flex flex-col justify-start space-y-4">
+              <div className="flex flex-col justify-center space-y-4">
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-green-400 to-teal-500 flex items-center justify-center shadow-lg">

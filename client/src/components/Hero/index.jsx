@@ -108,67 +108,93 @@ const Hero = () => {
           `}
         >
             
-            {/* Main Title with Modern Gradient and Particle Effect */}
+            {/* Enhanced Main Title with Premium Effects */}
             <div className="relative mb-8 group">
-              <div className="bg-gradient-to-br from-white/25 via-white/15 to-white/10 dark:from-black/35 dark:via-black/25 dark:to-black/15 backdrop-blur-xl rounded-3xl p-8 border-2 border-white/40 dark:border-white/25 shadow-2xl transform transition-all duration-500 hover:scale-105 overflow-hidden">
-                <div className="flex items-center justify-center gap-4 mb-4">
+              <div className="bg-gradient-to-br from-white/30 via-white/20 to-white/15 dark:from-black/40 dark:via-black/30 dark:to-black/20 backdrop-blur-2xl rounded-3xl p-6 sm:p-8 md:p-10 border-2 border-white/50 dark:border-white/30 shadow-2xl transform transition-all duration-700 hover:scale-105 overflow-hidden">
+                <div className="flex items-center justify-center gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6">
                   <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-green-400/30 via-blue-400/30 to-yellow-400/30 rounded-full blur-xl animate-pulse"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/40 via-blue-400/40 to-purple-400/40 rounded-full blur-2xl animate-pulse"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/30 via-orange-400/30 to-red-400/30 rounded-full blur-xl animate-pulse delay-1000"></div>
                     <img
                       src={isDarkMode ? heroImage : heroImageDark}
                       alt="Roster Hub Logo"
-                      className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 animate-left-right drop-shadow-2xl rounded-full border-2 border-white/50 dark:border-gray-700/50 shadow-xl transform group-hover:scale-110 transition-all duration-500"
+                      className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 animate-left-right drop-shadow-2xl rounded-full border-3 border-white/60 dark:border-gray-600/60 shadow-2xl transform group-hover:scale-110 transition-all duration-700"
                     />
                   </div>
-                  <h1 className="text-3xl sm:text-5xl lg:text-5xl font-black tracking-tight bg-gradient-to-r from-green-400 via-blue-500 to-yellow-400 bg-clip-text text-transparent drop-shadow-2xl group-hover:animate-pulse">
-                    ROSTER HUB
-                  </h1>
+                  <div className="text-center">
+                    <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black tracking-tight text-gray-900 dark:text-white drop-shadow-2xl group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors duration-500 leading-tight">
+                      ROSTER HUB
+                    </h1>
+                  </div>
                 </div>
-                <p className="text-lg sm:text-xl text-gray-800/90 dark:text-white/90 font-semibold group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                  Your Ultimate Team Management Platform
-                </p>
-                {/* Enhanced Glow effect */}
-                <div className="absolute -inset-2 bg-gradient-to-r from-green-600/25 via-blue-600/25 to-yellow-600/25 blur-2xl -z-10 animate-pulse group-hover:opacity-90 transition-opacity"></div>
-                {/* Particle effect */}
-                <div className="absolute top-4 right-4 w-2 h-2 bg-green-400 rounded-full animate-ping opacity-60"></div>
-                <div className="absolute bottom-6 left-6 w-1 h-1 bg-blue-400 rounded-full animate-pulse opacity-80"></div>
-                <div className="absolute top-8 left-8 w-1.5 h-1.5 bg-yellow-400 rounded-full animate-bounce opacity-70"></div>
+                <div className="text-center space-y-2 sm:space-y-3">
+                  <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-800 dark:text-gray-200 italic group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors duration-500">
+                    Your Ultimate Team Management Platform
+                  </p>
+                  <div className="flex items-center justify-center gap-1 sm:gap-2 md:gap-3">
+                    <span className="animate-bounce text-base sm:text-lg md:text-xl lg:text-2xl">⚽</span>
+                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-700 dark:text-gray-300 font-semibold">
+                      Where Champions Are Made
+                    </p>
+                    <span className="animate-bounce delay-300 text-base sm:text-lg md:text-xl lg:text-2xl">🏆</span>
+                  </div>
+                </div>
+                {/* Enhanced Multi-layered Glow Effects */}
+                <div className="absolute -inset-3 bg-gradient-to-r from-emerald-600/30 via-blue-600/30 to-purple-600/30 blur-3xl -z-10 animate-pulse group-hover:opacity-90 transition-opacity duration-700"></div>
+                <div className="absolute -inset-2 bg-gradient-to-r from-yellow-500/20 via-orange-500/20 to-red-500/20 blur-2xl -z-10 animate-pulse delay-500 group-hover:opacity-80 transition-opacity duration-700"></div>
+                {/* Enhanced Particle Effects */}
+                <div className="absolute top-4 right-4 w-3 h-3 bg-emerald-400 rounded-full animate-ping opacity-70"></div>
+                <div className="absolute bottom-6 left-6 w-2 h-2 bg-blue-400 rounded-full animate-pulse opacity-80"></div>
+                <div className="absolute top-8 left-8 w-2.5 h-2.5 bg-purple-400 rounded-full animate-bounce opacity-75"></div>
+                <div className="absolute bottom-4 right-8 w-1.5 h-1.5 bg-yellow-400 rounded-full animate-ping delay-700 opacity-80"></div>
               </div>
             </div>
 
-            {/* Sketch Image */}
+            {/* Enhanced Sketch Image with Transparent Background */}
             <div className="relative mb-8 group">
-              <img
-                src={sketchImage}
-                alt="Team Strategy Sketch"
-                className="w-full h-48 sm:h-56 md:h-64 lg:h-72 object-contain rounded-2xl transform transition-all duration-500 group-hover:scale-105 drop-shadow-2xl"
-              />
-            </div>
-
-            {/* Enhanced Stats with Hover Effects */}
-            <div className="flex justify-center gap-4 sm:gap-8 mb-8">
-              <div className="group text-center bg-gradient-to-br from-white/20 to-white/10 dark:from-black/30 dark:to-black/20 backdrop-blur-md rounded-xl p-4 border border-white/30 hover:border-green-400/50 transition-all duration-300 hover:scale-110 transform cursor-pointer">
-                <div className="text-2xl font-black text-green-400 group-hover:text-green-300 mb-1 group-hover:animate-bounce transition-colors">10K+</div>
-                <div className="text-xs text-gray-700/90 dark:text-white/80 group-hover:text-gray-800 dark:group-hover:text-white/90 font-medium transition-colors">Players</div>
-              </div>
-              <div className="group text-center bg-gradient-to-br from-white/20 to-white/10 dark:from-black/30 dark:to-black/20 backdrop-blur-md rounded-xl p-4 border border-white/30 hover:border-blue-400/50 transition-all duration-300 hover:scale-110 transform cursor-pointer">
-                <div className="text-2xl font-black text-blue-400 group-hover:text-blue-300 mb-1 group-hover:animate-bounce transition-colors delay-75">500+</div>
-                <div className="text-xs text-gray-700/90 dark:text-white/80 group-hover:text-gray-800 dark:group-hover:text-white/90 font-medium transition-colors">Teams</div>
-              </div>
-              <div className="group text-center bg-gradient-to-br from-white/20 to-white/10 dark:from-black/30 dark:to-black/20 backdrop-blur-md rounded-xl p-4 border border-white/30 hover:border-yellow-400/50 transition-all duration-300 hover:scale-110 transform cursor-pointer">
-                <div className="text-2xl font-black text-yellow-400 group-hover:text-yellow-300 mb-1 group-hover:animate-bounce transition-colors delay-150">99%</div>
-                <div className="text-xs text-gray-700/90 dark:text-white/80 group-hover:text-gray-800 dark:group-hover:text-white/90 font-medium transition-colors">Success</div>
+              <div className="relative">
+                <img
+                  src={sketchImage}
+                  alt="Team Strategy Sketch"
+                  className="relative w-full h-48 sm:h-56 md:h-64 lg:h-72 object-contain rounded-2xl transform transition-all duration-700 group-hover:scale-105 drop-shadow-2xl filter group-hover:brightness-110"
+                />
+                {/* Floating Elements Around Image */}
+                <div className="absolute -top-2 -right-2 w-4 h-4 bg-blue-400 rounded-full animate-bounce opacity-60"></div>
+                <div className="absolute -bottom-2 -left-2 w-3 h-3 bg-purple-400 rounded-full animate-ping opacity-70"></div>
+                <div className="absolute top-1/4 -left-3 w-2 h-2 bg-indigo-400 rounded-full animate-pulse opacity-80"></div>
+                <div className="absolute bottom-1/3 -right-3 w-2.5 h-2.5 bg-cyan-400 rounded-full animate-bounce delay-500 opacity-75"></div>
               </div>
             </div>
 
-            {/* Call-to-Action Quote */}
-            <div className="bg-gradient-to-br from-white/20 to-white/10 dark:from-black/30 dark:to-black/20 backdrop-blur-xl rounded-2xl p-6 shadow-xl border-2 border-white/30 dark:border-white/20 max-w-md">
-              <h4 className="text-base font-bold text-center text-gray-900 dark:text-white mb-2">
-                🚀 "Ready to elevate your team's performance?"
-              </h4>
-              <p className="text-sm text-gray-700/90 dark:text-white/80 text-center font-medium">
-                Join thousands of teams already dominating their leagues
-              </p>
+          {/* Modern CTA Buttons - Enhanced Design */}
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full max-w-2xl mb-6">
+              <button
+                onClick={() => navigate("/signup")}
+                className="group relative flex-1 px-8 py-4 bg-gradient-to-r from-emerald-500 via-blue-500 to-purple-600 hover:from-emerald-400 hover:via-blue-400 hover:to-purple-500 text-white font-bold rounded-2xl shadow-2xl hover:shadow-emerald-400/50 transition-all duration-500 text-lg tracking-wide transform hover:scale-105 active:scale-95 border-2 border-white/40 backdrop-blur-sm overflow-hidden"
+              >
+                <span className="relative z-10 flex items-center justify-center gap-3">
+                  <span className="text-2xl group-hover:animate-bounce transition-transform duration-300">✨</span>
+                  <span className="font-black">New User</span>
+                  <span className="group-hover:translate-x-1 transition-transform duration-300">🚀</span>
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-500 rounded-2xl blur-sm opacity-30 group-hover:opacity-60 transition-opacity duration-500 -z-10"></div>
+              </button>
+              
+              <button
+                onClick={() => navigate("/login")}
+                className="group relative flex-1 px-8 py-4 bg-gradient-to-r from-slate-600/80 via-gray-700/80 to-slate-800/80 hover:from-slate-500 hover:via-gray-600 hover:to-slate-700 backdrop-blur-xl text-white font-bold rounded-2xl border-2 border-white/50 hover:border-white/70 transition-all duration-500 text-lg tracking-wide transform hover:scale-105 shadow-xl hover:shadow-2xl overflow-hidden"
+              >
+                <span className="relative z-10 flex items-center justify-center gap-3">
+                  <span className="text-2xl group-hover:animate-bounce transition-transform duration-300">�</span>
+                  <span className="font-black">Welcome Back</span>
+                  <span className="group-hover:translate-x-1 transition-transform duration-300">💫</span>
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-indigo-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-slate-400 via-gray-500 to-slate-600 rounded-2xl blur-sm opacity-20 group-hover:opacity-50 transition-opacity duration-500 -z-10"></div>
+              </button>
             </div>
           </div>
 
@@ -254,48 +280,6 @@ const Hero = () => {
                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
               </div>
             </div>
-
-            {/* Modern CTA Buttons */}
-            <div className="space-y-4 w-full max-w-md">
-              <button
-                onClick={() => navigate("/signup")}
-                className="group relative w-full px-8 py-4 bg-gradient-to-r from-green-500 via-blue-500 to-yellow-500 hover:from-green-400 hover:via-blue-400 hover:to-yellow-400 text-white font-black rounded-2xl shadow-2xl hover:shadow-green-400/40 transition-all duration-300 text-lg tracking-wide transform hover:scale-105 active:scale-95 border-2 border-white/30 backdrop-blur-sm overflow-hidden"
-              >
-                <span className="relative z-10 flex items-center justify-center gap-3">
-                  <span className="group-hover:animate-bounce">🚀</span>
-                  <span>Start Your Journey</span>
-                  <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-              </button>
-              
-              <button
-                onClick={() => navigate("/login")}
-                className="group relative w-full px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-lg text-gray-900 dark:text-white font-bold rounded-2xl border-2 border-white/30 hover:border-white/50 transition-all duration-300 text-base tracking-wide transform hover:scale-105 overflow-hidden"
-              >
-                <span className="relative z-10 flex items-center justify-center gap-2">
-                  <span className="group-hover:animate-bounce">👤</span>
-                  <span>Welcome Back</span>
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-green-500/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
-              </button>
-              
-              <div className="text-center bg-gradient-to-r from-white/15 via-white/20 to-white/15 dark:from-black/25 dark:via-black/30 dark:to-black/25 backdrop-blur-md rounded-xl p-4 border border-white/20 transform hover:scale-105 transition-all duration-300 group cursor-pointer">
-                <p className="text-gray-800/90 dark:text-white/90 font-semibold text-sm flex items-center justify-center gap-2">
-                  <span className="animate-pulse text-yellow-400">⚡</span>
-                  <span className="group-hover:text-yellow-600 dark:group-hover:text-yellow-200 transition-colors">Join 10,000+ players worldwide!</span>
-                  <span className="animate-pulse text-yellow-300">⚡</span>
-                </p>
-              </div>
-            </div>
-
-            {/* Enhanced Decorative Elements with Interactivity */}
-            <div className="absolute top-6 right-6 text-4xl animate-spin-slow opacity-40 hover:opacity-80 hover:scale-125 transition-all duration-300 cursor-pointer">⚽</div>
-            <div className="absolute top-6 left-6 text-3xl animate-bounce opacity-40 hover:opacity-80 hover:scale-125 transition-all duration-300 cursor-pointer">🏆</div>
-            <div className="absolute bottom-6 right-6 text-3xl animate-pulse opacity-40 hover:opacity-80 hover:scale-125 transition-all duration-300 cursor-pointer">🥅</div>
-            <div className="absolute bottom-6 left-6 text-3xl animate-bounce delay-150 opacity-40 hover:opacity-80 hover:scale-125 transition-all duration-300 cursor-pointer">🏃‍♂️</div>
-            
             {/* Enhanced Background Glow */}
             <div className="absolute inset-0 bg-gradient-to-br from-green-600/10 via-blue-600/10 to-yellow-600/10 rounded-3xl animate-pulse backdrop-blur-sm -z-10"></div>
           </div>
