@@ -1,8 +1,14 @@
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { ThemeContext } from "../ThemeContext";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faTimes, faSun, faMoon, faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import { 
+  HiBars3, 
+  HiXMark, 
+  HiSun, 
+  HiMoon, 
+  HiChevronDown, 
+  HiChevronUp 
+} from "react-icons/hi2";
 
 const MainHeader = ({ open, setOpen, showTopHeader, setShowTopHeader }) => {
   const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
@@ -24,21 +30,22 @@ const MainHeader = ({ open, setOpen, showTopHeader, setShowTopHeader }) => {
       <div className="relative flex items-center justify-between px-4">
         {/* Left: Hamburger Menu Button */}
         <button
-          className={`lg:hidden p-2 rounded-xl transition-all duration-300 transform hover:scale-110 active:scale-95 ${
+          className={`lg:hidden p-2 rounded-xl transition-all duration-500 ease-out transform hover:scale-110 active:scale-95 will-change-transform ${
             open
               ? isDarkMode
-                ? "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-lg"
-                : "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg"
+                ? "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-lg scale-105"
+                : "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg scale-105"
               : isDarkMode
-              ? "bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white shadow-lg"
-              : "bg-gradient-to-r from-white to-gray-50 hover:from-gray-50 hover:to-gray-100 text-gray-900 shadow-lg border border-gray-200"
+              ? "bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white shadow-lg scale-100"
+              : "bg-gradient-to-r from-white to-gray-50 hover:from-gray-50 hover:to-gray-100 text-gray-900 shadow-lg border border-gray-200 scale-100"
           }`}
           onClick={toggleMenu}
         >
-          <FontAwesomeIcon
-            icon={open ? faTimes : faBars}
-            className={`text-2xl transition-all duration-300 ${open ? 'rotate-180' : 'rotate-0'}`}
-          />
+          {open ? (
+            <HiXMark className={`text-2xl transition-all duration-500 ease-out rotate-180 scale-110`} />
+          ) : (
+            <HiBars3 className={`text-2xl transition-all duration-500 ease-out rotate-0 scale-100`} />
+          )}
         </button>
 
         {/* Center: Title Section */}
@@ -60,7 +67,7 @@ const MainHeader = ({ open, setOpen, showTopHeader, setShowTopHeader }) => {
           
           {/* Dropdown Icon for TopHeader - Only visible on small screens */}
           <button
-            className={`mt-3 lg:hidden px-3 py-2 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 shadow-md hover:shadow-lg ${
+            className={`mt-3 lg:hidden px-3 py-2 rounded-full transition-all duration-500 ease-out transform hover:scale-110 active:scale-95 shadow-md hover:shadow-lg ${
               showTopHeader
                 ? isDarkMode
                   ? "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white border border-blue-400"
@@ -73,10 +80,11 @@ const MainHeader = ({ open, setOpen, showTopHeader, setShowTopHeader }) => {
             aria-label={showTopHeader ? "Hide navigation" : "Show navigation"}
           >
             <div className="flex items-center gap-2">
-              <FontAwesomeIcon
-                icon={showTopHeader ? faChevronUp : faChevronDown}
-                className={`text-sm transition-all duration-300 ${showTopHeader ? 'rotate-180' : 'rotate-0'}`}
-              />
+              {showTopHeader ? (
+                <HiChevronUp className={`text-sm transition-all duration-500 ease-out rotate-180`} />
+              ) : (
+                <HiChevronDown className={`text-sm transition-all duration-500 ease-out rotate-0`} />
+              )}
               <span className="text-xs font-medium">
                 {showTopHeader ? "Hide Menu" : "Show Menu"}
               </span>
@@ -86,7 +94,7 @@ const MainHeader = ({ open, setOpen, showTopHeader, setShowTopHeader }) => {
 
         {/* Right: Theme Toggle Button */}
         <button
-          className={`lg:hidden p-2 rounded-xl transition-all duration-300 transform hover:scale-110 active:scale-95 ${
+          className={`lg:hidden p-2 rounded-xl transition-all duration-500 ease-out transform hover:scale-110 active:scale-95 ${
             isDarkMode
               ? "bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-gray-900 shadow-lg"
               : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white shadow-lg"
@@ -94,10 +102,11 @@ const MainHeader = ({ open, setOpen, showTopHeader, setShowTopHeader }) => {
           onClick={toggleDarkMode}
           aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
         >
-          <FontAwesomeIcon
-            icon={isDarkMode ? faSun : faMoon}
-            className="text-2xl transition-all duration-300 hover:rotate-0 hover:scale-110 active:scale-95"
-          />
+          {isDarkMode ? (
+            <HiSun className="text-2xl transition-all duration-500 ease-out hover:rotate-0 hover:scale-110 active:scale-95" />
+          ) : (
+            <HiMoon className="text-2xl transition-all duration-500 ease-out hover:rotate-0 hover:scale-110 active:scale-95" />
+          )}
         </button>
       </div>
 

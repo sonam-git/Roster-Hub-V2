@@ -620,14 +620,15 @@ export const LOGIN_WITH_GOOGLE = gql`
 `;
 // Mutation to add feedback for a game
 export const ADD_FEEDBACK = gql`
-  mutation AddFeedback($gameId: ID!, $comment: String, $rating: Int!) {
-    addFeedback(gameId: $gameId, comment: $comment, rating: $rating) {
+  mutation AddFeedback($gameId: ID!, $comment: String, $rating: Int!, $playerOfTheMatchId: ID) {
+    addFeedback(gameId: $gameId, comment: $comment, rating: $rating, playerOfTheMatchId: $playerOfTheMatchId) {
       _id
       feedbacks {
         _id
         user { _id name }
         comment
         rating
+        playerOfTheMatch { _id name }
       }
       averageRating
     }

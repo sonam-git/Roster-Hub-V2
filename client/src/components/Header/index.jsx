@@ -7,16 +7,18 @@ import { QUERY_ME, QUERY_GAMES } from "../../utils/queries";
 import { Link, useNavigate, Outlet, useLocation } from "react-router-dom";
 import Auth from "../../utils/auth";
 import { ThemeContext } from "../ThemeContext";
-import chartFillImage from "../../assets/images/iconizer-home.png";
-import chatImage from "../../assets/images/iconizer-message.png";
-import skillImage from "../../assets/images/iconizer-skill.png";
-import userImage from "../../assets/images/iconizer-account.png";
-import rosterImage from "../../assets/images/iconizer-roster.png";
-import logoutImage from "../../assets/images/iconizer-logout.png";
-import loginImage from "../../assets/images/iconizer-login.png";
-import signupImage from "../../assets/images/iconizer-signup.png";
-import calenderImage from "../../assets/images/iconizer-calender.png";
-import scheduleImage from "../../assets/images/soccer-ball.png";
+import { 
+  HiHome,
+  HiUser,
+  HiUserGroup,
+  HiChatBubbleLeftRight,
+  HiCalendarDays,
+  HiTrophy,
+  HiArrowRightOnRectangle,
+  HiArrowLeftOnRectangle,
+  HiUserPlus,
+  HiSparkles
+} from "react-icons/hi2";
 
 const Header = ({ open, setOpen }) => {
   const navigate = useNavigate();
@@ -53,28 +55,28 @@ const Header = ({ open, setOpen }) => {
 
   const Menus = Auth.loggedIn()
     ? [
-        { title: "Home", src: chartFillImage, path: "/" },
-        { title: "My Profile", src: userImage, path: "/me" },
-        { title: "Roster", src: rosterImage, path: "/roster" },
-        { title: "Skill - List", src: skillImage, path: "/skill" },
+        { title: "Home", icon: HiHome, path: "/" },
+        { title: "My Profile", icon: HiUser, path: "/me" },
+        { title: "Roster", icon: HiUserGroup, path: "/roster" },
+        { title: "Skill - List", icon: HiSparkles, path: "/skill" },
         {
           title: "Message",
-          src: chatImage,
+          icon: HiChatBubbleLeftRight,
           path: "/message",
           badge: messageCount,
         },
         {
           title: "Schedule",
-          src: calenderImage,
+          icon: HiCalendarDays,
           path: "/game-schedule",
           badge: gameBadgeCount,
         },
-        { title: "ScoreBoard", src: scheduleImage, path: "/scoreboard" },
-        { title: "Logout", src: logoutImage, action: handleLogout },
+        { title: "ScoreBoard", icon: HiTrophy, path: "/scoreboard" },
+        { title: "Logout", icon: HiArrowRightOnRectangle, action: handleLogout },
       ]
     : [
-        { title: "Login", src: loginImage, path: "/login" },
-        { title: "Signup", src: signupImage, path: "/signup" },
+        { title: "Login", icon: HiArrowLeftOnRectangle, path: "/login" },
+        { title: "Signup", icon: HiUserPlus, path: "/signup" },
       ];
 
   return (
@@ -147,15 +149,27 @@ const Header = ({ open, setOpen }) => {
         </div>
       )}
 
+      {/* Mobile Backdrop Overlay */}
+      {open && Auth.loggedIn() && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm lg:hidden z-[4] transition-all duration-500 ease-out animate-in fade-in"
+          onClick={() => setOpen(false)}
+          aria-label="Close sidebar"
+        />
+      )}
+
       {/* Amazon-style Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full transition-all duration-300 ease-in-out z-[5] pt-16 lg:pt-16 ${
-          open ? "w-64 sm:w-72 translate-x-0" : "w-16 sm:w-20 -translate-x-full lg:translate-x-0"
+        className={`fixed top-0 left-0 h-full transition-all duration-500 ease-out z-[5] pt-16 lg:pt-16 transform-gpu will-change-transform ${
+          open ? "w-64 sm:w-72 translate-x-0 opacity-100" : "w-16 sm:w-20 -translate-x-full lg:translate-x-0 opacity-100 lg:opacity-100"
         } ${
           isDarkMode 
             ? "bg-gradient-to-b from-gray-900 via-gray-900 to-gray-800 border-r border-gray-700" 
             : "bg-gray-100 border-r border-gray-300"
         } shadow-2xl ${!Auth.loggedIn() && open ? 'hidden lg:block' : ''}`}
+        style={{
+          transformOrigin: 'left center',
+        }}
       >
         {/* Navigation Menu */}
         <nav className="flex-1 px-2 sm:px-4 py-3 overflow-hidden mt-4">
@@ -183,7 +197,7 @@ const Header = ({ open, setOpen }) => {
                 </div>
                 
                 {/* Smooth text transition */}
-                <div className={`transition-all duration-300 overflow-hidden ${
+                <div className={`transition-all duration-500 ease-out overflow-hidden ${
                   open 
                     ? "opacity-100 translate-x-0 w-auto" 
                     : "opacity-0 -translate-x-4 w-0"
@@ -260,15 +274,17 @@ const Header = ({ open, setOpen }) => {
                             ? isDarkMode ? "bg-gray-700 border-2 border-blue-400" : "bg-white border-2 border-blue-500"
                             : isDarkMode ? "bg-gray-700 group-hover:bg-gray-600" : "bg-white border border-gray-300 group-hover:bg-gray-50"
                         }`}>
-                          <img
-                            src={Menu.src}
-                            alt={Menu.title}
-                            className="w-3 h-3 sm:w-4 sm:h-4 opacity-80 transition-opacity duration-300 "
-                          />
+                          <Menu.icon className={`w-3 h-3 sm:w-4 sm:h-4 transition-opacity duration-300 ${
+                            isLogout
+                              ? isDarkMode ? "text-red-200" : "text-red-600"
+                              : isActive
+                              ? isDarkMode ? "text-blue-400" : "text-blue-600"
+                              : isDarkMode ? "text-gray-300 group-hover:text-white" : "text-gray-600 group-hover:text-gray-700"
+                          }`} />
                         </div>
                         
                         {/* Smooth text and badge transition */}
-                        <div className={`flex items-center justify-between flex-1 min-w-0 transition-all duration-300 overflow-hidden ${
+                        <div className={`flex items-center justify-between flex-1 min-w-0 transition-all duration-500 ease-out overflow-hidden ${
                           open 
                             ? "opacity-100 translate-x-0 w-auto" 
                             : "opacity-0 -translate-x-4 w-0"
@@ -314,15 +330,15 @@ const Header = ({ open, setOpen }) => {
                           ? isDarkMode ? "bg-red-800" : "bg-red-100"
                           : isDarkMode ? "bg-gray-700 group-hover:bg-gray-600" : "bg-white border border-gray-300 group-hover:bg-gray-50"
                       }`}>
-                        <img
-                          src={Menu.src}
-                          alt={Menu.title}
-                          className="w-3 h-3 sm:w-4 sm:h-4 opacity-80 transition-opacity duration-300"
-                        />
+                        <Menu.icon className={`w-3 h-3 sm:w-4 sm:h-4 transition-opacity duration-300 ${
+                          isLogout
+                            ? isDarkMode ? "text-red-200" : "text-red-600"
+                            : isDarkMode ? "text-gray-300 group-hover:text-white" : "text-gray-600 group-hover:text-gray-700"
+                        }`} />
                       </div>
                       
                       {/* Smooth text transition */}
-                      <div className={`transition-all duration-300 overflow-hidden ${
+                      <div className={`transition-all duration-500 ease-out overflow-hidden ${
                         open 
                           ? "opacity-100 translate-x-0 w-auto" 
                           : "opacity-0 -translate-x-4 w-0"
@@ -341,7 +357,7 @@ const Header = ({ open, setOpen }) => {
       </div>
 
       {/* Main Content Area */}
-      <div className={`flex-1 transition-all duration-300 ease-in-out ${
+      <div className={`flex-1 transition-all duration-500 ease-out transform-gpu ${
         open 
           ? "lg:ml-64 xl:ml-72" 
           : "lg:ml-16 xl:ml-20"

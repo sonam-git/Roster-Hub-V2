@@ -1,13 +1,20 @@
 // src/components/GameFeedback.jsx
 import React, { useState } from "react";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { ADD_FEEDBACK } from "../../utils/mutations";
 import { QUERY_GAME } from "../../utils/queries";
 
 const GameFeedback = ({ gameId, isDarkMode, onFeedback }) => {
   const [comment, setComment] = useState("");
-  const [rating, setRating]   = useState(5);
+  const [rating, setRating] = useState(5);
+  const [playerOfTheMatchId, setPlayerOfTheMatchId] = useState("");
   const [validationError, setValidationError] = useState("");
+
+  // Get game data to access available players
+  const { data: gameData } = useQuery(QUERY_GAME, {
+    variables: { gameId },
+    fetchPolicy: "cache-first",
+  });
 
   const [addFeedback, { loading, error }] = useMutation(ADD_FEEDBACK, {
     refetchQueries: [{ query: QUERY_GAME, variables: { gameId } }],
@@ -16,6 +23,7 @@ const GameFeedback = ({ gameId, isDarkMode, onFeedback }) => {
       // clear form
       setComment("");
       setRating(5);
+      setPlayerOfTheMatchId("");
       // notify parent
       onFeedback();
     }
@@ -28,8 +36,23 @@ const GameFeedback = ({ gameId, isDarkMode, onFeedback }) => {
       setTimeout(() => setValidationError(""), 3000);
       return;
     }
-    await addFeedback({ variables: { gameId, comment: comment.trim(), rating } });
+    
+    const variables = { 
+      gameId, 
+      comment: comment.trim(), 
+      rating 
+    };
+    
+    // Only add playerOfTheMatchId if a player is selected
+    if (playerOfTheMatchId) {
+      variables.playerOfTheMatchId = playerOfTheMatchId;
+    }
+    
+    await addFeedback({ variables });
   };
+
+  // Get available players for the dropdown
+  const availablePlayers = gameData?.game?.responses?.filter(response => response.isAvailable) || [];
 
   return (
     <div className={`rounded-2xl border transition-all duration-300 ${
@@ -129,6 +152,42 @@ const GameFeedback = ({ gameId, isDarkMode, onFeedback }) => {
               <span>Excellent</span>
             </div>
           </div>
+
+          {/* Player of the Match Section */}
+          {availablePlayers.length > 0 && (
+            <div className="space-y-3">
+              <label className={`block text-sm font-semibold ${isDarkMode ? "text-gray-200" : "text-gray-700"}`}>
+                Player of the Match (Optional)
+              </label>
+              <div className="relative">
+                <select
+                  value={playerOfTheMatchId}
+                  onChange={e => setPlayerOfTheMatchId(e.target.value)}
+                  className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none cursor-pointer ${
+                    isDarkMode 
+                      ? "bg-gray-800 border-gray-600 text-white" 
+                      : "bg-white border-gray-300 text-gray-900"
+                  }`}
+                >
+                  <option value="">Select a player (optional)</option>
+                  {availablePlayers.map(response => (
+                    <option key={response.user._id} value={response.user._id}>
+                      {response.user.name}
+                    </option>
+                  ))}
+                </select>
+                {/* Custom dropdown arrow */}
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+              <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
+                Choose the player who had the best performance in this game ({availablePlayers.length} available player{availablePlayers.length !== 1 ? 's' : ''})
+              </p>
+            </div>
+          )}
 
           {/* Error Messages */}
           {validationError && (

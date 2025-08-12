@@ -24,6 +24,7 @@ const FeedbackSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: "Profile", required: true },
   comment: { type: String, trim: true },
   rating: { type: Number, min: 0, max: 10, required: true },
+  playerOfTheMatch: { type: Schema.Types.ObjectId, ref: "Profile" },
   createdAt: { type: Date, default: Date.now }
 });
 

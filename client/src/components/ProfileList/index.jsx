@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import MessageBox from '../MessageBox';
 import { AiOutlineMessage, AiFillStar } from 'react-icons/ai'; 
-import { RiProfileLine, RiTShirt2Line } from 'react-icons/ri';
-import { FaUser, FaUsers, FaChevronLeft, FaChevronRight, FaHeart, FaRegHeart } from 'react-icons/fa';
+import { RiProfileLine } from 'react-icons/ri';
+import { FaUsers, FaChevronLeft, FaChevronRight, FaHeart, FaRegHeart } from 'react-icons/fa';
 import { HiSparkles } from 'react-icons/hi';
 import { BsPersonCheck, BsPersonPlus } from 'react-icons/bs';
 import Auth from '../../utils/auth';
@@ -12,7 +12,6 @@ import RatingModal from '../RatingModal';
 import renderStars from "../../utils/renderStars";
 
 const ProfileList = ({ profiles, title, isDarkMode }) => {
-  console.log(isDarkMode)
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [ratingProfile, setRatingProfile] = useState(null);
@@ -72,14 +71,22 @@ const ProfileList = ({ profiles, title, isDarkMode }) => {
 
   if (!filteredProfiles.length) {
     return (
-      <div className="text-center py-16">
-        <div className={`max-w-md mx-auto p-8 rounded-2xl shadow-xl ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
-          <FaUsers className={`mx-auto mb-4 text-6xl ${isDarkMode ? 'text-gray-400' : 'text-gray-300'}`} />
-          <h3 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-6">
+        <div className={`max-w-md mx-auto p-8 rounded-3xl backdrop-blur-lg text-center ${
+          isDarkMode 
+            ? 'bg-white/5 border border-white/10 shadow-2xl' 
+            : 'bg-white/80 border border-gray-200/50 shadow-xl'
+        }`}>
+          <div className={`w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center ${
+            isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'
+          }`}>
+            <FaUsers className={`text-3xl ${isDarkMode ? 'text-gray-400' : 'text-gray-400'}`} />
+          </div>
+          <h3 className={`text-xl font-semibold mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
             No Team Members Yet
           </h3>
-          <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-            Be the first to join the team!
+          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            Be the first to join this amazing team!
           </p>
         </div>
       </div>
@@ -94,242 +101,230 @@ const ProfileList = ({ profiles, title, isDarkMode }) => {
   );
 
   return (
-    <div className="space-y-8">
-      {/* Header Section */}
-      <div className="text-center mt-8">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <HiSparkles className={`text-3xl ${isDarkMode ? 'text-yellow-400' : 'text-yellow-500'}`} />
-          <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-            {title}
-          </h2>
-          <HiSparkles className={`text-3xl ${isDarkMode ? 'text-yellow-400' : 'text-yellow-500'}`} />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Modern Header Section */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-3 mb-6 px-6 py-3 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-lg border border-gray-200/50 dark:border-gray-700/50">
+            <HiSparkles className={`text-2xl ${isDarkMode ? 'text-yellow-400' : 'text-yellow-500'}`} />
+            <h1 className={`text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent`}>
+              {title}
+            </h1>
+            <HiSparkles className={`text-2xl ${isDarkMode ? 'text-yellow-400' : 'text-yellow-500'}`} />
+          </div>
+          <p className={`text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-xl mx-auto`}>
+            Discover {filteredProfiles.length} amazing team member{filteredProfiles.length !== 1 ? 's' : ''}
+          </p>
         </div>
-        <p className={`text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} max-w-2xl mx-auto`}>
-          {filteredProfiles.length} talented team member{filteredProfiles.length !== 1 ? 's' : ''} ready to make a difference
-        </p>
-      </div>
 
-      {/* Grid Layout - 2 profiles per row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-        {currentProfiles?.map((profile) => (
-          <div
-            key={profile._id}
-            className={`group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 ${
-              isDarkMode 
-                ? 'bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 border border-gray-700' 
-                : 'bg-gradient-to-br from-white via-blue-100 to-purple-100 border border-gray-800'
-            }`}
-          >
-            {/* Animated Background Effect */}
-            <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${
-              isDarkMode 
-                ? 'bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-gray-900/20' 
-                : 'bg-gradient-to-br from-blue-100/30 via-purple-100/30 to-pink-100/30'
-            }`}></div>
+        {/* Modern Profile Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          {currentProfiles?.map((profile) => (
+            <div
+              key={profile._id}
+              className={`group relative overflow-hidden rounded-3xl transition-all duration-500 hover:scale-[1.02] ${
+                isDarkMode 
+                  ? 'bg-white/5 backdrop-blur-lg border border-white/10 hover:border-white/20 shadow-xl hover:shadow-2xl' 
+                  : 'bg-white/90 backdrop-blur-lg border border-gray-200/50 hover:border-gray-300/80 shadow-lg hover:shadow-xl'
+              }`}
+            >
+              {/* Gradient Background Effect */}
+              <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${
+                isDarkMode 
+                  ? 'bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-pink-600/10' 
+                  : 'bg-gradient-to-br from-blue-100/50 via-purple-100/50 to-pink-100/50'
+              }`}></div>
 
-            <div className="relative p-6">
-              {/* Top Action Bar */}
-              <div className="absolute top-4 right-4 flex gap-2">
-                <button
-                  onClick={() => handleFavoriteToggle(profile._id)}
-                  className={`p-2 rounded-full transition-all duration-200 hover:scale-110 ${
-                    favorites.has(profile._id)
-                      ? isDarkMode 
-                        ? 'bg-red-900/50 text-red-400 hover:bg-red-800/70' 
-                        : 'bg-red-100 text-red-500 hover:bg-red-200'
-                      : isDarkMode 
-                        ? 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/70 hover:text-red-400' 
-                        : 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-500'
-                  }`}
-                  title={favorites.has(profile._id) ? 'Remove from favorites' : 'Add to favorites'}
-                >
-                  {favorites.has(profile._id) ? 
-                    <FaHeart className="text-sm" /> : 
-                    <FaRegHeart className="text-sm" />
-                  }
-                </button>
-                
-                <button
-                  onClick={() => handleFollowToggle(profile._id)}
-                  className={`p-2 rounded-full transition-all duration-200 hover:scale-110 ${
-                    following.has(profile._id)
-                      ? isDarkMode 
-                        ? 'bg-green-900/50 text-green-400 hover:bg-green-800/70' 
-                        : 'bg-green-100 text-green-500 hover:bg-green-200'
-                      : isDarkMode 
-                        ? 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/70 hover:text-green-400' 
-                        : 'bg-gray-100 text-gray-500 hover:bg-green-50 hover:text-green-500'
-                  }`}
-                  title={following.has(profile._id) ? 'Unfollow' : 'Follow'}
-                >
-                  {following.has(profile._id) ? 
-                    <BsPersonCheck className="text-sm" /> : 
-                    <BsPersonPlus className="text-sm" />
-                  }
-                </button>
-              </div>
-
-              {/* Profile Image Section */}
-              <div className="flex justify-center mb-4">
-                <div className="relative">
-                  <img
-                    src={profile?.profilePic || ProfileAvatar}
-                    alt={`${profile.name}'s profile`}
-                    className="w-24 h-24 rounded-full object-cover border-4 border-gradient-to-r from-blue-400 to-purple-400 shadow-lg group-hover:scale-110 transition-transform duration-300"
-                  />
-                  {/* Online indicator */}
-                  <div className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 ${isDarkMode ? 'border-gray-800' : 'border-white'} ${Math.random() > 0.5 ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+              <div className="relative p-6">
+                {/* Simplified Top Actions */}
+                <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <button
+                    onClick={() => handleFavoriteToggle(profile._id)}
+                    className={`p-2 rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110 ${
+                      favorites.has(profile._id)
+                        ? 'bg-red-500/20 text-red-500 border border-red-500/30' 
+                        : isDarkMode 
+                          ? 'bg-white/10 text-gray-300 hover:text-red-400 border border-white/20' 
+                          : 'bg-black/10 text-gray-600 hover:text-red-500 border border-gray-300/30'
+                    }`}
+                    title={favorites.has(profile._id) ? 'Remove from favorites' : 'Add to favorites'}
+                  >
+                    {favorites.has(profile._id) ? 
+                      <FaHeart className="text-sm" /> : 
+                      <FaRegHeart className="text-sm" />
+                    }
+                  </button>
+                  
+                  <button
+                    onClick={() => handleFollowToggle(profile._id)}
+                    className={`p-2 rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110 ${
+                      following.has(profile._id)
+                        ? 'bg-green-500/20 text-green-500 border border-green-500/30' 
+                        : isDarkMode 
+                          ? 'bg-white/10 text-gray-300 hover:text-green-400 border border-white/20' 
+                          : 'bg-black/10 text-gray-600 hover:text-green-500 border border-gray-300/30'
+                    }`}
+                    title={following.has(profile._id) ? 'Unfollow' : 'Follow'}
+                  >
+                    {following.has(profile._id) ? 
+                      <BsPersonCheck className="text-sm" /> : 
+                      <BsPersonPlus className="text-sm" />
+                    }
+                  </button>
                 </div>
-              </div>
 
-              {/* Name and Title */}
-              <div className="text-center mb-4">
-                <h3 className={`text-xl font-bold mb-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                  {profile.name}
-                </h3>
-                
-                {/* Jersey and Position */}
-                <div className="flex items-center justify-center gap-4 text-sm">
-                  {profile.jerseyNumber && (
-                    <div className={`flex items-center gap-1 px-2 py-1 rounded-full ${isDarkMode ? 'bg-blue-900/50 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
-                      <RiTShirt2Line className="text-sm" />
-                      <span className="font-semibold">#{profile.jerseyNumber}</span>
+                {/* Profile Image - Simplified */}
+                <div className="flex justify-center mb-6">
+                  <div className="relative">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 p-0.5">
+                      <img
+                        src={profile?.profilePic || ProfileAvatar}
+                        alt={`${profile.name}'s profile`}
+                        className="w-full h-full rounded-full object-cover bg-white"
+                      />
                     </div>
-                  )}
-                  {profile.position && (
-                    <div className={`flex items-center gap-1 px-2 py-1 rounded-full ${isDarkMode ? 'bg-purple-900/50 text-purple-300' : 'bg-purple-100 text-purple-700'}`}>
-                      <FaUser className="text-xs" />
-                      <span className="font-medium">{profile.position}</span>
-                    </div>
-                  )}
+                    {/* Simple Online Indicator */}
+                    <div className={`absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full border-2 ${
+                      isDarkMode ? 'border-gray-800' : 'border-white'
+                    } ${Math.random() > 0.5 ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+                  </div>
                 </div>
-              </div>
 
-              {/* Rating */}
-              <div className="flex justify-center mb-6">
-                <div className={`px-3 py-1 rounded-full ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-100'}`}>
-                  {renderStars(profile.averageRating)}
+                {/* Profile Info - Cleaner */}
+                <div className="text-center mb-6">
+                  <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                    {profile.name}
+                  </h3>
+                  
+                  {/* Compact Jersey and Position */}
+                  <div className="flex items-center justify-center gap-3 text-xs">
+                    {profile.jerseyNumber && (
+                      <span className={`px-2 py-1 rounded-full font-medium ${
+                        isDarkMode ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-100 text-blue-700'
+                      }`}>
+                        #{profile.jerseyNumber}
+                      </span>
+                    )}
+                    {profile.position && (
+                      <span className={`px-2 py-1 rounded-full font-medium ${
+                        isDarkMode ? 'bg-purple-500/20 text-purple-300' : 'bg-purple-100 text-purple-700'
+                      }`}>
+                        {profile.position}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Modern Action Buttons */}
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  onClick={() => handleChatClick(profile)}
-                  className={`group/btn flex flex-col items-center gap-1 p-2.5 rounded-xl transition-all duration-300 hover:scale-105 transform relative overflow-hidden ${
-                    isDarkMode 
-                      ? 'bg-blue-900/30 hover:bg-blue-800/50 text-blue-300 hover:text-blue-100 border border-blue-700/30 hover:border-blue-500/50' 
-                      : 'bg-blue-50 hover:bg-blue-100 text-blue-700 hover:text-blue-800 border border-blue-600 hover:border-blue-300 '
-                  } shadow-sm hover:shadow-md`}
-                  title="Send Message"
-                >
-                  <div className={`p-1.5 rounded-lg transition-all duration-200 group-hover/btn:scale-110 ${
-                    isDarkMode 
-                      ? 'bg-blue-800/40 group-hover/btn:bg-blue-700/60' 
-                      : 'bg-blue-100 group-hover/btn:bg-blue-200'
+                {/* Simplified Rating */}
+                <div className="flex justify-center mb-6">
+                  <div className={`px-3 py-1.5 rounded-full ${
+                    isDarkMode ? 'bg-gray-700/50 backdrop-blur-sm' : 'bg-gray-100/80 backdrop-blur-sm'
                   }`}>
-                    <AiOutlineMessage className="text-base" />
+                    {renderStars(profile.averageRating)}
                   </div>
-                  <span className="text-[10px] font-medium">Message</span>
-                </button>
+                </div>
 
-                <button
-                  onClick={() => handleRatingClick(profile)}
-                  className={`group/btn flex flex-col items-center gap-1 p-2.5 rounded-xl transition-all duration-300 hover:scale-105 transform relative overflow-hidden ${
-                    isDarkMode 
-                      ? 'bg-yellow-900/30 hover:bg-yellow-800/50 text-yellow-300 hover:text-yellow-100 border border-yellow-700/30 hover:border-yellow-500/50' 
-                      : 'bg-yellow-50 hover:bg-yellow-100 text-yellow-700 hover:text-yellow-800 border hover:border-yellow-300 border-yellow-600'
-                  } shadow-sm hover:shadow-md`}
-                  title="Rate Player"
-                >
-                  <div className={`p-1.5 rounded-lg transition-all duration-200 group-hover/btn:scale-110 group-hover/btn:rotate-12 ${
-                    isDarkMode 
-                      ? 'bg-yellow-800/40 group-hover/btn:bg-yellow-700/60' 
-                      : 'bg-yellow-100 group-hover/btn:bg-yellow-200'
-                  }`}>
-                    <AiFillStar className="text-base" />
-                  </div>
-                  <span className="text-[10px] font-medium">Rate</span>
-                </button>
+                {/* Clean Action Buttons */}
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    onClick={() => handleChatClick(profile)}
+                    className={`flex flex-col items-center gap-1.5 p-3 rounded-2xl transition-all duration-300 hover:scale-105 ${
+                      isDarkMode 
+                        ? 'bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 border border-blue-500/20 hover:border-blue-500/30' 
+                        : 'bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 hover:border-blue-300'
+                    }`}
+                    title="Send Message"
+                  >
+                    <AiOutlineMessage className="text-lg" />
+                    <span className="text-xs font-medium">Chat</span>
+                  </button>
 
-                <Link
-                  to={`/profiles/${profile._id}`}
-                  className={`group/btn flex flex-col items-center gap-1 p-2.5 rounded-xl transition-all duration-300 hover:scale-105 transform relative overflow-hidden hover:no-underline ${
-                    isDarkMode 
-                      ? 'bg-green-900/30 hover:bg-green-800/50 text-green-300 hover:text-green-100 border border-green-700/30 hover:border-green-500/50' 
-                      : 'bg-green-50 hover:bg-green-100 text-green-700 hover:text-green-800 border border-green-600 hover:border-green-300'
-                  } shadow-sm hover:shadow-md`}
-                  title="View Profile"
-                >
-                  <div className={`p-1.5 rounded-lg transition-all duration-200 group-hover/btn:scale-110 ${
-                    isDarkMode 
-                      ? 'bg-green-800/40 group-hover/btn:bg-green-700/60' 
-                      : 'bg-green-100 group-hover/btn:bg-green-200'
-                  }`}>
-                    <RiProfileLine className="text-base" />
-                  </div>
-                  <span className="text-[10px] font-medium">Profile</span>
-                </Link>
+                  <button
+                    onClick={() => handleRatingClick(profile)}
+                    className={`flex flex-col items-center gap-1.5 p-3 rounded-2xl transition-all duration-300 hover:scale-105 ${
+                      isDarkMode 
+                        ? 'bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-300 border border-yellow-500/20 hover:border-yellow-500/30' 
+                        : 'bg-yellow-50 hover:bg-yellow-100 text-yellow-600 border border-yellow-200 hover:border-yellow-300'
+                    }`}
+                    title="Rate Player"
+                  >
+                    <AiFillStar className="text-lg" />
+                    <span className="text-xs font-medium">Rate</span>
+                  </button>
+
+                  <Link
+                    to={`/profiles/${profile._id}`}
+                    className={`flex flex-col items-center gap-1.5 p-3 rounded-2xl transition-all duration-300 hover:scale-105 hover:no-underline ${
+                      isDarkMode 
+                        ? 'bg-green-500/10 hover:bg-green-500/20 text-green-300 border border-green-500/20 hover:border-green-500/30' 
+                        : 'bg-green-50 hover:bg-green-100 text-green-600 border border-green-200 hover:border-green-300'
+                    }`}
+                    title="View Profile"
+                  >
+                    <RiProfileLine className="text-lg" />
+                    <span className="text-xs font-medium">Profile</span>
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Modern Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-4 mt-12">
-          <button
-            onClick={() => setCurrentPage(currentPage - 1)}
-            disabled={currentPage === 1}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
-              currentPage === 1
-                ? isDarkMode 
-                  ? 'bg-gray-800 text-gray-500 cursor-not-allowed' 
-                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                : isDarkMode
-                  ? 'bg-gray-700 hover:bg-gray-600 text-white hover:scale-105 shadow-lg'
-                  : 'bg-white hover:bg-gray-50 text-gray-700 hover:scale-105 shadow-lg border border-gray-200'
-            }`}
-          >
-            <FaChevronLeft className="text-sm" />
-            Previous
-          </button>
-
-          <div className={`px-4 py-2 rounded-xl font-bold ${
-            isDarkMode 
-              ? 'bg-blue-900/50 text-blue-300 border border-blue-700' 
-              : 'bg-blue-100 text-blue-700 border border-blue-200'
-          }`}>
-            {currentPage} of {totalPages}
-          </div>
-
-          <button
-            onClick={() => setCurrentPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
-              currentPage === totalPages
-                ? isDarkMode 
-                  ? 'bg-gray-800 text-gray-500 cursor-not-allowed' 
-                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                : isDarkMode
-                  ? 'bg-gray-700 hover:bg-gray-600 text-white hover:scale-105 shadow-lg'
-                  : 'bg-white hover:bg-gray-50 text-gray-700 hover:scale-105 shadow-lg border border-gray-200'
-            }`}
-          >
-            Next
-            <FaChevronRight className="text-sm" />
-          </button>
+          ))}
         </div>
-      )}
 
-      {/* Modals */}
-      {selectedUser && showModal && (
-        <MessageBox recipient={selectedUser} onCloseModal={handleModalClose} isDarkMode={isDarkMode} />
-      )}
-      {ratingProfile && (
-        <RatingModal profile={ratingProfile} onClose={handleRatingModalClose} isDarkMode={isDarkMode} />
-      )}
+        {/* Modern Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-3 mb-8">
+            <button
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-all duration-300 ${
+                currentPage === 1
+                  ? isDarkMode 
+                    ? 'bg-gray-800/50 text-gray-500 cursor-not-allowed backdrop-blur-sm' 
+                    : 'bg-gray-100/50 text-gray-400 cursor-not-allowed backdrop-blur-sm'
+                  : isDarkMode
+                    ? 'bg-white/10 hover:bg-white/20 text-white hover:scale-105 shadow-lg backdrop-blur-sm border border-white/20'
+                    : 'bg-white/80 hover:bg-white text-gray-700 hover:scale-105 shadow-lg backdrop-blur-sm border border-gray-200/50'
+              }`}
+            >
+              <FaChevronLeft className="text-sm" />
+              <span>Previous</span>
+            </button>
+
+            <div className={`px-4 py-2.5 rounded-xl font-semibold backdrop-blur-sm ${
+              isDarkMode 
+                ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' 
+                : 'bg-blue-100/80 text-blue-700 border border-blue-200/50'
+            }`}>
+              {currentPage} of {totalPages}
+            </div>
+
+            <button
+              onClick={() => setCurrentPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-all duration-300 ${
+                currentPage === totalPages
+                  ? isDarkMode 
+                    ? 'bg-gray-800/50 text-gray-500 cursor-not-allowed backdrop-blur-sm' 
+                    : 'bg-gray-100/50 text-gray-400 cursor-not-allowed backdrop-blur-sm'
+                  : isDarkMode
+                    ? 'bg-white/10 hover:bg-white/20 text-white hover:scale-105 shadow-lg backdrop-blur-sm border border-white/20'
+                    : 'bg-white/80 hover:bg-white text-gray-700 hover:scale-105 shadow-lg backdrop-blur-sm border border-gray-200/50'
+              }`}
+            >
+              <span>Next</span>
+              <FaChevronRight className="text-sm" />
+            </button>
+          </div>
+        )}
+
+        {/* Modals */}
+        {selectedUser && showModal && (
+          <MessageBox recipient={selectedUser} onCloseModal={handleModalClose} isDarkMode={isDarkMode} />
+        )}
+        {ratingProfile && (
+          <RatingModal profile={ratingProfile} onClose={handleRatingModalClose} isDarkMode={isDarkMode} />
+        )}
+      </div>
     </div>
   );
 };

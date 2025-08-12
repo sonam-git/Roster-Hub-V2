@@ -289,7 +289,8 @@ const resolvers = {
       return Game.findById(gameId)
         .populate("creator")
         .populate("responses.user")
-        .populate("feedbacks.user");
+        .populate("feedbacks.user")
+        .populate("feedbacks.playerOfTheMatch");
     },
     // ************************** QUERY SOCCER SCORES *******************************************//
     soccerMatches: async (_, { competitionCode, status, dateFrom, dateTo }) => {
@@ -1349,7 +1350,7 @@ const resolvers = {
       return game;
     },
     // ************************** ADD A FEEDBACK TO COMPLETED GAME *******************************************//
-    addFeedback: async (_, { gameId, comment, rating }, context) => {
+    addFeedback: async (_, { gameId, comment, rating, playerOfTheMatchId }, context) => {
       if (!context.user) {
         throw new AuthenticationError("Must be logged in");
       }
@@ -1370,18 +1371,31 @@ const resolvers = {
       }
 
       // push new feedback
-      game.feedbacks.push({
+      const feedback = {
         user: context.user._id,
         comment,
         rating,
-      });
+      };
+
+      // Add playerOfTheMatch if provided
+      if (playerOfTheMatchId) {
+        feedback.playerOfTheMatch = playerOfTheMatchId;
+      }
+
+      game.feedbacks.push(feedback);
 
       // recalc average
       const sum = game.feedbacks.reduce((sum, f) => sum + f.rating, 0);
       game.averageRating = sum / game.feedbacks.length;
 
       await game.save();
-      return game;
+      
+      // Return the populated game
+      return Game.findById(gameId)
+        .populate("creator")
+        .populate("responses.user")
+        .populate("feedbacks.user")
+        .populate("feedbacks.playerOfTheMatch");
     },
     // ************************** CREATE A FORMATION | ONLY BY CREATOR *******************************************//
     createFormation: async (_, { gameId, formationType }, context) => {

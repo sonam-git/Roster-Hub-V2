@@ -98,6 +98,7 @@ const GameFeedbackList = ({ gameId, isDarkMode }) => {
           </div>
           <h3 className="text-xl font-bold">Player Feedback</h3>
         </div>
+        
         <p className="text-center italic opacity-80">
           Anonymous feedback from players for the game held on{" "}
           <span className="font-semibold">
@@ -158,6 +159,22 @@ const GameFeedbackList = ({ gameId, isDarkMode }) => {
                   <span className="text-2xl opacity-50 self-end">"</span>
                 </div>
               </div>
+
+              {/* Player of the Match Vote */}
+              {fb.playerOfTheMatch && (
+                <div className={`mt-3 p-3 rounded-lg border-l-4 border-yellow-500 ${
+                  isDarkMode 
+                    ? "bg-yellow-900/20 text-yellow-200" 
+                    : "bg-yellow-50 text-yellow-800"
+                }`}>
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">🏆</span>
+                    <span className="text-sm font-medium">
+                      Voted for <span className="font-bold">{fb.playerOfTheMatch.name}</span> as Player of the Match
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         ))}

@@ -622,48 +622,214 @@ export default function GameDetails({ gameId }) {
 
       case "results":
         return game.status === "COMPLETED" ? (
-          <div className={`p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-xl transition-all duration-300 hover:shadow-2xl transform hover:scale-[1.02] ${
-            isDarkMode ? "bg-gradient-to-br from-gray-700 to-gray-800 border border-gray-600" : "bg-gradient-to-br from-white to-yellow-50 border border-yellow-200"
+          (() => {
+            // Calculate Player of the Match (most selected player)
+            const calculatePlayerOfTheMatch = () => {
+              const feedbacks = game?.feedbacks || [];
+              if (!feedbacks.length) return null;
+              
+              const playerVotes = {};
+              feedbacks.forEach(feedback => {
+                if (feedback.playerOfTheMatch) {
+                  const playerId = feedback.playerOfTheMatch._id;
+                  const playerName = feedback.playerOfTheMatch.name;
+                  if (playerVotes[playerId]) {
+                    playerVotes[playerId].votes++;
+                  } else {
+                    playerVotes[playerId] = {
+                      id: playerId,
+                      name: playerName,
+                      votes: 1
+                    };
+                  }
+                }
+              });
+              
+              // Find the player with most votes
+              const players = Object.values(playerVotes);
+              if (players.length === 0) return null;
+              
+              return players.reduce((max, player) => 
+                player.votes > max.votes ? player : max
+              );
+            };
+
+            const playerOfTheMatch = calculatePlayerOfTheMatch();
+
+            return (
+          <div className={`relative overflow-hidden p-8 rounded-3xl shadow-2xl transition-all duration-500 hover:shadow-3xl transform hover:scale-[1.01] ${
+            isDarkMode 
+              ? "bg-gradient-to-br from-gray-800 via-gray-900 to-black border border-gray-600" 
+              : "bg-gradient-to-br from-white via-blue-50 to-purple-50 border border-blue-200"
           }`}>
-            <div className="text-center mb-4 sm:mb-6">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 mx-auto flex items-center justify-center mb-3 sm:mb-4">
-                <span className="text-2xl sm:text-3xl">🏆</span>
+            {/* Decorative background elements */}
+            <div className="absolute inset-0 opacity-5">
+              <div className="absolute top-4 right-4 w-32 h-32 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 blur-3xl"></div>
+              <div className="absolute bottom-4 left-4 w-24 h-24 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 blur-2xl"></div>
+            </div>
+
+            {/* Header Section */}
+            <div className="relative text-center mb-8">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 shadow-2xl mb-6 transform rotate-3 hover:rotate-0 transition-transform duration-300">
+                <span className="text-4xl animate-bounce">🏆</span>
               </div>
-              <h3 className={`text-xl sm:text-2xl font-bold mb-3 sm:mb-4 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+              <h3 className={`text-3xl font-bold mb-2 bg-gradient-to-r ${
+                isDarkMode 
+                  ? "from-yellow-400 to-orange-400 bg-clip-text text-transparent" 
+                  : "from-yellow-600 to-orange-600 bg-clip-text text-transparent"
+              }`}>
                 Game Results
               </h3>
+              <div className={`w-24 h-1 rounded-full mx-auto bg-gradient-to-r from-yellow-400 to-orange-500`}></div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-              <div className={`p-4 sm:p-6 rounded-2xl text-center ${isDarkMode ? "bg-gray-800" : "bg-blue-100"}`}>
-                <h4 className={`text-base sm:text-lg font-semibold mb-2 ${isDarkMode ? "text-blue-300" : "text-blue-800"}`}>
-                  Final Score
-                </h4>
-                <p className={`text-2xl sm:text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
-                  {game.score}
-                </p>
+
+            {/* Results Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              {/* Final Score Card */}
+              <div className={`group relative overflow-hidden p-6 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl ${
+                isDarkMode 
+                  ? "bg-gradient-to-br from-blue-900/30 to-blue-800/30 border border-blue-500/30" 
+                  : "bg-gradient-to-br from-blue-100/80 to-blue-200/80 border border-blue-300/50"
+              }`}>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative text-center">
+                  <div className="flex items-center justify-center gap-3 mb-4">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
+                      <span className="text-2xl">⚽</span>
+                    </div>
+                    <h4 className={`text-xl font-bold ${isDarkMode ? "text-blue-300" : "text-blue-800"}`}>
+                      Final Score
+                    </h4>
+                  </div>
+                  <p className={`text-4xl font-black mb-2 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                    {game.score}
+                  </p>
+                  <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full mx-auto"></div>
+                </div>
               </div>
-              <div className={`p-4 sm:p-6 rounded-2xl text-center ${isDarkMode ? "bg-gray-800" : "bg-green-100"}`}>
-                <h4 className={`text-base sm:text-lg font-semibold mb-2 ${isDarkMode ? "text-green-300" : "text-green-800"}`}>
-                  Result
-                </h4>
-                <p className={`text-lg sm:text-xl font-bold uppercase tracking-wide ${isDarkMode ? "text-white" : "text-gray-800"}`}>
-                  {game.result.replace("_", " ")}
-                </p>
+
+              {/* Result Card */}
+              <div className={`group relative overflow-hidden p-6 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl ${
+                isDarkMode 
+                  ? "bg-gradient-to-br from-green-900/30 to-emerald-800/30 border border-green-500/30" 
+                  : "bg-gradient-to-br from-green-100/80 to-emerald-200/80 border border-green-300/50"
+              }`}>
+                <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative text-center">
+                  <div className="flex items-center justify-center gap-3 mb-4">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
+                      <span className="text-2xl">🎯</span>
+                    </div>
+                    <h4 className={`text-xl font-bold ${isDarkMode ? "text-green-300" : "text-green-800"}`}>
+                      Result
+                    </h4>
+                  </div>
+                  <p className={`text-2xl font-black uppercase tracking-wider mb-2 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                    {game.result.replace("_", " ")}
+                  </p>
+                  <div className="w-16 h-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mx-auto"></div>
+                </div>
               </div>
             </div>
-            <div className={`mt-4 sm:mt-6 p-4 sm:p-6 rounded-2xl text-center ${isDarkMode ? "bg-purple-900" : "bg-purple-100"}`}>
-              <h4 className={`text-base sm:text-lg font-semibold mb-2 ${isDarkMode ? "text-purple-300" : "text-purple-800"}`}>
-                Average Rating
-              </h4>
-              <div className="flex items-center justify-center gap-2">
-                <span className="text-2xl sm:text-3xl">⭐</span>
-                <span className={`text-2xl sm:text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
-                  {game.averageRating.toFixed(1)}
-                </span>
-                <span className={`text-lg sm:text-xl ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>/10</span>
+
+            {/* Player of the Match and Average Rating - Two Column Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Player of the Match Card */}
+              {playerOfTheMatch ? (
+                <div className={`group relative overflow-hidden p-6 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl ${
+                  isDarkMode 
+                    ? "bg-gradient-to-br from-yellow-900/30 to-amber-800/30 border border-yellow-500/30" 
+                    : "bg-gradient-to-br from-yellow-100/80 to-amber-200/80 border border-yellow-300/50"
+                }`}>
+                  {/* Sparkle effects */}
+                  <div className="absolute inset-0 opacity-20">
+                    <div className="absolute top-2 left-4 w-1 h-1 bg-yellow-400 rounded-full animate-pulse"></div>
+                    <div className="absolute top-4 right-6 w-0.5 h-0.5 bg-orange-400 rounded-full animate-ping"></div>
+                    <div className="absolute bottom-3 left-8 w-1 h-1 bg-amber-400 rounded-full animate-pulse"></div>
+                  </div>
+                  
+                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/10 to-amber-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative text-center">
+                    <div className="flex items-center justify-center gap-3 mb-4">
+                      <div className="relative">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500 flex items-center justify-center shadow-lg transform group-hover:rotate-12 transition-transform duration-300">
+                          <span className="text-2xl">🏆</span>
+                        </div>
+                        <div className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-gradient-to-r from-red-400 to-pink-500 rounded-full flex items-center justify-center">
+                          <span className="text-xs">⭐</span>
+                        </div>
+                      </div>
+                      <h4 className={`text-xl font-bold ${isDarkMode ? "text-yellow-300" : "text-yellow-800"}`}>
+                        Player of the Match
+                      </h4>
+                    </div>
+                    
+                    <p className={`text-2xl font-black mb-3 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                      {playerOfTheMatch.name}
+                    </p>
+                    <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm ${
+                      isDarkMode 
+                        ? "bg-yellow-900/50 text-yellow-300 border border-yellow-500/30" 
+                        : "bg-yellow-200/80 text-yellow-800 border border-yellow-400/40"
+                    }`}>
+                      <span className="text-base">🗳️</span>
+                      <span className="font-bold">
+                        {playerOfTheMatch.votes} vote{playerOfTheMatch.votes !== 1 ? 's' : ''}
+                      </span>
+                    </div>
+                    <div className="w-16 h-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mx-auto mt-3"></div>
+                  </div>
+                </div>
+              ) : (
+                <div className={`group relative overflow-hidden p-6 rounded-2xl backdrop-blur-sm border-2 border-dashed ${
+                  isDarkMode 
+                    ? "border-gray-600 bg-gray-800/30 text-gray-400" 
+                    : "border-gray-300 bg-gray-100/50 text-gray-500"
+                }`}>
+                  <div className="text-center">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-gray-400 to-gray-500 flex items-center justify-center mx-auto mb-3">
+                      <span className="text-2xl opacity-50">🏆</span>
+                    </div>
+                    <h4 className="text-xl font-bold mb-2">Player of the Match</h4>
+                    <p className="text-sm italic">No votes cast yet</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Average Rating Card */}
+              <div className={`group relative overflow-hidden p-6 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl ${
+                isDarkMode 
+                  ? "bg-gradient-to-br from-purple-900/30 to-pink-800/30 border border-purple-500/30" 
+                  : "bg-gradient-to-br from-purple-100/80 to-pink-200/80 border border-purple-300/50"
+              }`}>
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative text-center">
+                  <div className="flex items-center justify-center gap-3 mb-4">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
+                      <span className="text-2xl">📊</span>
+                    </div>
+                    <h4 className={`text-xl font-bold ${isDarkMode ? "text-purple-300" : "text-purple-800"}`}>
+                      Average Rating
+                    </h4>
+                  </div>
+                  <div className="flex items-center justify-center gap-1 mb-3">
+                    {[...Array(Math.floor(game.averageRating / 2))].map((_, i) => (
+                      <span key={i} className="text-xl animate-pulse" style={{animationDelay: `${i * 0.1}s`}}>⭐</span>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-center gap-2">
+                    <span className={`text-4xl font-black ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                      {game.averageRating.toFixed(1)}
+                    </span>
+                    <span className={`text-2xl font-bold ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>/10</span>
+                  </div>
+                  <div className="w-16 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto mt-3"></div>
+                </div>
               </div>
             </div>
           </div>
+            );
+          })()
         ) : null;
 
       default:
@@ -733,16 +899,7 @@ export default function GameDetails({ gameId }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-1 sm:p-2 lg:p-4 transition-colors duration-300">
-      {/* Game Schedule Heading */}
-      <div className="max-w-7xl mx-auto mb-4 sm:mb-6">
-        <h1 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center ${
-          isDarkMode ? 'text-white' : 'text-gray-800'
-        } drop-shadow-lg`}>
-          Game Schedule
-        </h1>
-      </div>
-      
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-1 sm:p-2 lg:p-4 transition-colors duration-300"> 
       <div className={`max-w-7xl mx-auto transition-all duration-500 ${
         isDarkMode
           ? "bg-gradient-to-br from-gray-800 via-gray-900 to-black shadow-2xl shadow-gray-900/50"
@@ -752,54 +909,54 @@ export default function GameDetails({ gameId }) {
         {/* Header Section - Full Width */}
         <div className={`relative px-1 sm:px-2 md:px-4 lg:px-6 py-3 sm:py-4 md:py-6 lg:py-8 ${
           isDarkMode
-            ? "bg-gradient-to-r from-blue-900 via-purple-900 to-indigo-900"
-            : "bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600"
+            ? "bg-gradient-to-r from-green-900 via-teal-900 to-blue-900"
+            : "bg-gradient-to-r from-green-600 via-teal-600 to-blue-600"
         }`}>
           <div className="absolute inset-0 bg-black/20"></div>
           <div className="relative z-1">
             {/* Modern Three-Column Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 xl:gap-8 mb-4 sm:mb-6 md:mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 xl:gap-10 mb-6 sm:mb-8 md:mb-10">
               
               {/* Left Column - Enhanced Game Info & Status */}
-              <div className="flex flex-col justify-center space-y-4 sm:space-y-5">
+              <div className="flex flex-col justify-start mt-4 space-y-4 sm:space-y-5">
                 {/* Game Header with Enhanced Styling */}
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg">
-                      <span className="text-xl sm:text-2xl">⚽</span>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 flex items-center justify-center shadow-2xl transform hover:scale-110 transition-all duration-300">
+                      <span className="text-lg sm:text-xl">⚽</span>
                     </div>
                     <div>
-                      <h2 className="text-base sm:text-lg md:text-xl font-bold text-white">
+                      <h2 className="text-base sm:text-lg md:text-xl font-bold text-white drop-shadow-lg">
                         Football Match
                       </h2>
-                      <p className="text-xs sm:text-sm text-white/70">
+                      <p className="text-xs sm:text-sm text-white/80 font-medium">
                         Game Details
                       </p>
                     </div>
                   </div>
                   
                   {/* Opponent Section */}
-                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
-                    <p className="text-xs sm:text-sm text-white/80 mb-1 font-medium">
+                  <div className="bg-gradient-to-br from-white/15 via-white/10 to-white/5 backdrop-blur-md rounded-3xl p-4 border border-white/30 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]">
+                    <p className="text-xs sm:text-sm text-white/90 mb-2 font-semibold tracking-wide">
                       Playing Against
                     </p>
-                    <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-yellow-300 leading-tight">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold bg-gradient-to-r from-yellow-300 via-orange-300 to-yellow-400 bg-clip-text text-transparent leading-tight drop-shadow-lg">
                       {game.opponent}
                     </h1>
                   </div>
                 </div>
                 
                 {/* Status Badge Section */}
-                <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                <div className="bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-md rounded-3xl p-4 border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-indigo-400 to-purple-500 flex items-center justify-center">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-indigo-400 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg transform hover:rotate-12 transition-all duration-300">
                       <span className="text-lg sm:text-xl">📊</span>
                     </div>
                     <div>
-                      <p className="text-xs sm:text-sm text-white/80 font-medium">Current Status</p>
+                      <p className="text-xs sm:text-sm text-white/90 font-semibold">Current Status</p>
                     </div>
                   </div>
-                  <span className={`${statusBadgeClass(effectiveStatus)} text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold shadow-xl transform hover:scale-105 transition-all duration-300 inline-block w-full text-center`}>
+                  <span className={`${statusBadgeClass(effectiveStatus)} text-xs sm:text-sm px-4 sm:px-6 py-2 sm:py-3 rounded-2xl font-bold shadow-2xl transform hover:scale-105 transition-all duration-300 inline-block w-full text-center`}>
                     {effectiveStatus === 'PENDING' && (
                       <>
                         <span className="hidden sm:inline">⏳ PENDING</span>
@@ -833,132 +990,109 @@ export default function GameDetails({ gameId }) {
                     {!['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED', 'EXPIRED'].includes(effectiveStatus) && effectiveStatus}
                   </span>
                 </div>
-
-                {/* Quick Info Grid */}
-                <div className="grid grid-cols-1 gap-2">
-                  <div className="flex items-center gap-3 bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10">
-                    <span className="text-xl">📅</span>
-                    <div>
-                      <p className="text-xs text-white/70">Date</p>
-                      <p className="text-sm sm:text-base font-medium text-white">{humanDate}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10">
-                    <span className="text-xl">⏰</span>
-                    <div>
-                      <p className="text-xs text-white/70">Kick-off</p>
-                      <p className="text-sm sm:text-base font-medium text-white">{humanTime}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10">
-                    <span className="text-xl">📍</span>
-                    <div>
-                      <p className="text-xs text-white/70">Venue</p>
-                      <p className="text-sm sm:text-base font-medium text-white">{game.venue}</p>
-                    </div>
-                  </div>
-                </div>
               </div>
 
               {/* Middle Column - Sketch Image with Enhanced Animation */}
               <div className="flex items-center justify-center">
                 <div className="relative">
-                  {/* Enhanced Background Glow Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/30 via-orange-500/30 to-red-500/30 rounded-full blur-3xl scale-125 animate-pulse"></div>
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-purple-500/20 to-pink-500/20 rounded-full blur-2xl scale-110 animate-pulse" style={{ animationDelay: '1s' }}></div>
+                  {/* Enhanced Multi-Layer Background Glow Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/40 via-orange-500/40 to-red-500/40 rounded-full blur-3xl scale-150 animate-pulse"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400/30 via-purple-500/30 to-pink-500/30 rounded-full blur-2xl scale-125 animate-pulse" style={{ animationDelay: '1s' }}></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 via-teal-500/20 to-cyan-500/20 rounded-full blur-xl scale-110 animate-pulse" style={{ animationDelay: '2s' }}></div>
                   
-                  {/* Floating Animation Container */}
+                  {/* Floating Animation Container with Enhanced Effects */}
                   <div className="relative transform hover:scale-110 transition-all duration-700 ease-out">
                     <img 
                       src={SketchImage} 
                       alt="Football Game Illustration" 
-                      className="w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 lg:w-48 lg:h-48 xl:w-56 xl:h-56 object-contain filter drop-shadow-2xl animate-float"
+                      className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-52 lg:h-52 xl:w-60 xl:h-60 object-contain filter drop-shadow-2xl animate-float"
                       style={{
                         animation: 'float 6s ease-in-out infinite'
                       }}
                     />
                   </div>
                   
-                  {/* Enhanced Decorative Elements */}
-                  <div className="absolute -top-3 -right-3 w-5 h-5 bg-yellow-400 rounded-full animate-ping shadow-lg"></div>
-                  <div className="absolute -bottom-3 -left-3 w-4 h-4 bg-orange-500 rounded-full animate-ping shadow-lg" style={{ animationDelay: '1s' }}></div>
-                  <div className="absolute top-1/2 -left-4 w-3 h-3 bg-red-400 rounded-full animate-ping shadow-lg" style={{ animationDelay: '2s' }}></div>
-                  <div className="absolute top-1/4 -right-2 w-2 h-2 bg-pink-400 rounded-full animate-ping shadow-lg" style={{ animationDelay: '0.5s' }}></div>
+                  {/* Enhanced Decorative Elements with Better Positioning */}
+                  <div className="absolute -top-4 -right-4 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full animate-ping shadow-xl"></div>
+                  <div className="absolute -bottom-4 -left-4 w-5 h-5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full animate-ping shadow-xl" style={{ animationDelay: '1s' }}></div>
+                  <div className="absolute top-1/2 -left-5 w-4 h-4 bg-gradient-to-r from-red-400 to-pink-500 rounded-full animate-ping shadow-xl" style={{ animationDelay: '2s' }}></div>
+                  <div className="absolute top-1/4 -right-3 w-3 h-3 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full animate-ping shadow-xl" style={{ animationDelay: '0.5s' }}></div>
+                  <div className="absolute bottom-1/4 -right-5 w-4 h-4 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full animate-ping shadow-xl" style={{ animationDelay: '1.5s' }}></div>
                 </div>
               </div>
 
               {/* Right Column - Game Notice & Guidelines */}
-              <div className="flex flex-col justify-center space-y-4">
+              <div className="flex flex-col justify-start mt-4 space-y-4">
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-green-400 to-teal-500 flex items-center justify-center shadow-lg">
-                    <span className="text-xl sm:text-2xl">📋</span>
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-green-400 via-teal-500 to-emerald-500 flex items-center justify-center shadow-2xl transform hover:scale-110 transition-all duration-300">
+                    <span className="text-lg sm:text-xl">📋</span>
                   </div>
                   <div>
-                    <h3 className="text-base sm:text-lg md:text-xl font-bold text-white">
+                    <h3 className="text-base sm:text-lg md:text-xl font-bold text-white drop-shadow-lg">
                       Game Guidelines
                     </h3>
-                    <p className="text-xs sm:text-sm text-white/70">
+                    <p className="text-xs sm:text-sm text-white/80 font-medium">
                       Important reminders
                     </p>
                   </div>
                 </div>
 
                 {/* Guidelines List */}
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 sm:p-5 border border-white/20 space-y-3">
+                <div className="bg-gradient-to-br from-white/15 via-white/10 to-white/5 backdrop-blur-md rounded-3xl p-4 sm:p-5 border border-white/30 space-y-3 shadow-2xl hover:shadow-3xl transition-all duration-500">
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-lg">
                       <span className="text-xs text-white">ℹ️</span>
                     </div>
-                    <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
-                      <span className="font-medium">Be informed</span> about time, venue, and opponent
+                    <p className="text-xs sm:text-sm text-white/95 leading-relaxed">
+                      <span className="font-semibold text-blue-200">Be informed</span> about time, venue, and opponent
                     </p>
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-cyan-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-cyan-500 to-cyan-600 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-lg">
                       <span className="text-xs text-white">💧</span>
                     </div>
-                    <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
-                      <span className="font-medium">Stay hydrated</span> before and during the game
+                    <p className="text-xs sm:text-sm text-white/95 leading-relaxed">
+                      <span className="font-semibold text-cyan-200">Stay hydrated</span> before and during the game
                     </p>
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-yellow-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-500 to-yellow-600 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-lg">
                       <span className="text-xs text-white">⏰</span>
                     </div>
-                    <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
-                      <span className="font-medium">Arrive 30 minutes</span> before kick-off
+                    <p className="text-xs sm:text-sm text-white/95 leading-relaxed">
+                      <span className="font-semibold text-yellow-200">Arrive 30 minutes</span> before kick-off
                     </p>
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-lg">
                       <span className="text-xs text-white">🏃</span>
                     </div>
-                    <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
-                      <span className="font-medium">Team warm-up</span> before kick-off
+                    <p className="text-xs sm:text-sm text-white/95 leading-relaxed">
+                      <span className="font-semibold text-orange-200">Team warm-up</span> before kick-off
                     </p>
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-lg">
                       <span className="text-xs text-white">🎯</span>
                     </div>
-                    <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
-                      <span className="font-medium">Know the game plan</span> and formation
+                    <p className="text-xs sm:text-sm text-white/95 leading-relaxed">
+                      <span className="font-semibold text-purple-200">Know the game plan</span> and formation
                     </p>
                   </div>
                 </div>
 
                 {/* Additional Info */}
-                <div className="bg-gradient-to-r from-green-500/20 to-teal-500/20 backdrop-blur-sm rounded-xl p-3 border border-green-400/30">
+                <div className="bg-gradient-to-br from-green-500/30 via-teal-500/25 to-emerald-500/20 backdrop-blur-md rounded-2xl p-3 border border-green-400/40 shadow-xl hover:shadow-2xl transition-all duration-500">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-green-300">✨</span>
-                    <p className="text-xs font-medium text-green-200">Good Luck!</p>
+                    <span className="text-lg">✨</span>
+                    <p className="text-xs font-bold text-green-100">Good Luck!</p>
                   </div>
-                  <p className="text-xs text-green-100/80 leading-relaxed">
+                  <p className="text-xs text-green-50/90 leading-relaxed">
                     Play with passion, respect your teammates and opponents
                   </p>
                 </div>
@@ -1209,7 +1343,160 @@ export default function GameDetails({ gameId }) {
                     </div>
                     
                     {game.status === "COMPLETED" ? (
+                      (() => {
+                        // Calculate Player of the Match (most selected player)
+                        const calculatePlayerOfTheMatch = () => {
+                          const feedbacks = game?.feedbacks || [];
+                          if (!feedbacks.length) return null;
+                          
+                          const playerVotes = {};
+                          feedbacks.forEach(feedback => {
+                            if (feedback.playerOfTheMatch) {
+                              const playerId = feedback.playerOfTheMatch._id;
+                              const playerName = feedback.playerOfTheMatch.name;
+                              const playerProfilePic = feedback.playerOfTheMatch.profilePic;
+                              if (playerVotes[playerId]) {
+                                playerVotes[playerId].votes++;
+                              } else {
+                                playerVotes[playerId] = {
+                                  id: playerId,
+                                  name: playerName,
+                                  profilePic: playerProfilePic,
+                                  votes: 1
+                                };
+                              }
+                            }
+                          });
+                          
+                          // Find the player with most votes
+                          const players = Object.values(playerVotes);
+                          if (players.length === 0) return null;
+                          
+                          return players.reduce((max, player) => 
+                            player.votes > max.votes ? player : max
+                          );
+                        };
+
+                        const playerOfTheMatch = calculatePlayerOfTheMatch();
+
+                        return (
                       <div className="space-y-4">
+                                                         {/* Player of the Match Award Display */}
+                          {playerOfTheMatch && (
+                            <div className={`mb-6 p-6 rounded-3xl border-2 relative overflow-hidden ${
+                              isDarkMode 
+                                ? "bg-gradient-to-br from-yellow-900/30 via-amber-900/40 to-orange-900/30 border-yellow-500/50" 
+                                : "bg-gradient-to-br from-yellow-50/90 via-amber-50/90 to-orange-50/90 border-yellow-400/60"
+                            }`}>
+                              {/* Sparkle effects */}
+                              <div className="absolute inset-0 opacity-30">
+                                <div className="absolute top-2 left-4 w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                                <div className="absolute top-4 right-6 w-1.5 h-1.5 bg-orange-400 rounded-full animate-ping"></div>
+                                <div className="absolute bottom-3 left-8 w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
+                                <div className="absolute bottom-2 right-4 w-1 h-1 bg-red-400 rounded-full animate-ping"></div>
+                                <div className="absolute top-1/2 left-2 w-1.5 h-1.5 bg-pink-400 rounded-full animate-pulse"></div>
+                                <div className="absolute top-1/4 right-3 w-1 h-1 bg-purple-400 rounded-full animate-ping"></div>
+                              </div>
+
+                              {/* Award Ribbon */}
+                              <div className="absolute -top-1 -right-1 w-12 h-12 bg-gradient-to-r from-red-500 to-pink-500 transform rotate-12 rounded-lg flex items-center justify-center shadow-lg">
+                                <span className="text-white text-xs font-bold transform -rotate-12">WINNER</span>
+                              </div>
+
+                              <div className="relative text-center">
+                                {/* Title */}
+                                <div className="mb-4">
+                                  <div className="flex items-center justify-center gap-2 mb-2">
+                                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg">
+                                      <span className="text-sm">🏆</span>
+                                    </div>
+                                    <h4 className={`text-lg font-bold ${
+                                      isDarkMode ? "text-yellow-300" : "text-yellow-800"
+                                    }`}>
+                                      Player of the Match
+                                    </h4>
+                                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center shadow-lg">
+                                      <span className="text-sm">⭐</span>
+                                    </div>
+                                  </div>
+                                  <div className="w-24 h-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-full mx-auto"></div>
+                                </div>
+
+                                {/* Player Image and Info */}
+                                <div className="flex flex-col items-center space-y-3">
+                                  {/* Profile Image with Trophy Frame */}
+                                  <div className="relative">
+                                    {/* Outer glow ring */}
+                                    <div className="absolute inset-0 w-18 h-18 rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 animate-pulse blur-sm"></div>
+                                    
+                                    {/* Trophy frame */}
+                                    <div className="relative w-16 h-16 rounded-full bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500 p-0.5 shadow-2xl">
+                                      <div className="w-full h-full rounded-full bg-white p-0.5 shadow-inner">
+                                        <img
+                                          src={playerOfTheMatch.profilePic || SketchImage}
+                                          alt={playerOfTheMatch.name}
+                                          className="w-full h-full rounded-full object-cover shadow-lg"
+                                          onError={(e) => {
+                                            e.target.src = SketchImage;
+                                          }}
+                                        />
+                                      </div>
+                                    </div>
+
+                                    {/* Crown */}
+                                    <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg">
+                                      <span className="text-xs">👑</span>
+                                    </div>
+                                  </div>
+
+                                  {/* Player Details */}
+                                  <div className="space-y-1">
+                                    <h3 className={`text-xl font-black ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                                      {playerOfTheMatch.name}
+                                    </h3>
+                                    
+                                    {/* Vote Badge */}
+                                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm ${
+                                      isDarkMode 
+                                        ? "bg-yellow-900/50 text-yellow-300 border border-yellow-500/30" 
+                                        : "bg-yellow-200/80 text-yellow-800 border border-yellow-400/40"
+                                    }`}>
+                                      <span className="text-sm">🗳️</span>
+                                      <span className="font-bold">
+                                        {playerOfTheMatch.votes} vote{playerOfTheMatch.votes !== 1 ? 's' : ''}
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  {/* Award Message */}
+                                  <div className={`mt-2 p-2 rounded-lg text-xs ${
+                                    isDarkMode 
+                                      ? "bg-gradient-to-r from-yellow-900/30 to-amber-900/30 text-yellow-200" 
+                                      : "bg-gradient-to-r from-yellow-100/80 to-amber-100/80 text-yellow-800"
+                                  }`}>
+                                    <p className="font-medium italic">
+                                      🎉 Outstanding performance! 🎉
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                                    {/* No Player of the Match fallback */}
+                          {!playerOfTheMatch && (
+                            <div className={`p-3 rounded-lg mb-3 border-2 border-dashed ${
+                              isDarkMode 
+                                ? "bg-gray-800/50 border-gray-600 text-gray-400" 
+                                : "bg-gray-100/50 border-gray-300 text-gray-500"
+                            }`}>
+                              <div className="flex items-center justify-between">
+                                <span className={`font-semibold ${isDarkMode ? "text-yellow-300" : "text-yellow-600"}`}>
+                                  Player Of The Match:
+                                </span>
+                                <span className="text-sm italic">No votes cast yet</span>
+                              </div>
+                            </div>
+                          )}
                         {/* Game Results Summary */}
                         <div className={`p-4 rounded-xl ${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
                           <div className="text-center mb-4">
@@ -1257,7 +1544,6 @@ export default function GameDetails({ gameId }) {
                               </div>
                             </div>
                           </div>
-                          
                           {/* Feedback Statistics */}
                           <div className={`p-3 rounded-lg border-t-2 ${isDarkMode ? "bg-gray-700 border-gray-600" : "bg-white border-gray-200"}`}>
                             <h5 className={`font-semibold mb-2 ${isDarkMode ? "text-yellow-300" : "text-yellow-600"}`}>
@@ -1290,8 +1576,9 @@ export default function GameDetails({ gameId }) {
                               </div>
                             </div>
                           </div>
+                          
                         </div>
-                        
+
                         {/* Feedback Encouragement */}
                         {!feedbackGiven && (
                           <div className={`p-3 rounded-lg text-center ${isDarkMode ? "bg-blue-900/50" : "bg-blue-50"}`}>
@@ -1301,6 +1588,8 @@ export default function GameDetails({ gameId }) {
                           </div>
                         )}
                       </div>
+                        );
+                      })()
                     ) : (
                       <div className="h-full">
                         <FormationCommentList gameId={gameId} />

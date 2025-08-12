@@ -468,6 +468,10 @@ export const QUERY_GAMES = gql`
         comment
         rating
         createdAt
+        playerOfTheMatch {
+          _id
+          name
+        }
       }
       averageRating
       formation {
@@ -542,6 +546,10 @@ export const QUERY_GAME = gql`
         }
         comment
         rating
+        playerOfTheMatch {
+          _id
+          name
+        }
         createdAt
       }
       averageRating

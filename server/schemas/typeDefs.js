@@ -162,6 +162,7 @@ const typeDefs = gql`
     user: Profile!
     comment: String
     rating: Int!
+    playerOfTheMatch: Profile
     createdAt: String!
   }
 
@@ -305,7 +306,7 @@ const typeDefs = gql`
     unvoteGame(gameId: ID!): Game!
     deleteGame(gameId: ID!): Game!
     updateGame(gameId: ID!, input: UpdateGameInput!): Game!
-    addFeedback(gameId: ID!, comment: String, rating: Int!): Game!
+    addFeedback(gameId: ID!, comment: String, rating: Int!, playerOfTheMatchId: ID): Game!
     createFormation(gameId: ID!, formationType: String!): Formation!
     updateFormation(gameId: ID!, positions: [PositionInput!]!): Formation!
     deleteFormation(gameId: ID!): Boolean!
