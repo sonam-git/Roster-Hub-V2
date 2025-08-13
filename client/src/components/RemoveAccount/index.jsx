@@ -38,11 +38,11 @@ const RemoveAccount = ({ profileId, isDarkMode }) => {
     <div>
       <button
         onClick={() => setShowModal(true)}
-        className={`w-full sm:w-auto px-5 sm:px-6 py-3 sm:py-4 rounded-2xl text-sm sm:text-base font-bold text-white 
-          shadow-xl transition-all duration-300 transform hover:scale-[1.02]
+        className={`w-full sm:w-auto px-4 sm:px-5 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-semibold text-white 
+          shadow-lg transition-all duration-300 transform hover:scale-[1.02]
           bg-gradient-to-r from-red-600 via-pink-600 to-red-700 hover:from-red-500 hover:via-pink-500 hover:to-red-600
-          hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-red-300/50
-          relative overflow-hidden group min-w-[150px]`}
+          hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-red-300/50
+          relative overflow-hidden group min-w-[120px]`}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
         <span className="flex items-center justify-center gap-2 relative z-10">
@@ -62,31 +62,31 @@ const RemoveAccount = ({ profileId, isDarkMode }) => {
               <div className="flex items-center justify-center w-14 h-14 mx-auto mb-4 bg-gradient-to-br from-red-500 to-pink-600 rounded-full">
                 <FaExclamationTriangle className="text-white text-xl" />
               </div>
-              <h3 className={`text-lg sm:text-xl font-bold text-center mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              <h3 className={`text-base sm:text-lg font-bold text-center mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                 Delete Account?
               </h3>
-              <p className={`text-sm sm:text-base text-center mb-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+              <p className={`text-xs sm:text-sm text-center mb-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                 Are you sure you want to permanently delete your account? This action cannot be undone and all your data will be lost.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={() => setShowModal(false)}
-                  className={`flex-1 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-300 transform hover:scale-[1.02]
+                  className={`flex-1 px-3 py-2 sm:px-4 sm:py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 transform hover:scale-[1.02]
                     ${isDarkMode 
                       ? 'bg-gray-700 hover:bg-gray-600 text-white' 
                       : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
                     }
-                    shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-gray-300/50`}
+                    shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-gray-300/50`}
                   disabled={deleting}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="flex-1 px-4 py-3 rounded-2xl text-sm font-bold text-white 
+                  className="flex-1 px-3 py-2 sm:px-4 sm:py-3 rounded-xl text-xs sm:text-sm font-semibold text-white 
                     bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500
-                    shadow-xl transition-all duration-300 transform hover:scale-[1.02]
-                    hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-red-300/50
+                    shadow-lg transition-all duration-300 transform hover:scale-[1.02]
+                    hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-red-300/50
                     disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   disabled={deleting}
                 >

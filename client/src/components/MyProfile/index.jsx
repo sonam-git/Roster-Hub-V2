@@ -155,9 +155,9 @@ const MyProfile = () => {
                   ? 'bg-gray-800/30 border-gray-700 shadow-gray-900/20' 
                   : 'bg-white/70 border-gray-200 shadow-blue-100/50'
               } backdrop-blur-sm shadow-lg`}>
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2 mb-3 ">
                   <span className="text-xl">🔗</span>
-                  <h4 className={`font-bold text-sm ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                  <h4 className={`font-bold  text-sm ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
                     Social Links
                   </h4>
                 </div>
@@ -168,80 +168,84 @@ const MyProfile = () => {
                 />
               </div>
 
-              <div className="navbar flex justify-center mt-8">
-                <div className={`flex flex-col sm:flex-row rounded-2xl p-1.5 shadow-lg border transition-all duration-300 w-full sm:w-auto ${
-                  isDarkMode 
-                    ? 'bg-gray-800 border-gray-600 shadow-gray-900/20' 
-                    : 'bg-white border-gray-200 shadow-blue-100/50'
-                }`}>
-                  <button
-                    className={`relative px-4 py-3 sm:py-2 rounded-xl font-bold text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 flex items-center justify-center sm:justify-start gap-2 w-full sm:w-auto mb-1 sm:mb-0 ${
-                      selectedView === "settings"
-                        ? `${isDarkMode 
-                            ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/30' 
-                            : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25'
-                          }` 
-                        : `${isDarkMode 
-                            ? 'text-gray-300 hover:text-white hover:bg-gray-700' 
-                            : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
-                          }`
-                    }`}
-                    onClick={() => setSelectedView("settings")}
-                  >
-                    <span className="text-sm">⚙️</span>
-                    <span>Settings</span>
-                    {selectedView === "settings" && (
-                      <div className="absolute -bottom-0.5 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse"></div>
-                    )}
-                  </button>
-                  <button
-                    className={`relative px-4 py-3 sm:py-2 rounded-xl font-bold text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 flex items-center justify-center sm:justify-start gap-2 w-full sm:w-auto mb-1 sm:mb-0 ${
-                      selectedView === "posts"
-                        ? `${isDarkMode 
-                            ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-500/30' 
-                            : 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/25'
-                          }` 
-                        : `${isDarkMode 
-                            ? 'text-gray-300 hover:text-white hover:bg-gray-700' 
-                            : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
-                          }`
-                    }`}
-                    onClick={() => setSelectedView("posts")}
-                  >
-                    <span className="text-sm">📝</span>
-                    <span>Posts</span>
-                    {selectedView === "posts" && (
-                      <div className="absolute -bottom-0.5 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-purple-400 rounded-full animate-pulse"></div>
-                    )}
-                  </button>
-                  <button
-                    className={`relative px-4 py-3 sm:py-2 rounded-xl font-bold text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 flex items-center justify-center sm:justify-start gap-2 w-full sm:w-auto ${
-                      selectedView === "games"
-                        ? `${isDarkMode 
-                            ? 'bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg shadow-green-500/30' 
-                            : 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg shadow-green-500/25'
-                          }` 
-                        : `${isDarkMode 
-                            ? 'text-gray-300 hover:text-white hover:bg-gray-700' 
-                            : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
-                          }`
-                    }`}
-                    onClick={() => setSelectedView("games")}
-                  >
-                    <span className="text-sm">⚽</span>
-                    <span>My Games</span>
-                    {selectedView === "games" && (
-                      <div className="absolute -bottom-0.5 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
-                    )}
-                  </button>
-                </div>
-              </div>
+
             </div>
           </div>
         </div>
 
         {/* ─── RIGHT COLUMN */}
         <div className="md:w-3/5 p-2">
+                      <div className="navbar mb-6">
+                <div className={`flex flex-col sm:flex-row sm:justify-around sm:gap-2 rounded-xl p-1 shadow-md border transition-all duration-300 w-full backdrop-blur-sm ${
+                  isDarkMode 
+                    ? 'bg-gray-800/90 border-gray-600/50 shadow-gray-900/20' 
+                    : 'bg-white/90 border-gray-200/50 shadow-blue-100/50'
+                }`}>
+                  <button
+                    className={`relative px-3 py-2 sm:py-1.5 rounded-lg font-semibold text-xs sm:text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-1 focus:ring-blue-400/50 flex items-center justify-center gap-1.5 w-full sm:flex-1 mb-0.5 sm:mb-0 overflow-hidden group ${
+                      selectedView === "settings"
+                        ? `${isDarkMode 
+                            ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/20' 
+                            : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/15'
+                          }` 
+                        : `${isDarkMode 
+                            ? 'text-gray-300 hover:text-white hover:bg-gray-700/60' 
+                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100/60'
+                          }`
+                    }`}
+                    onClick={() => setSelectedView("settings")}
+                  >
+                    <span className="text-xs">⚙️</span>
+                    <span className="font-medium">Settings</span>
+                    {selectedView === "settings" && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-600/20 rounded-lg"></div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                  </button>
+                  <button
+                    className={`relative px-3 py-2 sm:py-1.5 rounded-lg font-semibold text-xs sm:text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-1 focus:ring-purple-400/50 flex items-center justify-center gap-1.5 w-full sm:flex-1 mb-0.5 sm:mb-0 overflow-hidden group ${
+                      selectedView === "posts"
+                        ? `${isDarkMode 
+                            ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-md shadow-purple-500/20' 
+                            : 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-md shadow-purple-500/15'
+                          }` 
+                        : `${isDarkMode 
+                            ? 'text-gray-300 hover:text-white hover:bg-gray-700/60' 
+                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100/60'
+                          }`
+                    }`}
+                    onClick={() => setSelectedView("posts")}
+                  >
+                    <span className="text-xs">📝</span>
+                    <span className="font-medium">Posts</span>
+                    {selectedView === "posts" && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-purple-600/20 rounded-lg"></div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                  </button>
+                  <button
+                    className={`relative px-3 py-2 sm:py-1.5 rounded-lg font-semibold text-xs sm:text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-1 focus:ring-green-400/50 flex items-center justify-center gap-1.5 w-full sm:flex-1 overflow-hidden group ${
+                      selectedView === "games"
+                        ? `${isDarkMode 
+                            ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md shadow-green-500/20' 
+                            : 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md shadow-green-500/15'
+                          }` 
+                        : `${isDarkMode 
+                            ? 'text-gray-300 hover:text-white hover:bg-gray-700/60' 
+                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100/60'
+                          }`
+                    }`}
+                    onClick={() => setSelectedView("games")}
+                  >
+                    <span className="text-xs">⚽</span>
+                    <span className="font-medium">Games</span>
+                    {selectedView === "games" && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-green-600/20 rounded-lg"></div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                  </button>
+                </div>
+              </div>
           {selectedView === "posts" ? (
             <>
               <PostForm />

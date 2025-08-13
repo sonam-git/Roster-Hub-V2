@@ -64,19 +64,19 @@ const UserInfoForm = ({ profileId, isDarkMode }) => {
               shadow-xl animate-pulse`}>
               <FaUserEdit className="text-white text-lg sm:text-xl" />
             </div>
-            <h2 className={`text-lg sm:text-xl md:text-2xl font-bold mb-3 gradient-text
+            <h2 className={`text-base sm:text-lg md:text-xl font-bold mb-3 gradient-text
               ${isDarkMode ? 'from-blue-300 to-purple-300' : 'from-blue-600 to-indigo-600'}`}>
               Player Information
             </h2>
-            <p className={`text-sm sm:text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
               Complete your profile with essential game details
             </p>
           </div>
 
-          <form className="space-y-5 sm:space-y-6" onSubmit={handleFormSubmit}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <form className="space-y-4" onSubmit={handleFormSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="group md:col-span-1">
-                <label htmlFor="jersey-number" className={`block text-sm sm:text-base font-semibold mb-2 transition-colors
+                <label htmlFor="jersey-number" className={`block text-xs sm:text-sm font-semibold mb-2 transition-colors
                   ${isDarkMode ? 'text-blue-300 group-focus-within:text-blue-200' : 'text-blue-700 group-focus-within:text-blue-800'}`}>
                   Jersey Number
                 </label>
@@ -85,21 +85,21 @@ const UserInfoForm = ({ profileId, isDarkMode }) => {
                   type="number"
                   placeholder="Enter Your Jersey Number"
                   value={jerseyNumber}
-                  className={`w-full rounded-2xl border-0 px-4 py-3 sm:px-5 sm:py-4 text-sm sm:text-base font-medium
+                  className={`w-full rounded-xl border-0 px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm font-medium
                     ${isDarkMode 
                       ? 'bg-gray-800/60 text-white placeholder-gray-400 ring-gray-600/50 focus:ring-indigo-500/60' 
                       : 'bg-white/90 text-gray-900 placeholder-gray-500 ring-blue-200/60 focus:ring-indigo-500/60'
                     } 
-                    shadow-xl ring-2 ring-inset backdrop-blur-sm
-                    focus:ring-4 focus:ring-inset focus:shadow-2xl
-                    transition-all duration-300 hover:shadow-xl hover:scale-[1.02]`}
+                    shadow-lg ring-1 ring-inset backdrop-blur-sm
+                    focus:ring-2 focus:ring-inset focus:shadow-xl
+                    transition-all duration-300 hover:shadow-lg hover:scale-[1.02]`}
                   onChange={(event) => setJerseyNumber(event.target.value)}
                   required
                 />
               </div>
 
               <div className="group md:col-span-1">
-                <label htmlFor="position" className={`block text-sm sm:text-base font-semibold mb-2 transition-colors
+                <label htmlFor="position" className={`block text-xs sm:text-sm font-semibold mb-2 transition-colors
                   ${isDarkMode ? 'text-blue-300 group-focus-within:text-blue-200' : 'text-blue-700 group-focus-within:text-blue-800'}`}>
                   Position
                 </label>
@@ -108,21 +108,21 @@ const UserInfoForm = ({ profileId, isDarkMode }) => {
                   type="text"
                   placeholder="Enter Your Position"
                   value={position}
-                  className={`w-full rounded-2xl border-0 px-4 py-3 sm:px-5 sm:py-4 text-sm sm:text-base font-medium
+                  className={`w-full rounded-xl border-0 px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm font-medium
                     ${isDarkMode 
                       ? 'bg-gray-800/60 text-white placeholder-gray-400 ring-gray-600/50 focus:ring-indigo-500/60' 
                       : 'bg-white/90 text-gray-900 placeholder-gray-500 ring-blue-200/60 focus:ring-indigo-500/60'
                     } 
-                    shadow-xl ring-2 ring-inset backdrop-blur-sm
-                    focus:ring-4 focus:ring-inset focus:shadow-2xl
-                    transition-all duration-300 hover:shadow-xl hover:scale-[1.02]`}
+                    shadow-lg ring-1 ring-inset backdrop-blur-sm
+                    focus:ring-2 focus:ring-inset focus:shadow-xl
+                    transition-all duration-300 hover:shadow-lg hover:scale-[1.02]`}
                   onChange={(event) => setPosition(event.target.value)}
                   required
                 />
               </div>
 
               <div className="group md:col-span-2">
-                <label htmlFor="phone-number" className={`block text-sm sm:text-base font-semibold mb-2 transition-colors
+                <label htmlFor="phone-number" className={`block text-xs sm:text-sm font-semibold mb-2 transition-colors
                   ${isDarkMode ? 'text-blue-300 group-focus-within:text-blue-200' : 'text-blue-700 group-focus-within:text-blue-800'}`}>
                   Phone Number
                 </label>
@@ -131,14 +131,14 @@ const UserInfoForm = ({ profileId, isDarkMode }) => {
                   type="tel"
                   placeholder="Enter Your Phone Number"
                   value={phoneNumber}
-                  className={`w-full rounded-2xl border-0 px-4 py-3 sm:px-5 sm:py-4 text-sm sm:text-base font-medium
+                  className={`w-full rounded-xl border-0 px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm font-medium
                     ${isDarkMode 
                       ? 'bg-gray-800/60 text-white placeholder-gray-400 ring-gray-600/50 focus:ring-indigo-500/60' 
                       : 'bg-white/90 text-gray-900 placeholder-gray-500 ring-blue-200/60 focus:ring-indigo-500/60'
                     } 
-                    shadow-xl ring-2 ring-inset backdrop-blur-sm
-                    focus:ring-4 focus:ring-inset focus:shadow-2xl
-                    transition-all duration-300 hover:shadow-xl hover:scale-[1.02]`}
+                    shadow-lg ring-1 ring-inset backdrop-blur-sm
+                    focus:ring-2 focus:ring-inset focus:shadow-xl
+                    transition-all duration-300 hover:shadow-lg hover:scale-[1.02]`}
                   onChange={(event) => setPhoneNumber(event.target.value)}
                   required
                 />
@@ -147,20 +147,20 @@ const UserInfoForm = ({ profileId, isDarkMode }) => {
 
             <button
               type="submit"
-              className={`w-full rounded-2xl px-6 py-4 sm:px-8 sm:py-5 text-base sm:text-lg font-bold text-white 
-                shadow-2xl transition-all duration-300 transform
+              className={`w-full rounded-xl px-4 py-3 sm:px-5 sm:py-4 text-sm sm:text-base font-semibold text-white 
+                shadow-lg transition-all duration-300 transform
                 ${isDarkMode 
                   ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:via-purple-500 hover:to-pink-500 shadow-purple-500/30' 
                   : 'bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 shadow-blue-500/30'
                 }
-                hover:scale-[1.02] hover:shadow-3xl focus:outline-none focus:ring-4 focus:ring-indigo-300/50
+                hover:scale-[1.02] hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-indigo-300/50
                 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none button-glow
                 relative overflow-hidden group`}
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-              <span className="flex items-center justify-center gap-2 sm:gap-3 relative z-10">
+              <span className="flex items-center justify-center gap-2 relative z-10">
                 {buttonText}
-                <FaUserEdit className="text-base sm:text-lg" />
+                <FaUserEdit className="text-sm" />
               </span>
             </button>
 

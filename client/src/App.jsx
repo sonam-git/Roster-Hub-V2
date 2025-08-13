@@ -151,8 +151,13 @@ function AppContent({ sidebarOpen, setSidebarOpen, showTopHeader }) {
         className={`flex transition-colors duration-300 ${backgroundConfig.className}`}
         style={backgroundConfig.style}
       >
+        {/* Global backdrop blur overlay for better content readability over background images */}
+        {shouldUseSportsBackground && (
+          <div className="fixed inset-0 backdrop-blur-sm bg-white/30 dark:bg-black/40 pointer-events-none z-[1]"></div>
+        )}
+        
         <Header open={sidebarOpen} setOpen={setSidebarOpen} />
-        <div className={`flex-1 transition-all duration-300 ${showTopHeader ? 'pt-2 md:pt-2' : 'pt-32 md:pt-2'} lg:pt-2`}>
+        <div className={`flex-1 transition-all duration-300 ${showTopHeader ? 'pt-2 md:pt-2' : 'pt-32 md:pt-2'} lg:pt-2 relative z-[2]`}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route
