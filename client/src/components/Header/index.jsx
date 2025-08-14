@@ -87,7 +87,7 @@ const Header = ({ open, setOpen }) => {
     >
       {/* Mobile horizontal auth buttons when not logged in */}
       {!Auth.loggedIn() && open && (
-        <div className="lg:hidden fixed top-32 left-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl py-4 shadow-2xl border-b border-gray-200 dark:border-gray-700 z-[50] mt-4">
+        <div className="lg:hidden fixed top-30 left-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl py-4 shadow-2xl border-b border-gray-200 dark:border-gray-700 z-[50] ">
           <div className="flex flex-row gap-1 px-2">
             <Link
               to="/"

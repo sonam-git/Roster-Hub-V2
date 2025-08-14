@@ -39,7 +39,6 @@ import TopHeader from "./components/TopHeader";
 import CustomComingGames from "./components/CustomComingGames";
 import AllSkillsList from "./components/AllSkillsList";
 import About from "./pages/About";
-import fieldImage from "./assets/images/field.webp";
 
 // Define HTTP and WebSocket URIs based on environment
 const httpUri =
@@ -90,7 +89,7 @@ const client = new ApolloClient({
 });
 
 // ─── App Content ───
-function AppContent({ sidebarOpen, setSidebarOpen, showTopHeader }) {
+function AppContent({ sidebarOpen, setSidebarOpen }) {
   const { isDarkMode } = useContext(ThemeContext);
   const { data } = useQuery(QUERY_ME);
   const currentUser = data?.me;
@@ -103,37 +102,10 @@ function AppContent({ sidebarOpen, setSidebarOpen, showTopHeader }) {
   const shouldUseSportsBackground = sportsStyleRoutes.includes(location.pathname);
 
   const getSportsBackground = () => {
-    const isLargeScreen = window.innerWidth >= 1024;
-    
-    if (isDarkMode) {
-      return {
-        className: `relative overflow-hidden min-h-screen
-                   ${isLargeScreen 
-                     ? 'lg:before:absolute lg:before:inset-0 lg:before:z-[-1] lg:before:opacity-25 lg:after:absolute lg:after:inset-0 lg:after:bg-gradient-to-br lg:after:from-blue-900/70 lg:after:via-blue-800/50 lg:after:to-slate-900/60 lg:after:z-[-1]'
-                     : 'bg-gradient-to-br from-green-600 via-gray-600 to-blue-700'
-                   }`,
-        style: isLargeScreen ? {
-          backgroundImage: `url(${fieldImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        } : {}
-      };
-    } else {
-      return {
-        className: `relative overflow-hidden min-h-screen
-                   ${isLargeScreen 
-                     ? 'lg:before:absolute lg:before:inset-0 lg:before:z-[-1] lg:before:opacity-20 lg:after:absolute lg:after:inset-0 lg:after:bg-gradient-to-br lg:after:from-blue-500/40 lg:after:via-white/70 lg:after:to-white/90 lg:after:z-[-1]'
-                     : 'bg-gradient-to-br from-green-400 via-blue-500 to-gray-600'
-                   }`,
-        style: isLargeScreen ? {
-          backgroundImage: `url(${fieldImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        } : {}
-      };
-    }
+    return {
+      className: isDarkMode ? "relative overflow-hidden min-h-screen bg-gray-900" : "relative overflow-hidden min-h-screen bg-white",
+      style: {}
+    };
   };
 
   const getDefaultBackground = () => {
@@ -151,13 +123,8 @@ function AppContent({ sidebarOpen, setSidebarOpen, showTopHeader }) {
         className={`flex transition-colors duration-300 ${backgroundConfig.className}`}
         style={backgroundConfig.style}
       >
-        {/* Global backdrop blur overlay for better content readability over background images */}
-        {shouldUseSportsBackground && (
-          <div className="fixed inset-0 backdrop-blur-sm bg-white/30 dark:bg-black/40 pointer-events-none z-[1]"></div>
-        )}
-        
         <Header open={sidebarOpen} setOpen={setSidebarOpen} />
-        <div className={`flex-1 transition-all duration-300 ${showTopHeader ? 'pt-2 md:pt-2' : 'pt-32 md:pt-2'} lg:pt-2 relative z-[2]`}>
+        <div className={`flex-1 transition-all duration-300 pt-28 lg:pt-4 relative z-[2]`}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route
@@ -202,7 +169,6 @@ function AppContent({ sidebarOpen, setSidebarOpen, showTopHeader }) {
 // ─── Main App ───
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [showTopHeader, setShowTopHeader] = useState(false);
   
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
@@ -217,21 +183,15 @@ function App() {
             <MainHeader 
               open={sidebarOpen} 
               setOpen={setSidebarOpen} 
-              showTopHeader={showTopHeader}
-              setShowTopHeader={setShowTopHeader}
             />
-            {/* TopHeader - conditionally rendered on small screens, always visible on large screens */}
-            <div className={`${showTopHeader ? 'block' : 'hidden'} lg:block`}>
-              <TopHeader 
-                onToggleMenu={() => setSidebarOpen((v) => !v)} 
-                open={sidebarOpen} 
-                isVisible={showTopHeader}
-              />
-            </div>
+            {/* TopHeader - always visible, positioned with fixed */}
+            <TopHeader 
+              onToggleMenu={() => setSidebarOpen((v) => !v)} 
+              open={sidebarOpen} 
+            />
             <AppContent 
               sidebarOpen={sidebarOpen} 
               setSidebarOpen={setSidebarOpen} 
-              showTopHeader={showTopHeader}
             />
           </Router>
         </ThemeProvider>

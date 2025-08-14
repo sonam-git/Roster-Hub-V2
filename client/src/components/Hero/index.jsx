@@ -29,32 +29,29 @@ const Hero = () => {
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M0 0h60v1H0V0zm0 30h60v1H0v-1z'/%3E%3Cpath d='M0 0v60h1V0H0zm30 0v60h1V0h-1z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
         }}></div>
         
-        {/* Gradient overlays for additional depth */}
-        <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-green-600/10 dark:from-green-400/10 dark:via-emerald-400/5 dark:to-green-500/10"></div>
-        
         {/* Floating elements */}
         <div className="absolute top-20 left-20 w-2 h-2 bg-green-400/60 rounded-full animate-pulse"></div>
         <div className="absolute top-40 right-32 w-1 h-1 bg-emerald-400/50 rounded-full animate-ping"></div>
         <div className="absolute bottom-32 left-32 w-1.5 h-1.5 bg-green-500/40 rounded-full animate-bounce"></div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-6 min-h-screen flex flex-col">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen flex flex-col">
         {/* Top Center: Title and Slogan */}
-        <div className={`text-center  transition-all duration-1000 transform ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+        <div className={`text-center transition-all duration-1000 transform ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
           {/* Glassmorphism container for title */}
-          <div  >
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-2 tracking-tight drop-shadow-lg">
+          <div className="mb-2">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-2 tracking-tight drop-shadow-lg mx-4 sm:mx-0">
               Roster<span className="text-green-600 dark:text-green-400">Hub</span>
             </h1>
-            <p className=" italic sm:text-lg lg:text-xl text-gray-800 dark:text-gray-100 font-medium drop-shadow-md">
+            <p className="text-xs sm:text-lg lg:text-xl text-gray-800 dark:text-gray-100 font-medium drop-shadow-md italic">
               Where Players Connect & Understand Before The Game!
             </p>
           </div>
         </div>
 
         {/* Center: Transparent Background Image */}
-        <div className={`flex-1 flex items-center justify-center transition-all duration-1000 delay-300 transform ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
-          <div className=" relative backdrop-blur-sm bg-white/20 dark:bg-black/10 rounded-full p-4 border border-white/30 dark:border-white/10 shadow-xl">
+        <div className={`flex-1 flex items-center justify-center transition-all duration-1000 delay-300 transform mb-6 sm:mb-0 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <div className="relative backdrop-blur-sm bg-white/20 dark:bg-black/10 rounded-full p-4 border border-white/30 dark:border-white/10 shadow-xl">
             <img
               src={heroImage}
               alt="RosterHub"

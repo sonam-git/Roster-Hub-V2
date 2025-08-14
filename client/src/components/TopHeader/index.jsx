@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef, useEffect } from "react";
 import { useNavigate, useLocation,Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPersonRunning, faCalendarAlt, faPlus, faInbox, faStar, faHome, faInfoCircle, faMoon, faSun, faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -16,6 +16,7 @@ const BUTTONS = [
   { key: "gameschedule", label: "Upcoming", icon: faCalendarAlt, path: "/games-shortcut" },
   { key: "search", label: "Search", icon: faSearch, action: "search", path: "/game-search" },
   { key: "creategame", label: "Create Game", icon: faPlus, path: "/game-schedule#create" },
+  { key: "roster", label: "Roster", icon: faPersonRunning, action: "roster" },
   { key: "messages", label: "Inbox", icon: faInbox, path: "/message" },
   { key: "skilllist", label: "Skills", icon: faStar, path: "/skills-shortcut" },
   { key: "about", label: "About", icon: faInfoCircle, path: "/about" },
@@ -28,9 +29,38 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
   const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
   const isLoggedIn = Auth.loggedIn();
   const [showRosterDropdown, setShowRosterDropdown] = React.useState(false);
+  const rosterBtnRef = useRef(null);
+  const dropdownRef = useRef(null);
+  const [dropdownPos, setDropdownPos] = React.useState({ top: 0, left: 0 });
+
+  useEffect(() => {
+    if (showRosterDropdown && rosterBtnRef.current) {
+      const rect = rosterBtnRef.current.getBoundingClientRect();
+      setDropdownPos({
+        top: rect.bottom + 8,
+        left: rect.left + rect.width / 2,
+      });
+    }
+  }, [showRosterDropdown]);
+
+  useEffect(() => {
+    if (!showRosterDropdown) return;
+    function handleClick(e) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target) &&
+        rosterBtnRef.current &&
+        !rosterBtnRef.current.contains(e.target)
+      ) {
+        setShowRosterDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [showRosterDropdown]);
 
   return (
-    <div className={`w-full flex flex-col md:flex-row items-center justify-between bg-gray-100 dark:bg-gray-800 py-2 shadow-md sticky top-0 z-[10] px-2 sm:px-4 ${isVisible ? 'mt-32' : 'mt-0'} lg:mt-0 ${typeof className !== 'undefined' ? className : ''}`}>
+    <div className={`w-full flex flex-col md:flex-row items-center justify-between bg-gray-100 dark:bg-gray-800 py-2 shadow-md sticky z-[10] px-2 sm:px-4 ${isVisible ? 'top-20 lg:top-0' : 'top-0'} ${typeof className !== 'undefined' ? className : ''}`}>
       {/* Left: Logo and Title (always visible, beautiful UI) */}
       <Link
         to={"/"}
@@ -67,149 +97,65 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
         </div>
       </Link>
       {/* Center: Menu buttons or promo text */}
-      <div className={`flex flex-row flex-wrap md:flex-nowrap items-center justify-center flex-1 w-full md:w-auto gap-y-2 gap-x-1 mt-8 md:mt-0`}> 
+      <div className={`flex flex-row items-center justify-center flex-1 w-full md:w-auto mt-4 md:mt-0`}>
         {isLoggedIn ? (
-          <>
-            {BUTTONS.map(btn => (
-              <button
-                key={btn.key}
-                className={`dark:text-gray-900 mx-1 sm:mx-2 px-2 sm:px-4 py-1 rounded-full font-semibold transition-colors text-xs sm:text-sm flex items-center gap-1 sm:gap-2 mb-1 md:mb-0 ${location.pathname === btn.path.split('#')[0] ? "bg-blue-600 text-white" : "bg-gray-100 dark:bg-gray-500 text-gray-800 dark:text-white  hover:bg-gray-300 dark:hover:bg-blue-800 hover:bg-opacity-90 dark:hover:bg-opacity-90"}`}
-                onClick={() => {
-                  if (btn.action === "search") {
-                    // Navigate to dedicated game search page
-                    navigate("/game-search");
-                  } else if (btn.key === "creategame") {
-                    navigate("/game-schedule", { state: { showCreateGame: true } });
-                  } else {
-                    navigate(btn.path);
-                  }
-                }}
-              >
-                <FontAwesomeIcon icon={btn.icon} className="mr-1 text-xs sm:text-sm" />
-                <span className="hidden md:inline">{btn.label}</span>
-              </button>
-            ))}
-            {/* Roster Dropdown */}
-            <div className="relative">
-              <button
-                className={`mx-1 sm:mx-2 px-2 sm:px-3 md:px-4 py-1.5 rounded-full font-medium transition-all duration-300 text-xs sm:text-sm flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-600 dark:to-gray-700 text-gray-800 dark:text-white hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-700 dark:hover:to-blue-800 shadow-md hover:shadow-lg transform hover:scale-105 border border-gray-300 dark:border-gray-500`}
-                onClick={() => setShowRosterDropdown((prev) => !prev)}
-              >
-                <FontAwesomeIcon icon={faPersonRunning} className="text-xs sm:text-sm" />
-                <span className="hidden md:inline font-medium">Roster</span>
-                <span className="md:hidden text-xs">Team</span>
-                <FaChevronDown 
-                  className={`text-xs sm:text-sm transition-transform duration-200 ${
-                    showRosterDropdown ? 'rotate-180' : 'rotate-0'
-                  }`} 
-                />
-              </button>
-              
-              {showRosterDropdown && (
-                <div className={`absolute z-[150] mt-2 shadow-2xl border border-gray-200 dark:border-gray-600 rounded-2xl overflow-hidden backdrop-blur-sm transition-all duration-300 transform ${
-                  showRosterDropdown ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 -translate-y-2'
-                } right-0 md:right-0 left-1/2 md:left-auto transform -translate-x-1/2 md:translate-x-0 w-72 max-w-[90vw] md:max-w-sm bg-white/95 dark:bg-gray-800/95`}>
-                  
-                  {/* Header */}
-                  <div className="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 px-3 sm:px-4 py-2 sm:py-3 border-b border-blue-300 dark:border-blue-500">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-white font-semibold text-xs sm:text-sm flex items-center gap-1 sm:gap-2">
-                        <FontAwesomeIcon icon={faPersonRunning} className="text-blue-100 text-xs sm:text-sm" />
-                        Team Roster
-                      </h3>
+          <div className="w-full max-w-4xl mx-auto">
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 md:pb-0 md:justify-center md:flex-wrap">
+              {BUTTONS.map(btn => {
+                if (btn.key === "roster") {
+                  return (
+                    <div key={btn.key} className="relative flex-shrink-0">
+                      <button
+                        ref={rosterBtnRef}
+                        className={`flex flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-2xl font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl min-w-[80px] sm:min-w-0 justify-center backdrop-blur-sm ${
+                          isDarkMode
+                            ? "bg-gradient-to-br from-gray-800/80 to-gray-700/80 hover:from-gray-700/90 hover:to-gray-600/90 text-gray-200 shadow-gray-800/50 hover:shadow-gray-700/70"
+                            : "bg-gradient-to-br from-white/90 to-gray-50/90 hover:from-gray-50/95 hover:to-gray-100/95 text-gray-700 shadow-gray-200/50 hover:shadow-gray-300/70"
+                        }`}
+                        onClick={() => setShowRosterDropdown((prev) => !prev)}
+                      >
+                        <FontAwesomeIcon icon={btn.icon} className="text-xs sm:text-sm" />
+                        <span className="text-xs sm:text-sm font-bold truncate">{btn.label}</span>
+                        <FaChevronDown 
+                          className={`text-xs sm:text-sm transition-transform duration-200 ${
+                            showRosterDropdown ? 'rotate-180' : 'rotate-0'
+                          }`} 
+                        />
+                      </button>
                     </div>
-                    <p className="text-blue-100 text-xs mt-0.5 sm:mt-1">
-                      {profilesData?.profiles?.length || 0} team members
-                    </p>
-                  </div>
-                  
-                  {/* Player List */}
-                  <div className="max-h-56 sm:max-h-64 overflow-y-auto">
-                    {profilesData?.profiles?.length > 0 ? (
-                      <ul className="py-1 sm:py-2">
-                        {profilesData.profiles.map((player) => (
-                          <li key={player._id}>
-                            <button
-                              className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-gray-900 dark:text-white font-medium flex items-center gap-2 sm:gap-3 transition-all duration-200 group border-b border-gray-100 dark:border-gray-700 last:border-b-0"
-                              onClick={() => {
-                                setShowRosterDropdown(false);
-                                navigate(`/profiles/${player._id}`);
-                              }}
-                            >
-                              <div className="relative">
-                                {player.profilePic ? (
-                                  <img 
-                                    src={player.profilePic} 
-                                    alt={`${player.name}'s avatar`} 
-                                    className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600 group-hover:border-blue-300 dark:group-hover:border-blue-500 transition-colors" 
-                                  />
-                                ) : (
-                                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center border-2 border-gray-200 dark:border-gray-600 group-hover:border-blue-300 dark:group-hover:border-blue-500 transition-colors">
-                                    <FontAwesomeIcon 
-                                      icon={faPersonRunning} 
-                                      className="text-white text-sm sm:text-base" 
-                                    />
-                                  </div>
-                                )}
-                                
-                                {/* Online indicator */}
-                                {Auth.loggedIn() && Auth.getProfile().data._id === player._id && (
-                                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
-                                )}
-                              </div>
-                              
-                              <div className="flex-1 min-w-0">
-                                <p className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                                  {Auth.loggedIn() && Auth.getProfile().data._id === player._id ? "You" : player.name}
-                                </p>
-                                {player.position && (
-                                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                                    {player.position}
-                                  </p>
-                                )}
-                              </div>
-                              
-                              <div className="flex items-center gap-2">
-                                {Auth.loggedIn() && Auth.getProfile().data._id === player._id && (
-                                  <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 text-xs rounded-full font-medium">
-                                    You
-                                  </span>
-                                )}
-                                <svg className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                </svg>
-                              </div>
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <div className="px-4 py-8 text-center">
-                        <FontAwesomeIcon icon={faPersonRunning} className="text-4xl text-gray-300 dark:text-gray-600 mb-3" />
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">No team members found</p>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Footer */}
-                  <div className="bg-gray-50 dark:bg-gray-700/50 px-3 sm:px-4 py-2 sm:py-3 border-t border-gray-200 dark:border-gray-600">
-                    <button
-                      onClick={() => {
-                        setShowRosterDropdown(false);
-                        navigate('/roster');
-                      }}
-                      className="w-full text-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1 sm:gap-2"
-                    >
-                      <span>View Full Roster</span>
-                      <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              )}
+                  );
+                }
+                
+                return (
+                  <button
+                    key={btn.key}
+                    className={`flex flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-2xl font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl flex-shrink-0 min-w-[80px] sm:min-w-0 justify-center backdrop-blur-sm mb-1 md:mb-0 ${
+                      location.pathname === btn.path.split('#')[0] 
+                        ? isDarkMode
+                          ? "bg-gradient-to-br from-blue-600 via-purple-600 to-blue-700 text-white shadow-blue-500/30 hover:shadow-blue-500/50"
+                          : "bg-gradient-to-br from-blue-500 via-purple-500 to-blue-600 text-white shadow-blue-500/30 hover:shadow-blue-500/50"
+                        : isDarkMode
+                          ? "bg-gradient-to-br from-gray-800/80 to-gray-700/80 hover:from-gray-700/90 hover:to-gray-600/90 text-gray-200 shadow-gray-800/50 hover:shadow-gray-700/70"
+                          : "bg-gradient-to-br from-white/90 to-gray-50/90 hover:from-gray-50/95 hover:to-gray-100/95 text-gray-700 shadow-gray-200/50 hover:shadow-gray-300/70"
+                    }`}
+                    onClick={() => {
+                      if (btn.action === "search") {
+                        // Navigate to dedicated game search page
+                        navigate("/game-search");
+                      } else if (btn.key === "creategame") {
+                        navigate("/game-schedule", { state: { showCreateGame: true } });
+                      } else {
+                        navigate(btn.path);
+                      }
+                    }}
+                  >
+                    <FontAwesomeIcon icon={btn.icon} className="text-xs sm:text-sm" />
+                    <span className="text-xs sm:text-sm font-bold truncate">{btn.label}</span>
+                  </button>
+                );
+              })}
             </div>
-          </>
+          </div>
         ) : (
           <div className="w-full flex items-center justify-center overflow-hidden bg-gray-100 dark:bg-gray-800 py-0.5 rounded-2xl shadow-2xl border-2 border-blue-300 dark:border-blue-900 relative">
             <span className="animate-marquee whitespace-nowrap  text-lg sm:text-xl md:text-2xl font-bold tracking-wide px-2 sm:px-4 py-1 rounded-2xl flex items-center gap-4 bg-gradient-to-r from-green-100 via-green-200 to-green-300 dark:text-white dark:bg-gray-800" style={{ fontFamily: 'sans-serif', letterSpacing: '0.04em', boxShadow: '0 4px 24px rgba(59,130,246,0.15)' }}>
@@ -248,6 +194,110 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
           </div>
         )}
       </div>
+      {/* Roster Dropdown (fixed position, outside scrolling container) */}
+      {showRosterDropdown && (
+        <div
+          ref={dropdownRef}
+          className="fixed z-[9999] shadow-2xl border border-gray-200 dark:border-gray-600 rounded-2xl overflow-hidden backdrop-blur-sm transition-all duration-300 bg-white/95 dark:bg-gray-800/95 w-72 max-w-[90vw] md:max-w-sm"
+          style={{
+            top: dropdownPos.top,
+            left: dropdownPos.left,
+            transform: "translateX(-50%)",
+          }}
+        >
+          {/* Header */}
+          <div className="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 px-3 sm:px-4 py-2 sm:py-3 border-b border-blue-300 dark:border-blue-500">
+            <div className="flex items-center justify-between">
+              <h3 className="text-white font-semibold text-xs sm:text-sm flex items-center gap-1 sm:gap-2">
+                <FontAwesomeIcon icon={faPersonRunning} className="text-blue-100 text-xs sm:text-sm" />
+                Team Roster
+              </h3>
+            </div>
+            <p className="text-blue-100 text-xs mt-0.5 sm:mt-1">
+              {profilesData?.profiles?.length || 0} team members
+            </p>
+          </div>
+          {/* Player List */}
+          <div className="max-h-56 sm:max-h-64 overflow-y-auto">
+            {profilesData?.profiles?.length > 0 ? (
+              <ul className="py-1 sm:py-2">
+                {profilesData.profiles.map((player) => (
+                  <li key={player._id}>
+                    <button
+                      className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-gray-900 dark:text-white font-medium flex items-center gap-2 sm:gap-3 transition-all duration-200 group border-b border-gray-100 dark:border-gray-700 last:border-b-0"
+                      onClick={() => {
+                        setShowRosterDropdown(false);
+                        navigate(`/profiles/${player._id}`);
+                      }}
+                    >
+                      <div className="relative">
+                        {player.profilePic ? (
+                          <img 
+                            src={player.profilePic} 
+                            alt={`${player.name}'s avatar`} 
+                            className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600 group-hover:border-blue-300 dark:group-hover:border-blue-500 transition-colors" 
+                          />
+                        ) : (
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center border-2 border-gray-200 dark:border-gray-600 group-hover:border-blue-300 dark:group-hover:border-blue-500 transition-colors">
+                            <FontAwesomeIcon 
+                              icon={faPersonRunning} 
+                              className="text-white text-sm sm:text-base" 
+                            />
+                          </div>
+                        )}
+                        {/* Online indicator */}
+                        {Auth.loggedIn() && Auth.getProfile().data._id === player._id && (
+                          <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                          {Auth.loggedIn() && Auth.getProfile().data._id === player._id ? "You" : player.name}
+                        </p>
+                        {player.position && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                            {player.position}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {Auth.loggedIn() && Auth.getProfile().data._id === player._id && (
+                          <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 text-xs rounded-full font-medium">
+                            You
+                          </span>
+                        )}
+                        <svg className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="px-4 py-8 text-center">
+                <FontAwesomeIcon icon={faPersonRunning} className="text-4xl text-gray-300 dark:text-gray-600 mb-3" />
+                <p className="text-gray-500 dark:text-gray-400 text-sm">No team members found</p>
+              </div>
+            )}
+          </div>
+          {/* Footer */}
+          <div className="bg-gray-50 dark:bg-gray-700/50 px-3 sm:px-4 py-2 sm:py-3 border-t border-gray-200 dark:border-gray-600">
+            <button
+              onClick={() => {
+                setShowRosterDropdown(false);
+                navigate('/roster');
+              }}
+              className="w-full text-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1 sm:gap-2"
+            >
+              <span>View Full Roster</span>
+              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
       {/* Right: Dark/Light mode toggle and sidebar toggle (arrow always visible) */}
       <div className="hidden md:flex items-center ml-4 gap-2">
         <button

@@ -10,19 +10,15 @@ import {
   HiChevronUp 
 } from "react-icons/hi2";
 
-const MainHeader = ({ open, setOpen, showTopHeader, setShowTopHeader }) => {
+const MainHeader = ({ open, setOpen }) => {
   const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
 
   const toggleMenu = () => {
     setOpen(!open);
   };
 
-  const toggleTopHeader = () => {
-    setShowTopHeader(!showTopHeader);
-  };
-
   return (
-    <div className="w-full py-6 bg-gradient-to-r from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-blue-950 dark:to-emerald-950 shadow-xl lg:hidden fixed top-0 left-0 right-0 z-[250] border-b-2 border-blue-200 dark:border-blue-800 transition-all duration-500 backdrop-blur-sm">
+    <div className="w-full py-6 bg-gradient-to-r from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-blue-950 dark:to-emerald-950 shadow-xl lg:hidden fixed top-0 left-0 right-0 z-[300] border-b-2 border-blue-200 dark:border-blue-800 transition-all duration-500 backdrop-blur-sm">
       {/* Background decoration */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-100/20 via-transparent to-green-100/20 dark:from-blue-900/20 dark:to-emerald-900/20"></div>
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-green-500 to-yellow-500 dark:from-blue-400 dark:via-green-400 dark:to-yellow-400"></div>
@@ -64,32 +60,6 @@ const MainHeader = ({ open, setOpen, showTopHeader, setShowTopHeader }) => {
               Team Management
             </span>
           </Link>
-          
-          {/* Dropdown Icon for TopHeader - Only visible on small screens */}
-          <button
-            className={`mt-3 lg:hidden px-3 py-2 rounded-full transition-all duration-500 ease-out transform hover:scale-110 active:scale-95 shadow-md hover:shadow-lg ${
-              showTopHeader
-                ? isDarkMode
-                  ? "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white border border-blue-400"
-                  : "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white border border-blue-300"
-                : isDarkMode
-                  ? "bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-500 hover:to-gray-600 text-gray-200 hover:text-white border border-gray-500"
-                  : "bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400 text-gray-700 hover:text-gray-900 border border-gray-400"
-            }`}
-            onClick={toggleTopHeader}
-            aria-label={showTopHeader ? "Hide navigation" : "Show navigation"}
-          >
-            <div className="flex items-center gap-2">
-              {showTopHeader ? (
-                <HiChevronUp className={`text-sm transition-all duration-500 ease-out rotate-180`} />
-              ) : (
-                <HiChevronDown className={`text-sm transition-all duration-500 ease-out rotate-0`} />
-              )}
-              <span className="text-xs font-medium">
-                {showTopHeader ? "Hide Menu" : "Show Menu"}
-              </span>
-            </div>
-          </button>
         </div>
 
         {/* Right: Theme Toggle Button */}

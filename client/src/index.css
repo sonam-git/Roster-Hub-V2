@@ -1705,6 +1705,16 @@ html {
      align-content: center;
    } }
  
+/* Hide scrollbar utility class */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
 /* Smooth Scrolling Utilities for Messages */
 .scrollbar-thin {
   scrollbar-width: thin;

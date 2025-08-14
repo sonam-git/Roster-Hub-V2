@@ -77,38 +77,53 @@ export default function CustomComingGames({ isDarkMode }) {
         </div>
 
         {/* Category Filter Buttons */}
-        <div className="flex justify-center gap-1 sm:gap-4">
-          {categories.map((category) => (
-            <button
-              key={category.key}
-              onClick={() => setSelectedCategory(category.key)}
-              className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg flex-1 sm:flex-initial justify-center ${
-                selectedCategory === category.key
-                  ? isDarkMode
-                    ? "bg-gradient-to-r from-green-600 to-blue-600 text-white shadow-green-500/30"
-                    : "bg-gradient-to-r from-green-500 to-blue-500 text-white shadow-green-500/30"
-                  : isDarkMode
-                    ? "bg-gray-700 hover:bg-gray-600 text-gray-200 border border-gray-600"
-                    : "bg-white hover:bg-gray-50 text-gray-700 border border-gray-200"
-              }`}
-            >
-              <span className="text-sm sm:text-base">{category.icon}</span>
-              <span className="hidden sm:inline">{category.label}</span>
-              <span className="sm:hidden text-xs">{category.key === "ALL" ? "All" : category.key.charAt(0) + category.key.slice(1).toLowerCase()}</span>
-              {category.count > 0 && (
-                <span className={`px-1.5 sm:px-2 py-0.5 rounded-full text-xs font-bold ${
+        <div className="w-full max-w-4xl mx-auto">
+          <div className="flex gap-2 sm:gap-4 overflow-x-auto scrollbar-hide pb-2 sm:pb-0 sm:justify-center">
+            {categories.map((category) => (
+              <button
+                key={category.key}
+                onClick={() => setSelectedCategory(category.key)}
+                className={`flex flex-row items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-2xl font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl flex-shrink-0 min-w-[75px] sm:min-w-0 justify-center backdrop-blur-sm ${
                   selectedCategory === category.key
-                    ? "bg-white/20 text-white"
+                    ? isDarkMode
+                      ? "bg-gradient-to-br from-green-600 via-blue-600 to-purple-600 text-white shadow-green-500/30 hover:shadow-green-500/50"
+                      : "bg-gradient-to-br from-green-500 via-blue-500 to-purple-500 text-white shadow-green-500/30 hover:shadow-green-500/50"
                     : isDarkMode
-                      ? "bg-gray-600 text-gray-300"
-                      : "bg-gray-100 text-gray-600"
-                }`}>
-                  {category.count}
-                </span>
-              )}
-            </button>
-          ))}
+                      ? "bg-gradient-to-br from-gray-800/80 to-gray-700/80 hover:from-gray-700/90 hover:to-gray-600/90 text-gray-200 shadow-gray-800/50 hover:shadow-gray-700/70"
+                      : "bg-gradient-to-br from-white/90 to-gray-50/90 hover:from-gray-50/95 hover:to-gray-100/95 text-gray-700 shadow-gray-200/50 hover:shadow-gray-300/70"
+                }`}
+              >
+                <span className="text-base sm:text-lg">{category.icon}</span>
+                <div className="flex flex-row items-center gap-1 sm:gap-2">
+                  <span className="text-xs sm:text-sm font-bold truncate">
+                    {category.key === "ALL" ? "All" : category.label}
+                  </span>
+                  {category.count > 0 && (
+                    <span className={`px-1.5 py-0.5 rounded-full text-xs font-bold min-w-[18px] text-center ${
+                      selectedCategory === category.key
+                        ? "bg-white/25 text-white backdrop-blur-sm"
+                        : isDarkMode
+                          ? "bg-gray-600/70 text-gray-200 backdrop-blur-sm"
+                          : "bg-gray-200/70 text-gray-600 backdrop-blur-sm"
+                    }`}>
+                      {category.count}
+                    </span>
+                  )}
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
+        
+        <style jsx>{`
+          .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
       </div>
 
       {/* Games Grid */}
