@@ -218,7 +218,7 @@ const ProfileList = ({ profiles, title, isDarkMode }) => {
                 {/* Simplified Rating */}
                 <div className="flex justify-center mb-6">
                   <div className={`px-3 py-1.5 rounded-full ${
-                    isDarkMode ? 'bg-gray-700/50 backdrop-blur-sm' : 'bg-gray-100/80 backdrop-blur-sm'
+                    isDarkMode ? 'bg-gray-700/50 text-gray-100 backdrop-blur-sm' : 'bg-gray-100/80 backdrop-blur-sm'
                   }`}>
                     {renderStars(profile.averageRating)}
                   </div>
@@ -254,10 +254,10 @@ const ProfileList = ({ profiles, title, isDarkMode }) => {
 
                   <Link
                     to={`/profiles/${profile._id}`}
-                    className={`flex flex-col items-center gap-1.5 p-3 rounded-2xl transition-all duration-300 hover:scale-105 hover:no-underline ${
+                    className={`flex flex-col items-center gap-1.5 p-3 rounded-2xl transition-all duration-300 hover:scale-105 hover:no-underline hover:text-green-200 ${
                       isDarkMode 
                         ? 'bg-green-500/10 hover:bg-green-500/20 text-green-300 border border-green-500/20 hover:border-green-500/30' 
-                        : 'bg-green-50 hover:bg-green-100 text-green-600 border border-green-200 hover:border-green-300'
+                        : 'bg-green-50 hover:bg-green-100 text-green-600 border border-green-200 hover:border-green-300 hover:text-green-600'
                     }`}
                     title="View Profile"
                   >
