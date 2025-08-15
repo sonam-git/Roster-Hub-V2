@@ -86,6 +86,29 @@ const GameSearch = ({ onSearch, onReset, initialFilters = {} }) => {
     }`}>
       {/* Search Header */}
       <div className="p-4 sm:p-6 md:p-8">
+        {/* Back Button */}
+        <div className="mb-6">
+          <button
+            onClick={() => window.history.back()}
+            className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md group ${
+              isDarkMode 
+                ? "bg-gray-700/80 hover:bg-gray-600/80 text-gray-200 hover:text-white border border-gray-600 shadow-gray-800/50" 
+                : "bg-white/90 hover:bg-blue-50 text-gray-600 hover:text-blue-700 border border-gray-200 shadow-blue-200/50 hover:shadow-lg"
+            }`}
+            title="Go back to Game Schedule"
+          >
+            <svg 
+              className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:-translate-x-1" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span className="text-sm sm:text-base font-medium">Back to Game Schedule</span>
+          </button>
+        </div>
+
         <div className="text-center mb-6 sm:mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-indigo-600 flex items-center justify-center shadow-lg transform hover:scale-105 transition-all duration-300">
@@ -152,24 +175,24 @@ const GameSearch = ({ onSearch, onReset, initialFilters = {} }) => {
                 }`}
               />
             </div>
-            <div className="grid grid-cols-2 gap-2 sm:flex sm:gap-3">
+            <div className="flex gap-2 sm:gap-3">
               <button
                 onClick={handleSearch}
-                className="px-3 sm:px-8 py-3 sm:py-4 text-xs sm:text-base bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-1 sm:gap-2"
+                className="px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-2"
               >
-                <span className="text-sm sm:text-base">🔍</span>
-                <span className="text-xs sm:text-base">Search</span>
+                <span className="hidden sm:inline">Search</span>
+                <span className="sm:hidden">🔍</span>
               </button>
               <button
                 onClick={handleReset}
-                className={`px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-base rounded-2xl font-bold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg flex items-center justify-center gap-1 sm:gap-2 ${
+                className={`px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-base rounded-2xl font-bold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg ${
                   isDarkMode
                     ? "bg-gray-700 hover:bg-gray-600 text-white shadow-gray-800/50"
                     : "bg-gray-100 hover:bg-gray-200 text-gray-700 shadow-gray-300/50"
                 }`}
               >
-                <span className="text-sm sm:text-base">🔄</span>
-                <span className="text-xs sm:text-base">Reset</span>
+                <span className="hidden sm:inline">Reset</span>
+                <span className="sm:hidden">🔄</span>
               </button>
             </div>
           </div>
