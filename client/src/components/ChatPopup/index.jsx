@@ -367,10 +367,10 @@ const ChatPopup = ({ currentUser }) => {
   })();
 
   return (
-    <div className="fixed bottom-0 right-4 w-80 chat-popup-container z-[100]">
+    <div className="fixed bottom-20 right-4 w-80 chat-popup-container z-[500]">
       {/* Modern Header */}
       <div
-        className={`flex items-center justify-between p-4 rounded-t-2xl cursor-pointer shadow-2xl backdrop-blur-sm border-t border-x transition-all duration-300 hover:shadow-lg chat-popup-header ${
+        className={`flex items-center justify-between p-2 rounded-t-2xl cursor-pointer shadow-2xl backdrop-blur-sm border-t border-x transition-all duration-300 hover:shadow-lg chat-popup-header ${
           isDarkMode 
             ? 'bg-gradient-to-r from-gray-800 to-gray-900 border-gray-700 text-white' 
             : 'bg-gradient-to-r from-blue-600 to-blue-700 border-blue-500 text-white'
@@ -462,11 +462,11 @@ const ChatPopup = ({ currentUser }) => {
                       onKeyPress={e => e.key === 'Enter' && handleUserSelect(user)}
                       className={`group flex items-center p-3 rounded-xl cursor-pointer transition-all duration-200 hover:scale-[1.02] ${
                         isDarkMode 
-                          ? 'hover:bg-gray-700/50 border border-gray-700/30 hover:border-gray-600' 
-                          : 'hover:bg-blue-50 border border-gray-100 hover:border-blue-200 hover:shadow-md'
+                          ? 'hover:bg-gray-700/50 border border-gray-200 hover:border-gray-600' 
+                          : 'hover:bg-blue-50 border border-gray-400 hover:border-blue-300 hover:shadow-md'
                       } ${selectedUserId === user._id ? 'bg-blue-100 border-blue-300' : ''}`}
                     >
-                      <div className="relative">
+                      <div className="relative ">
                         <img
                           src={user.profilePic || ProfileAvatar}
                           alt={user.name}
