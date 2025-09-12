@@ -48,24 +48,43 @@ const Signup = () => {
   }, [showError]);
 
   return (
-    <main className="relative overflow-hidden min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 dark:from-slate-900 dark:via-gray-900 dark:to-blue-950">
-      {/* Sophisticated Background Pattern - matching Hero */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Grid pattern */}
-        <div className="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M0 0h60v1H0V0zm0 30h60v1H0v-1z'/%3E%3Cpath d='M0 0v60h1V0H0zm30 0v60h1V0h-1z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-        }}></div>
+    <main className="relative overflow-hidden min-h-screen">
+      {/* Full-page Hero Image Background */}
+      <div className="absolute inset-0 z-0">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25 dark:opacity-20"
+          style={{
+            backgroundImage: `url(${sketchImage})`,
+            backgroundPosition: 'center center',
+            backgroundSize: 'cover',
+          }}
+        ></div>
         
-        {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/3 via-emerald-500/2 to-purple-500/3"></div>
-        
-        {/* Floating elements */}
-        <div className="absolute top-20 left-20 w-2 h-2 bg-blue-400/60 rounded-full animate-pulse"></div>
-        <div className="absolute top-40 right-32 w-1 h-1 bg-emerald-400/50 rounded-full animate-ping"></div>
-        <div className="absolute bottom-32 left-32 w-1.5 h-1.5 bg-purple-400/40 rounded-full animate-bounce"></div>
+        {/* Lighter gradient overlays for better text readability while keeping image visible */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50/85 via-green-50/75 to-blue-100/85 dark:from-gray-950/85 dark:via-slate-900/75 dark:to-green-950/85"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-white/25 via-transparent to-white/15 dark:from-black/25 dark:via-transparent dark:to-black/15"></div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen flex items-center justify-center">
+      {/* Enhanced Background Elements */}
+      <div className="absolute inset-0 z-[1] overflow-hidden">
+        {/* Animated gradient orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-green-400/15 to-emerald-400/15 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-blue-400/15 to-cyan-400/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400/10 to-green-400/10 rounded-full blur-3xl animate-pulse delay-500"></div>
+        
+        {/* Enhanced Grid pattern */}
+        <div className="absolute inset-0 opacity-[0.04] dark:opacity-[0.08]" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2310b981' fill-opacity='1'%3E%3Ccircle cx='30' cy='30' r='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+        }}></div>
+        
+        {/* Enhanced Floating elements */}
+        <div className="absolute top-20 left-20 w-4 h-4 bg-gradient-to-r from-green-400/60 to-emerald-400/60 rounded-full animate-pulse shadow-lg"></div>
+        <div className="absolute top-40 right-32 w-3 h-3 bg-gradient-to-r from-blue-400/60 to-cyan-400/60 rotate-45 animate-ping shadow-lg"></div>
+        <div className="absolute bottom-32 left-32 w-3 h-3 bg-gradient-to-r from-emerald-400/60 to-green-400/60 rounded-full animate-bounce shadow-lg"></div>
+        <div className="absolute top-60 right-60 w-5 h-5 bg-gradient-to-r from-green-400/60 to-blue-400/60 rounded-full animate-bounce delay-300 shadow-lg"></div>
+      </div>
+
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-8  flex items-center justify-center">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full max-w-6xl">
           {/* Left side: Logo and branding */}
           <div className="hidden lg:flex flex-col items-center text-center space-y-6">

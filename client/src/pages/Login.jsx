@@ -70,65 +70,82 @@ const Login = () => {
   };
 
   return (
-    <main className="relative overflow-hidden min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 dark:from-slate-900 dark:via-gray-900 dark:to-blue-950">
-      {/* Sophisticated Background Pattern - matching Hero */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Grid pattern */}
-        <div className="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M0 0h60v1H0V0zm0 30h60v1H0v-1z'/%3E%3Cpath d='M0 0v60h1V0H0zm30 0v60h1V0h-1z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-        }}></div>
+    <main className="relative overflow-hidden min-h-screen">
+      {/* Full-page Hero Image Background */}
+      <div className="absolute inset-0 z-0">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25 dark:opacity-20"
+          style={{
+            backgroundImage: `url(${sketchImage})`,
+            backgroundPosition: 'center center',
+            backgroundSize: 'cover',
+          }}
+        ></div>
         
-        {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/3 via-emerald-500/2 to-purple-500/3"></div>
-        
-        {/* Floating elements */}
-        <div className="absolute top-20 left-20 w-2 h-2 bg-blue-400/60 rounded-full animate-pulse"></div>
-        <div className="absolute top-40 right-32 w-1 h-1 bg-emerald-400/50 rounded-full animate-ping"></div>
-        <div className="absolute bottom-32 left-32 w-1.5 h-1.5 bg-purple-400/40 rounded-full animate-bounce"></div>
+        {/* Lighter gradient overlays for better text readability while keeping image visible */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50/85 via-blue-50/75 to-indigo-100/85 dark:from-gray-950/85 dark:via-slate-900/75 dark:to-indigo-950/85"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-white/25 via-transparent to-white/15 dark:from-black/25 dark:via-transparent dark:to-black/15"></div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen flex items-center justify-center">
+      {/* Enhanced Background Elements */}
+      <div className="absolute inset-0 z-[1] overflow-hidden">
+        {/* Animated gradient orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-400/15 to-purple-400/15 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-green-400/15 to-blue-400/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-purple-400/10 to-pink-400/10 rounded-full blur-3xl animate-pulse delay-500"></div>
+        
+        {/* Enhanced Grid pattern */}
+        <div className="absolute inset-0 opacity-[0.04] dark:opacity-[0.08]" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236366f1' fill-opacity='1'%3E%3Ccircle cx='30' cy='30' r='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+        }}></div>
+        
+        {/* Enhanced Floating elements */}
+        <div className="absolute top-20 left-20 w-4 h-4 bg-gradient-to-r from-blue-400/60 to-cyan-400/60 rounded-full animate-pulse shadow-lg"></div>
+        <div className="absolute top-40 right-32 w-3 h-3 bg-gradient-to-r from-green-400/60 to-emerald-400/60 rotate-45 animate-ping shadow-lg"></div>
+        <div className="absolute bottom-32 left-32 w-3 h-3 bg-gradient-to-r from-purple-400/60 to-pink-400/60 rounded-full animate-bounce shadow-lg"></div>
+        <div className="absolute top-60 right-60 w-5 h-5 bg-gradient-to-r from-indigo-400/60 to-purple-400/60 rounded-full animate-bounce delay-300 shadow-lg"></div>
+      </div>
+
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-8 flex items-center justify-center">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full max-w-6xl">
           {/* Left side: Logo and branding */}
           <div className="hidden lg:flex flex-col items-center text-center space-y-6">
-            {/* Logo/Image */}
-            <div className="relative">
-              <img
-                src={sketchImage}
-                alt="RosterHub Sketch"
-                className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 object-contain opacity-90 hover:opacity-100 transition-all duration-500 hover:scale-105 drop-shadow-2xl"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-2xl animate-pulse"></div>
-            </div>
-            
-            {/* Welcome message */}
+            {/* Welcome message with modern styling */}
             <div className="space-y-4">
-              <h1 className="text-4xl lg:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-none">
-                Welcome to <span className="text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 dark:from-blue-400 dark:via-purple-400 dark:to-blue-500 bg-clip-text">RosterHub</span>
+              <h1 className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 dark:from-green-400 dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent tracking-tight leading-none drop-shadow-2xl">
+                Welcome to <span className="text-green-500 dark:text-green-400">RosterHub</span>
               </h1>
-              <p className="text-lg text-gray-600 dark:text-gray-300 font-medium">
-                Where Players Connect & Understand Before The Game!
-              </p>
-              <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full"></div>
+              <div className="max-w-lg mx-auto p-4 rounded-2xl backdrop-blur-sm bg-white/60 dark:bg-black/30 border border-white/40 dark:border-white/10">
+                <p className="text-lg text-gray-800 dark:text-gray-100 font-bold drop-shadow-lg">
+                  Where Players <span className="text-green-500 dark:text-green-400 animate-pulse">Connect</span> & <span className="text-blue-500 dark:text-blue-400 animate-pulse delay-300">Understand</span> Before The Game!
+                </p>
+              </div>
+              <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full"></div>
             </div>
 
-            {/* Features list */}
-            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/30 dark:border-gray-700/40">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+            {/* Enhanced Features card */}
+            <div className="backdrop-blur-xl bg-white/30 dark:bg-black/20 rounded-2xl p-6 border border-white/40 dark:border-white/15 shadow-2xl">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 drop-shadow-md">
                 🚀 Ready to Get Started?
               </h3>
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                <li className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                  Connect with your team
+              <ul className="space-y-3 text-sm text-gray-700 dark:text-gray-200">
+                <li className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-green-400/80 to-emerald-500/80 dark:from-green-500/70 dark:to-emerald-600/70 rounded-xl flex items-center justify-center shadow-lg">
+                    <span className="w-2 h-2 bg-white rounded-full"></span>
+                  </div>
+                  <span className="drop-shadow-sm">Connect with your team</span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
-                  Track performance metrics
+                <li className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-400/80 to-indigo-500/80 dark:from-blue-500/70 dark:to-indigo-600/70 rounded-xl flex items-center justify-center shadow-lg">
+                    <span className="w-2 h-2 bg-white rounded-full"></span>
+                  </div>
+                  <span className="drop-shadow-sm">Track performance metrics</span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                  Manage game schedules
+                <li className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-purple-400/80 to-pink-500/80 dark:from-purple-500/70 dark:to-pink-600/70 rounded-xl flex items-center justify-center shadow-lg">
+                    <span className="w-2 h-2 bg-white rounded-full"></span>
+                  </div>
+                  <span className="drop-shadow-sm">Manage game schedules</span>
                 </li>
               </ul>
             </div>
@@ -136,24 +153,26 @@ const Login = () => {
 
           {/* Right side: Login Form */}
           <div className="w-full lg:w-auto">
-            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-xl p-8 border border-white/30 dark:border-gray-700/40 w-full max-w-md mx-auto">
+            <div className="backdrop-blur-xl bg-white/40 dark:bg-black/20 rounded-3xl shadow-2xl p-8 border border-white/50 dark:border-white/20 w-full max-w-md mx-auto hover:shadow-3xl transition-all duration-500">
               <div className="text-center mb-6">
-                <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-2">
+                <h2 className="text-2xl font-black bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 dark:from-green-400 dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-2 drop-shadow-2xl">
                   Welcome Back! 👋
                 </h2>
-                <p className="text-gray-600 dark:text-gray-300 text-sm">
-                  Sign in to your account to continue
-                </p>
+                <div className="max-w-sm mx-auto p-3 rounded-2xl backdrop-blur-sm bg-white/60 dark:bg-black/30 border border-white/40 dark:border-white/10">
+                  <p className="text-gray-800 dark:text-gray-100 text-sm font-bold drop-shadow-lg">
+                    Sign in to your account to continue
+                  </p>
+                </div>
               </div>
 
-              {/* Error Alert */}
+                {/* Error Alert */}
               {error && (
                 <div className="mb-6">
-                  <div className="bg-red-100/80 dark:bg-red-900/30 backdrop-blur-md border border-red-300/50 dark:border-red-700/50 text-red-800 dark:text-red-200 px-4 py-3 rounded-xl shadow-lg text-sm flex items-center gap-2 animate-pulse">
+                  <div className="bg-red-100/90 dark:bg-red-900/40 backdrop-blur-md border border-red-300/60 dark:border-red-700/60 text-red-800 dark:text-red-200 px-4 py-3 rounded-xl shadow-xl text-sm flex items-center gap-2 animate-pulse">
                     <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
                     </svg>
-                    <span>{error.message}</span>
+                    <span className="drop-shadow-sm">{error.message}</span>
                   </div>
                 </div>
               )}
@@ -200,19 +219,24 @@ const Login = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-gradient-to-br from-blue-600 via-purple-600 to-blue-700 hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 text-white font-bold py-3 px-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    className="group relative w-full px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 text-base border border-green-400/50 overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   >
-                    {isSubmitting ? (
-                      <span className="flex items-center justify-center gap-2">
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Signing in...
-                      </span>
-                    ) : (
-                      "⚡ Sign In"
-                    )}
+                    <span className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                    <span className="relative flex items-center justify-center gap-2">
+                      {isSubmitting ? (
+                        <>
+                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Signing in...
+                        </>
+                      ) : (
+                        <>
+                          🚀 Sign In
+                        </>
+                      )}
+                    </span>
                   </button>
                 </div>
 

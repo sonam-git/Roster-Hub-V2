@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import MessageBox from '../MessageBox';
 import { AiOutlineMessage, AiFillStar } from 'react-icons/ai'; 
 import { RiProfileLine } from 'react-icons/ri';
-import { FaUsers, FaChevronLeft, FaChevronRight, FaHeart, FaRegHeart } from 'react-icons/fa';
+import { FaUsers, FaChevronLeft, FaChevronRight, FaHeart, FaRegHeart, FaTshirt, FaRunning } from 'react-icons/fa';
 import { HiSparkles } from 'react-icons/hi';
 import { BsPersonCheck, BsPersonPlus } from 'react-icons/bs';
 import Auth from '../../utils/auth';
@@ -118,14 +118,14 @@ const ProfileList = ({ profiles, title, isDarkMode }) => {
         </div>
 
         {/* Modern Profile Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 ">
           {currentProfiles?.map((profile) => (
             <div
               key={profile._id}
               className={`group relative overflow-hidden rounded-3xl transition-all duration-500 hover:scale-[1.02] ${
                 isDarkMode 
-                  ? 'bg-white/5 backdrop-blur-lg border border-white/10 hover:border-white/20 shadow-xl hover:shadow-2xl' 
-                  : 'bg-white/90 backdrop-blur-lg border border-gray-200/50 hover:border-gray-300/80 shadow-lg hover:shadow-xl'
+                  ? 'bg-white/5 backdrop-blur-lg border border-gray-500 hover:border-white/20 shadow-xl hover:shadow-2xl' 
+                  : 'bg-white/90 backdrop-blur-lg border border-gray-600 hover:border-gray-300/80 shadow-lg hover:shadow-xl'
               }`}
             >
               {/* Gradient Background Effect */}
@@ -196,73 +196,96 @@ const ProfileList = ({ profiles, title, isDarkMode }) => {
                     {profile.name}
                   </h3>
                   
-                  {/* Compact Jersey and Position */}
+                  {/* Enhanced Jersey and Position with Icons */}
                   <div className="flex items-center justify-center gap-3 text-xs">
                     {profile.jerseyNumber && (
-                      <span className={`px-2 py-1 rounded-full font-medium ${
-                        isDarkMode ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-100 text-blue-700'
+                      <div className={`flex items-center gap-1.5 px-3 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105 ${
+                        isDarkMode ? 'bg-gradient-to-r from-blue-500/20 to-indigo-500/20 text-blue-300 border border-blue-500/30 hover:shadow-lg hover:shadow-blue-500/20' : 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 border border-blue-200 hover:shadow-lg hover:shadow-blue-500/20'
                       }`}>
-                        #{profile.jerseyNumber}
-                      </span>
+                        <FaTshirt className="text-sm" />
+                        <span>#{profile.jerseyNumber}</span>
+                      </div>
                     )}
                     {profile.position && (
-                      <span className={`px-2 py-1 rounded-full font-medium ${
-                        isDarkMode ? 'bg-purple-500/20 text-purple-300' : 'bg-purple-100 text-purple-700'
+                      <div className={`flex items-center gap-1.5 px-3 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105 ${
+                        isDarkMode ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border border-purple-500/30 hover:shadow-lg hover:shadow-purple-500/20' : 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border border-purple-200 hover:shadow-lg hover:shadow-purple-500/20'
                       }`}>
-                        {profile.position}
-                      </span>
+                        <FaRunning className="text-sm" />
+                        <span>{profile.position}</span>
+                      </div>
                     )}
                   </div>
                 </div>
 
-                {/* Simplified Rating */}
+                {/* Enhanced Rating with Star Icon */}
                 <div className="flex justify-center mb-6">
-                  <div className={`px-3 py-1.5 rounded-full ${
-                    isDarkMode ? 'bg-gray-700/50 text-gray-100 backdrop-blur-sm' : 'bg-gray-100/80 backdrop-blur-sm'
+                  <div className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 hover:scale-105 ${
+                    isDarkMode ? 'bg-gradient-to-r from-amber-500/20 to-yellow-500/20 text-amber-200 backdrop-blur-sm border border-amber-500/30 hover:shadow-lg hover:shadow-amber-500/20' : 'bg-gradient-to-r from-amber-100 to-yellow-100 backdrop-blur-sm border border-amber-200 hover:shadow-lg hover:shadow-amber-500/20'
                   }`}>
-                    {renderStars(profile.averageRating)}
+                    <AiFillStar className={`text-lg ${isDarkMode ? 'text-amber-400' : 'text-amber-500'}`} />
+                    <div className="flex items-center">
+                      {renderStars(profile.averageRating)}
+                      <span className={`text-sm font-semibold ml-2 ${isDarkMode ? 'text-amber-300' : 'text-amber-700'}`}>
+                        ({profile.averageRating || 0})
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Clean Action Buttons */}
-                <div className="grid grid-cols-3 gap-2">
+                {/* Modern Action Buttons */}
+                <div className="grid grid-cols-3 gap-3">
                   <button
                     onClick={() => handleChatClick(profile)}
-                    className={`flex flex-col items-center gap-1.5 p-3 rounded-2xl transition-all duration-300 hover:scale-105 ${
+                    className={`group relative overflow-hidden flex flex-col items-center gap-2.5 p-4 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 ${
                       isDarkMode 
-                        ? 'bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 border border-blue-500/20 hover:border-blue-500/30' 
-                        : 'bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 hover:border-blue-300'
+                        ? 'bg-gradient-to-br from-blue-500/10 to-cyan-500/10 hover:from-blue-500/20 hover:to-cyan-500/20 text-blue-300 border border-blue-500/20 hover:border-blue-400/40 hover:shadow-xl hover:shadow-blue-500/25' 
+                        : 'bg-gradient-to-br from-blue-50 to-cyan-50 hover:from-blue-100 hover:to-cyan-100 text-blue-600 border border-blue-200 hover:border-blue-300 hover:shadow-xl hover:shadow-blue-500/25'
                     }`}
                     title="Send Message"
                   >
-                    <AiOutlineMessage className="text-lg" />
-                    <span className="text-xs font-medium">Chat</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform -skew-x-12"></div>
+                    <div className={`p-2.5 rounded-xl transition-all duration-300 group-hover:scale-110 ${
+                      isDarkMode ? 'bg-blue-500/20 group-hover:bg-blue-500/30' : 'bg-blue-100 group-hover:bg-blue-200'
+                    }`}>
+                      <AiOutlineMessage className="text-xl" />
+                    </div>
+                    <span className="text-xs font-bold uppercase tracking-wider">Message</span>
                   </button>
 
                   <button
                     onClick={() => handleRatingClick(profile)}
-                    className={`flex flex-col items-center gap-1.5 p-3 rounded-2xl transition-all duration-300 hover:scale-105 ${
+                    className={`group relative overflow-hidden flex flex-col items-center gap-2.5 p-4 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 ${
                       isDarkMode 
-                        ? 'bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-300 border border-yellow-500/20 hover:border-yellow-500/30' 
-                        : 'bg-yellow-50 hover:bg-yellow-100 text-yellow-600 border border-yellow-200 hover:border-yellow-300'
+                        ? 'bg-gradient-to-br from-amber-500/10 to-orange-500/10 hover:from-amber-500/20 hover:to-orange-500/20 text-amber-300 border border-amber-500/20 hover:border-amber-400/40 hover:shadow-xl hover:shadow-amber-500/25' 
+                        : 'bg-gradient-to-br from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 text-amber-600 border border-amber-200 hover:border-amber-300 hover:shadow-xl hover:shadow-amber-500/25'
                     }`}
                     title="Rate Player"
                   >
-                    <AiFillStar className="text-lg" />
-                    <span className="text-xs font-medium">Rate</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform -skew-x-12"></div>
+                    <div className={`p-2.5 rounded-xl transition-all duration-300 group-hover:scale-110 ${
+                      isDarkMode ? 'bg-amber-500/20 group-hover:bg-amber-500/30' : 'bg-amber-100 group-hover:bg-amber-200'
+                    }`}>
+                      <AiFillStar className="text-xl" />
+                    </div>
+                    <span className="text-xs font-bold uppercase tracking-wider">Rate</span>
                   </button>
 
                   <Link
                     to={`/profiles/${profile._id}`}
-                    className={`flex flex-col items-center gap-1.5 p-3 rounded-2xl transition-all duration-300 hover:scale-105 hover:no-underline hover:text-green-200 ${
+                    className={`group relative overflow-hidden flex flex-col items-center gap-2.5 p-4 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 hover:no-underline ${
                       isDarkMode 
-                        ? 'bg-green-500/10 hover:bg-green-500/20 text-green-300 border border-green-500/20 hover:border-green-500/30' 
-                        : 'bg-green-50 hover:bg-green-100 text-green-600 border border-green-200 hover:border-green-300 hover:text-green-600'
+                        ? 'bg-gradient-to-br from-green-500/10 to-emerald-500/10 hover:from-green-500/20 hover:to-emerald-500/20 text-green-300 border border-green-500/20 hover:border-green-400/40 hover:shadow-xl hover:shadow-green-500/25 hover:text-green-300' 
+                        : 'bg-gradient-to-br from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 text-green-600 border border-green-200 hover:border-green-300 hover:shadow-xl hover:shadow-green-500/25 hover:text-green-600'
                     }`}
                     title="View Profile"
                   >
-                    <RiProfileLine className="text-lg" />
-                    <span className="text-xs font-medium">Profile</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform -skew-x-12"></div>
+                    <div className={`p-2.5 rounded-xl transition-all duration-300 group-hover:scale-110 ${
+                      isDarkMode ? 'bg-green-500/20 group-hover:bg-green-500/30' : 'bg-green-100 group-hover:bg-green-200'
+                    }`}>
+                      <RiProfileLine className="text-xl" />
+                    </div>
+                    <span className="text-xs font-bold uppercase tracking-wider">Profile</span>
                   </Link>
                 </div>
               </div>

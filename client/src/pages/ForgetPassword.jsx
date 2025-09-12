@@ -23,7 +23,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <main className="relative overflow-hidden min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 dark:from-slate-900 dark:via-gray-900 dark:to-blue-950">
+    <main className="relative overflow-hidden  bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 dark:from-slate-900 dark:via-gray-900 dark:to-blue-950">
       {/* Sophisticated Background Pattern - matching Hero */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Grid pattern */}
@@ -40,7 +40,7 @@ const ForgotPassword = () => {
         <div className="absolute bottom-32 left-32 w-1.5 h-1.5 bg-purple-400/40 rounded-full animate-bounce"></div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen flex items-center justify-center">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-8  flex items-center justify-center">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full max-w-6xl">
           {/* Left side: Logo and branding */}
           <div className="hidden lg:flex flex-col items-center text-center space-y-6">

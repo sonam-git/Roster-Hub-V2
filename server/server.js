@@ -26,15 +26,6 @@ app.use(graphqlUploadExpress());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-// // Serve static files in production
-// if (process.env.NODE_ENV === 'production') {
-//   app.use(express.static(path.join(__dirname, '../client/build')));
-// }
-
-// // Define routes
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../client/build/index.html'));
-// });
 // In production, serve the Vite build output from client/dist
 if (process.env.NODE_ENV === "production") {
   const clientDist = path.join(__dirname, "../client/dist");
@@ -51,8 +42,6 @@ if (process.env.NODE_ENV === "production") {
 // Create an executable schema
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
-// In-memory set to track online users
-// const onlineUsers = new Set();
 
 // Create a WebSocket server
 const httpServer = createServer(app);

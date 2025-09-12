@@ -156,7 +156,7 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
             </div>
           </div>
         ) : (
-          <div className="w-full flex items-center justify-center overflow-hidden bg-gray-100 dark:bg-gray-800 py-0.5 rounded-2xl shadow-2xl border-2 border-blue-300 dark:border-blue-900 relative">
+          <div className="w-full  flex items-center justify-center overflow-hidden bg-gray-100 dark:bg-gray-800 py-0.5 rounded-2xl shadow-2xl border-2 border-blue-300 dark:border-blue-900 relative">
             <span className="animate-marquee whitespace-nowrap  text-lg sm:text-xl md:text-2xl font-bold tracking-wide px-2 sm:px-4 py-1 rounded-2xl flex items-center gap-4 bg-gradient-to-r from-green-100 via-green-200 to-green-300 dark:text-white dark:bg-gray-800" style={{ fontFamily: 'sans-serif', letterSpacing: '0.04em', boxShadow: '0 4px 24px rgba(59,130,246,0.15)' }}>
               <FontAwesomeIcon icon={faPersonRunning} className="text-green-500 text-2xl sm:text-3xl md:text-4xl drop-shadow-lg animate-spin-slow" />
               <span className="text-blue-700 font-bold" style={{ fontFamily: 'sans-serif', fontWeight: 700, fontSize: '1.3rem', textShadow: 'none' }}>
