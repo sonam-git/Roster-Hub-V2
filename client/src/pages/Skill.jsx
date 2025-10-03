@@ -47,53 +47,14 @@ const Skill = ({ isDarkMode }) => {
   return (
     <main className="w-full px-4 sm:px-6 lg:px-8 mx-auto transition-all duration-300">
       <div className="max-w-6xl mx-auto space-y-6 mt-8 mb-8">
-        {/* Modern Header */}
-        <div
-          className={`relative rounded-3xl shadow-2xl p-6 sm:p-8 border-2 overflow-hidden ${
-            isDarkMode
-              ? "bg-gradient-to-br from-gray-800 via-gray-900 to-black border-gray-600 text-white"
-              : "bg-gradient-to-br from-white via-blue-50 to-indigo-100 border-blue-300 text-gray-800"
-          }`}
-        >
-          {/* Animated background elements */}
-          <div className="absolute inset-0 bg-black/5"></div>
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16 animate-pulse"></div>
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12 animate-pulse"></div>
-          
-          <div className="relative z-1 text-center">
-            <div className="flex items-center justify-center gap-3 mb-4 ">
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-                isDarkMode ? 'bg-blue-600' : 'bg-blue-500'
-              }`}>
-                <span className="text-2xl text-white">🎯</span>
-              </div>
-              <h1 className={`text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight ${
-                isDarkMode ? 'text-blue-200' : 'text-blue-700'
-              }`}>
-                Skill Endorsements
-              </h1>
-            </div>
-            
-            <div className={`p-4 rounded-2xl border backdrop-blur-sm ${
-              isDarkMode 
-                ? 'bg-gray-800/30 border-gray-700' 
-                : 'bg-white/70 border-blue-200'
-            }`}>
-              <p className="text-base sm:text-lg font-medium mb-2">
-                {profileId ? `${profile.name}'s` : "Your"} friends have endorsed you
-              </p>
-              <div className="flex items-center justify-center gap-2">
-                <span className={`text-2xl sm:text-3xl font-bold ${
-                  isDarkMode ? 'text-blue-400' : 'text-blue-600'
-                }`}>
-                  {filteredSkills.length || 0}
-                </span>
-                <span className="text-base sm:text-lg">
-                  skill{filteredSkills.length === 1 ? "" : "s"}
-                </span>
-              </div>
-            </div>
-          </div>
+        {/* Simple Header like Game.jsx */}
+        <div className={`mb-6 text-center ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+          <h1 className="text-2xl sm:text-3xl font-bold dark:text-white bg-clip-text">
+            Skill Endorsements
+          </h1>
+          <p className={`text-sm md:text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            View skills endorsed by your teammates and track your progress
+          </p>
         </div>
 
         {/* Skills Grid */}

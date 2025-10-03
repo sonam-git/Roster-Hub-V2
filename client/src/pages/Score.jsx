@@ -39,21 +39,17 @@ export default function Score() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 mt-4">
-      {/* Header Section */}
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-gray-800 dark:to-gray-700 py-6 sm:py-8 md:py-12">
-        <div className="w-full mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 max-w-7xl">
-          <div className="text-center text-white">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-1 sm:mb-2 md:mb-4 leading-tight">
-              ⚽ Live Scores & Fixtures
-            </h1>
-            <p className="text-sm sm:text-lg md:text-xl opacity-90">
-              Stay updated with your favorite leagues and matches
-            </p>
-          </div>
-        </div>
-      </div>
-
       <div className="w-full mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 py-4 sm:py-6 md:py-8 space-y-6 sm:space-y-8 max-w-7xl">
+        {/* Simple Header like Game.jsx and Skill.jsx */}
+        <div className="mb-6 text-center text-gray-800 dark:text-white">
+          <h1 className="text-2xl sm:text-3xl font-bold dark:text-white bg-clip-text">
+            Live Scores & Fixtures
+          </h1>
+          <p className="text-sm md:text-base text-gray-600 dark:text-gray-300">
+            Stay updated with your favorite leagues and matches
+          </p>
+        </div>
+
         {/* My Favorites Section */}
         <div className="space-y-3 sm:space-y-4 md:space-y-6">
           <div className="flex items-center space-x-2 sm:space-x-3">

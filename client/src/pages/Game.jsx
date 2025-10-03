@@ -83,8 +83,8 @@ const Game = () => {
         <div className="flex flex-col lg:flex-row lg:space-x-2">
           <div className="w-full">
             {/* Game Schedule Header */}
-            <div className={`mb-6 text-center ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-              <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+            <div className={`mb-6  text-center ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                <h1 className="text-2xl sm:text-3xl font-bold dark:text-white bg-clip-text ">
                 Game Schedule
               </h1>
               <p className={`text-sm md:text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>

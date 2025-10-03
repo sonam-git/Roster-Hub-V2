@@ -104,18 +104,19 @@ const ProfileList = ({ profiles, title, isDarkMode }) => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Modern Header Section */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-3 mb-6 px-6 py-3 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-lg border border-gray-200/50 dark:border-gray-700/50">
-            <HiSparkles className={`text-2xl ${isDarkMode ? 'text-yellow-400' : 'text-yellow-500'}`} />
-            <h1 className={`text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent`}>
-              {title}
-            </h1>
-            <HiSparkles className={`text-2xl ${isDarkMode ? 'text-yellow-400' : 'text-yellow-500'}`} />
-          </div>
-          <p className={`text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-xl mx-auto`}>
-            Discover {filteredProfiles.length} amazing team member{filteredProfiles.length !== 1 ? 's' : ''}
-          </p>
-        </div>
+<div className={`mb-6 text-center ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+  <div className="inline-flex items-center gap-3 mb-6 px-6 py-3 rounded-full  dark:bg-gray-800/80 ">
+    <HiSparkles className={`text-2xl ${isDarkMode ? 'text-yellow-400' : 'text-yellow-500'}`} />
+    <h1 className="text-2xl sm:text-3xl font-bold dark:text-white bg-clip-text ">
+      {title}
+    </h1>
+    <HiSparkles className={`text-2xl ${isDarkMode ? 'text-yellow-400' : 'text-yellow-500'}`} />
+  </div>
+  <p className={`text-sm md:text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} max-w-xl mx-auto`}>
+    Discover {filteredProfiles.length} amazing team member{filteredProfiles.length !== 1 ? 's' : ''}
+  </p>
+</div>
+
 
         {/* Modern Profile Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 ">
