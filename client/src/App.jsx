@@ -120,12 +120,13 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
   return (
     <>
       <div
-        className={`flex transition-colors duration-300 ${backgroundConfig.className}`}
+        className={`flex min-h-screen transition-colors duration-300 ${backgroundConfig.className}`}
         style={backgroundConfig.style}
       >
         <Header open={sidebarOpen} setOpen={setSidebarOpen} />
-        <div className={`flex-1 transition-all duration-300 pt-28 lg:pt-4 relative z-[2]`}>
-          <Routes>
+        <div className={`flex-1 transition-all duration-300 pt-28 lg:pt-4 relative z-[2] flex flex-col`}>
+          <div className="flex-1">
+            <Routes>
             <Route path="/" element={<Home />} />
             <Route
               path="/games-shortcut"
@@ -156,12 +157,13 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
             <Route path="/scoreboard" element={<Score />} />
             <Route path="/about" element={<About />} />
           </Routes>
+          </div>
           {Auth.loggedIn() && currentUser && (
             <ChatPopup currentUser={currentUser} isDarkMode={isDarkMode} />
           )}
+          <Footer />
         </div>
       </div>
-      <Footer />
     </>
   );
 }

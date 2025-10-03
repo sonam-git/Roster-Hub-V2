@@ -367,7 +367,7 @@ const ChatPopup = ({ currentUser }) => {
   })();
 
   return (
-    <div className="fixed bottom-20 right-4 w-80 chat-popup-container z-[500]">
+    <div className="fixed bottom-0 right-4 w-80 chat-popup-container z-[500]">
       {/* Modern Header */}
       <div
         className={`flex items-center justify-between p-2 rounded-t-2xl cursor-pointer shadow-2xl backdrop-blur-sm border-t border-x transition-all duration-300 hover:shadow-lg chat-popup-header ${
