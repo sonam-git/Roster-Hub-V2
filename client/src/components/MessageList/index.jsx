@@ -139,30 +139,68 @@ const handleSendMessage = async (recipientId) => {
   // Show empty state when no conversations exist
   if (conversations.length === 0) {
     return (
-      <div className="text-center py-20">
-        <div className={`max-w-lg mx-auto p-10 rounded-3xl shadow-2xl ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
-          <HiChatAlt2 className={`mx-auto mb-6 text-7xl ${isDarkMode ? 'text-gray-400' : 'text-gray-300'}`} />
-          <h3 className={`text-3xl font-bold mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-            No Conversations Yet
-          </h3>
-          <p className={`mb-8 text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-            Start chatting with your team members!
-          </p>
-          {isLoggedInUser && (
-            <button
-              onClick={() => setShowUserListModal(true)}
-              className={`px-8 py-4 rounded-xl font-medium text-lg transition-all duration-200 hover:scale-105 ${
-                isDarkMode
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                  : 'bg-blue-500 hover:bg-blue-600 text-white'
-              }`}
-            >
-              <HiPlus className="inline-block w-6 h-6 mr-3" />
-              Start New Conversation
-            </button>
-          )}
+      <>
+        <div className="text-center py-8 sm:py-20">
+          <div className={`max-w-xs sm:max-w-lg mx-auto p-4 sm:p-10 rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
+            <HiChatAlt2 className={`mx-auto mb-3 sm:mb-6 text-4xl sm:text-7xl ${isDarkMode ? 'text-gray-400' : 'text-gray-300'}`} />
+            <h3 className={`text-xl sm:text-3xl font-bold mb-2 sm:mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              No Conversations Yet
+            </h3>
+            <p className={`mb-4 sm:mb-8 text-sm sm:text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              Start chatting with your team members!
+            </p>
+            {isLoggedInUser && (
+              <button
+                onClick={() => setShowUserListModal(true)}
+                className={`px-4 sm:px-8 py-2 sm:py-4 rounded-lg sm:rounded-xl font-medium text-sm sm:text-lg transition-all duration-200 hover:scale-105 ${
+                  isDarkMode
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                    : 'bg-blue-500 hover:bg-blue-600 text-white'
+                }`}
+              >
+                <HiPlus className="inline-block w-4 h-4 sm:w-6 sm:h-6 mr-2 sm:mr-3" />
+                Start New Conversation
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+
+        {/* Render modals outside the early return */}
+        <UserListModal
+          show={showUserListModal}
+          onClose={() => setShowUserListModal(false)}
+          profiles={profiles}
+          onSelectUser={(user) => {
+            setSelectedRecipient(user);
+            setShowUserListModal(false);
+            setShowChatModal(true);
+          }}
+          isDarkMode={isDarkMode}
+        />
+
+        {showChatModal && selectedRecipient && (
+          <MessageBox
+            recipient={selectedRecipient}
+            selectedMessage={selectedMessage}
+            onCloseModal={() => {
+              setShowChatModal(false);
+              setSelectedRecipient(null);
+              setSelectedMessage(null);
+            }}
+            isDarkMode={isDarkMode}
+            inputValue={inputValues[selectedRecipient?._id] || ""}
+            setInputValue={(val) => setInputValues((prev) => ({ ...prev, [selectedRecipient._id]: val }))}
+            onSendMessage={() => handleSendMessage(selectedRecipient._id)}
+          />
+        )}
+
+        <DeleteMessageModal
+          show={showDeleteModal}
+          onConfirm={confirmDeleteMessage}
+          onCancel={cancelDeleteMessage}
+          isDarkMode={isDarkMode}
+        />
+      </>
     );
   }
 

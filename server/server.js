@@ -16,6 +16,7 @@ const onlineUsers = require("./utils/onlineUsers");
 const PORT = process.env.PORT || 3001;
 const app = express();
 
+//system for real-time GraphQL subscriptions
 const { PubSub } = require("graphql-subscriptions");
 const pubsub = new PubSub(); // Ensure this instance is used in the resolvers
 
@@ -41,7 +42,6 @@ if (process.env.NODE_ENV === "production") {
 
 // Create an executable schema
 const schema = makeExecutableSchema({ typeDefs, resolvers });
-
 
 // Create a WebSocket server
 const httpServer = createServer(app);

@@ -39,6 +39,9 @@ import TopHeader from "./components/TopHeader";
 import CustomComingGames from "./components/CustomComingGames";
 import AllSkillsList from "./components/AllSkillsList";
 import About from "./pages/About";
+import PWAInstallButton from "./components/PWAInstallButton";
+import OfflineIndicator from "./components/OfflineIndicator";
+import PWAUpdatePrompt from "./components/PWAUpdatePrompt";
 
 // Define HTTP and WebSocket URIs based on environment
 const httpUri =
@@ -161,6 +164,9 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
           {Auth.loggedIn() && currentUser && (
             <ChatPopup currentUser={currentUser} isDarkMode={isDarkMode} />
           )}
+          <PWAInstallButton isDarkMode={isDarkMode} />
+          <PWAUpdatePrompt isDarkMode={isDarkMode} />
+          <OfflineIndicator isDarkMode={isDarkMode} />
           <Footer />
         </div>
       </div>

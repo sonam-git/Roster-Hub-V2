@@ -306,7 +306,12 @@ const typeDefs = gql`
     unvoteGame(gameId: ID!): Game!
     deleteGame(gameId: ID!): Game!
     updateGame(gameId: ID!, input: UpdateGameInput!): Game!
-    addFeedback(gameId: ID!, comment: String, rating: Int!, playerOfTheMatchId: ID): Game!
+    addFeedback(
+      gameId: ID!
+      comment: String
+      rating: Int!
+      playerOfTheMatchId: ID
+    ): Game!
     createFormation(gameId: ID!, formationType: String!): Formation!
     updateFormation(gameId: ID!, positions: [PositionInput!]!): Formation!
     deleteFormation(gameId: ID!): Boolean!
@@ -319,9 +324,7 @@ const typeDefs = gql`
     likeFormationComment(commentId: ID!): FormationComment
     likeFormation(formationId: ID!): Formation
     removeSocialMediaLink(userId: ID!, type: String!): Boolean
-    markChatAsSeen(
-      userId: ID!
-    ): Boolean
+    markChatAsSeen(userId: ID!): Boolean
     reactToSkill(skillId: ID!, emoji: String!): Skill!
   }
   type Subscription {
