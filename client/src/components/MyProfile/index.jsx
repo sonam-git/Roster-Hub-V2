@@ -196,7 +196,7 @@ const MyProfile = () => {
                     onClick={() => setSelectedView("settings")}
                   >
                     <span className="text-xs">⚙️</span>
-                    <span className="font-medium">Settings</span>
+                    <span className="font-bold">Settings</span>
                     {selectedView === "settings" && (
                       <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-600/20 rounded-lg"></div>
                     )}
@@ -217,7 +217,7 @@ const MyProfile = () => {
                     onClick={() => setSelectedView("posts")}
                   >
                     <span className="text-xs">📝</span>
-                    <span className="font-medium">Posts</span>
+                    <span className="font-bold">Posts</span>
                     {selectedView === "posts" && (
                       <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-purple-600/20 rounded-lg"></div>
                     )}
@@ -238,7 +238,7 @@ const MyProfile = () => {
                     onClick={() => setSelectedView("games")}
                   >
                     <span className="text-xs">⚽</span>
-                    <span className="font-medium">Games</span>
+                    <span className="font-bold">Games</span>
                     {selectedView === "games" && (
                       <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-green-600/20 rounded-lg"></div>
                     )}

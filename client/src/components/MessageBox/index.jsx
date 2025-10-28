@@ -39,9 +39,26 @@ const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode }) =>
     }
   };
 
-  const handleCloseModal = () => {
+  const handleCloseModal = (wasCancelled = false) => {
     setShowModal(false);
-    onCloseModal();
+    // Pass whether a message was sent when closing (not if cancelled)
+    onCloseModal(wasCancelled ? false : messageSent);
+  };
+
+  const handleMessageSentModalClose = () => {
+    setShowModal(false);
+    setMessage("");
+    setError(false);
+    // When the success modal is closed, a message was definitely sent
+    onCloseModal(true);
+    setMessageSent(false); // Reset for next time
+  };
+
+  const handleCancel = () => {
+    setMessage("");
+    setError(false);
+    setMessageSent(false);
+    handleCloseModal(true); // Pass true to indicate cancellation
   };
 
   const isSender = selectedMessage?.sender?._id === data?.me?._id;
@@ -88,7 +105,7 @@ const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode }) =>
                 </div>
                 
                 <button
-                  onClick={handleCloseModal}
+                  onClick={handleCancel}
                   className={`p-2 rounded-full transition-all duration-200 hover:scale-110 ${
                     isDarkMode 
                       ? 'text-gray-400 hover:bg-gray-700 hover:text-white' 
@@ -159,7 +176,7 @@ const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode }) =>
 
               <div className="flex gap-3 pt-2">
                 <button
-                  onClick={handleCloseModal}
+                  onClick={handleCancel}
                   className={`flex-1 px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 ${
                     isDarkMode
                       ? 'bg-gray-700 hover:bg-gray-600 text-white'
@@ -179,7 +196,7 @@ const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode }) =>
             </div>
           </Modal>
         )}
-        {showModal && <MessageSentModal onClose={handleCloseModal} />}
+        {showModal && <MessageSentModal onClose={handleMessageSentModalClose} />}
       </>
     )
   );

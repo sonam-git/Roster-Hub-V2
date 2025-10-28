@@ -25,10 +25,13 @@ const ProfileList = ({ profiles, title, isDarkMode }) => {
     setShowModal(true);
   };
 
-  const handleModalClose = () => {
+  const handleModalClose = (messageSent = false) => {
     setSelectedUser(null);
     setShowModal(false);
-    window.location.href = '/message';
+    // Only navigate to /message if a message was actually sent
+    if (messageSent) {
+      window.location.href = '/message';
+    }
   };
 
   const handleRatingClick = (profile) => {

@@ -141,8 +141,8 @@ const UserProfile = ({ profile }) => {
                 onClick={() => setActiveTab('posts')}
               >
                 <span className="text-xs sm:text-sm">📝</span>
-                <span className="hidden xs:inline sm:hidden">POSTS</span>
-                <span className="hidden sm:inline">POSTS</span>
+                <span className="hidden xs:inline sm:hidden">Posts</span>
+                <span className="hidden sm:inline">Posts</span>
                 <span className="xs:hidden sm:hidden">P</span>
                 {activeTab === 'posts' && (
                   <div className="absolute -bottom-0.5 left-1/2 transform -translate-x-1/2 w-1 h-1 sm:w-1.5 sm:h-1.5 bg-purple-400 rounded-full animate-pulse"></div>
@@ -163,8 +163,8 @@ const UserProfile = ({ profile }) => {
                 onClick={() => setActiveTab('skills')}
               >
                 <span className="text-xs sm:text-sm">⚡</span>
-                <span className="hidden xs:inline sm:hidden">SKILLS</span>
-                <span className="hidden sm:inline">SKILLS</span>
+                <span className="hidden xs:inline sm:hidden">Skills</span>
+                <span className="hidden sm:inline">Skills</span>
                 <span className="xs:hidden sm:hidden">S</span>
                 {activeTab === 'skills' && (
                   <div className="absolute -bottom-0.5 left-1/2 transform -translate-x-1/2 w-1 h-1 sm:w-1.5 sm:h-1.5 bg-blue-400 rounded-full animate-pulse"></div>
@@ -185,8 +185,8 @@ const UserProfile = ({ profile }) => {
                 onClick={() => setActiveTab('games')}
               >
                 <span className="text-xs sm:text-sm">⚽</span>
-                <span className="hidden xs:inline sm:hidden">GAMES</span>
-                <span className="hidden sm:inline">GAMES</span>
+                <span className="hidden xs:inline sm:hidden">Games</span>
+                <span className="hidden sm:inline">Games</span>
                 <span className="xs:hidden sm:hidden">G</span>
                 {activeTab === 'games' && (
                   <div className="absolute -bottom-0.5 left-1/2 transform -translate-x-1/2 w-1 h-1 sm:w-1.5 sm:h-1.5 bg-green-400 rounded-full animate-pulse"></div>
