@@ -87,7 +87,8 @@ const Header = ({ open, setOpen }) => {
     >
       {/* Mobile horizontal auth buttons when not logged in */}
       {!Auth.loggedIn() && open && (
-        <div className="lg:hidden fixed top-30 left-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl py-4 shadow-2xl border-b border-gray-200 dark:border-gray-700 z-[50] ">
+        <div className="lg:hidden fixed left-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl py-4 shadow-2xl border-b border-gray-200 dark:border-gray-700 z-[50]" 
+             style={{ top: 'calc(env(safe-area-inset-top, 20px) + 96px)' }}>
           <div className="flex flex-row gap-1 px-2">
             <Link
               to="/"
@@ -160,7 +161,7 @@ const Header = ({ open, setOpen }) => {
 
       {/* Amazon-style Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full transition-all duration-500 ease-out z-[5] pt-16 lg:pt-16 transform-gpu will-change-transform ${
+        className={`fixed top-0 left-0 h-full transition-all duration-500 ease-out z-[5] pt-32 lg:pt-16 transform-gpu will-change-transform ${
           open ? "w-64 sm:w-72 translate-x-0 opacity-100" : "w-16 sm:w-20 -translate-x-full lg:translate-x-0 opacity-100 lg:opacity-100"
         } ${
           isDarkMode 

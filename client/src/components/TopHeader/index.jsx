@@ -61,7 +61,7 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
   }, [showRosterDropdown]);
 
   return (
-    <div className={`w-full flex flex-col md:flex-row items-center justify-between bg-gray-100 dark:bg-gray-800 py-2 shadow-md sticky z-[10] px-2 sm:px-4 ${isVisible ? 'top-24 lg:top-0' : 'top-0'} ${typeof className !== 'undefined' ? className : ''}`}>
+    <div className={`w-full flex flex-col md:flex-row items-center justify-between bg-gray-100 dark:bg-gray-800 py-2 shadow-md sticky z-[10] px-2 sm:px-4 ${isVisible ? 'top-28 lg:top-0' : 'top-0'} ${typeof className !== 'undefined' ? className : ''}`}>
       {/* Left: Logo and Title (always visible, beautiful UI) */}
       <Link
         to={"/"}
@@ -108,7 +108,7 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
                     <div key={btn.key} className="relative flex-shrink-0">
                       <button
                         ref={rosterBtnRef}
-                        className={`flex flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-2xl font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl min-w-[80px] sm:min-w-0 justify-center backdrop-blur-sm ${
+                        className={`flex flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-2xl font-semibold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl min-w-[80px] sm:min-w-0 justify-center backdrop-blur-sm ${
                           isDarkMode
                             ? "bg-gradient-to-br from-gray-800/80 to-gray-700/80 hover:from-gray-700/90 hover:to-gray-600/90 text-gray-200 shadow-gray-800/50 hover:shadow-gray-700/70"
                             : "bg-gradient-to-br from-white/90 to-gray-50/90 hover:from-gray-50/95 hover:to-gray-100/95 text-gray-700 shadow-gray-200/50 hover:shadow-gray-300/70"
