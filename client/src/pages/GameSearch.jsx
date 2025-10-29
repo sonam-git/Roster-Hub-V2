@@ -22,26 +22,24 @@ const GameSearchPage = () => {
     <div className="w-full mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 mt-6 lg:mt-5 max-w-7xl">
       <div className="flex flex-col space-y-6">
         {/* Header */}
-                <div className="text-center mb-6 sm:mb-8">
-            <div className="flex flex-col items-center mb-4">
-              <div className={`w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-indigo-600 flex items-center justify-center mb-4 shadow-xl transform hover:scale-105 transition-all duration-300 ${
-                isDarkMode ? 'shadow-blue-500/25' : 'shadow-blue-500/20'
-              }`}>
-              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <div className={`w-16 h-16 rounded-full   flex items-center justify-center shadow-xl transform hover:scale-105 transition-all duration-300 `}>
+              <svg className="w-8 h-8 text-gray-800 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
-            <h1 className={`text-2xl sm:text-3xl md:text-3xl font-bold mb-2 ${
+            <h1 className={`text-2xl sm:text-3xl md:text-4xl font-bold ${
               isDarkMode 
-                ? " text-white" 
-                : "bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent"
+                ? "text-white" 
+                : "text-gray-800"
             }`}>
               Game Search
             </h1>
           </div>
-         <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                Discover, filter, and organize your games with powerful search tools. Find exactly what you're looking for!
-              </p>
+          <p className={`text-sm sm:text-base ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+            Discover, filter, and organize your games with powerful search tools. Find exactly what you're looking for!
+          </p>
         </div>
  
         {/* Search Component */}

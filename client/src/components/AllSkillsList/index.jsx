@@ -78,7 +78,7 @@ export default function AllSkillsList({ isDarkMode }) {
       <div className={`mb-8 text-center p-6 rounded-2xl backdrop-blur-sm border shadow-lg ${
         isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 border-gray-200'
       }`}>
-        <h1 className={`text-2xl md:text-3xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent`}>
+        <h1 className={`text-2xl md:text-3xl font-bold mb-2 ${ isDarkMode ? 'text-white' : 'text-gray-900'}`}>
           🌟 Endorsed Skills
         </h1>
         <p className={`text-sm md:text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>

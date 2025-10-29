@@ -124,7 +124,7 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
         style={backgroundConfig.style}
       >
         <Header open={sidebarOpen} setOpen={setSidebarOpen} />
-        <div className={`flex-1 transition-all duration-300 pt-28 lg:pt-4 relative z-[2] flex flex-col`}>
+        <div className={`flex-1 transition-all duration-300 pt-0 relative z-[2] flex flex-col`}>
           <div className="flex-1">
             <Routes>
             <Route path="/" element={<Home />} />

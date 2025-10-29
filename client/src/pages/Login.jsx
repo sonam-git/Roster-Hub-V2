@@ -112,12 +112,12 @@ const Login = () => {
           <div className="hidden lg:flex flex-col items-center text-center space-y-6">
             {/* Welcome message with modern styling */}
             <div className="space-y-4">
-              <h1 className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 dark:from-green-400 dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent tracking-tight leading-none drop-shadow-2xl">
-                Welcome to <span className="text-green-500 dark:text-green-400">RosterHub</span>
+              <h1 className="text-4xl lg:text-5xl font-oswald font-black bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 dark:from-green-400 dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent tracking-tight leading-none drop-shadow-2xl">
+                WELCOME TO <span className="text-green-500 dark:text-green-400">ROSTERHUB</span>
               </h1>
               <div className="max-w-lg mx-auto p-4 rounded-2xl backdrop-blur-sm bg-white/60 dark:bg-black/30 border border-white/40 dark:border-white/10">
-                <p className="text-lg text-gray-800 dark:text-gray-100 font-bold drop-shadow-lg">
-                  Where Players <span className="text-green-500 dark:text-green-400 animate-pulse">Connect</span> & <span className="text-blue-500 dark:text-blue-400 animate-pulse delay-300">Understand</span> Before The Game!
+                <p className="text-lg text-gray-800 dark:text-gray-100 font-oswald font-semibold tracking-wide drop-shadow-lg">
+                  WHERE PLAYERS <span className="text-green-500 dark:text-green-400 animate-pulse">CONNECT</span> & <span className="text-blue-500 dark:text-blue-400 animate-pulse delay-300">UNDERSTAND</span> BEFORE THE GAME!
                 </p>
               </div>
               <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full"></div>
@@ -155,12 +155,12 @@ const Login = () => {
           <div className="w-full lg:w-auto">
             <div className="backdrop-blur-xl bg-white/40 dark:bg-black/20 rounded-3xl shadow-2xl p-8 border border-white/50 dark:border-white/20 w-full max-w-md mx-auto hover:shadow-3xl transition-all duration-500">
               <div className="text-center mb-6">
-                <h2 className="text-2xl font-black bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 dark:from-green-400 dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-2 drop-shadow-2xl">
-                  Welcome Back! 👋
+                <h2 className="text-2xl font-oswald font-black bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 dark:from-green-400 dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-2 drop-shadow-2xl tracking-wide">
+                  WELCOME BACK! 👋
                 </h2>
                 <div className="max-w-sm mx-auto p-3 rounded-2xl backdrop-blur-sm bg-white/60 dark:bg-black/30 border border-white/40 dark:border-white/10">
-                  <p className="text-gray-800 dark:text-gray-100 text-sm font-bold drop-shadow-lg">
-                    Sign in to your account to continue
+                  <p className="text-gray-800 dark:text-gray-100 text-sm font-oswald font-semibold tracking-wide drop-shadow-lg">
+                    SIGN IN TO YOUR ACCOUNT TO CONTINUE
                   </p>
                 </div>
               </div>
@@ -219,7 +219,7 @@ const Login = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="group relative w-full px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 text-base border border-green-400/50 overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    className="group relative w-full px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-oswald font-bold tracking-wide rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 text-base border border-green-400/50 overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   >
                     <span className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                     <span className="relative flex items-center justify-center gap-2">
@@ -229,11 +229,11 @@ const Login = () => {
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                           </svg>
-                          Signing in...
+                          SIGNING IN...
                         </>
                       ) : (
                         <>
-                          🚀 Sign In
+                          🚀 SIGN IN
                         </>
                       )}
                     </span>

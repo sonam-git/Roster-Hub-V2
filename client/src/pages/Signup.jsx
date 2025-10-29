@@ -100,11 +100,11 @@ const Signup = () => {
             
             {/* Welcome message */}
             <div className="space-y-4">
-              <h1 className="text-4xl lg:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-none">
-                Join <span className="text-transparent bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-700 dark:from-emerald-400 dark:via-blue-400 dark:to-purple-500 bg-clip-text">RosterHub</span>
+              <h1 className="text-4xl lg:text-5xl font-oswald font-black text-gray-900 dark:text-white tracking-tight leading-none">
+                JOIN <span className="text-transparent bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-700 dark:from-emerald-400 dark:via-blue-400 dark:to-purple-500 bg-clip-text">ROSTERHUB</span>
               </h1>
-              <p className="text-lg text-gray-600 dark:text-gray-300 font-medium">
-                Where Players Connect & Understand Before The Game!
+              <p className="text-lg text-gray-600 dark:text-gray-300 font-oswald font-medium tracking-wide">
+                WHERE PLAYERS CONNECT & UNDERSTAND BEFORE THE GAME!
               </p>
               <div className="w-24 h-1 bg-gradient-to-r from-emerald-500 to-blue-500 mx-auto rounded-full"></div>
             </div>
@@ -139,11 +139,11 @@ const Signup = () => {
           <div className="w-full lg:w-auto">
             <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-xl p-8 border border-white/30 dark:border-gray-700/40 w-full max-w-md mx-auto">
               <div className="text-center mb-6">
-                <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-2">
-                  Create Account 🚀
+                <h2 className="text-2xl font-oswald font-black text-gray-900 dark:text-white mb-2 tracking-wide">
+                  CREATE ACCOUNT 🚀
                 </h2>
-                <p className="text-gray-600 dark:text-gray-300 text-sm">
-                  Join thousands of teams already using RosterHub
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-oswald font-medium tracking-wider">
+                  JOIN THOUSANDS OF TEAMS ALREADY USING ROSTERHUB
                 </p>
               </div>
 
@@ -219,7 +219,7 @@ const Signup = () => {
                   <button
                     type="submit"
                     disabled={isPending}
-                    className="w-full bg-gradient-to-br from-emerald-600 via-blue-600 to-purple-700 hover:from-emerald-700 hover:via-blue-700 hover:to-purple-800 text-white font-bold py-3 px-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    className="w-full bg-gradient-to-br from-emerald-600 via-blue-600 to-purple-700 hover:from-emerald-700 hover:via-blue-700 hover:to-purple-800 text-white font-oswald font-bold tracking-wide py-3 px-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   >
                     {isPending ? (
                       <span className="flex items-center justify-center gap-2">
@@ -227,10 +227,10 @@ const Signup = () => {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Creating account...
+                        CREATING ACCOUNT...
                       </span>
                     ) : (
-                      "🚀 Create Account"
+                      "🚀 CREATE ACCOUNT"
                     )}
                   </button>
                 </div>

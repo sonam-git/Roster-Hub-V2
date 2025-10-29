@@ -7,15 +7,12 @@ export default {
   ],
   theme: {
     extend: {
-      spacing: {
-        '128': '32rem',
-        '144': '36rem',
-      },
-      borderRadius: {
-        '4xl': '2rem',
-      },
       fontFamily: {
-        sans: ['Graphik', 'sans-serif'],
+        'oswald': ['Oswald', 'sans-serif'],
+        'anton': ['Anton', 'sans-serif'],
+        'bebas': ['Bebas Neue', 'sans-serif'],
+        'primary': ['Oswald', 'sans-serif'],
+        sans: ['Oswald', 'Graphik', 'sans-serif'],
         serif: ['Merriweather', 'serif'],
       },
       screens: {

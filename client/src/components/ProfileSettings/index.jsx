@@ -97,11 +97,11 @@ const ProfileSettings = ({ isDarkMode }) => {
       ${isDarkMode 
         ? 'bg-gradient-to-br from-gray-800/90 via-gray-900/90 to-purple-900/90 border border-gray-600/30 shadow-purple-500/20' 
         : 'bg-gradient-to-br from-white/90 via-blue-50/90 to-indigo-100/90 border border-blue-200/50 shadow-blue-500/20'
-      } p-6 sm:p-8 md:p-10 lg:p-12 transition-all duration-300 hover:shadow-3xl hover:scale-[1.02] card-float`}>
+      } p-4 sm:p-6 md:p-8 lg:p-10 transition-all duration-300 hover:shadow-3xl hover:scale-[1.02] card-float`}>
       
       {/* Header */}
-      <div className="text-center mb-8">
-        <div className={`inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full mb-6 
+      <div className="text-center mb-6">
+        <div className={`inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full mb-4 
           ${isDarkMode ? 'bg-gradient-to-r from-indigo-500 to-purple-600' : 'bg-gradient-to-r from-blue-500 to-indigo-600'} 
           shadow-xl`}>
           <FaCog className="text-white text-lg sm:text-xl animate-spin-slow" />
@@ -116,7 +116,7 @@ const ProfileSettings = ({ isDarkMode }) => {
       </div>
 
       {/* Update Name Section */}
-      <div className={`rounded-2xl p-5 sm:p-6 mb-6 border backdrop-blur-sm
+      <div className={`rounded-2xl p-4 sm:p-5 mb-5 border backdrop-blur-sm
         ${isDarkMode 
           ? 'bg-gray-800/40 border-gray-600/40' 
           : 'bg-white/60 border-blue-200/40'
@@ -132,7 +132,7 @@ const ProfileSettings = ({ isDarkMode }) => {
         </div>
         
         {errorNameMessage && (
-          <div className={`p-3 sm:p-4 rounded-xl border-l-4 mb-4 animate-in slide-in-from-left-2 duration-300 flex items-center
+          <div className={`p-2 sm:p-3 rounded-xl border-l-4 mb-3 animate-in slide-in-from-left-2 duration-300 flex items-center
             ${isDarkMode 
               ? 'bg-red-900/50 border-red-500 text-red-200' 
               : 'bg-red-50 border-red-500 text-red-700'
@@ -143,7 +143,7 @@ const ProfileSettings = ({ isDarkMode }) => {
         )}
         
         {successMessage && (
-          <div className={`p-3 sm:p-4 rounded-xl border-l-4 mb-4 animate-in slide-in-from-left-2 duration-300 flex items-center
+          <div className={`p-2 sm:p-3 rounded-xl border-l-4 mb-3 animate-in slide-in-from-left-2 duration-300 flex items-center
             ${isDarkMode 
               ? 'bg-green-900/50 border-green-500 text-green-200' 
               : 'bg-green-50 border-green-500 text-green-700'
@@ -186,7 +186,7 @@ const ProfileSettings = ({ isDarkMode }) => {
       </div>
 
       {/* Update Password Section */}
-      <div className={`rounded-2xl p-5 sm:p-6 mb-6 border backdrop-blur-sm
+      <div className={`rounded-2xl p-4 sm:p-5 mb-5 border backdrop-blur-sm
         ${isDarkMode 
           ? 'bg-gray-800/40 border-gray-600/40' 
           : 'bg-white/60 border-blue-200/40'
@@ -202,7 +202,7 @@ const ProfileSettings = ({ isDarkMode }) => {
         </div>
         
         {errorMessage && (
-          <div className={`p-3 sm:p-4 rounded-xl border-l-4 mb-4 animate-in slide-in-from-left-2 duration-300 flex items-center
+          <div className={`p-2 sm:p-3 rounded-xl border-l-4 mb-3 animate-in slide-in-from-left-2 duration-300 flex items-center
             ${isDarkMode 
               ? 'bg-red-900/50 border-red-500 text-red-200' 
               : 'bg-red-50 border-red-500 text-red-700'
@@ -213,7 +213,7 @@ const ProfileSettings = ({ isDarkMode }) => {
         )}
         
         {passwordSuccessMessage && (
-          <div className={`p-3 sm:p-4 rounded-xl border-l-4 mb-4 animate-in slide-in-from-left-2 duration-300 flex items-center
+          <div className={`p-2 sm:p-3 rounded-xl border-l-4 mb-3 animate-in slide-in-from-left-2 duration-300 flex items-center
             ${isDarkMode 
               ? 'bg-green-900/50 border-green-500 text-green-200' 
               : 'bg-green-50 border-green-500 text-green-700'
@@ -223,7 +223,7 @@ const ProfileSettings = ({ isDarkMode }) => {
           </div>
         )}
         
-        <div className="space-y-3">
+        <div className="space-y-2">
           <input
             type="password"
             value={currentPassword}
@@ -268,7 +268,7 @@ const ProfileSettings = ({ isDarkMode }) => {
           />
         </div>
         
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mt-5">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mt-4">
           <button
             onClick={handlePasswordChange}
             className={`w-full sm:w-auto px-4 sm:px-5 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-semibold text-white 

@@ -8,15 +8,16 @@ import { ThemeContext } from "../ThemeContext";
 import controlImage from "../../assets/images/iconizer-arrow-left.png";
 import Auth from "../../utils/auth";
 import { FaChevronDown } from "react-icons/fa";
+// import lightLogo from "../../assets/images/roster-hub-logo.png";
 import lightLogo from "../../assets/images/roster-hub-logo.png";
 import darkLogo from "../../assets/images/dark-logo.png";
 
 const BUTTONS = [
   { key: "home", label: "Home", icon: faHome, path: "/" },
   { key: "gameschedule", label: "Upcoming", icon: faCalendarAlt, path: "/games-shortcut" },
-  { key: "search", label: "Search", icon: faSearch, action: "search", path: "/game-search" },
+   { key: "roster", label: "Roster", icon: faPersonRunning, action: "roster" },
   { key: "creategame", label: "Create Game", icon: faPlus, path: "/game-schedule#create" },
-  { key: "roster", label: "Roster", icon: faPersonRunning, action: "roster" },
+ { key: "search", label: "Search", icon: faSearch, action: "search", path: "/game-search" },
   { key: "messages", label: "Inbox", icon: faInbox, path: "/message" },
   { key: "skilllist", label: "Skills", icon: faStar, path: "/skills-shortcut" },
   { key: "about", label: "About", icon: faInfoCircle, path: "/about" },
@@ -60,7 +61,7 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
   }, [showRosterDropdown]);
 
   return (
-    <div className={`w-full flex flex-col md:flex-row items-center justify-between bg-gray-100 dark:bg-gray-800 py-2 shadow-md sticky z-[10] px-2 sm:px-4 ${isVisible ? 'top-20 lg:top-0' : 'top-0'} ${typeof className !== 'undefined' ? className : ''}`}>
+    <div className={`w-full flex flex-col md:flex-row items-center justify-between bg-gray-100 dark:bg-gray-800 py-1 sm:py-2 shadow-md sticky z-[10] px-2 sm:px-4 pwa-safe-top ${isVisible ? 'top-0' : 'top-0'} ${typeof className !== 'undefined' ? className : ''}`}>
       {/* Left: Logo and Title (always visible, beautiful UI) */}
       <Link
         to={"/"}
@@ -83,15 +84,15 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
               ? "opacity-100 translate-x-0 w-auto ml-3 lg:ml-0" 
               : "opacity-0 -translate-x-4 w-0 ml-0"
           }`}>
-            <h1 className={`font-bold text-lg sm:text-xl transition-colors duration-200 whitespace-nowrap ${
+            <h1 className={`font-oswald font-bold text-lg sm:text-xl transition-colors duration-200 whitespace-nowrap tracking-wide ${
               isDarkMode ? "text-white" : "text-gray-900"
             }`}>
-              RosterHub
+              ROSTERHUB
             </h1>
-            <p className={`text-xs whitespace-nowrap ${
+            <p className={`text-xs whitespace-nowrap font-oswald tracking-wider ${
               isDarkMode ? "text-gray-400" : "text-gray-500"
             }`}>
-              Team Management
+              TEAM MANAGEMENT
             </p>
           </div>
         </div>
@@ -115,7 +116,7 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
                         onClick={() => setShowRosterDropdown((prev) => !prev)}
                       >
                         <FontAwesomeIcon icon={btn.icon} className="text-xs sm:text-sm" />
-                        <span className="text-xs sm:text-sm font-bold truncate">{btn.label}</span>
+                        <span className="text-xs sm:text-sm font-oswald font-bold tracking-wide truncate">{btn.label.toUpperCase()}</span>
                         <FaChevronDown 
                           className={`text-xs sm:text-sm transition-transform duration-200 ${
                             showRosterDropdown ? 'rotate-180' : 'rotate-0'
@@ -149,7 +150,7 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
                   }}
                 >
                   <FontAwesomeIcon icon={btn.icon} className="text-xs sm:text-sm" />
-                  <span className="text-xs sm:text-sm font-bold truncate">{btn.label}</span>
+                  <span className="text-xs sm:text-sm font-oswald font-bold tracking-wide truncate">{btn.label.toUpperCase()}</span>
                 </button>
                 );
               })}
@@ -207,9 +208,9 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 px-3 sm:px-4 py-2 sm:py-3 border-b border-blue-300 dark:border-blue-500">
             <div className="flex items-center justify-between">
-              <h3 className="text-white font-semibold text-xs sm:text-sm flex items-center gap-1 sm:gap-2">
+              <h3 className="text-white font-oswald font-semibold tracking-wide text-xs sm:text-sm flex items-center gap-1 sm:gap-2">
                 <FontAwesomeIcon icon={faPersonRunning} className="text-blue-100 text-xs sm:text-sm" />
-                Team Roster
+                TEAM ROSTER
               </h3>
             </div>
             <p className="text-blue-100 text-xs mt-0.5 sm:mt-1">

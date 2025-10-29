@@ -24,7 +24,7 @@ const { isDarkMode } = React.useContext(ThemeContext);
         <div className="col-12 ">
           {/* Conditional rendering based on authentication status */}
           {isLoggedIn && (
-            <ProfileList profiles={profiles} title={`The ${year} roster`} isDarkMode={isDarkMode} />
+            <ProfileList profiles={profiles} title={`The ${year} Roster`} isDarkMode={isDarkMode} />
           )}
         </div>
       </div>

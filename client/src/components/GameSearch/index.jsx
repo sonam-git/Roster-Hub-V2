@@ -107,67 +107,133 @@ const GameSearch = ({ onSearch, onReset, initialFilters = {} }) => {
         }}></div>
 
         <div className="relative p-4 sm:p-6 md:p-8">
-          {/* Navigation and Info Row */}
-          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4 lg:gap-0 mb-8">
-            {/* Left side - Enhanced Back Button */}
-            <div className="lg:flex-1">
-              <button
-                onClick={() => window.history.back()}
-                className={`group inline-flex items-center gap-3 px-5 py-3 rounded-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl ${
-                  isDarkMode 
-                    ? "bg-gradient-to-r from-gray-700/90 to-gray-600/90 hover:from-gray-600/90 hover:to-gray-500/90 text-gray-200 hover:text-white border border-gray-500/30 shadow-gray-900/50 hover:shadow-gray-700/50 backdrop-blur-sm" 
-                    : "bg-gradient-to-r from-white/95 to-blue-50/95 hover:from-blue-50/95 hover:to-blue-100/95 text-gray-700 hover:text-blue-700 border border-blue-200/50 shadow-blue-200/30 hover:shadow-blue-300/40 backdrop-blur-sm"
-                }`}
-                title="Return to Game Schedule"
-              >
-                <div className={`p-2 rounded-xl transition-all duration-300 group-hover:scale-110 ${
-                  isDarkMode 
-                    ? 'bg-gray-600/50 group-hover:bg-gray-500/50' 
-                    : 'bg-blue-100/80 group-hover:bg-blue-200/80'
-                }`}>
-                  <svg 
-                    className={`w-4 h-4 transition-all duration-300 group-hover:-translate-x-1 ${
-                      isDarkMode ? 'text-gray-300 group-hover:text-white' : 'text-blue-600 group-hover:text-blue-700'
-                    }`}
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                  </svg>
-                </div>
-                <div className="flex flex-col items-start">
-                  <span className="text-sm font-bold leading-tight">Back to Schedule</span>
-                  <span className={`text-xs opacity-75 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                    Return to game list
-                  </span>
-                </div>
-              </button>
-            </div>
-            
-            {/* Right side - Search Tips */}
-            <div className="lg:flex-1 flex lg:justify-end">
-              <div className={`w-full lg:max-w-md lg:text-right p-4 rounded-2xl backdrop-blur-sm transition-all duration-300 ${
-                isDarkMode 
-                  ? 'bg-gradient-to-r lg:bg-gradient-to-l from-blue-500/10 to-purple-500/10 border border-blue-500/20' 
-                  : 'bg-gradient-to-r lg:bg-gradient-to-l from-blue-50/80 to-purple-50/80 border border-blue-200/50'
-              } shadow-lg hover:shadow-xl`}>
-                <div className="flex items-center lg:justify-end gap-2 mb-2">
-                  <span className={`text-sm font-bold ${isDarkMode ? 'text-blue-300' : 'text-blue-700'}`}>
-                    Search Tips
-                  </span>
-                  <div className={`p-1.5 rounded-lg ${isDarkMode ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
-                    <svg className={`w-4 h-4 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          {/* Top Navigation - Responsive Layout */}
+          <div className="mb-8 space-y-4 md:space-y-0">
+            {/* Mobile: Two rows - Back button first, then Search tips */}
+            <div className="flex flex-col space-y-4 md:hidden">
+              {/* Row 1: Back Button */}
+              <div className="flex justify-start">
+                <button
+                  onClick={() => window.history.back()}
+                  className={`group inline-flex items-center gap-3 px-5 py-3 rounded-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl ${
+                    isDarkMode 
+                      ? "bg-gradient-to-r from-gray-700/90 to-gray-600/90 hover:from-gray-600/90 hover:to-gray-500/90 text-gray-200 hover:text-white border border-gray-500/30 shadow-gray-900/50 hover:shadow-gray-700/50 backdrop-blur-sm" 
+                      : "bg-gradient-to-r from-white/95 to-blue-50/95 hover:from-blue-50/95 hover:to-blue-100/95 text-gray-700 hover:text-blue-700 border border-blue-200/50 shadow-blue-200/30 hover:shadow-blue-300/40 backdrop-blur-sm"
+                  }`}
+                  title="Return to Game Schedule"
+                >
+                  <div className={`p-2 rounded-xl transition-all duration-300 group-hover:scale-110 ${
+                    isDarkMode 
+                      ? 'bg-gray-600/50 group-hover:bg-gray-500/50' 
+                      : 'bg-blue-100/80 group-hover:bg-blue-200/80'
+                  }`}>
+                    <svg 
+                      className={`w-4 h-4 transition-all duration-300 group-hover:-translate-x-1 ${
+                        isDarkMode ? 'text-gray-300 group-hover:text-white' : 'text-blue-600 group-hover:text-blue-700'
+                      }`}
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                   </div>
+                  <div className="flex flex-col items-start">
+                    <span className="text-sm font-oswald font-bold tracking-wide leading-tight">BACK TO SCHEDULE</span>
+                    <span className={`text-xs opacity-75 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      Return to game list
+                    </span>
+                  </div>
+                </button>
+              </div>
+              
+              {/* Row 2: Search Tips */}
+              <div className="flex justify-end">
+                <div className={`w-full max-w-md text-right p-4 rounded-2xl backdrop-blur-sm transition-all duration-300 ${
+                  isDarkMode 
+                    ? 'bg-gradient-to-l from-blue-500/10 to-purple-500/10 border border-blue-500/20' 
+                    : 'bg-gradient-to-l from-blue-50/80 to-purple-50/80 border border-blue-200/50'
+                } shadow-lg hover:shadow-xl`}>
+                  <div className="flex items-center justify-end gap-2 mb-2">
+                    <span className={`text-sm font-oswald font-bold tracking-wide ${isDarkMode ? 'text-blue-300' : 'text-blue-700'}`}>
+                      SEARCH TIPS
+                    </span>
+                    <div className={`p-1.5 rounded-lg ${isDarkMode ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
+                      <svg className={`w-4 h-4 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <p className={`text-xs leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    Fine-tune your search with detailed filtering options below. Use advanced filters for precise results.
+                  </p>
                 </div>
-                <p className={`text-xs leading-relaxed lg:text-right ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                  Fine-tune your search with detailed filtering options below. Use advanced filters for precise results.
-                </p>
+              </div>
+            </div>
+
+            {/* Desktop: Single row - Side by side */}
+            <div className="hidden md:flex justify-between items-start">
+              {/* Left Corner - Enhanced Back Button */}
+              <div>
+                <button
+                  onClick={() => window.history.back()}
+                  className={`group inline-flex items-center gap-3 px-5 py-3 rounded-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl ${
+                    isDarkMode 
+                      ? "bg-gradient-to-r from-gray-700/90 to-gray-600/90 hover:from-gray-600/90 hover:to-gray-500/90 text-gray-200 hover:text-white border border-gray-500/30 shadow-gray-900/50 hover:shadow-gray-700/50 backdrop-blur-sm" 
+                      : "bg-gradient-to-r from-white/95 to-blue-50/95 hover:from-blue-50/95 hover:to-blue-100/95 text-gray-700 hover:text-blue-700 border border-blue-200/50 shadow-blue-200/30 hover:shadow-blue-300/40 backdrop-blur-sm"
+                  }`}
+                  title="Return to Game Schedule"
+                >
+                  <div className={`p-2 rounded-xl transition-all duration-300 group-hover:scale-110 ${
+                    isDarkMode 
+                      ? 'bg-gray-600/50 group-hover:bg-gray-500/50' 
+                      : 'bg-blue-100/80 group-hover:bg-blue-200/80'
+                  }`}>
+                    <svg 
+                      className={`w-4 h-4 transition-all duration-300 group-hover:-translate-x-1 ${
+                        isDarkMode ? 'text-gray-300 group-hover:text-white' : 'text-blue-600 group-hover:text-blue-700'
+                      }`}
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <span className="text-sm font-oswald font-bold tracking-wide leading-tight">BACK TO SCHEDULE</span>
+                    <span className={`text-xs opacity-75 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      Return to game list
+                    </span>
+                  </div>
+                </button>
+              </div>
+              
+              {/* Right Corner - Search Tips */}
+              <div>
+                <div className={`max-w-md text-right p-4 rounded-2xl backdrop-blur-sm transition-all duration-300 ${
+                  isDarkMode 
+                    ? 'bg-gradient-to-l from-blue-500/10 to-purple-500/10 border border-blue-500/20' 
+                    : 'bg-gradient-to-l from-blue-50/80 to-purple-50/80 border border-blue-200/50'
+                } shadow-lg hover:shadow-xl`}>
+                  <div className="flex items-center justify-end gap-2 mb-2">
+                    <span className={`text-sm font-oswald font-bold tracking-wide ${isDarkMode ? 'text-blue-300' : 'text-blue-700'}`}>
+                      SEARCH TIPS
+                    </span>
+                    <div className={`p-1.5 rounded-lg ${isDarkMode ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
+                      <svg className={`w-4 h-4 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <p className={`text-xs leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    Fine-tune your search with detailed filtering options below. Use advanced filters for precise results.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
+
 
           {/* Active Filters Indicator */}
         {(filters.searchText || filters.status !== 'ALL' || filters.dateFrom || filters.dateTo || 

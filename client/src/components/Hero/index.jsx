@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   FaUsers, 
+  FaCalendarAlt, 
   FaTrophy, 
   FaChartLine 
 } from "react-icons/fa";
@@ -62,12 +63,12 @@ const Hero = () => {
         <div className={`text-center mb-4 transition-all duration-1000 transform ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
           {/* Modern Glassmorphism container for title */}
           <div className="inline-block p-6 rounded-3xl backdrop-blur-xl bg-white/40 dark:bg-black/20 border border-white/50 dark:border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105">
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 dark:from-green-400 dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-2 tracking-tight drop-shadow-2xl">
-              Roster<span className="text-green-500 dark:text-green-400">Hub</span>
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-oswald font-black bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 dark:from-green-400 dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-2 tracking-tight drop-shadow-2xl">
+              ROSTER<span className="text-green-500 dark:text-green-400">HUB</span>
             </h1>
             <div className="max-w-2xl mx-auto p-3 rounded-2xl backdrop-blur-sm bg-white/60 dark:bg-black/30 border border-white/40 dark:border-white/10">
-              <p className="text-xs sm:text-sm lg:text-base text-gray-800 dark:text-gray-100 font-bold drop-shadow-lg">
-                Where Players <span className="text-green-500 dark:text-green-400 animate-pulse">Connect</span> & <span className="text-blue-500 dark:text-blue-400 animate-pulse delay-300">Understand</span> Before The Game!
+              <p className="text-xs sm:text-sm lg:text-base text-gray-800 dark:text-gray-100 font-oswald font-semibold tracking-wide drop-shadow-lg">
+                WHERE PLAYERS <span className="text-green-500 dark:text-green-400 animate-pulse">CONNECT</span> & <span className="text-blue-500 dark:text-blue-400 animate-pulse delay-300">UNDERSTAND</span> BEFORE THE GAME!
               </p>
             </div>
           </div>
@@ -77,20 +78,20 @@ const Hero = () => {
         <div className={`flex flex-col sm:flex-row gap-4 justify-center mb-24 transition-all duration-1000 delay-500 transform ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
           <button
             onClick={() => navigate("/signup")}
-            className="group relative px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 text-base min-w-[180px] border border-green-400/50 overflow-hidden"
+            className="group relative px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-oswald font-bold tracking-wide rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 text-base min-w-[180px] border border-green-400/50 overflow-hidden"
           >
             <span className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
             <span className="relative flex items-center justify-center gap-2">
-              ✨ Join as New User
+              ✨ JOIN AS NEW USER
             </span>
           </button>
           <button
             onClick={() => navigate("/login")}
-            className="group relative px-6 py-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-green-600 dark:text-green-400 border-2 border-green-500/70 dark:border-green-400/70 font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 text-base min-w-[180px] hover:bg-green-50/95 dark:hover:bg-gray-700/95 overflow-hidden"
+            className="group relative px-6 py-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-green-600 dark:text-green-400 border-2 border-green-500/70 dark:border-green-400/70 font-oswald font-bold tracking-wide rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 text-base min-w-[180px] hover:bg-green-50/95 dark:hover:bg-gray-700/95 overflow-hidden"
           >
             <span className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
             <span className="relative flex items-center justify-center gap-2">
-              🚀 Login
+              🚀 LOGIN
             </span>
           </button>
         </div>
@@ -104,8 +105,8 @@ const Hero = () => {
               <div className="w-12 h-12 mx-auto mb-3 bg-gradient-to-br from-green-400/80 to-emerald-500/80 dark:from-green-500/70 dark:to-emerald-600/70 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 shadow-lg">
                 <FaUsers className="w-6 h-6 text-white drop-shadow-lg" />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 drop-shadow-md group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors duration-300">
-                Team Management
+              <h3 className="text-lg font-oswald font-bold tracking-wide text-gray-900 dark:text-white mb-2 drop-shadow-md group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors duration-300">
+                TEAM MANAGEMENT
               </h3>
               <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed drop-shadow-sm">
                 Create detailed player profiles, track skills, and manage your team roster with ease.
@@ -120,8 +121,8 @@ const Hero = () => {
               <div className="w-12 h-12 mx-auto mb-3 bg-gradient-to-br from-blue-400/80 to-indigo-500/80 dark:from-blue-500/70 dark:to-indigo-600/70 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 shadow-lg">
                 <FaChartLine className="w-6 h-6 text-white drop-shadow-lg" />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 drop-shadow-md group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
-                Performance Analytics
+              <h3 className="text-lg font-oswald font-bold tracking-wide text-gray-900 dark:text-white mb-2 drop-shadow-md group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                PERFORMANCE ANALYTICS
               </h3>
               <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed drop-shadow-sm">
                 Track player progress with advanced metrics, ratings, and detailed performance reports.
@@ -136,8 +137,8 @@ const Hero = () => {
               <div className="w-12 h-12 mx-auto mb-3 bg-gradient-to-br from-purple-400/80 to-pink-500/80 dark:from-purple-500/70 dark:to-pink-600/70 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 shadow-lg">
                 <FaTrophy className="w-6 h-6 text-white drop-shadow-lg" />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 drop-shadow-md group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors duration-300">
-                Game Scheduling
+              <h3 className="text-lg font-oswald font-bold tracking-wide text-gray-900 dark:text-white mb-2 drop-shadow-md group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors duration-300">
+                GAME SCHEDULING
               </h3>
               <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed drop-shadow-sm">
                 Schedule matches, track scores, and celebrate victories with comprehensive game management.

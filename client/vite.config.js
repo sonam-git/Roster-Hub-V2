@@ -35,7 +35,7 @@ export default defineConfig({
           },
         ],
       },
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      includeAssets: ['favicon.ico', 'RH-Logo.png', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
         name: 'RosterHub - Team Management',
         short_name: 'RosterHub',
@@ -49,19 +49,19 @@ export default defineConfig({
         categories: ['sports', 'productivity', 'social'],
         icons: [
           {
-            src: 'pwa-192x192.png',
+            src: 'RH-Logo.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any maskable'
           },
           {
-            src: 'pwa-512x512.png',
+            src: 'RH-Logo.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'
           },
           {
-            src: 'apple-touch-icon.png',
+            src: 'RH-Logo.png',
             sizes: '180x180',
             type: 'image/png'
           }
@@ -72,21 +72,21 @@ export default defineConfig({
             short_name: 'New Game',
             description: 'Create a new game',
             url: '/game-schedule#create',
-            icons: [{ src: 'pwa-192x192.png', sizes: '192x192' }]
+            icons: [{ src: 'RH-Logo.png', sizes: '192x192' }]
           },
           {
             name: 'Messages',
             short_name: 'Messages',
             description: 'View team messages',
             url: '/message',
-            icons: [{ src: 'pwa-192x192.png', sizes: '192x192' }]
+            icons: [{ src: 'RH-Logo.png', sizes: '192x192' }]
           },
           {
             name: 'Team Roster',
             short_name: 'Roster',
             description: 'View team roster',
             url: '/roster',
-            icons: [{ src: 'pwa-192x192.png', sizes: '192x192' }]
+            icons: [{ src: 'RH-Logo.png', sizes: '192x192' }]
           }
         ]
       }

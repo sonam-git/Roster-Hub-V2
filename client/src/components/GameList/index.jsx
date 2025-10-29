@@ -503,7 +503,7 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
         )}
       </div>
 
-      <div className="flex justify-center space-x-4 mt-6">
+      <div className="flex justify-center space-x-4 mt-6 mb-4">
         <button
           onClick={handlePrev}
           disabled={page === 0}
