@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   FaUsers, 
-  FaCalendarAlt, 
   FaTrophy, 
   FaChartLine 
 } from "react-icons/fa";
@@ -23,6 +22,17 @@ const Hero = () => {
 
   return (
     <main className="relative overflow-hidden min-h-screen">
+      {/* Custom styles for animations */}
+      <style>{`
+        @keyframes spin-slow {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+          animation: spin-slow 8s linear infinite;
+        }
+      `}</style>
+      
       {/* Full-page Hero Image Background */}
       <div className="absolute inset-0 z-0">
         <div 
@@ -61,17 +71,33 @@ const Hero = () => {
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-4 min-h-screen flex flex-col">
         {/* Enhanced Top Section: Title and Slogan */}
         <div className={`text-center mb-4 transition-all duration-1000 transform ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
-          {/* Modern Glassmorphism container for title */}
-          <div className="inline-block p-6 rounded-3xl backdrop-blur-xl bg-white/40 dark:bg-black/20 border border-white/50 dark:border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105">
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-oswald font-black bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 dark:from-green-400 dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-2 tracking-tight drop-shadow-2xl">
-              ROSTER<span className="text-green-500 dark:text-green-400">HUB</span>
-            </h1>
-            <div className="max-w-2xl mx-auto p-3 rounded-2xl backdrop-blur-sm bg-white/60 dark:bg-black/30 border border-white/40 dark:border-white/10">
-              <p className="text-xs sm:text-sm lg:text-base text-gray-800 dark:text-gray-100 font-oswald font-semibold tracking-wide drop-shadow-lg">
-                WHERE PLAYERS <span className="text-green-500 dark:text-green-400 animate-pulse">CONNECT</span> & <span className="text-blue-500 dark:text-blue-400 animate-pulse delay-300">UNDERSTAND</span> BEFORE THE GAME!
-              </p>
+          {/* Circular logo with enhanced styling */}
+          <div className="relative mx-auto mb-4">
+            <div className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 mx-auto relative">
+              {/* Animated ring effects */}
+              <div className="absolute inset-0 rounded-full border-4 border-gradient-to-r from-green-400 via-blue-400 to-purple-400 animate-pulse opacity-30"></div>
+              <div className="absolute inset-0 rounded-full border-2 border-green-500/50 dark:border-green-400/50 animate-spin-slow"></div>
+              
+              {/* Logo container */}
+              <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white/50 dark:border-white/30 shadow-2xl bg-gradient-to-br from-white/80 via-white/60 to-white/40 dark:from-gray-800/80 dark:via-gray-700/60 dark:to-gray-600/40 hover:scale-110 transition-all duration-500 group">
+                <img
+                  src="/RH-Logo.png"
+                  alt="RosterHub Logo"
+                  className="w-full h-full object-contain p-3 drop-shadow-xl group-hover:drop-shadow-2xl transition-all duration-500"
+                />
+                {/* Hover overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              </div>
             </div>
           </div>
+          
+          {/* Enhanced slogan with smaller, italic styling */}
+          <h1 className="text-xs sm:text-xs lg:text-sm font-serif font-light italic text-gray-800 dark:text-gray-100 mb-1 tracking-wide drop-shadow-xl leading-tight">
+            WHERE PLAYERS <span className="text-green-600 dark:text-green-400 animate-pulse font-semibold italic">CONNECT</span> & <span className="text-blue-600 dark:text-blue-400 animate-pulse delay-300 font-semibold italic">UNDERSTAND</span>
+          </h1>
+          <p className="text-xs sm:text-xs lg:text-xs font-light italic text-gray-700 dark:text-gray-200 tracking-wider drop-shadow-lg">
+            BEFORE THE GAME!
+          </p>
         </div>
 
         {/* Enhanced Action Buttons */}

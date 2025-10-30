@@ -157,38 +157,108 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
             </div>
           </div>
         ) : (
-          <div className="w-full  flex items-center justify-center overflow-hidden bg-gray-100 dark:bg-gray-800 py-0.5 rounded-2xl shadow-2xl border-2 border-blue-300 dark:border-blue-900 relative">
-            <span className="animate-marquee whitespace-nowrap  text-lg sm:text-xl md:text-2xl font-bold tracking-wide px-2 sm:px-4 py-1 rounded-2xl flex items-center gap-4 bg-gradient-to-r from-green-100 via-green-200 to-green-300 dark:text-white dark:bg-gray-800" style={{ fontFamily: 'sans-serif', letterSpacing: '0.04em', boxShadow: '0 4px 24px rgba(59,130,246,0.15)' }}>
-              <FontAwesomeIcon icon={faPersonRunning} className="text-green-500 text-2xl sm:text-3xl md:text-4xl drop-shadow-lg animate-spin-slow" />
-              <span className="text-blue-700 font-bold" style={{ fontFamily: 'sans-serif', fontWeight: 700, fontSize: '1.3rem', textShadow: 'none' }}>
-                Roster Hub
+          <div className="w-full relative flex items-center justify-center overflow-hidden rounded-3xl shadow-2xl border-2 border-transparent bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-green-500/20 dark:from-blue-600/30 dark:via-purple-600/30 dark:to-green-600/30 backdrop-blur-sm">
+            {/* Animated background effects */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 via-purple-400/10 to-green-400/10 dark:from-blue-500/15 dark:via-purple-500/15 dark:to-green-500/15 animate-pulse"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 animate-pulse"></div>
+            <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 via-purple-500 to-blue-500 animate-pulse delay-1000"></div>
+            
+            {/* Main content container */}
+            <div className="relative z-10 py-2 px-4">
+              <span className="animate-marquee whitespace-nowrap text-lg sm:text-xl md:text-2xl font-bold tracking-wide flex items-center gap-3 sm:gap-4 md:gap-6">
+                {/* Leading icon with enhanced styling */}
+                <div className="relative">
+                  <FontAwesomeIcon 
+                    icon={faPersonRunning} 
+                    className="text-green-600 dark:text-green-300 text-2xl sm:text-3xl md:text-4xl drop-shadow-2xl animate-bounce-slow filter brightness-110" 
+                  />
+                  <div className="absolute inset-0 text-green-300 dark:text-green-100 text-2xl sm:text-3xl md:text-4xl animate-ping opacity-30">
+                    <FontAwesomeIcon icon={faPersonRunning} />
+                  </div>
+                </div>
+                
+                {/* Brand name with gradient text */}
+                <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 dark:from-blue-300 dark:via-purple-300 dark:to-cyan-300 bg-clip-text text-transparent font-oswald font-black text-2xl sm:text-3xl md:text-4xl drop-shadow-lg tracking-wider">
+                  ROSTERHUB
+                </span>
+                
+                {/* Marketing message with enhanced styling */}
+                <span className="hidden sm:inline-flex items-center gap-2 text-gray-700 dark:text-gray-100 font-medium text-sm sm:text-base md:text-lg italic tracking-wide">
+                  <span className="text-yellow-500 dark:text-yellow-300 animate-pulse text-lg">✨</span>
+                  <span className="bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 dark:from-gray-100 dark:via-white dark:to-gray-100 bg-clip-text text-transparent font-semibold">
+                    Where Champions Connect & Teams Thrive!
+                  </span>
+                  <span className="text-yellow-500 dark:text-yellow-300 animate-pulse text-lg delay-500">🏆</span>
+                </span>
+                
+                {/* Mobile-specific shorter message */}
+                <span className="sm:hidden text-gray-700 dark:text-gray-100 font-medium text-sm italic">
+                  <span className="text-yellow-500 dark:text-yellow-300 animate-pulse">✨</span>
+                  Build Your Dream Team!
+                  <span className="text-yellow-500 dark:text-yellow-300 animate-pulse delay-500">🏆</span>
+                </span>
+                
+                {/* Call-to-action with pulse effect */}
+                <span className=" md:inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-400 dark:to-emerald-500 text-white dark:text-gray-900 font-bold text-sm rounded-full shadow-lg animate-pulse border border-green-400/50 dark:border-green-300/50">
+                  <span>JOIN NOW</span>
+                  <span className="animate-bounce">🚀</span>
+                </span>
+                
+                {/* Trailing star with enhanced animation */}
+                <div className="relative">
+                  <FontAwesomeIcon 
+                    icon={faStar} 
+                    className="text-yellow-600 dark:text-yellow-200 text-2xl sm:text-3xl md:text-4xl drop-shadow-2xl animate-spin-slow filter brightness-110" 
+                  />
+                  <div className="absolute inset-0 text-yellow-300 dark:text-yellow-100 text-2xl sm:text-3xl md:text-4xl animate-ping opacity-40 delay-700">
+                    <FontAwesomeIcon icon={faStar} />
+                  </div>
+                </div>
               </span>
-              <span className="text-gray-800  font-medium text-base sm:text-lg md:text-xl italic" style={{ fontFamily: 'sans-serif', textShadow: 'none' }}>
-                — Create your team's hub with us. Join Roster Hub Today!
-              </span>
-              <FontAwesomeIcon icon={faStar} className="text-yellow-400 text-2xl sm:text-3xl md:text-4xl drop-shadow-lg animate-pulse" />
-            </span>
+            </div>
+            
+            {/* Enhanced animations and styles */}
             <style>{`
               @keyframes marquee {
                 0% { transform: translateX(100%); }
                 100% { transform: translateX(-100%); }
               }
               .animate-marquee {
-                animation: marquee 10s linear infinite;
+                animation: marquee 12s linear infinite;
+                animation-play-state: running;
+              }
+              .animate-marquee:hover {
+                animation-play-state: paused;
               }
               @keyframes spin-slow {
                 0% { transform: rotate(0deg); }
                 100% { transform: rotate(360deg); }
               }
               .animate-spin-slow {
-                animation: spin-slow 6s linear infinite;
+                animation: spin-slow 8s linear infinite;
               }
-              .animate-pulse {
-                animation: pulse 1.5s infinite;
+              @keyframes bounce-slow {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-8px); }
+              }
+              .animate-bounce-slow {
+                animation: bounce-slow 2s ease-in-out infinite;
               }
               @keyframes pulse {
-                0%, 100% { opacity: 1; }
-                50% { opacity: 0.5; }
+                0%, 100% { opacity: 1; transform: scale(1); }
+                50% { opacity: 0.8; transform: scale(1.05); }
+              }
+              .animate-pulse {
+                animation: pulse 2s infinite;
+              }
+              @keyframes ping {
+                75%, 100% {
+                  transform: scale(2);
+                  opacity: 0;
+                }
+              }
+              .animate-ping {
+                animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
               }
             `}</style>
           </div>
