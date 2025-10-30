@@ -5,9 +5,7 @@ import {
   HiBars3, 
   HiXMark, 
   HiSun, 
-  HiMoon, 
-  HiChevronDown, 
-  HiChevronUp 
+  HiMoon,
 } from "react-icons/hi2";
 
 const MainHeader = ({ open, setOpen }) => {
@@ -18,12 +16,25 @@ const MainHeader = ({ open, setOpen }) => {
   };
 
   return (
-    <div className="w-full py-6 bg-gradient-to-r from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-blue-950 dark:to-emerald-950 shadow-xl lg:hidden fixed top-0 left-0 right-0 z-[300] border-b-2 border-blue-200 dark:border-blue-800 transition-all duration-500 backdrop-blur-sm">
+    <>
+      {/* Status Bar Safe Area - Only on mobile with increased height */}
+      <div className={`lg:hidden fixed top-0 left-0 right-0 z-[301] transition-colors duration-500 ${
+        isDarkMode 
+          ? "bg-gradient-to-r from-gray-900 via-blue-950 to-emerald-950" 
+          : "bg-gradient-to-r from-blue-50 via-white to-green-50"
+      }`} style={{ height: 'calc(env(safe-area-inset-top, 20px) + 16px)' }}>
+        {/* Optional gradient decoration */}
+        <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-blue-500 via-green-500 to-yellow-500 dark:from-blue-400 dark:via-green-400 dark:to-yellow-400"></div>
+      </div>
+      
+      <div className={`w-full py-3 bg-gradient-to-r from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-blue-950 dark:to-emerald-950 shadow-xl lg:hidden fixed left-0 right-0 z-[300] border-b-2 border-blue-200 dark:border-blue-800 transition-all duration-500 backdrop-blur-sm`}
+           style={{ top: 'calc(env(safe-area-inset-top, 20px) + 16px)' }}>
       {/* Background decoration */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-100/20 via-transparent to-green-100/20 dark:from-blue-900/20 dark:to-emerald-900/20"></div>
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-green-500 to-yellow-500 dark:from-blue-400 dark:via-green-400 dark:to-yellow-400"></div>
       
-      <div className="relative flex items-center justify-between px-4">
+      <div className="relative flex items-center justify-between px-4 pt-6">
+        {/* Additional top spacing for status bar clearance */}
         {/* Left: Hamburger Menu Button */}
         <button
           className={`lg:hidden p-2 rounded-xl transition-all duration-500 ease-out transform hover:scale-110 active:scale-95 will-change-transform ${
@@ -83,6 +94,7 @@ const MainHeader = ({ open, setOpen }) => {
       {/* Bottom gradient line */}
       <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-blue-500 to-transparent dark:via-green-400 opacity-60"></div>
     </div>
+    </>
   );
 };
 
