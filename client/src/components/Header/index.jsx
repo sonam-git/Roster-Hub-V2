@@ -173,7 +173,7 @@ const Header = ({ open, setOpen }) => {
         }}
       >
         {/* Navigation Menu */}
-        <nav className="flex-1 px-2 sm:px-4 py-3 overflow-hidden mt-4">
+        <nav className="flex-1 px-2 sm:px-4 overflow-hidden py-4 mt-5">
           {/* Menu Items */}
           <div className="space-y-1">
             {/* Theme Toggle - styled like other menu items */}
