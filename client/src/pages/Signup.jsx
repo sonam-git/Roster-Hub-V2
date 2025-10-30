@@ -84,7 +84,7 @@ const Signup = () => {
         <div className="absolute top-60 right-60 w-5 h-5 bg-gradient-to-r from-green-400/60 to-blue-400/60 rounded-full animate-bounce delay-300 shadow-lg"></div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-8  flex items-center justify-center">
+      <div className="relative z-10 container mx-auto lg:px-8 py-8  flex items-center justify-center">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full max-w-6xl">
           {/* Left side: Logo and branding */}
           <div className="hidden lg:flex flex-col items-center text-center space-y-6">

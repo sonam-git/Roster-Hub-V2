@@ -69,7 +69,7 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
         style={{ textDecoration: "none" }}
       >
         <div className="flex items-center gap-3 w-full md:w-auto justify-center py-1 px-2">
-          <div className="relative flex items-center justify-center">
+          <div className="relative flex items-center justify-center mt-3 ">
             <img
               src={isDarkMode ? darkLogo : lightLogo}
               className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-2xl shadow-lg border-2 border-blue-400/30 bg-gradient-to-br from-blue-100/60 to-purple-100/40 dark:from-blue-900/40 dark:to-purple-900/30 drop-shadow-xl transition-all duration-500"
@@ -79,7 +79,7 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
             {/* Animated ring effect */}
             <span className="absolute inset-0 rounded-2xl border-2 border-blue-400/40 dark:border-purple-400/40 opacity-30 animate-pulse pointer-events-none"></span>
           </div>
-          <div className={`flex flex-col transition-all duration-300 overflow-hidden ${
+          <div className={`flex flex-col transition-all duration-300 overflow-hidden  mt-3 ${
             open 
               ? "opacity-100 translate-x-0 w-auto ml-3 lg:ml-0" 
               : "opacity-0 -translate-x-4 w-0 ml-0"
@@ -369,7 +369,7 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
         </div>
       )}
       {/* Right: Dark/Light mode toggle and sidebar toggle (arrow always visible) */}
-      <div className="hidden md:flex items-center ml-4 gap-2">
+      <div className="hidden md:flex items-center ml-4 gap-2 mt-3">
         <button
           onClick={toggleDarkMode}
           className="rounded-full p-2 bg-gray-100 dark:bg-gray-600 shadow hover:bg-gray-600 dark:hover:bg-gray-400 transition-colors"
