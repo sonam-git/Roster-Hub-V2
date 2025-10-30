@@ -61,7 +61,7 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
   }, [showRosterDropdown]);
 
   return (
-    <div className={`w-full flex flex-col md:flex-row items-center justify-between bg-gray-100 dark:bg-gray-800 py-2 shadow-md sticky z-[10] px-2 sm:px-4 ${isVisible ? 'top-32 lg:top-0' : 'top-0'} ${typeof className !== 'undefined' ? className : ''}`}>
+    <div className={`w-full flex flex-col md:flex-row items-center justify-between bg-gray-100 dark:bg-gray-800 py-2 shadow-md sticky z-[10] px-2 sm:px-4 ${isVisible ? 'top-44 lg:top-0' : 'top-0'} ${typeof className !== 'undefined' ? className : ''}`}>
       {/* Left: Logo and Title (always visible, beautiful UI) */}
       <Link
         to={"/"}
