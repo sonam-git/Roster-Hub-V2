@@ -45,8 +45,8 @@ const Skill = ({ isDarkMode }) => {
     ) || [];
 
   return (
-    <main className="w-full px-4 sm:px-6 lg:px-8 mx-auto transition-all duration-300">
-      <div className="max-w-6xl mx-auto space-y-6 mt-8 mb-8">
+    <main className="mx-auto w-full px-1 sm:px-2 md:px-4 lg:px-6 xl:px-8 2xl:max-w-7xl transition-all duration-300">
+      <div className="w-full mx-auto space-y-6 mt-4 mb-6">
         {/* Simple Header like Game.jsx */}
         <div className={`mb-6 text-center ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
           <h1 className="text-2xl sm:text-3xl font-bold dark:text-white bg-clip-text">
@@ -59,7 +59,7 @@ const Skill = ({ isDarkMode }) => {
 
         {/* Skills Grid */}
         {filteredSkills.length > 0 && (
-          <div className={`rounded-2xl shadow-xl border-2 p-4 sm:p-6 ${
+          <div className={`rounded-2xl shadow-xl border-2 p-2 sm:p-3 lg:p-4 ${
             isDarkMode 
               ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700' 
               : 'bg-gradient-to-br from-white to-blue-50 border-gray-200'

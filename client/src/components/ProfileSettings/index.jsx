@@ -93,28 +93,9 @@ const ProfileSettings = ({ isDarkMode }) => {
   };
 
   return (
-    <div className={`w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto rounded-3xl shadow-2xl backdrop-blur-lg 
-      ${isDarkMode 
-        ? 'bg-gradient-to-br from-gray-800/90 via-gray-900/90 to-purple-900/90 border border-gray-600/30 shadow-purple-500/20' 
-        : 'bg-gradient-to-br from-white/90 via-blue-50/90 to-indigo-100/90 border border-blue-200/50 shadow-blue-500/20'
-      } p-4 sm:p-6 md:p-8 lg:p-10 transition-all duration-300 hover:shadow-3xl hover:scale-[1.02] card-float`}>
+    <div className={`w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto p-2
+        sm:p-4 md:p-8 lg:p-10 `}>
       
-      {/* Header */}
-      <div className="text-center mb-6">
-        <div className={`inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full mb-4 
-          ${isDarkMode ? 'bg-gradient-to-r from-indigo-500 to-purple-600' : 'bg-gradient-to-r from-blue-500 to-indigo-600'} 
-          shadow-xl`}>
-          <FaCog className="text-white text-lg sm:text-xl animate-spin-slow" />
-        </div>
-        <h1 className={`text-base sm:text-lg md:text-xl font-bold mb-3 gradient-text
-          ${isDarkMode ? 'from-blue-300 to-purple-300' : 'from-blue-600 to-indigo-600'}`}>
-          Profile Settings
-        </h1>
-        <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-          Manage your account information and preferences
-        </p>
-      </div>
-
       {/* Update Name Section */}
       <div className={`rounded-2xl p-4 sm:p-5 mb-5 border backdrop-blur-sm
         ${isDarkMode 

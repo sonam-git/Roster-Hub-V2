@@ -65,10 +65,10 @@ export default function CustomComingGames({ isDarkMode }) {
             </div>
             <h2 className={`text-2xl md:text-3xl font-bold ${
               isDarkMode 
-                ? "bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent" 
-                : "bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent"
+                ? "text-white" 
+                : "text-gray-800"
             }`}>
-              🏆 Upcoming Games
+             Upcoming Games
             </h2>
           </div>
           <p className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -77,34 +77,37 @@ export default function CustomComingGames({ isDarkMode }) {
         </div>
 
         {/* Category Filter Buttons */}
-        <div className="w-full max-w-4xl mx-auto">
-          <div className="flex gap-2 sm:gap-4 overflow-x-auto scrollbar-hide pb-2 sm:pb-0 sm:justify-center">
+        <div className="w-full max-w-5xl mx-auto">
+          <div className="flex gap-1 sm:gap-2 overflow-x-auto scrollbar-hide pb-2 sm:pb-0 sm:justify-center">
             {categories.map((category) => (
               <button
                 key={category.key}
                 onClick={() => setSelectedCategory(category.key)}
-                className={`flex flex-row items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-2xl font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl flex-shrink-0 min-w-[75px] sm:min-w-0 justify-center backdrop-blur-sm ${
+                className={`group relative flex flex-row items-center gap-2 sm:gap-3 px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl font-semibold text-xs sm:text-sm transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg flex-shrink-0 min-w-[80px] sm:min-w-[100px] justify-center border ${
                   selectedCategory === category.key
                     ? isDarkMode
-                      ? "bg-gradient-to-br from-green-600 via-blue-600 to-purple-600 text-white shadow-green-500/30 hover:shadow-green-500/50"
-                      : "bg-gradient-to-br from-green-500 via-blue-500 to-purple-500 text-white shadow-green-500/30 hover:shadow-green-500/50"
+                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-blue-500/25 hover:shadow-blue-500/40 border-blue-400/50"
+                      : "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-blue-500/25 hover:shadow-blue-500/40 border-blue-300/50"
                     : isDarkMode
-                      ? "bg-gradient-to-br from-gray-800/80 to-gray-700/80 hover:from-gray-700/90 hover:to-gray-600/90 text-gray-200 shadow-gray-800/50 hover:shadow-gray-700/70"
-                      : "bg-gradient-to-br from-white/90 to-gray-50/90 hover:from-gray-50/95 hover:to-gray-100/95 text-gray-700 shadow-gray-200/50 hover:shadow-gray-300/70"
+                      ? "bg-gray-800/80 hover:bg-gray-700/90 text-gray-200 shadow-gray-800/30 hover:shadow-gray-700/50 border-gray-600/30 hover:border-gray-500/50"
+                      : "bg-white/90 hover:bg-gray-50/95 text-gray-700 shadow-gray-200/40 hover:shadow-gray-300/60 border-gray-300/40 hover:border-gray-400/60"
                 }`}
               >
-                <span className="text-base sm:text-lg">{category.icon}</span>
-                <div className="flex flex-row items-center gap-1 sm:gap-2">
-                  <span className="text-xs sm:text-sm font-bold truncate">
+                {/* Icon */}
+                <span className="text-sm sm:text-base">{category.icon}</span>
+                
+                {/* Label and count */}
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <span className="text-xs sm:text-sm font-bold tracking-wide uppercase">
                     {category.key === "ALL" ? "All" : category.label}
                   </span>
                   {category.count > 0 && (
-                    <span className={`px-1.5 py-0.5 rounded-full text-xs font-bold min-w-[18px] text-center ${
+                    <span className={`flex items-center justify-center min-w-[16px] sm:min-w-[18px] h-4 sm:h-5 px-1.5 sm:px-2 rounded-full text-xs font-bold ${
                       selectedCategory === category.key
-                        ? "bg-white/25 text-white backdrop-blur-sm"
+                        ? "bg-white/25 text-white"
                         : isDarkMode
-                          ? "bg-gray-600/70 text-gray-200 backdrop-blur-sm"
-                          : "bg-gray-200/70 text-gray-600 backdrop-blur-sm"
+                          ? "bg-gray-600/70 text-gray-200"
+                          : "bg-gray-200/80 text-gray-600"
                     }`}>
                       {category.count}
                     </span>

@@ -19,7 +19,7 @@ const { isDarkMode } = React.useContext(ThemeContext);
   }
 
   return (
-    <main className="className={`min-h-screen transition-colors duration-200"> 
+    <main className="mx-auto w-full px-1 sm:px-2 md:px-4 lg:px-6 xl:px-8 2xl:max-w-7xl"> 
       <div className="flex-row justify-center">
         <div className="col-12 ">
           {/* Conditional rendering based on authentication status */}

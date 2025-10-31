@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import UserInfoForm from '../UserInfoForm';
 import ProfileSettings from '../ProfileSettings';
-import { FaEdit, FaUser, FaCog } from "react-icons/fa";
+import { FaUserEdit, FaUser, FaCog } from "react-icons/fa";
 
 const ProfileManagement = ({me ,isDarkMode}) => {
  
   const [activeComponent, setActiveComponent] = useState('userInfo'); // Default to 'userInfo'
 
   return (
-      <div className={`rounded-3xl shadow-2xl border-2 transition-all duration-500 hover:shadow-3xl transform hover:scale-[1.01] p-2 sm:p-4 lg:p-6 max-w-4xl mx-auto ${
+      <div className={`rounded-3xl shadow-2xl border-2 transition-all duration-500 hover:shadow-3xl transform hover:scale-[1.01] p-1 sm:p-2 lg:p-3 w-full mx-auto ${
         isDarkMode 
           ? 'bg-gradient-to-br from-gray-800 via-gray-900 to-black border-gray-600 shadow-gray-900/50' 
           : 'bg-gradient-to-br from-white via-blue-50 to-indigo-50 border-blue-300 shadow-blue-500/20'
@@ -30,7 +30,7 @@ const ProfileManagement = ({me ,isDarkMode}) => {
         </div>
 
         {/* Modern Tab Navigation */}
-        <div className={`flex justify-center mb-4 sm:mb-6 px-1`}>
+        <div className={`flex justify-center mb-4 sm:mb-6`}>
           <div className={`flex rounded-2xl p-1 sm:p-1.5 shadow-lg border transition-all duration-300 w-full sm:w-auto ${
             isDarkMode 
               ? 'bg-gray-800 border-gray-600 shadow-gray-900/20' 
@@ -83,18 +83,14 @@ const ProfileManagement = ({me ,isDarkMode}) => {
 
         {/* Content Area */}
         <div className={`transition-all duration-500 ease-in-out`}>
-          <div className={`p-2 sm:p-3 lg:p-4 rounded-2xl border backdrop-blur-sm ${
-            isDarkMode 
-              ? 'bg-gray-800/30 border-gray-700 shadow-gray-900/20' 
-              : 'bg-white/70 border-gray-200 shadow-blue-100/50'
-          } shadow-lg`}>
-            <div className="w-full max-w-2xl mx-auto">
+          <div className={`p-1 sm:p-2 lg:p-3`}>
+            <div className="w-full mx-auto">
               {/* Profile Settings Tab */}
               {activeComponent === 'userInfo' && (
                 <div className="animate-fade-in">
                   <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center">
-                      <FaUser className="text-white text-xs sm:text-sm" />
+                      <FaUserEdit className="text-white text-xs sm:text-sm" />
                     </div>
                     <div>
                       <h3 className={`text-lg sm:text-xl font-oswald font-bold tracking-wide ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
@@ -114,7 +110,7 @@ const ProfileManagement = ({me ,isDarkMode}) => {
                 <div className="animate-fade-in">
                   <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center">
-                      <FaCog className="text-white text-xs sm:text-sm" />
+                      <FaCog className="text-white text-xs sm:text-sm animate-spin-slow" />
                     </div>
                     <div>
                       <h3 className={`text-lg sm:text-xl font-oswald font-bold tracking-wide ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>

@@ -52,27 +52,9 @@ const UserInfoForm = ({ profileId, isDarkMode }) => {
 
   return (
     <div className={`w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto rounded-3xl shadow-2xl backdrop-blur-lg 
-      ${isDarkMode 
-        ? 'bg-gradient-to-br from-gray-800/90 via-gray-900/90 to-purple-900/90 border border-gray-600/30 shadow-purple-500/20' 
-        : 'bg-gradient-to-br from-white/90 via-blue-50/90 to-indigo-100/90 border border-blue-200/50 shadow-blue-500/20'
-      } p-6 sm:p-8 md:p-10 lg:p-12 transition-all duration-300 hover:shadow-3xl hover:scale-[1.02] card-float`}> 
+      p-6 sm:p-8 md:p-10 lg:p-12 `}> 
       {Auth.loggedIn() ? (
         <>
-          <div className="text-center mb-8">
-            <div className={`inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full mb-6 
-              ${isDarkMode ? 'bg-gradient-to-r from-indigo-500 to-purple-600' : 'bg-gradient-to-r from-blue-500 to-indigo-600'} 
-              shadow-xl animate-pulse`}>
-              <FaUserEdit className="text-white text-lg sm:text-xl" />
-            </div>
-            <h2 className={`text-base sm:text-lg md:text-xl font-bold mb-3 gradient-text
-              ${isDarkMode ? 'from-blue-300 to-purple-300' : 'from-blue-600 to-indigo-600'}`}>
-              Player Information
-            </h2>
-            <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-              Complete your profile with essential game details
-            </p>
-          </div>
-
           <form className="space-y-4" onSubmit={handleFormSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="group md:col-span-1">

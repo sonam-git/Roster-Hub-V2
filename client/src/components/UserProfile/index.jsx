@@ -14,6 +14,24 @@ const UserProfile = ({ profile }) => {
   const [activeTab, setActiveTab] = useState('skills'); // 'skills', 'posts', or 'games'
   const [showMessageModal, setShowMessageModal] = useState(false);
   const [showRatingModal, setShowRatingModal] = useState(false);
+  const [skillsPage, setSkillsPage] = useState(0); // For skills pagination
+
+  const SKILLS_PER_PAGE = 2; // Show only 2 skills at a time
+  
+  // Calculate pagination for skills
+  const totalSkills = profile.skills?.length || 0;
+  const totalSkillsPages = Math.ceil(totalSkills / SKILLS_PER_PAGE);
+  const startIndex = skillsPage * SKILLS_PER_PAGE;
+  const endIndex = startIndex + SKILLS_PER_PAGE;
+  const paginatedSkills = profile.skills?.slice(startIndex, endIndex) || [];
+
+  const handlePrevSkills = () => {
+    setSkillsPage(Math.max(0, skillsPage - 1));
+  };
+
+  const handleNextSkills = () => {
+    setSkillsPage(Math.min(totalSkillsPages - 1, skillsPage + 1));
+  };
 
   const handleMessageClick = () => setShowMessageModal(true);
   const handleCloseMessage = () => setShowMessageModal(false);
@@ -21,9 +39,9 @@ const UserProfile = ({ profile }) => {
   const handleCloseRating = () => setShowRatingModal(false);
 
   return (
-    <div className={`md:flex md:space-x-6 p-2 sm:p-3 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+    <div className={`md:flex md:space-x-1 mt-4 mb-6 ${isDarkMode ? 'text-white' : 'text-black'}`}>
       {/* Left Side - Profile Card */}
-      <div className="md:w-2/5 p-1 sm:p-2">
+      <div className="md:w-2/5">
         <div className={`w-full mt-3 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border-2 transition-all duration-500 hover:shadow-3xl transform hover:scale-[1.02] ${
           isDarkMode 
             ? "bg-gradient-to-br from-gray-800 via-gray-900 to-black border-gray-600 shadow-gray-900/50" 
@@ -113,7 +131,7 @@ const UserProfile = ({ profile }) => {
       </div>
 
       {/* Right Side - Content */}
-      <div className="md:w-3/5 p-1 sm:p-2 mt-4 md:mt-0">
+      <div className="md:w-3/5 mt-4 md:mt-0">
         <div className={`w-full h-full rounded-2xl sm:rounded-3xl shadow-2xl border-2 backdrop-blur-lg transition-all duration-500 hover:shadow-3xl ${
           isDarkMode 
             ? 'bg-gradient-to-br from-gray-800/90 via-gray-900/90 to-purple-900/90 border-gray-600/30 shadow-purple-500/20' 
@@ -196,33 +214,66 @@ const UserProfile = ({ profile }) => {
           </div>
 
           {/* Content Area */}
-          <div className="p-4 sm:p-6 pt-3 sm:pt-4">
+          <div className=" sm:p-6 pt-3 sm:pt-4">
             {activeTab === 'skills' ? (
               <div className="w-full flex flex-col gap-4 sm:gap-6">
                 {profile.skills && profile.skills.length > 0 ? (
-                  <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 border transition-all duration-300 ${
+                  <div className={`rounded-xl sm:rounded-2xl p-2 sm:p-6 border transition-all duration-300 ${
                     isDarkMode 
                       ? 'bg-gray-800/30 border-gray-700/50 shadow-gray-900/20' 
                       : 'bg-white/70 border-gray-200/50 shadow-blue-100/50'
                   } backdrop-blur-sm shadow-lg`}>
-                    <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                      <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${
-                        isDarkMode ? 'bg-gradient-to-r from-blue-600 to-blue-700' : 'bg-gradient-to-r from-blue-500 to-blue-600'
-                      }`}>
-                        <span className="text-white text-sm sm:text-lg">⚡</span>
+                    <div className="flex items-center justify-between mb-3 sm:mb-4">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${
+                          isDarkMode ? 'bg-gradient-to-r from-blue-600 to-blue-700' : 'bg-gradient-to-r from-blue-500 to-blue-600'
+                        }`}>
+                          <span className="text-white text-sm sm:text-lg animate-spin-slow">⚡</span>
+                        </div>
+                        <div>
+                          <h3 className={`font-bold text-base sm:text-lg ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                            Endorsed Skills
+                          </h3>
+                          <p className="text-xs font-thin dark:text-white">
+                            {profile.name}'s friends have endorsed {profile.skills?.length ?? 0}{" "}
+                            skill
+                            {profile.skills?.length === 1 ? "" : "s"}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className={`font-bold text-base sm:text-lg ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                          Endorsed Skills
-                        </h3>
-                         <p className="text-xs font-thin dark:text-white">
-          {profile.name}'s friends have endorsed {profile.skills?.length ?? 0}{" "}
-          skill
-          {profile.skills?.length === 1 ? "" : "s"}
-        </p>
-                      </div>
+                      
+                      {/* Pagination Controls */}
+                      {totalSkillsPages > 1 && (
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={handlePrevSkills}
+                            disabled={skillsPage === 0}
+                            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                              skillsPage === 0
+                                ? isDarkMode ? 'bg-gray-700/50 text-gray-500 cursor-not-allowed' : 'bg-gray-200/50 text-gray-400 cursor-not-allowed'
+                                : isDarkMode ? 'bg-blue-600 hover:bg-blue-700 text-white hover:scale-110' : 'bg-blue-500 hover:bg-blue-600 text-white hover:scale-110'
+                            }`}
+                          >
+                            <span className="text-sm">‹</span>
+                          </button>
+                          <span className={`text-xs px-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                            {skillsPage + 1} / {totalSkillsPages}
+                          </span>
+                          <button
+                            onClick={handleNextSkills}
+                            disabled={skillsPage === totalSkillsPages - 1}
+                            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                              skillsPage === totalSkillsPages - 1
+                                ? isDarkMode ? 'bg-gray-700/50 text-gray-500 cursor-not-allowed' : 'bg-gray-200/50 text-gray-400 cursor-not-allowed'
+                                : isDarkMode ? 'bg-blue-600 hover:bg-blue-700 text-white hover:scale-110' : 'bg-blue-500 hover:bg-blue-600 text-white hover:scale-110'
+                            }`}
+                          >
+                            <span className="text-sm">›</span>
+                          </button>
+                        </div>
+                      )}
                     </div>
-                    <SkillsList skills={profile.skills} isDarkMode={isDarkMode} profile={profile} />
+                    <SkillsList skills={paginatedSkills} isDarkMode={isDarkMode} profile={profile} />
                   </div>
                 ) : (
                   <div className={`w-full flex flex-col items-center justify-center py-8 sm:py-12 rounded-xl sm:rounded-2xl border-2 border-dashed transition-all duration-300 ${
@@ -243,7 +294,7 @@ const UserProfile = ({ profile }) => {
                 )}
                 
                 {/* Skill Endorsement Form */}
-                <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 border transition-all duration-300 ${
+                <div className={`rounded-xl sm:rounded-2xl p-2 sm:p-6 border transition-all duration-300 ${
                   isDarkMode 
                     ? 'bg-gray-800/40 border-gray-700/50 shadow-gray-900/20' 
                     : 'bg-white/80 border-gray-200/60 shadow-blue-100/50'
@@ -267,7 +318,7 @@ const UserProfile = ({ profile }) => {
                 </div>
               </div>
             ) : activeTab === 'posts' ? (
-              <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 border transition-all duration-300 ${
+              <div className={`rounded-xl sm:rounded-2xl p-2 sm:p-6 border transition-all duration-300 ${
                 isDarkMode 
                   ? 'bg-gray-800/30 border-gray-700/50 shadow-gray-900/20' 
                   : 'bg-white/70 border-gray-200/50 shadow-blue-100/50'
@@ -276,7 +327,7 @@ const UserProfile = ({ profile }) => {
                   <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${
                     isDarkMode ? 'bg-gradient-to-r from-purple-600 to-purple-700' : 'bg-gradient-to-r from-purple-500 to-purple-600'
                   }`}>
-                    <span className="text-white text-sm sm:text-lg">📝</span>
+                    <span className="text-white text-sm sm:text-lg animate-spin-slow">📝</span>
                   </div>
                   <div>
                     <h3 className={`font-bold text-base sm:text-lg ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
@@ -290,7 +341,7 @@ const UserProfile = ({ profile }) => {
                 <PostsList profileId={profile._id} isDarkMode={isDarkMode} profile={profile} />
               </div>
             ) : (
-              <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 border transition-all duration-300 ${
+              <div className={`rounded-xl sm:rounded-2xl p-2 sm:p-6 border transition-all duration-300 ${
                 isDarkMode 
                   ? 'bg-gray-800/30 border-gray-700/50 shadow-gray-900/20' 
                   : 'bg-white/70 border-gray-200/50 shadow-blue-100/50'
@@ -299,7 +350,7 @@ const UserProfile = ({ profile }) => {
                   <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${
                     isDarkMode ? 'bg-gradient-to-r from-green-600 to-green-700' : 'bg-gradient-to-r from-green-500 to-green-600'
                   }`}>
-                    <span className="text-white text-sm sm:text-lg">⚽</span>
+                    <span className="text-white text-sm sm:text-lg animate-spin-slow">⚽</span>
                   </div>
                   <div>
                     <h3 className={`font-bold text-base sm:text-lg ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>

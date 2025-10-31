@@ -67,11 +67,11 @@ const MyProfile = () => {
   return (
     <>
       <div
-        className={`md:flex md:space-x-2 mb-6  p-3 ${isDarkMode ? "text-white" : "text-black"
+        className={`md:flex md:space-x-1 mt-4 mb-6 ${isDarkMode ? "text-white" : "text-black"
           }`}
       >
         {/* ─── LEFT COLUMN */}
-        <div className="md:w-2/5 p-2">
+        <div className="md:w-2/5">
           <div
             className={`w-full rounded-3xl overflow-hidden shadow-2xl border-2 transition-all duration-500 hover:shadow-3xl transform hover:scale-[1.02] ${
               isDarkMode 
@@ -174,7 +174,7 @@ const MyProfile = () => {
         </div>
 
         {/* ─── RIGHT COLUMN */}
-        <div className="md:w-3/5 p-2">
+        <div className="md:w-3/5">
                       <div className="navbar mb-6">
                 <div className={`flex flex-col sm:flex-row sm:justify-around sm:gap-2 rounded-xl p-1 shadow-md border transition-all duration-300 w-full backdrop-blur-sm ${
                   isDarkMode 

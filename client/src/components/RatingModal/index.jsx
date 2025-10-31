@@ -106,7 +106,7 @@ const RatingModal = ({ profile, onClose, isDarkMode }) => {
           <FaTimes className="text-lg" />
         </button>
 
-        <div className="relative p-8">
+        <div className="relative p-4  ">
           {/* Header with Profile Info */}
           <div className="text-center mb-8">
             <div className="flex justify-center mb-4">

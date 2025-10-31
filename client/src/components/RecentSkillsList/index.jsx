@@ -82,7 +82,7 @@ export default function RecentSkillsList() {
   return (
     <div className="w-full mt-6">
       {/* Modern Header */}
-      <div className={`mb-6 text-center p-6  ${
+      <div className={`mb-6 text-center p-3 sm:p-4 ${
         isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 border-gray-200'
       }`}>
         <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -91,7 +91,7 @@ export default function RecentSkillsList() {
       </div>
 
       {validSkills.length === 0 ? (
-        <div className={`rounded-2xl shadow-xl p-8 border-2 text-center backdrop-blur-sm ${
+        <div className={`rounded-2xl shadow-xl p-4 sm:p-6 border-2 text-center backdrop-blur-sm ${
           isDarkMode
             ? "bg-gradient-to-br from-gray-800/80 to-gray-900/80 border-gray-700 text-gray-100"
             : "bg-gradient-to-br from-white/90 to-blue-50/90 border-blue-200 text-blue-900"
