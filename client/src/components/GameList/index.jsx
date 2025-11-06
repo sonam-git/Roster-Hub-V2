@@ -245,11 +245,15 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
             </button>
           ))}
           
-          {/* Action buttons - inline with status buttons on large screens */}
+          {/* Action buttons - inline with status buttons on large screens only */}
           {onCreateGame && (
             <button
               onClick={onCreateGame}
-              className="px-3 py-2 md:px-4 bg-gray-100 text-black rounded-sm font-semibold hover:bg-blue-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-xs md:text-sm flex items-center justify-center gap-1"
+              className={`hidden md:flex px-3 py-2 md:px-4 rounded-sm font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-xs md:text-sm items-center justify-center gap-1 border ${
+                isDarkMode 
+                  ? 'bg-gray-50 text-gray-800 border-gray-300 hover:bg-gray-800 hover:text-white hover:border-white' 
+                  : 'bg-gray-800 text-gray-50 border-gray-600 hover:bg-white hover:text-gray-800 hover:border-gray-800'
+              }`}
             >
               <span>+</span>
               <span className="hidden sm:inline">Create Game</span>
@@ -258,7 +262,11 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
           )}
           <button
             onClick={() => navigate('/game-search')}
-            className="px-3 py-2 md:px-4 bg-gray-100 text-black rounded-sm font-semibold hover:bg-blue-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 text-xs md:text-sm flex items-center justify-center gap-1"
+            className={`hidden md:flex px-3 py-2 md:px-4 rounded-sm font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 text-xs md:text-sm items-center justify-center gap-1 border ${
+              isDarkMode 
+                ? 'bg-gray-50 text-gray-800 border-gray-300 hover:bg-gray-800 hover:text-white hover:border-white' 
+                : 'bg-gray-800 text-gray-50 border-gray-600 hover:bg-white hover:text-gray-800 hover:border-gray-800'
+            }`}
           >
             <span>🔍</span>
             <span className="hidden sm:inline">Search Games</span>
@@ -267,11 +275,15 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
         </div>
         
         {/* Action buttons - separate row for mobile/tablet only */}
-        <div className="flex flex-col sm:flex-row sm:justify-center gap-2 md:hidden">
+        <div className="grid grid-cols-2 gap-2 md:hidden">
           {onCreateGame && (
             <button
               onClick={onCreateGame}
-              className="px-4 py-2 bg-blue-600 text-white rounded-sm font-semibold hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm flex items-center justify-center gap-1"
+              className={`px-4 py-2 rounded-md font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm flex items-center justify-center gap-1 border ${
+                isDarkMode 
+                  ? 'bg-white text-gray-800 border-gray-300 hover:bg-gray-800 hover:text-white hover:border-white' 
+                  : 'bg-gray-800 text-white border-gray-600 hover:bg-white hover:text-gray-800 hover:border-gray-800'
+              }`}
             >
               <span>+</span>
               Create Game
@@ -279,7 +291,11 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
           )}
           <button
             onClick={() => navigate('/game-search')}
-            className="px-4 py-2 bg-purple-600 text-white rounded-full font-bold hover:bg-purple-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm flex items-center justify-center gap-1"
+            className={`px-4 py-2 rounded-md font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm flex items-center justify-center gap-1 border ${
+              isDarkMode 
+                ? 'bg-white text-gray-800 border-gray-300 hover:bg-gray-800 hover:text-white hover:border-white' 
+                : 'bg-gray-800 text-white border-gray-600 hover:bg-white hover:text-gray-800 hover:border-gray-800'
+            }`}
           >
             <span>🔍</span>
             Search Games
