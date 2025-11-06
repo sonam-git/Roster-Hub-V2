@@ -58,7 +58,7 @@ const Skill = ({ isDarkMode }) => {
         </div>
 
         {/* Skills Grid */}
-        {filteredSkills.length > 0 && (
+        {filteredSkills.length > 0 ? (
           <div className={`rounded-2xl shadow-xl border-2 p-2 sm:p-3 lg:p-4 ${
             isDarkMode 
               ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700' 
@@ -71,6 +71,24 @@ const Skill = ({ isDarkMode }) => {
               isDarkMode={isDarkMode}
               columns={2}
             />
+          </div>
+        ) : (
+          <div className={`p-8 sm:p-12 text-center `}>
+            <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full mb-6 flex items-center justify-center mx-auto ${
+              isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'
+            }`}>
+              <span className="text-3xl sm:text-4xl">⚡</span>
+            </div>
+            <h3 className={`text-xl sm:text-2xl font-bold mb-4 ${
+              isDarkMode ? 'text-white' : 'text-gray-800'
+            }`}>
+              No Skills Yet
+            </h3>
+            <p className={`text-base sm:text-lg leading-relaxed max-w-2xl mx-auto ${
+              isDarkMode ? 'text-gray-300' : 'text-gray-600'
+            }`}>
+              Your friends haven't endorsed you yet. Once they endorsed it will display here, where you can react to the skill for appreciation, also delete if you don't want to see it.
+            </p>
           </div>
         )}
       </div>

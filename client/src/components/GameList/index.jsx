@@ -226,7 +226,7 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
             <button
               key={opt.key}
               onClick={() => setStatusFilter(opt.key)}
-              className={`relative px-3 py-2 md:px-4 rounded-full font-bold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-xs md:text-sm transform hover:scale-105 hover:-translate-y-0.5
+              className={`relative px-3 py-2 md:px-4 rounded-sm font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-xs md:text-sm transform hover:scale-105 hover:-translate-y-0.5
                 ${statusFilter === opt.key
                   ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white scale-105 ring-2 ring-blue-400 shadow-lg' // Active state
                   : `${opt.color} ${opt.darkColor}`}
@@ -234,7 +234,7 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
             >
               <div className="flex items-center justify-center gap-2">
                 <span>{opt.label}</span>
-                <div className={`px-2 py-0.5 rounded-full text-xs font-bold min-w-[1.5rem] flex items-center justify-center ${
+                <div className={`px-2 py-0.5 rounded-full text-xs font-semibold min-w-[1.5rem] flex items-center justify-center ${
                   statusFilter === opt.key 
                     ? 'bg-white/20 text-white backdrop-blur-sm'
                     : 'bg-black/10 text-white backdrop-blur-sm shadow-sm'
@@ -249,7 +249,7 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
           {onCreateGame && (
             <button
               onClick={onCreateGame}
-              className="px-3 py-2 md:px-4 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-xs md:text-sm flex items-center justify-center gap-1"
+              className="px-3 py-2 md:px-4 bg-gray-100 text-black rounded-sm font-semibold hover:bg-blue-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-xs md:text-sm flex items-center justify-center gap-1"
             >
               <span>+</span>
               <span className="hidden sm:inline">Create Game</span>
@@ -258,7 +258,7 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
           )}
           <button
             onClick={() => navigate('/game-search')}
-            className="px-3 py-2 md:px-4 bg-purple-600 text-white rounded-full font-bold hover:bg-purple-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 text-xs md:text-sm flex items-center justify-center gap-1"
+            className="px-3 py-2 md:px-4 bg-gray-100 text-black rounded-sm font-semibold hover:bg-blue-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 text-xs md:text-sm flex items-center justify-center gap-1"
           >
             <span>🔍</span>
             <span className="hidden sm:inline">Search Games</span>
@@ -271,7 +271,7 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
           {onCreateGame && (
             <button
               onClick={onCreateGame}
-              className="px-4 py-2 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm flex items-center justify-center gap-1"
+              className="px-4 py-2 bg-blue-600 text-white rounded-sm font-semibold hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm flex items-center justify-center gap-1"
             >
               <span>+</span>
               Create Game

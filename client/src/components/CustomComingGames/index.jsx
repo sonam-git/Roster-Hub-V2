@@ -83,11 +83,11 @@ export default function CustomComingGames({ isDarkMode }) {
               <button
                 key={category.key}
                 onClick={() => setSelectedCategory(category.key)}
-                className={`group relative flex flex-row items-center gap-2 sm:gap-3 px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl font-semibold text-xs sm:text-sm transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg flex-shrink-0 min-w-[80px] sm:min-w-[100px] justify-center border ${
+                className={`group relative flex flex-row items-center gap-2 sm:gap-3 px-2 sm:px-5 py-1 sm:py-2.5 rounded-xl sm:rounded-md font-semibold text-xs sm:text-sm transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg flex-shrink-0 min-w-[80px] sm:min-w-[100px] justify-center border ${
                   selectedCategory === category.key
                     ? isDarkMode
-                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-blue-500/25 hover:shadow-blue-500/40 border-blue-400/50"
-                      : "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-blue-500/25 hover:shadow-blue-500/40 border-blue-300/50"
+                      ? "bg-blue-600  text-white shadow-blue-500/25 hover:shadow-blue-500/40 border-blue-400/50"
+                      : "bg-blue-600  text-white shadow-blue-500/25 hover:shadow-blue-500/40 border-blue-300/50"
                     : isDarkMode
                       ? "bg-gray-800/80 hover:bg-gray-700/90 text-gray-200 shadow-gray-800/30 hover:shadow-gray-700/50 border-gray-600/30 hover:border-gray-500/50"
                       : "bg-white/90 hover:bg-gray-50/95 text-gray-700 shadow-gray-200/40 hover:shadow-gray-300/60 border-gray-300/40 hover:border-gray-400/60"

@@ -45,6 +45,7 @@ export default function FormationSection({
 
   const [selectedFormation, setSelectedFormation] = useState("");
   const [draggingPlayer, setDraggingPlayer] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const gameId   = game._id;
   const isFormed = Boolean(formation);
@@ -165,15 +166,24 @@ export default function FormationSection({
       setFormation(null);
       setSelectedFormation("");
       setAssignments({});
+      setShowDeleteModal(false);
     } catch (err) {
       console.error("❌ Delete failed:", err.message);
     }
   };
 
+  const handleDeleteClick = () => {
+    setShowDeleteModal(true);
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false);
+  };
+
   return (
     <div className="space-y-6">
       {!isFormed && isCreator && (
-        <div className={`rounded-3xl p-6 border-2 transition-all duration-300 hover:shadow-xl transform hover:scale-[1.02] ${
+        <div className={`rounded-3xl p-4 border-2 transition-all duration-300 hover:shadow-xl transform hover:scale-[1.02] ${
           isDarkMode 
             ? "bg-gradient-to-br from-gray-800 via-indigo-900 to-gray-900 border-indigo-700 shadow-lg shadow-indigo-900/20" 
             : "bg-gradient-to-br from-indigo-50 via-blue-50 to-white border-indigo-200 shadow-lg shadow-indigo-200/50"
@@ -263,14 +273,14 @@ export default function FormationSection({
               </div>
             )}
 
-            <div className={`rounded-3xl p-6 border-2 transition-all duration-300 hover:shadow-xl ${
+            <div className={`rounded-3xl p-2 border-2 transition-all duration-300 hover:shadow-xl ${
               isDarkMode 
                 ? "bg-gradient-to-br from-gray-800 via-green-900 to-gray-900 border-green-700 shadow-lg shadow-green-900/20" 
                 : "bg-gradient-to-br from-green-50 via-teal-50 to-white border-green-200 shadow-lg shadow-green-200/50"
             }`}>
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-14 h-14 rounded-full bg-gradient-to-r from-green-500 to-teal-500 flex items-center justify-center shadow-lg">
-                  <span className="text-2xl">⚽</span>
+                  <span className="text-2xl animate-spin-slow">⚽</span>
                 </div>
                 <div>
                   <h3 className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
@@ -318,7 +328,7 @@ export default function FormationSection({
                 
                 {isFormed && (
                   <button
-                    onClick={handleDelete}
+                    onClick={handleDeleteClick}
                     className="group relative overflow-hidden bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-3 min-w-[200px]"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-red-400 to-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
@@ -332,7 +342,7 @@ export default function FormationSection({
           </DndContext>
 
           {formation && (
-            <div className={`mt-8 rounded-3xl p-6 border-2 transition-all duration-300 hover:shadow-xl ${
+            <div className={`mt-8 rounded-3xl p-4 border-2 transition-all duration-300 hover:shadow-xl ${
               isDarkMode 
                 ? "bg-gradient-to-br from-gray-800 via-purple-900 to-gray-900 border-purple-700 shadow-lg shadow-purple-900/20" 
                 : "bg-gradient-to-br from-purple-50 via-pink-50 to-white border-purple-200 shadow-lg shadow-purple-200/50"
@@ -361,6 +371,81 @@ export default function FormationSection({
             </div>
           )}
         </>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in"
+            onClick={handleCancelDelete}
+          />
+          
+          {/* Modal Content */}
+          <div className={`relative flex flex-col items-center justify-center p-6 sm:p-8 rounded-3xl shadow-2xl border-2 max-w-md w-full animate-modal-pop ${
+            isDarkMode 
+              ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-600' 
+              : 'bg-gradient-to-br from-white to-red-50 border-red-200'
+          }`}>
+            {/* Warning Icon */}
+            <div className="w-16 h-16 rounded-full bg-gradient-to-r from-red-500 to-red-600 flex items-center justify-center mb-6 shadow-lg">
+              <span className="text-3xl text-white">⚠️</span>
+            </div>
+            
+            {/* Title */}
+            <h3 className={`text-xl sm:text-2xl font-bold mb-4 text-center ${
+              isDarkMode ? 'text-white' : 'text-gray-800'
+            }`}>
+              Delete Formation?
+            </h3>
+            
+            {/* Description */}
+            <p className={`text-center mb-8 text-sm sm:text-base leading-relaxed ${
+              isDarkMode ? 'text-gray-300' : 'text-gray-600'
+            }`}>
+              Are you sure you want to delete this formation? This action will remove all player positions and cannot be undone.
+            </p>
+            
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 w-full">
+              <button
+                onClick={handleDelete}
+                className="group relative overflow-hidden flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+              >
+                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-200"></div>
+                <span className="relative z-10 text-lg">🗑️</span>
+                <span className="relative z-10">Yes, Delete</span>
+              </button>
+              
+              <button
+                onClick={handleCancelDelete}
+                className={`group relative overflow-hidden flex-1 px-6 py-3 rounded-xl font-bold transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 ${
+                  isDarkMode 
+                    ? 'bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white' 
+                    : 'bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 text-gray-700'
+                }`}
+              >
+                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-200"></div>
+                <span className="relative z-10 text-lg">❌</span>
+                <span className="relative z-10">Cancel</span>
+              </button>
+            </div>
+            
+            {/* Close button */}
+            <button
+              className={`absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 ${
+                isDarkMode 
+                  ? 'text-gray-400 hover:text-white hover:bg-gray-700' 
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+              }`}
+              onClick={handleCancelDelete}
+              aria-label="Close"
+            >
+              ×
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -14,12 +14,12 @@ import darkLogo from "../../assets/images/dark-logo.png";
 
 const BUTTONS = [
   { key: "home", label: "Home", icon: faHome, path: "/" },
-  { key: "gameschedule", label: "Upcoming", icon: faCalendarAlt, path: "/games-shortcut" },
+  { key: "gameschedule", label: "Upcoming", icon: faCalendarAlt, path: "/upcoming-games" },
    { key: "roster", label: "Roster", icon: faPersonRunning, action: "roster" },
   { key: "creategame", label: "Create Game", icon: faPlus, path: "/game-schedule#create" },
  { key: "search", label: "Search", icon: faSearch, action: "search", path: "/game-search" },
   { key: "messages", label: "Inbox", icon: faInbox, path: "/message" },
-  { key: "skilllist", label: "Skills", icon: faStar, path: "/skills-shortcut" },
+  { key: "skilllist", label: "Skills", icon: faStar, path: "/recent-skills" },
   { key: "about", label: "About", icon: faInfoCircle, path: "/about" },
 ];
 
@@ -108,7 +108,7 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
                     <div key={btn.key} className="relative flex-shrink-0">
                       <button
                         ref={rosterBtnRef}
-                        className={`flex flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-2xl font-semibold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl min-w-[80px] sm:min-w-0 justify-center backdrop-blur-sm ${
+                        className={`flex flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-md font-semibold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl min-w-[80px] sm:min-w-0 justify-center backdrop-blur-sm ${
                           isDarkMode
                             ? "bg-gradient-to-br from-gray-800/80 to-gray-700/80 hover:from-gray-700/90 hover:to-gray-600/90 text-gray-200 shadow-gray-800/50 hover:shadow-gray-700/70"
                             : "bg-gradient-to-br from-white/90 to-gray-50/90 hover:from-gray-50/95 hover:to-gray-100/95 text-gray-700 shadow-gray-200/50 hover:shadow-gray-300/70"
@@ -126,18 +126,18 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
                     </div>
                   );
                 }
-                
-                return (                <button
-                  key={btn.key}
-                  className={`flex flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-2xl font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl flex-shrink-0 min-w-[80px] sm:min-w-0 justify-center backdrop-blur-sm mb-1 md:mb-0 ${
-                    location.pathname === btn.path.split('#')[0] 
-                      ? isDarkMode
-                        ? "bg-gradient-to-br from-blue-600 via-purple-600 to-blue-700 text-white shadow-blue-500/30 hover:shadow-blue-500/50"
-                        : "bg-gradient-to-br from-blue-500 via-purple-500 to-blue-600 text-white shadow-blue-500/30 hover:shadow-blue-500/50"
-                      : isDarkMode
-                        ? "bg-gradient-to-br from-gray-800/80 to-gray-700/80 hover:from-gray-700/90 hover:to-gray-600/90 text-gray-200 shadow-gray-800/50 hover:shadow-gray-700/70"
-                        : "bg-gradient-to-br from-white/90 to-gray-50/90 hover:from-gray-50/95 hover:to-gray-100/95 text-gray-700 shadow-gray-200/50 hover:shadow-gray-300/70"
-                  }`}
+                return (
+                  <button
+                    key={btn.key}
+                    className={`flex flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-sm font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl flex-shrink-0 min-w-[80px] sm:min-w-0 justify-center backdrop-blur-sm mb-1 md:mb-0 ${
+                      location.pathname === btn.path.split('#')[0]
+                        ? isDarkMode
+                          ? "bg-gradient-to-br from-blue-600 via-purple-600 to-blue-700 text-white shadow-blue-500/30 hover:shadow-blue-500/50"
+                          : "bg-gradient-to-br from-blue-500 via-purple-500 to-blue-600 text-white shadow-blue-500/30 hover:shadow-blue-500/50"
+                        : isDarkMode
+                          ? "bg-gradient-to-br from-gray-800/80 to-gray-700/80 hover:from-gray-700/90 hover:to-gray-600/90 text-gray-200 shadow-gray-800/50 hover:shadow-gray-700/70"
+                          : "bg-gradient-to-br from-white/90 to-gray-50/90 hover:from-gray-50/95 hover:to-gray-100/95 text-gray-700 shadow-gray-200/50 hover:shadow-gray-300/70"
+                    }`}
                   onClick={() => {
                     if (btn.action === "search") {
                       // Navigate to dedicated game search page

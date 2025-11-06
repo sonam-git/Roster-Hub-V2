@@ -14,7 +14,7 @@ export default function FormationBoard({ rows, assignments, formationType, creat
       <div className="bg-gradient-to-r from-green-600 to-green-700 dark:from-green-700 dark:to-green-800 p-3 sm:p-4 text-white">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
           <div className="flex items-center gap-2">
-            <span className="text-xl">⚽</span>
+            <span className="text-xl ">⚽</span>
             <div>
               <h3 className="font-bold text-lg">Formation: {formationType}</h3>
               <p className="text-green-100 text-xs">Tactical Formation</p>
@@ -31,7 +31,7 @@ export default function FormationBoard({ rows, assignments, formationType, creat
       </div>
 
       {/* Football Field */}
-      <div className="p-2 sm:p-4 lg:p-6">
+      <div className="p-1 sm:p-4 lg:p-6">
         <div className="relative w-full h-[400px] sm:h-[450px] lg:h-[500px] mx-auto rounded-xl overflow-hidden shadow-inner border-2 sm:border-4 border-white" 
              style={{
                background: `

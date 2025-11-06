@@ -1216,7 +1216,7 @@ export default function GameDetails({ gameId }) {
                   >
                     <span className="text-sm sm:text-base">👥</span>
                     <span className="hidden sm:inline">Vote & Responses</span>
-                    <span className="sm:hidden">Players</span>
+                    <span className="sm:hidden">Vote</span>
                   </button>
                   
                   {/* Game Results Button - Always visible if game is completed */}

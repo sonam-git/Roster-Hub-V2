@@ -59,7 +59,7 @@ export default function About() {
             }`}>
               <span className="text-2xl">⚽</span>
             </div>
-            <h1 className={`text-4xl sm:text-5xl md:text-6xl font-anton font-bold tracking-wider ${
+            <h1 className={`text-2xl sm:text-2xl md:text-4xl font-anton font-bold tracking-wider ${
               isDarkMode 
                 ? "bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 bg-clip-text text-transparent" 
                 : "bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 bg-clip-text text-transparent"

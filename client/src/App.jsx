@@ -129,11 +129,11 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
             <Routes>
             <Route path="/" element={<Home />} />
             <Route
-              path="/games-shortcut"
+              path="/upcoming-games"
               element={<CustomComingGames isDarkMode={isDarkMode} />}
             />
             <Route
-              path="/skills-shortcut"
+              path="/recent-skills"
               element={<AllSkillsList isDarkMode={isDarkMode} />}
             />
             <Route path="/roster" element={<Roster />} />
