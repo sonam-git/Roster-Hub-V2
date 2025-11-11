@@ -39,6 +39,36 @@ export const ADD_INFO = gql`
     }
   }
 `;
+
+// Mutation to update jersey number only
+export const UPDATE_JERSEY_NUMBER = gql`
+  mutation updateJerseyNumber($profileId: ID!, $jerseyNumber: Int!) {
+    updateJerseyNumber(profileId: $profileId, jerseyNumber: $jerseyNumber) {
+      _id
+      jerseyNumber
+    }
+  }
+`;
+
+// Mutation to update position only
+export const UPDATE_POSITION = gql`
+  mutation updatePosition($profileId: ID!, $position: String!) {
+    updatePosition(profileId: $profileId, position: $position) {
+      _id
+      position
+    }
+  }
+`;
+
+// Mutation to update phone number only
+export const UPDATE_PHONE_NUMBER = gql`
+  mutation updatePhoneNumber($profileId: ID!, $phoneNumber: String!) {
+    updatePhoneNumber(profileId: $profileId, phoneNumber: $phoneNumber) {
+      _id
+      phoneNumber
+    }
+  }
+`;
 // Mutation to upload a profile picture
 export const UPLOAD_PROFILE_PIC = gql`
   mutation uploadProfilePic($profileId: ID!, $profilePic: Upload!) {

@@ -97,7 +97,7 @@ const ProfileManagement = ({me ,isDarkMode}) => {
                         PROFILE INFORMATION
                       </h3>
                       <p className={`text-xs sm:text-sm font-oswald font-medium tracking-wider ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                        UPDATE YOUR PERSONAL DETAILS AND PROFILE INFORMATION
+                        UPDATE YOUR PERSONAL DETAILS AND PROFILE INFORMATION ALL IN ONCE.
                       </p>
                     </div>
                   </div>

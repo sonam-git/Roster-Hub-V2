@@ -289,8 +289,7 @@ const resolvers = {
       return Game.findById(gameId)
         .populate("creator")
         .populate("responses.user")
-        .populate("feedbacks.user")
-        .populate("feedbacks.playerOfTheMatch");
+        .populate("feedbacks.user");
     },
     // ************************** QUERY SOCCER SCORES *******************************************//
     soccerMatches: async (_, { competitionCode, status, dateFrom, dateTo }) => {
@@ -302,13 +301,7 @@ const resolvers = {
         headers: { "X-Auth-Token": process.env.FOOTBALL_DATA_KEY },
       });
 
-      // Debug: Log the first match to see the actual data structure
-      if (res.data.matches.length > 0) {
-        console.log("Sample match data:", JSON.stringify(res.data.matches[0], null, 2));
-        console.log("Venue data:", JSON.stringify(res.data.matches[0].venue, null, 2));
-      }
-
-      return res.data.matches.map((m, index) => ({
+      return res.data.matches.map((m) => ({
         homeTeam: m.homeTeam.name,
         awayTeam: m.awayTeam.name,
         homeGoals: m.score.fullTime.home,
@@ -316,27 +309,6 @@ const resolvers = {
         status: m.status,
         matchday: m.matchday,
         utcDate: m.utcDate,
-        venue: m.venue?.name || m.venue || `Stadium ${index + 1}`,
-        venueCity: m.venue?.city || m.venue?.location || "London",
-        venueAddress: m.venue?.address || m.venue?.street || "123 Stadium Street",
-        referee: m.referees?.[0]?.name || null,
-        duration: m.duration || null,
-        halfTimeScore: {
-          home: m.score.halfTime.home,
-          away: m.score.halfTime.away,
-        },
-        fullTimeScore: {
-          home: m.score.fullTime.home,
-          away: m.score.fullTime.away,
-        },
-        extraTimeScore: {
-          home: m.score.extraTime?.home,
-          away: m.score.extraTime?.away,
-        },
-        penaltiesScore: {
-          home: m.score.penalties?.home,
-          away: m.score.penalties?.away,
-        },
       }));
     },
     // ************************** QUERY FORMATION *******************************************//
@@ -436,6 +408,75 @@ const resolvers = {
       } catch (error) {
         console.error("Error updating profile information:", error);
         throw new Error("Failed to update profile information");
+      }
+    },
+    // ************************** UPDATE JERSEY NUMBER *******************************************//
+    updateJerseyNumber: async (parent, { profileId, jerseyNumber }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in");
+      }
+      console.log("Update jersey number called with:", { profileId, jerseyNumber });
+      try {
+        const profile = await Profile.findByIdAndUpdate(
+          profileId,
+          { jerseyNumber },
+          { new: true, runValidators: true }
+        );
+        if (!profile) {
+          throw new Error("Profile not found!");
+        }
+        console.log("Jersey number updated successfully:", profile.jerseyNumber);
+        return profile;
+      } catch (error) {
+        console.error("Error updating jersey number:", error);
+        console.error("Error details:", error.message, error.stack);
+        throw new Error(`Failed to update jersey number: ${error.message}`);
+      }
+    },
+    // ************************** UPDATE POSITION *******************************************//
+    updatePosition: async (parent, { profileId, position }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in");
+      }
+      console.log("Update position called with:", { profileId, position });
+      try {
+        const profile = await Profile.findByIdAndUpdate(
+          profileId,
+          { position },
+          { new: true, runValidators: true }
+        );
+        if (!profile) {
+          throw new Error("Profile not found!");
+        }
+        console.log("Position updated successfully:", profile.position);
+        return profile;
+      } catch (error) {
+        console.error("Error updating position:", error);
+        console.error("Error details:", error.message, error.stack);
+        throw new Error(`Failed to update position: ${error.message}`);
+      }
+    },
+    // ************************** UPDATE PHONE NUMBER *******************************************//
+    updatePhoneNumber: async (parent, { profileId, phoneNumber }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in");
+      }
+      console.log("Update phone number called with:", { profileId, phoneNumber });
+      try {
+        const profile = await Profile.findByIdAndUpdate(
+          profileId,
+          { phoneNumber },
+          { new: true, runValidators: true }
+        );
+        if (!profile) {
+          throw new Error("Profile not found!");
+        }
+        console.log("Phone number updated successfully:", profile.phoneNumber);
+        return profile;
+      } catch (error) {
+        console.error("Error updating phone number:", error);
+        console.error("Error details:", error.message, error.stack);
+        throw new Error(`Failed to update phone number: ${error.message}`);
       }
     },
     // ************************** ADD RATING *******************************************//
@@ -1350,7 +1391,7 @@ const resolvers = {
       return game;
     },
     // ************************** ADD A FEEDBACK TO COMPLETED GAME *******************************************//
-    addFeedback: async (_, { gameId, comment, rating, playerOfTheMatchId }, context) => {
+    addFeedback: async (_, { gameId, comment, rating }, context) => {
       if (!context.user) {
         throw new AuthenticationError("Must be logged in");
       }
@@ -1371,31 +1412,18 @@ const resolvers = {
       }
 
       // push new feedback
-      const feedback = {
+      game.feedbacks.push({
         user: context.user._id,
         comment,
         rating,
-      };
-
-      // Add playerOfTheMatch if provided
-      if (playerOfTheMatchId) {
-        feedback.playerOfTheMatch = playerOfTheMatchId;
-      }
-
-      game.feedbacks.push(feedback);
+      });
 
       // recalc average
       const sum = game.feedbacks.reduce((sum, f) => sum + f.rating, 0);
       game.averageRating = sum / game.feedbacks.length;
 
       await game.save();
-      
-      // Return the populated game
-      return Game.findById(gameId)
-        .populate("creator")
-        .populate("responses.user")
-        .populate("feedbacks.user")
-        .populate("feedbacks.playerOfTheMatch");
+      return game;
     },
     // ************************** CREATE A FORMATION | ONLY BY CREATOR *******************************************//
     createFormation: async (_, { gameId, formationType }, context) => {

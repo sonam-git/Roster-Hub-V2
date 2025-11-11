@@ -2,20 +2,19 @@
 import React, { useState, useContext } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_ME } from "../../utils/queries";
-import { SAVE_SOCIAL_MEDIA_LINK, REMOVE_SOCIAL_MEDIA_LINK } from "../../utils/mutations";
-import { RiTShirt2Line } from "react-icons/ri";
-import { FaUser, FaTrash } from "react-icons/fa";
+import { SAVE_SOCIAL_MEDIA_LINK, REMOVE_SOCIAL_MEDIA_LINK, UPDATE_PHONE_NUMBER } from "../../utils/mutations";
+import { FaTrash, FaStar, FaTshirt, FaRunning, FaPhone } from "react-icons/fa";
 import ProfilePicUploader from "../ProfilePicUploader";
 import ProfileManagement from "../ProfileManangement";
 import ProfileAvatar from "../../assets/images/profile-avatar.png";
 import { ThemeContext } from "../ThemeContext";
 import PostForm from "../PostForm";
-import renderStars from "../../utils/renderStars";
 import PostsList from "../PostsList";
 import Auth from "../../utils/auth";
 import MyGames from "../MyGames";
 
 import SocialMediaLink from "../SocialMediaLink";
+import ProfileCard from "../ProfileCard";
 
 const MyProfile = () => {
   const userId = Auth.getProfile()?.data?._id;
@@ -36,6 +35,9 @@ const MyProfile = () => {
   const [removeSocialMediaLink] = useMutation(REMOVE_SOCIAL_MEDIA_LINK, {
     refetchQueries: [{ query: QUERY_ME }],
   });
+  const [updatePhoneNumber] = useMutation(UPDATE_PHONE_NUMBER, {
+    refetchQueries: [{ query: QUERY_ME }],
+  });
 
   if (loading) return <div>Loading...</div>;
 
@@ -44,6 +46,26 @@ const MyProfile = () => {
       setError(true);
       return;
     }
+    
+    // Handle phone number separately
+    if (selectedSocialMedia === "phone") {
+      try {
+        await updatePhoneNumber({
+          variables: {
+            profileId: me._id,
+            phoneNumber: socialMediaLink,
+          },
+        });
+        setSelectedSocialMedia(null);
+        setSocialMediaLink("");
+        setError(false);
+      } catch (e) {
+        console.error("Error updating phone number:", e);
+      }
+      return;
+    }
+    
+    // Handle social media links
     try {
       await saveSocialMediaLink({
         variables: {
@@ -95,12 +117,22 @@ const MyProfile = () => {
                 ✨ My Profile
               </div>
               
-              <div className="relative z-5 w-44 h-44 rounded-full bg-white/10 backdrop-blur-sm overflow-hidden border-4 border-white/30 shadow-2xl transition-all duration-300 hover:scale-110 hover:border-white/50">
-                <img
-                  src={me.profilePic || ProfileAvatar}
-                  alt="Profile"
-                  className="w-44 h-44 object-cover transition-all duration-300 hover:scale-110"
-                />
+              <div className="relative z-5">
+                <div className="w-44 h-44 rounded-full bg-white/10 backdrop-blur-sm overflow-hidden border-4 border-white/30 shadow-2xl transition-all duration-300 hover:scale-110 hover:border-white/50">
+                  <img
+                    src={me.profilePic || ProfileAvatar}
+                    alt="Profile"
+                    className="w-44 h-44 object-cover transition-all duration-300 hover:scale-110"
+                  />
+                </div>
+                
+                {/* Rating Badge - Bottom Right */}
+                <div className="absolute -bottom-2 -right-2 bg-gradient-to-br from-yellow-400 to-yellow-500 dark:from-yellow-500 dark:to-yellow-600 rounded-full px-3 py-2 shadow-xl border-3 border-white dark:border-gray-800 flex items-center gap-1 z-20">
+                  <FaStar className="text-white text-base" />
+                  <span className="text-base font-bold text-white">
+                    {me?.averageRating ? me.averageRating.toFixed(1) : '0.0'}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -110,61 +142,65 @@ const MyProfile = () => {
                 profilePicUrl={me.profilePic}
                 isDarkMode={isDarkMode}
               />
-
+              
+              {/* Player Information */}
               <div className="flex flex-col items-center">
-                <h3
-                  className={`font-extrabold text-3xl tracking-tight mb-3 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent ${
-                    isDarkMode ? "from-blue-400 to-purple-400" : "from-blue-600 to-purple-600"
-                  }`}
-                >
-                  {me?.name ? (me.name.charAt(0).toUpperCase() + me.name.slice(1)) : 'Unknown User'}
-                </h3>
-                
-                <div className={`mb-4 p-3 rounded-2xl ${
-                  isDarkMode ? 'bg-gray-800/50 border border-gray-700' : 'bg-white/70 border border-blue-200'
-                } backdrop-blur-sm shadow-lg`}>
-                  {renderStars(me.averageRating)}
+                {/* Name with decorative underline */}
+                <div className="text-center mb-6">
+                  <h3 className={`font-extrabold text-2xl tracking-tight mb-1 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                    {me?.name ? (me.name.charAt(0).toUpperCase() + me.name.slice(1)) : 'Unknown User'}
+                  </h3>
+                  <div className="h-1 w-20 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full mt-2"></div>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-center gap-3 mt-4">
-                  {me.position && (
-                    <div className={`flex items-center px-4 py-2 rounded-2xl shadow-lg border transition-all duration-300 hover:scale-105 ${
-                      isDarkMode 
-                        ? 'bg-gradient-to-r from-blue-900 to-blue-800 text-blue-200 border-blue-700 shadow-blue-900/30' 
-                        : 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border-blue-300 shadow-blue-500/20'
-                    }`}>
-                      <FaUser className="mr-2 text-lg" />
-                      <span className="font-bold text-sm">{me.position}</span>
+                {/* Jersey Number and Position */}
+                <div className="flex flex-col items-center gap-4 mb-4">
+                  {/* Jersey Number */}
+                  {me.jerseyNumber && (
+                    <div className="relative">
+                      <FaTshirt className={`${isDarkMode ? "text-blue-400" : "text-blue-600"} text-7xl`} />
+                      <span className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl font-bold ${isDarkMode ? "text-gray-900" : "text-white"}`}>
+                        {me.jerseyNumber}
+                      </span>
                     </div>
                   )}
-                  {me.jerseyNumber && (
-                    <div className={`flex items-center px-4 py-2 rounded-2xl shadow-lg border transition-all duration-300 hover:scale-105 ${
-                      isDarkMode 
-                        ? 'bg-gradient-to-r from-green-900 to-green-800 text-green-200 border-green-700 shadow-green-900/30' 
-                        : 'bg-gradient-to-r from-green-100 to-green-200 text-green-800 border-green-300 shadow-green-500/20'
-                    }`}>
-                      <RiTShirt2Line className="mr-2 text-xl" />
-                      <span className="font-bold text-sm">#{me.jerseyNumber}</span>
+                  
+                  {/* Position */}
+                  {me.position && (
+                    <div className={`flex items-center gap-3 px-5 py-2 rounded-xl shadow-lg ${isDarkMode ? "bg-gray-700" : "bg-gradient-to-r from-blue-50 to-green-50"}`}>
+                      <FaRunning className={`text-xl ${isDarkMode ? "text-green-400" : "text-green-600"}`} />
+                      <span className={`text-lg font-bold uppercase ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                        {me.position}
+                      </span>
                     </div>
                   )}
                 </div>
               </div>
-
+{/* social links of login user */}
               <div className={`mt-8 p-4 rounded-2xl border transition-all duration-300 ${
                 isDarkMode 
                   ? 'bg-gray-800/30 border-gray-700 shadow-gray-900/20' 
                   : 'bg-white/70 border-gray-200 shadow-blue-100/50'
               } backdrop-blur-sm shadow-lg`}>
-                <div className="flex items-center gap-2 mb-3 ">
+                <div className="flex items-center gap-2 mb-2">
                   <span className="text-xl">🔗</span>
-                  <h4 className={`font-bold  text-sm ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                  <h4 className={`font-bold text-sm ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
                     Social Links
                   </h4>
                 </div>
+                <p className={`text-xs mb-3 leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Add your professional social links to each account so your friends can visit your other social profiles and stay connected. Simply click on each icon below to add or update the link as needed.
+                </p>
                 <SocialMediaLink
                   isDarkMode={isDarkMode}
-                  phoneNumber={me.phoneNumber}
-                  onSelect={(type) => setSelectedSocialMedia(type)}
+                  onSelect={(type) => {
+                    setSelectedSocialMedia(type);
+                    if (type === "phone") {
+                      setSocialMediaLink(me.phoneNumber || "");
+                    } else {
+                      setSocialMediaLink("");
+                    }
+                  }}
                 />
               </div>
 
@@ -277,28 +313,39 @@ const MyProfile = () => {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-                  <span className="text-white text-lg">🔗</span>
+                  <span className="text-white text-lg">{selectedSocialMedia === "phone" ? "�" : "�🔗"}</span>
                 </div>
                 <div>
                   <h4 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                    {me.socialMediaLinks && me.socialMediaLinks.some(l => l.type === selectedSocialMedia) ? 'Update' : 'Add'} {label}
+                    {selectedSocialMedia === "phone" 
+                      ? (me.phoneNumber ? 'Update' : 'Add') + ' Phone Number'
+                      : (me.socialMediaLinks && me.socialMediaLinks.some(l => l.type === selectedSocialMedia) ? 'Update' : 'Add') + ' ' + label
+                    }
                   </h4>
                   <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    {me.socialMediaLinks && me.socialMediaLinks.some(l => l.type === selectedSocialMedia) ? 'Modify your link' : 'Connect your social profile'}
+                    {selectedSocialMedia === "phone"
+                      ? me.phoneNumber ? 'Modify your phone number' : 'Add your contact number'
+                      : me.socialMediaLinks && me.socialMediaLinks.some(l => l.type === selectedSocialMedia) ? 'Modify your link' : 'Connect your social profile'
+                    }
                   </p>
                 </div>
               </div>
-              {me.socialMediaLinks && me.socialMediaLinks.some(l => l.type === selectedSocialMedia) && (
+              {((selectedSocialMedia === "phone" && me.phoneNumber) || 
+                (selectedSocialMedia !== "phone" && me.socialMediaLinks && me.socialMediaLinks.some(l => l.type === selectedSocialMedia))) && (
                 <button
                   className="p-2 rounded-full bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 transition-all duration-200 hover:scale-110"
-                  title={`Delete ${label} link`}
+                  title={`Delete ${selectedSocialMedia === "phone" ? "Phone Number" : label + " link"}`}
                   onClick={async () => {
                     setSelectedSocialMedia(null);
                     setSocialMediaLink("");
                     try {
-                      await removeSocialMediaLink({ variables: { userId: me._id, type: selectedSocialMedia } });
+                      if (selectedSocialMedia === "phone") {
+                        await updatePhoneNumber({ variables: { profileId: me._id, phoneNumber: "" } });
+                      } else {
+                        await removeSocialMediaLink({ variables: { userId: me._id, type: selectedSocialMedia } });
+                      }
                     } catch (e) {
-                      console.error("Error deleting social media link:", e);
+                      console.error("Error deleting:", e);
                     }
                   }}
                 >
@@ -309,7 +356,7 @@ const MyProfile = () => {
             
             <div className="space-y-4">
               <input
-                type="text"
+                type={selectedSocialMedia === "phone" ? "tel" : "text"}
                 value={socialMediaLink}
                 onChange={(e) => {
                   setSocialMediaLink(e.target.value);
@@ -322,13 +369,13 @@ const MyProfile = () => {
                       ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400" 
                       : "border-gray-300 bg-white text-gray-800 placeholder-gray-500"
                 }`}
-                placeholder={`Enter your ${label} URL`}
+                placeholder={selectedSocialMedia === "phone" ? "Enter your phone number" : `Enter your ${label} URL`}
               />
               {error && (
                 <div className="flex items-center gap-2 p-3 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-xl">
                   <span className="text-red-500">⚠️</span>
                   <p className="text-red-600 dark:text-red-400 text-sm font-medium">
-                    Please enter a valid URL.
+                    {selectedSocialMedia === "phone" ? "Please enter a valid phone number." : "Please enter a valid URL."}
                   </p>
                 </div>
               )}
@@ -338,7 +385,7 @@ const MyProfile = () => {
                   className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95"
                   onClick={saveLink}
                 >
-                  💾 Save Link
+                  💾 Save {selectedSocialMedia === "phone" ? "Phone Number" : "Link"}
                 </button>
                 <button
                   className={`px-6 py-3 rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 ${

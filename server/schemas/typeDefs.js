@@ -267,6 +267,9 @@ const typeDefs = gql`
       position: String!
       phoneNumber: String!
     ): Profile
+    updateJerseyNumber(profileId: ID!, jerseyNumber: Int!): Profile
+    updatePosition(profileId: ID!, position: String!): Profile
+    updatePhoneNumber(profileId: ID!, phoneNumber: String!): Profile
     uploadProfilePic(profileId: ID!, profilePic: Upload!): Profile
     addSkill(profileId: ID!, skillText: String!): Skill
     sendMessage(recipientId: ID!, text: String!): Message!

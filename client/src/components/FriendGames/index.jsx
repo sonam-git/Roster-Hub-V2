@@ -166,7 +166,7 @@ const FriendGames = ({ friendId, friendName, isDarkMode }) => {
         <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full mx-auto mb-3 sm:mb-4 flex items-center justify-center ${
           isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
         }`}>
-          <span className="text-xl sm:text-2xl">⚽</span>
+          <span className="text-xl sm:text-2xl animate-spin-slow">⚽</span>
         </div>
         <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">No Games Available</h3>
         <p className="text-xs sm:text-sm">

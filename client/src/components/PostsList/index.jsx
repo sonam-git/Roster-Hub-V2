@@ -69,7 +69,7 @@ const PostsList = ({ profileId }) => {
   // Filter by profile if needed
   const allPosts = data.posts;
   const loginPost = allPosts.filter((p) => p.userId._id === profileId)
-  if(loginPost.length === 0 && profileId) { return <h3 className='ml-5 text-sm lg:text-md font-italic dark:text-white'>Posted nothing yet. Post will be appeared here. </h3> }
+  if(loginPost.length === 0 && profileId) { return <h3 className='ml-5 text-sm lg:text-md font-italic justify-self-center dark:text-white'>Post will be appeared here. Stay tuned for the first post.</h3> }
   const postsToDisplay = profileId
     ? loginPost
     : allPosts;

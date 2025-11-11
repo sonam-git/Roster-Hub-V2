@@ -145,7 +145,18 @@ const UserInfoForm = ({ profileId, isDarkMode }) => {
                 <FaUserEdit className="text-sm" />
               </span>
             </button>
-
+            <p className={`text-xs sm:text-sm font-oswald font-sm tracking-wider text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              For single update of each field, please go to the{' '}
+              <Link 
+                to="/" 
+                className={`font-semibold transition-colors hover:underline inline-flex items-center gap-1
+                  ${isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'}`}
+              >
+                home page
+                <span className="text-sm">→</span>
+              </Link>
+              {' '}(top right corner), where you can update your info directly.
+            </p>
             {error && (
               <div className={`p-4 rounded-xl border-l-4 shadow-lg animate-in slide-in-from-left-2 duration-300 flex items-center
                 ${isDarkMode 

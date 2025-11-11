@@ -324,17 +324,20 @@ const UserProfile = ({ profile }) => {
                   : 'bg-white/70 border-gray-200/50 shadow-blue-100/50'
               } backdrop-blur-sm shadow-lg`}>
                 <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${
-                    isDarkMode ? 'bg-gradient-to-r from-purple-600 to-purple-700' : 'bg-gradient-to-r from-purple-500 to-purple-600'
+           
+                          <div className={`w-full flex flex-col items-center justify-center py-8 sm:py-12 rounded-xl sm:rounded-2xl border-2 border-dashed transition-all duration-300 ${
+                    isDarkMode 
+                      ? 'border-gray-700 bg-gray-800/20 text-gray-400' 
+                      : 'border-gray-300 bg-gray-50/80 text-gray-500'
                   }`}>
-                    <span className="text-white text-sm sm:text-lg animate-spin-slow">📝</span>
-                  </div>
-                  <div>
-                    <h3 className={`font-bold text-base sm:text-lg ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                      Posts & Updates
-                    </h3>
-                    <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Recent posts from {profile.name}
+                    <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full mb-3 sm:mb-4 flex items-center justify-center ${
+                      isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
+                    }`}>
+                      <span className="text-xl sm:text-2xl animate-spin-slow">📝</span>
+                    </div>
+                    <p className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Posts & Updates</p>
+                    <p className="text-xs sm:text-sm text-center max-w-sm px-4">
+                      {profile.name} hasn't posted anything yet. Stay tuned for updates.
                     </p>
                   </div>
                 </div>
