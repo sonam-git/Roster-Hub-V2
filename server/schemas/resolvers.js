@@ -57,7 +57,6 @@ const FOOTBALL_API = "https://api.football-data.org/v4";
 // In-memory set to track online users
 const onlineUsers = require("../utils/onlineUsers");
 
-
 const resolvers = {
   // ############ QUERIES ########## //
   Query: {
@@ -336,7 +335,9 @@ const resolvers = {
       const profile = await Profile.findOne({ email });
 
       if (!profile) {
-        throw new AuthenticationError("No profile with this email and password found!");
+        throw new AuthenticationError(
+          "No profile with this email and password found!"
+        );
       }
 
       const correctPw = await profile.isCorrectPassword(password);
@@ -411,11 +412,18 @@ const resolvers = {
       }
     },
     // ************************** UPDATE JERSEY NUMBER *******************************************//
-    updateJerseyNumber: async (parent, { profileId, jerseyNumber }, context) => {
+    updateJerseyNumber: async (
+      parent,
+      { profileId, jerseyNumber },
+      context
+    ) => {
       if (!context.user) {
         throw new AuthenticationError("You need to be logged in");
       }
-      console.log("Update jersey number called with:", { profileId, jerseyNumber });
+      console.log("Update jersey number called with:", {
+        profileId,
+        jerseyNumber,
+      });
       try {
         const profile = await Profile.findByIdAndUpdate(
           profileId,
@@ -425,7 +433,10 @@ const resolvers = {
         if (!profile) {
           throw new Error("Profile not found!");
         }
-        console.log("Jersey number updated successfully:", profile.jerseyNumber);
+        console.log(
+          "Jersey number updated successfully:",
+          profile.jerseyNumber
+        );
         return profile;
       } catch (error) {
         console.error("Error updating jersey number:", error);
@@ -461,7 +472,10 @@ const resolvers = {
       if (!context.user) {
         throw new AuthenticationError("You need to be logged in");
       }
-      console.log("Update phone number called with:", { profileId, phoneNumber });
+      console.log("Update phone number called with:", {
+        profileId,
+        phoneNumber,
+      });
       try {
         const profile = await Profile.findByIdAndUpdate(
           profileId,
@@ -1076,16 +1090,32 @@ const resolvers = {
         if (!profile) {
           throw new Error("Profile not found");
         }
-        // Delete all skills associated with the deleted profile
+        
+        // Delete all skills associated with the deleted profile (skills received)
         await Skill.deleteMany({ _id: { $in: profile.skills } });
-
+        
+        // Delete all skills created/endorsed BY the deleted user (where they are the author)
+        // This ensures skills they gave to others are also removed
+        const skillsCreatedByUser = await Skill.find({ skillAuthor: profile.name });
+        const skillIdsCreatedByUser = skillsCreatedByUser.map(s => s._id);
+        await Skill.deleteMany({ skillAuthor: profile.name });
+        
+        // Remove these skill references from other profiles
+        await Profile.updateMany(
+          {},
+          { $pull: { skills: { $in: skillIdsCreatedByUser } } }
+        );
+        
         // Delete all social media links associated with the deleted profile
         await SocialMediaLink.deleteMany({ userId: profileId });
         // Delete messages where the deleted profile is either sender or recipient
         await Message.deleteMany({
           $or: [{ sender: profileId }, { recipient: profileId }],
         });
-
+        //delete chats where the deleted profile is either from or to
+        await Chat.deleteMany({
+          $or: [{ from: profileId }, { to: profileId }],
+        });
         // Delete all posts created by the user
         const userPosts = await Post.find({ userId: profileId });
         const postIds = userPosts.map((p) => p._id);
@@ -1101,6 +1131,16 @@ const resolvers = {
         await Comment.deleteMany({ userId: profileId });
         // Remove comment references from all posts
         await Post.updateMany({}, { $pull: { comments: { $in: commentIds } } });
+        // Remove post likes from all posts
+        await Post.updateMany(
+          {},
+          { $pull: { likedBy: profileId }, $inc: { likes: -1 } }
+        );
+        // Remove comment likes from all comments
+        await Comment.updateMany(
+          {},
+          { $pull: { likedBy: profileId }, $inc: { likes: -1 } }
+        );
 
         // Delete all games created by the user
         const userGames = await Game.find({ creator: profileId });
@@ -1147,7 +1187,7 @@ const resolvers = {
           subject: "Password Reset",
           text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
                    Please click on the following link, or paste this into your browser to complete the process:\n\n
-                   http://localhost:3000/reset-password/${resetToken}\n\n
+                   https://roster-hub-v2-240f2b371524.herokuapp.com/reset-password/${resetToken}\n\n
                    If you did not request this, please ignore this email and your password will remain unchanged.\n`,
         };
 
@@ -1198,7 +1238,9 @@ const resolvers = {
       }
       const { date, time, venue, city, notes, opponent } = input;
       if (!date || !time || !venue || !city || !opponent) {
-        throw new UserInputError("Date, time, opponent, venue and city are required");
+        throw new UserInputError(
+          "Date, time, opponent, venue and city are required"
+        );
       }
       const newGame = await Game.create({
         creator: context.user._id,
@@ -1729,8 +1771,8 @@ const resolvers = {
       return populatedSkill;
     },
   },
-  
-   // ############  SUBSCRIPTION  ############ //
+
+  // ############  SUBSCRIPTION  ############ //
   Subscription: {
     // chat related subscription
     chatCreated: {
@@ -1912,13 +1954,16 @@ const resolvers = {
   // ############  Type‐level resolvers for Game ############ //
   Game: {
     availableCount: (parent) => {
-      return parent.responses.filter((r) => r.isAvailable).length;
+      return parent.responses.filter((r) => r.user && r.isAvailable).length;
     },
     unavailableCount: (parent) => {
-      return parent.responses.filter((r) => !r.isAvailable).length;
+      return parent.responses.filter((r) => r.user && !r.isAvailable).length;
     },
     creator: (parent) => parent.creator,
-    responses: (parent) => parent.responses,
+    responses: (parent) => {
+      // Filter out responses where user is null (orphaned responses)
+      return parent.responses.filter((r) => r.user != null);
+    },
     averageRating(game) {
       return typeof game.averageRating === "number" ? game.averageRating : 0;
     },
@@ -1936,7 +1981,7 @@ const resolvers = {
     },
     // ...other field resolvers if needed...
   },
-   // ############  Type‐level resolvers for Skill ############ //
+  // ############  Type‐level resolvers for Skill ############ //
   Skill: {
     reactions: async (parent) => {
       // parent is the Skill document
@@ -1947,7 +1992,7 @@ const resolvers = {
       });
     },
   },
-   // ############  Type‐level resolvers for SkillReaction ############ //
+  // ############  Type‐level resolvers for SkillReaction ############ //
   SkillReaction: {
     user: async (parent) => {
       // parent.user is the Profile object or ID

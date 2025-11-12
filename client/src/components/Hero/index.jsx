@@ -83,7 +83,7 @@ const Hero = () => {
                 <img
                   src="/RH-Logo.png"
                   alt="RosterHub Logo"
-                  className="w-full h-full object-contain p-3 drop-shadow-xl group-hover:drop-shadow-2xl transition-all duration-500"
+                  className="w-full h-full object-contain drop-shadow-xl group-hover:drop-shadow-2xl transition-all duration-500"
                 />
                 {/* Hover overlay */}
                 <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>

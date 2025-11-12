@@ -417,7 +417,7 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
             >
               <span className="flex items-center justify-center">
                 <span className="mr-2">←</span>
-                Back to Games
+                Games
               </span>
             </button>
           )}

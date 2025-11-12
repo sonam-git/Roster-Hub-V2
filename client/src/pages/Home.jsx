@@ -14,6 +14,7 @@ import { FaFutbol, FaRegListAlt, FaStar, FaCalendarAlt } from "react-icons/fa";
 import ProfileAvatar from '../assets/images/profile-avatar.png';
 
 
+
 const Home = ({ isDarkMode }) => {
   // Check login
   const isLoggedIn = Auth.loggedIn();
@@ -46,7 +47,7 @@ const Home = ({ isDarkMode }) => {
   }
 
   return (
-    <main className=" container mx-auto w-full px-2 sm:px-8 xl:max-w-7xl xl:px-16">
+    <main className="w-full mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 lg:mt-5 pt-4 max-w-7xl">
       {isLoggedIn ? (
         <>
           {/* Welcome & Hero Section */}

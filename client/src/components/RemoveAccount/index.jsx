@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { DELETE_PROFILE } from '../../utils/mutations';
-import Auth from '../../utils/auth';
 import FarewellModal from '../FareWellModal';
 import { FaTrash, FaExclamationTriangle } from 'react-icons/fa';
 
@@ -39,10 +38,13 @@ const RemoveAccount = ({ profileId, isDarkMode }) => {
       <button
         onClick={() => setShowModal(true)}
         className={`w-full sm:w-auto px-4 sm:px-5 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-semibold text-white 
-          shadow-lg transition-all duration-300 transform hover:scale-[1.02]
-          bg-gradient-to-r from-red-600 via-pink-600 to-red-700 hover:from-red-500 hover:via-pink-500 hover:to-red-600
-          hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-red-300/50
-          relative overflow-hidden group min-w-[120px]`}
+              shadow-lg transition-all duration-300 transform hover:scale-[1.02]
+              ${isDarkMode 
+                ? 'bg-gradient-to-r from-red-600 via-pink-600 to-red-700 hover:from-red-500 hover:via-pink-500 hover:to-red-600'
+                : 'bg-gradient-to-r from-red-600 via-pink-600 to-red-700 hover:from-red-500 hover:via-pink-500 hover:to-red-600'
+              }
+              hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-red-300/50
+              relative overflow-hidden group min-w-[120px]`}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
         <span className="flex items-center justify-center gap-2 relative z-10">
