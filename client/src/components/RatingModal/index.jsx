@@ -76,7 +76,7 @@ const RatingModal = ({ profile, onClose, isDarkMode }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/60 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/60 backdrop-blur-sm p-2 mt-24 sm:mt-0">
       <div 
         className={`relative max-w-md w-full mx-auto transform transition-all duration-300 scale-100 ${
           isDarkMode 

@@ -333,14 +333,15 @@ export default function AllSkillsList({ isDarkMode }) {
   return (
     <div className="w-full mx-auto mb-4 px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 mt-8 max-w-7xl">
       {/* Modern Header */}
-      <div className={`mb-8 text-center p-6 rounded-2xl backdrop-blur-sm border shadow-lg ${
-        isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 border-gray-200'
-      }`}>
+      <div className="mb-8 text-center">
         <h1 className={`text-2xl md:text-3xl font-bold mb-2 ${ isDarkMode ? 'text-white' : 'text-gray-900'}`}>
           🌟 Endorsed Skills
         </h1>
-        <p className={`text-sm md:text-base mb-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+        <p className={`text-sm md:text-base mb-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
           Discover the amazing skills endorsed by our team members
+        </p>
+        <p className={`text-xs md:text-sm mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+          You can directly endorse your friend by clicking the button below
         </p>
         
         {/* Toggle Button */}
@@ -591,7 +592,7 @@ export default function AllSkillsList({ isDarkMode }) {
             </button>
 
             {/* Modal Content */}
-            <div className="p-6 sm:p-8">
+            <div className="p-2 sm:p-4 ">
               {/* Player Info */}
               <div className="flex flex-col items-center mb-6">
                 <img
@@ -638,7 +639,7 @@ export default function AllSkillsList({ isDarkMode }) {
                       setSkillText("");
                       setErrorMessage("");
                     }}
-                    className={`flex-1 px-4 py-3 rounded-xl font-semibold transition-all ${
+                    className={`flex-1 px-2 py-3 rounded-xl font-semibold transition-all ${
                       isDarkMode 
                         ? 'bg-gray-700 hover:bg-gray-600 text-white' 
                         : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
@@ -649,7 +650,7 @@ export default function AllSkillsList({ isDarkMode }) {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`flex-1 px-4 py-3 rounded-xl font-semibold text-white transition-all ${
+                    className={`flex-1 px-2 py-3 rounded-xl font-semibold text-white transition-all ${
                       isSubmitting
                         ? 'bg-gray-400 cursor-not-allowed'
                         : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl'
@@ -664,7 +665,7 @@ export default function AllSkillsList({ isDarkMode }) {
                         Submitting...
                       </span>
                     ) : (
-                      'Submit Endorsement'
+                      'Endorse'
                     )}
                   </button>
                 </div>
