@@ -76,12 +76,63 @@ export default function ComingGames() {
   };
   upcoming.forEach((g) => {
     if (grouped[g.status]) grouped[g.status].push(g);
-  });
+  })
 
   if (loading) return <p>Loading upcoming games…</p>;
   if (error) return <p className="text-red-500">Error: {error.message}</p>;
-  if (upcoming.length === 0)
-    return <p className=" text-center italic dark:text-white">No upcoming games.</p>;
+  if (upcoming.length === 0) {
+    return (
+      <div className="w-full py-8 ">
+        <div className={`rounded-2xl shadow-xl border p-10 text-center backdrop-blur-sm ${
+          isDarkMode 
+            ? 'bg-gradient-to-br from-gray-800 via-gray-750 to-gray-700 border-gray-600' 
+            : 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 border-gray-200'
+        }`}>
+          <div className="mb-6">
+            <div className={`w-20 h-20 mx-auto rounded-full flex items-center justify-center shadow-lg ${
+              isDarkMode 
+                ? 'bg-gradient-to-br from-blue-600 to-purple-700' 
+                : 'bg-gradient-to-br from-blue-500 to-purple-600'
+            }`}>
+              <svg 
+                className="w-10 h-10 text-white" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" 
+                />
+              </svg>
+            </div>
+          </div>
+          <h3 className={`text-2xl font-bold mb-3 ${
+            isDarkMode 
+              ? 'text-white bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent' 
+              : 'text-gray-900 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent'
+          }`}>
+            No Upcoming Games
+          </h3>
+          <p className={`text-base mb-6 leading-relaxed ${
+            isDarkMode ? 'text-gray-300' : 'text-gray-600'
+          }`}>
+            No games scheduled at the moment. Check back soon for new matches!
+          </p>
+          <div className={`flex items-center justify-center gap-2 text-sm ${
+            isDarkMode ? 'text-gray-400' : 'text-gray-500'
+          }`}>
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+            </svg>
+            <span>New games will appear here once scheduled</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Column config
   const columns = [

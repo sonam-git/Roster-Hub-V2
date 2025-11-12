@@ -88,9 +88,9 @@ const MyGames = () => {
         </p>
         <Link
           to="/game-schedule"
-          className="inline-block px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105"
+          className="inline-block px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 underline-offset-2"
         >
-          View All Games
+          Game | Schedule
         </Link>
       </div>
     );
