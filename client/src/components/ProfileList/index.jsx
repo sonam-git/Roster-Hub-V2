@@ -24,13 +24,10 @@ const ProfileList = ({ profiles, title, isDarkMode }) => {
     setShowModal(true);
   };
 
-  const handleModalClose = (messageSent = false) => {
+  const handleModalClose = () => {
     setSelectedUser(null);
     setShowModal(false);
-    // Only navigate to /message if a message was actually sent
-    if (messageSent) {
-      window.location.href = '/message';
-    }
+    // Don't navigate - just stay on the current page
   };
 
   const handleRatingClick = (profile) => {
@@ -353,7 +350,12 @@ const ProfileList = ({ profiles, title, isDarkMode }) => {
 
         {/* Modals */}
         {selectedUser && showModal && (
-          <MessageBox recipient={selectedUser} onCloseModal={handleModalClose} isDarkMode={isDarkMode} />
+          <MessageBox 
+            recipient={selectedUser} 
+            onCloseModal={handleModalClose} 
+            isDarkMode={isDarkMode}
+            skipNavigation={true}
+          />
         )}
         {ratingProfile && (
           <RatingModal profile={ratingProfile} onClose={handleRatingModalClose} isDarkMode={isDarkMode} />

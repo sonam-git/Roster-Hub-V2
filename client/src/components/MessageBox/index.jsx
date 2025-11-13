@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { SEND_MESSAGE } from "../../utils/mutations";
 import Modal from "../Modal";
@@ -7,13 +7,19 @@ import { QUERY_ME } from "../../utils/queries";
 import { HiPaperAirplane, HiX, HiUser, HiReply, HiExclamationCircle } from "react-icons/hi";
 import ProfileAvatar from "../../assets/images/profile-avatar.png";
 
-const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode }) => {
+const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode, skipSuccessModal = false, skipNavigation = false }) => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [messageSent, setMessageSent] = useState(false);
   const [sendMessage] = useMutation(SEND_MESSAGE);
   const { data } = useQuery(QUERY_ME);
+
+  // Reset messageSent when component mounts (always reset on mount)
+  useEffect(() => {
+    setMessageSent(false);
+    setMessage("");
+    setError(false);
+  }, []); // Empty dependency array to run only on mount
 
   const handleSendMessage = async () => {
     if (message.trim() === "") {
@@ -22,6 +28,10 @@ const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode }) =>
     }
 
     try {
+      console.log('🔵 MessageBox: Sending message...');
+      console.log('🔵 skipSuccessModal:', skipSuccessModal);
+      console.log('🔵 skipNavigation:', skipNavigation);
+      
       await sendMessage({
         variables: {
           recipientId: recipient._id,
@@ -29,29 +39,38 @@ const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode }) =>
         },
         refetchQueries: [{ query: QUERY_ME }],
       });
-
-      setMessage("");
-      setMessageSent(true);
-      setShowModal(true);
-      setError(false);
+      
+      console.log('✅ MessageBox: Message sent successfully');
+      
+      // If skipSuccessModal is true, close immediately without showing success modal
+      if (skipSuccessModal) {
+        console.log('⚠️ MessageBox: Skipping success modal, closing immediately');
+        setMessage("");
+        setError(false);
+        onCloseModal(true); // Pass true to indicate message was sent
+      } else {
+        // Show success modal
+        console.log('🎉 MessageBox: Setting messageSent to TRUE - should show success modal');
+        setMessageSent(true);
+        setMessage("");
+        setError(false);
+      }
     } catch (error) {
-      console.error("Error sending message:", error);
+      console.error("❌ Error sending message:", error);
     }
   };
 
   const handleCloseModal = (wasCancelled = false) => {
-    setShowModal(false);
     // Pass whether a message was sent when closing (not if cancelled)
     onCloseModal(wasCancelled ? false : messageSent);
   };
 
   const handleMessageSentModalClose = () => {
-    setShowModal(false);
     setMessage("");
     setError(false);
+    setMessageSent(false); // Reset for next time
     // When the success modal is closed, a message was definitely sent
     onCloseModal(true);
-    setMessageSent(false); // Reset for next time
   };
 
   const handleCancel = () => {
@@ -63,10 +82,12 @@ const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode }) =>
 
   const isSender = selectedMessage?.sender?._id === data?.me?._id;
 
+  console.log('🟢 MessageBox RENDER - messageSent:', messageSent, 'skipSuccessModal:', skipSuccessModal, 'skipNavigation:', skipNavigation);
+
   return (
     recipient && (
       <>
-        {!messageSent && (
+        {!messageSent ? (
           <Modal showModal={true} onClose={handleCloseModal}>
             <div className={`rounded-2xl shadow-2xl p-8 border max-w-2xl w-full mx-4 ${
               isDarkMode
@@ -195,8 +216,14 @@ const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode }) =>
               </div>
             </div>
           </Modal>
+        ) : (
+          <MessageSentModal 
+            onClose={handleMessageSentModalClose} 
+            recipientName={recipient.name}
+            isDarkMode={isDarkMode}
+            skipNavigation={skipNavigation}
+          />
         )}
-        {showModal && <MessageSentModal onClose={handleMessageSentModalClose} />}
       </>
     )
   );

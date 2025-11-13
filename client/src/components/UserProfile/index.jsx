@@ -33,8 +33,15 @@ const UserProfile = ({ profile }) => {
     setSkillsPage(Math.min(totalSkillsPages - 1, skillsPage + 1));
   };
 
-  const handleMessageClick = () => setShowMessageModal(true);
-  const handleCloseMessage = () => setShowMessageModal(false);
+  const handleMessageClick = () => {
+    console.log('🔴 UserProfile: Opening message modal');
+    setShowMessageModal(true);
+  };
+
+  const handleCloseMessage = () => {
+    console.log('🔴 UserProfile: handleCloseMessage called - closing modal');
+    setShowMessageModal(false);
+  };
   const handleRateClick = () => setShowRatingModal(true);
   const handleCloseRating = () => setShowRatingModal(false);
 
@@ -376,11 +383,13 @@ const UserProfile = ({ profile }) => {
       </div>
 
       {/* Modals */}
+      {console.log('🔴 UserProfile RENDER - showMessageModal:', showMessageModal)}
       {showMessageModal && (
         <MessageBox
           recipient={profile}
           onCloseModal={handleCloseMessage}
           isDarkMode={isDarkMode}
+          skipNavigation={true}
         />
       )}
 

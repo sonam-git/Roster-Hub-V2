@@ -182,6 +182,7 @@ const handleSendMessage = async (recipientId) => {
           <MessageBox
             recipient={selectedRecipient}
             selectedMessage={selectedMessage}
+            skipSuccessModal={true}
             onCloseModal={() => {
               setShowChatModal(false);
               setSelectedRecipient(null);
@@ -335,6 +336,7 @@ const handleSendMessage = async (recipientId) => {
         <MessageBox
           recipient={selectedRecipient}
           selectedMessage={selectedMessage}
+          skipSuccessModal={true}
           onCloseModal={() => {
             setShowChatModal(false);
             setSelectedRecipient(null);

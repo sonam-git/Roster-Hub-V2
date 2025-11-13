@@ -16,7 +16,7 @@ const BUTTONS = [
   { key: "home", label: "Home", icon: faHome, path: "/" },
   { key: "gameschedule", label: "Upcoming", icon: faCalendarAlt, path: "/upcoming-games" },
    { key: "roster", label: "Roster", icon: faPersonRunning, action: "roster" },
-  { key: "creategame", label: "Create Game", icon: faPlus, path: "/game-schedule#create" },
+  { key: "creategame", label: "Create Game", icon: faPlus, path: "/game-create" },
  { key: "search", label: "Search", icon: faSearch, action: "search", path: "/game-search" },
   { key: "messages", label: "Inbox", icon: faInbox, path: "/message" },
   { key: "skilllist", label: "Skills", icon: faStar, path: "/recent-skills" },
@@ -143,7 +143,7 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
                       // Navigate to dedicated game search page
                       navigate("/game-search");
                     } else if (btn.key === "creategame") {
-                      navigate("/game-schedule", { state: { showCreateGame: true } });
+                      navigate("/game-create", { state: { showCreateGame: true } });
                     } else {
                       navigate(btn.path);
                     }

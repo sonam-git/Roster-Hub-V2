@@ -26,6 +26,7 @@ import Roster from "./pages/Roster";
 import Message from "./pages/Message";
 import Skill from "./pages/Skill";
 import Game from "./pages/Game";
+import GameCreate from "./pages/GameCreate";
 import GameSearch from "./pages/GameSearch";
 import Score from "./pages/Score";
 import ForgotPassword from "./pages/ForgetPassword";
@@ -149,6 +150,7 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<PasswordReset />} />
             <Route path="/game-schedule" element={<Game />} />
+            <Route path="/game-create" element={<GameCreate />} />
             <Route path="/game-search" element={<GameSearch />} />
             <Route
               path="/game-schedule/:gameId"

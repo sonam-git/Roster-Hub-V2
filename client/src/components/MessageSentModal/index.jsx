@@ -1,38 +1,99 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import "../../assets/css/modal.css"; 
-import "../../assets/css/message-sent-modal-animations.css";
+import React, { useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { HiCheckCircle, HiMail } from 'react-icons/hi';
 
-const MessageSentModal = ({ onClose }) => {
+const MessageSentModal = ({ onClose, recipientName, isDarkMode, skipNavigation = false }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  console.log('🟣 MessageSentModal RENDERED - skipNavigation:', skipNavigation, 'recipientName:', recipientName);
+  
+  // Check if we're already on the message page
+  const isOnMessagePage = location.pathname === '/message';
+
+  // Auto-close and redirect after 1.5 seconds
+  useEffect(() => {
+    console.log('🟣 MessageSentModal: Setting timer for auto-close');
+    const timer = setTimeout(() => {
+      console.log('🟣 MessageSentModal: Timer fired, calling onClose');
+      onClose();
+      // Only navigate if we're not already on the message page and skipNavigation is false
+      if (!isOnMessagePage && !skipNavigation) {
+        navigate('/message');
+      }
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [onClose, navigate, isOnMessagePage, skipNavigation]);
 
   const handleClose = () => {
-    onClose(); // Close the modal
-    navigate('/message'); // Navigate to the home page
+    onClose();
+    // Only navigate if we're not already on the message page and skipNavigation is false
+    if (!isOnMessagePage && !skipNavigation) {
+      navigate('/message');
+    }
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-75 transition-opacity duration-300 animate-fade-in">
-      <div className="bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 scale-95 animate-modal-pop">
-        <h2 className="text-2xl font-bold mb-4 text-center">Message Sent!</h2>
-        <p className="text-gray-700 text-center mb-4">Your message has been successfully sent.</p>
+    <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-[9999] px-4 animate-in fade-in duration-200">
+      <div className={`rounded-2xl shadow-2xl p-8 max-w-md w-full transform animate-in zoom-in-95 duration-300 ${
+        isDarkMode 
+          ? 'bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700' 
+          : 'bg-gradient-to-br from-white to-gray-50 border border-gray-200'
+      }`}>
+        {/* Success Icon */}
+        <div className="flex justify-center mb-6">
+          <div className="relative">
+            <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-lg animate-bounce">
+              <HiCheckCircle className="w-12 h-12 text-white" />
+            </div>
+            <div className="absolute -top-1 -right-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+              <HiMail className="w-4 h-4 text-white" />
+            </div>
+          </div>
+        </div>
+
+        {/* Success Message */}
+        <h2 className={`text-2xl font-bold text-center mb-3 ${
+          isDarkMode ? 'text-white' : 'text-gray-900'
+        }`}>
+          Message Sent!
+        </h2>
+        
+        <p className={`text-center mb-6 ${
+          isDarkMode ? 'text-gray-300' : 'text-gray-600'
+        }`}>
+          Your message has been successfully sent{recipientName ? ` to ${recipientName}` : ''}.
+        </p>
+
+        {/* Progress Bar */}
+        <div className={`w-full h-1 rounded-full mb-6 overflow-hidden ${
+          isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
+        }`}>
+          <div className="h-full bg-gradient-to-r from-green-400 to-blue-500 animate-pulse"></div>
+        </div>
+
+        {/* Action Button */}
         <button
           onClick={handleClose}
-          className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full transition-colors duration-200"
+          className={`w-full px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 active:scale-95 flex items-center justify-center gap-2 ${
+            isDarkMode
+              ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-lg'
+              : 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg'
+          }`}
         >
-          Close
+          <HiMail className="w-5 h-5" />
+          <span>{skipNavigation ? 'Close' : (isOnMessagePage ? 'Continue' : 'View Messages')}</span>
         </button>
+
+        <p className={`text-center text-xs mt-3 ${
+          isDarkMode ? 'text-gray-400' : 'text-gray-500'
+        }`}>
+          {skipNavigation ? 'Closing automatically...' : (isOnMessagePage ? 'Closing automatically...' : 'Redirecting automatically...')}
+        </p>
       </div>
     </div>
   );
-  
 };
 
 export default MessageSentModal;
-
-/* Add these to your global CSS if not present:
-.animate-fade-in { animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-.animate-modal-pop { animation: modalPop 0.3s cubic-bezier(.17,.67,.83,.67); }
-@keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-*/
