@@ -367,30 +367,52 @@ const ChatPopup = ({ currentUser }) => {
   })();
 
   return (
-    <div className="fixed bottom-0 right-4 chat-popup-container z-[500]">
-      {/* Mobile: Compact Icon Button (sm and below) */}
-      <div className="sm:hidden">
+    <>
+      {/* Chat Icon and Popup Container - Responsive positioning */}
+      <div 
+        className="fixed chat-popup-container"
+        style={{ 
+          right: '0.5rem',
+          zIndex: 9999 
+        }}
+      >
+        {/* Use CSS to handle responsive bottom positioning */}
+        <style>{`
+          @media (max-width: 975px) {
+            .chat-popup-container {
+              bottom: 4.5rem !important; /* Above mobile bottom nav */
+            }
+          }
+          @media (min-width: 976px) {
+            .chat-popup-container {
+              bottom: 1rem !important; /* Normal desktop positioning */
+            }
+          }
+        `}</style>
+        
+        {/* Mobile: Compact Icon Button (visible below lg, positioned above bottom nav) */}
+        <div className="block lg:hidden mb-5">
         <button
           onClick={() => setChatPopupOpen(o => !o)}
-          className={`w-14 h-14 rounded-full flex items-center justify-center relative shadow-2xl transition-all duration-300 hover:scale-110 ${
+          className={`w-14 h-14 rounded-full flex items-center justify-center relative shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95 ${
             isDarkMode 
               ? 'bg-gradient-to-r from-gray-800 to-gray-900 text-white' 
               : 'bg-gradient-to-r from-blue-600 to-blue-700 text-white'
           }`}
           aria-label={`Chat${totalNotifications > 0 ? ` - ${totalNotifications} new messages` : ''}`}
         >
-          <FaComments className="text-xl" />
+          <FaComments className="text-2xl" />
           {/* Notification badge for mobile */}
           {totalNotifications > 0 && (
-            <div className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold rounded-full min-w-[22px] h-[22px] flex items-center justify-center shadow-lg animate-pulse border-2 border-white">
+            <div className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold rounded-full min-w-[24px] h-[24px] flex items-center justify-center shadow-lg animate-pulse border-2 border-white">
               {totalNotifications > 99 ? '99+' : totalNotifications}
             </div>
           )}
         </button>
       </div>
 
-      {/* Desktop: Full Header (sm and above) */}
-      <div className="hidden sm:block w-80">
+      {/* Desktop: Full Header (visible on lg and above) */}
+      <div className="hidden lg:block w-80">
         <div
           className={`flex items-center justify-between p-2 rounded-t-2xl cursor-pointer shadow-2xl backdrop-blur-sm border-t border-x transition-all duration-300 hover:shadow-lg chat-popup-header ${
             isDarkMode 
@@ -435,17 +457,32 @@ const ChatPopup = ({ currentUser }) => {
 
       {/* Modern Body */}
       {chatPopupOpen && (
+        <>
+        <style>{`
+          @media (max-width: 766px) {
+            .chat-popup-body {
+              top: 6.5rem !important; /* 64px top spacing for mobile under main header */
+            }
+          }
+          @media (min-width: 767px) and (max-width: 975px) {
+            .chat-popup-body {
+              top: 7rem !important; /* 112px top spacing for iPad/tablets */
+            }
+          }
+        `}</style>
         <div className={`flex flex-col overflow-hidden shadow-2xl backdrop-blur-sm animate-chat-popup chat-popup-body ${
           isDarkMode 
             ? 'bg-gradient-to-b from-gray-900/95 to-gray-800/95 text-white border-gray-700' 
             : 'bg-gradient-to-b from-white/95 to-gray-50/95 text-gray-800 border-gray-200'
         } 
-        sm:border-x sm:border-b sm:rounded-b-2xl sm:h-[500px]
-        fixed sm:static left-0 right-0 sm:left-auto sm:right-auto w-full sm:w-auto z-[600] sm:z-auto
-        `}>
+        lg:border-x lg:border-b lg:rounded-b-2xl lg:h-[500px]
+        fixed lg:static left-0 right-0 lg:left-auto lg:right-auto bottom-[4rem] lg:bottom-auto top-0 lg:top-auto w-full lg:w-80
+        `}
+        style={{ zIndex: 10000 }}
+        >
           
-          {/* Mobile Close Button - Only visible on small screens */}
-          <div className="sm:hidden flex items-center justify-between p-4 border-b sticky top-0 z-10 backdrop-blur-md" style={{
+          {/* Mobile Close Button - Only visible on small/medium screens */}
+          <div className="lg:hidden flex items-center justify-between p-4 border-b sticky top-0 z-10 backdrop-blur-md" style={{
             backgroundColor: isDarkMode ? 'rgba(17, 24, 39, 0.95)' : 'rgba(255, 255, 255, 0.95)',
             borderColor: isDarkMode ? 'rgb(55, 65, 81)' : 'rgb(229, 231, 235)'
           }}>
@@ -495,7 +532,7 @@ const ChatPopup = ({ currentUser }) => {
           {/* Players List */}
           {isLoggedIn && !selectedUserId && (
             <div className="flex flex-col h-full">
-              <div className={`p-4 border-b hidden sm:block ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+              <div className={`p-4 border-b hidden lg:block ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                 <h3 className="font-bold text-lg flex items-center gap-2">
                   <FaComments className="text-blue-500" />
                   Team Members
@@ -744,12 +781,14 @@ const ChatPopup = ({ currentUser }) => {
             </div>
           )}
         </div>
+        </>
       )}
+      </div>
       
-      {/* Modern Delete Confirmation Modal */}
+      {/* Modern Delete Confirmation Modal - Outside chat container */}
       {showDeleteModal && (
         <Modal showModal={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
-          <div className={`p-6 rounded-2xl shadow-2xl backdrop-blur-sm border chat-modal-overlay ${
+          <div className={`p-6 rounded-2xl shadow-2xl backdrop-blur-sm border chat-modal-overlay  ${
             isDarkMode 
               ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700' 
               : 'bg-gradient-to-br from-white to-gray-50 border-gray-200'
@@ -794,7 +833,7 @@ const ChatPopup = ({ currentUser }) => {
           </div>
         </Modal>
       )}
-    </div>
+    </>
   );
 };
 

@@ -32,6 +32,11 @@ html {
    padding-bottom: env(safe-area-inset-bottom);
  }
 
+ /* Safe area support for mobile bottom navigation */
+ .pb-safe {
+   padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+ }
+
  .pwa-safe-left {
    padding-left: env(safe-area-inset-left);
  }

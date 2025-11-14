@@ -17,7 +17,8 @@ import {
   HiArrowRightOnRectangle,
   HiArrowLeftOnRectangle,
   HiUserPlus,
-  HiSparkles
+  HiSparkles,
+  HiInformationCircle
 } from "react-icons/hi2";
 
 const Header = ({ open, setOpen }) => {
@@ -72,6 +73,7 @@ const Header = ({ open, setOpen }) => {
           badge: gameBadgeCount,
         },
         { title: "ScoreBoard", icon: HiTrophy, path: "/scoreboard" },
+        // { title: "About", icon: HiInformationCircle, path: "/about" },
         { title: "Logout", icon: HiArrowRightOnRectangle, action: handleLogout },
       ]
     : [
@@ -114,11 +116,11 @@ const Header = ({ open, setOpen }) => {
               className={`group relative overflow-hidden px-2 py-2 font-medium rounded-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-98 shadow-md hover:shadow-lg hover:no-underline flex-1 text-center ${
                 location.pathname === "/login" 
                   ? isDarkMode
-                    ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white ring-1 ring-orange-400" 
-                    : "bg-gradient-to-r from-orange-500 to-orange-600 text-white ring-1 ring-orange-300"
+                     ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white ring-1 ring-blue-400" 
+                    : "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white ring-1 ring-emerald-300"
                   : isDarkMode
-                    ? "bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-500 hover:to-orange-600 text-white border border-orange-500"
-                    : "bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-500 hover:to-orange-600 text-white border border-orange-400"
+                    ? "bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white border border-emerald-500"
+                    : "bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white border border-emerald-400"
               }`}
             >
               <span className="relative z-10 flex items-center justify-center gap-1">
@@ -133,11 +135,11 @@ const Header = ({ open, setOpen }) => {
               className={`group relative overflow-hidden px-2 py-2 font-medium rounded-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-98 shadow-md hover:shadow-lg hover:no-underline flex-1 text-center ${
                 location.pathname === "/signup" 
                   ? isDarkMode
-                    ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white ring-1 ring-emerald-400" 
-                    : "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white ring-1 ring-emerald-300"
+                   ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white ring-1 ring-blue-400" 
+                      : "bg-gradient-to-r from-blue-500 to-blue-600 text-white ring-1 ring-blue-300"
                   : isDarkMode
-                    ? "bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white border border-emerald-500"
-                    : "bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white border border-emerald-400"
+                    ? "bg-gradient-to-r from-purple-600 to-emerald-700 hover:from-purple-500 hover:to-emerald-600 text-white border border-emerald-500"
+                    : "bg-gradient-to-r from-purple-600 to-emerald-700 hover:from-purple-500 hover:to-emerald-600 text-white border border-emerald-400"
               }`}
             >
               <span className="relative z-10 flex items-center justify-center gap-1">
@@ -161,7 +163,7 @@ const Header = ({ open, setOpen }) => {
 
       {/* Amazon-style Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full transition-all duration-500 ease-out z-[5] pt-32 lg:pt-16 transform-gpu will-change-transform ${
+        className={`fixed top-0 left-0 h-full transition-all duration-500 ease-out z-[5] pt-10 lg:pt-30 transform-gpu will-change-transform ${
           open ? "w-64 sm:w-72 translate-x-0 opacity-100" : "w-16 sm:w-20 -translate-x-full lg:translate-x-0 opacity-100 lg:opacity-100"
         } ${
           isDarkMode 
@@ -173,7 +175,7 @@ const Header = ({ open, setOpen }) => {
         }}
       >
         {/* Navigation Menu */}
-        <nav className="flex-1 px-2 sm:px-4 overflow-hidden py-4 mt-5">
+        <nav className="flex-1 px-2 sm:px-4 overflow-hidden py-2 mt-2">
           {/* Menu Items */}
           <div className="space-y-1">
             {/* Theme Toggle - styled like other menu items */}

@@ -1,31 +1,63 @@
+/* Modal Wrapper */
+.modal {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 99999 !important;
+  display: block !important;
+}
+
+.modal.show {
+  display: block !important;
+}
+
 /* Modal Overlay */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
-    z-index: 1000; /* Ensure modal is above other content */
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+    z-index: 99999 !important; /* Ensure modal is above chat popup (z-index: 10000) */
   }
   
   /* Modal Content */
   .modal-content {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
     /* background-color: white; */
     padding: 10px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    z-index: 1001; /* Ensure modal content is above overlay */
+    z-index: 100000 !important; /* Ensure modal content is above overlay and chat popup */
+    max-width: 90vw;
   }
   
   /* Add margin-top on smaller screens to avoid top header */
-  @media (max-width: 640px) {
+  @media (max-width: 480px) {
     .modal-content {
-      top: calc(50% + 32px); /* Shift down by 64px / 2 = 32px */
+      top: 50% !important;
+      max-width: 95vw;
+      padding: 15px;
+    }
+  }
+
+  @media (min-width: 481px) and (max-width: 640px) {
+    .modal-content {
+      top: 50% !important;
+      max-width: 90vw;
+    }
+  }
+  
+  @media (min-width: 641px) and (max-width: 975px) {
+    .modal-content {
+      top: 50% !important;
+      max-width: 85vw;
     }
   }
   
@@ -35,6 +67,6 @@
     top: 10px;
     right: 10px;
     cursor: pointer;
-    z-index: 1002; /* Ensure close button is above modal content */
+    z-index: 10003; /* Ensure close button is above modal content */
   }
   

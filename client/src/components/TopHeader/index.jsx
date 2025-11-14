@@ -15,12 +15,12 @@ import darkLogo from "../../assets/images/dark-logo.png";
 const BUTTONS = [
   { key: "home", label: "Home", icon: faHome, path: "/" },
   { key: "gameschedule", label: "Upcoming", icon: faCalendarAlt, path: "/upcoming-games" },
-   { key: "roster", label: "Roster", icon: faPersonRunning, action: "roster" },
   { key: "creategame", label: "Create Game", icon: faPlus, path: "/game-create" },
  { key: "search", label: "Search", icon: faSearch, action: "search", path: "/game-search" },
   { key: "messages", label: "Inbox", icon: faInbox, path: "/message" },
   { key: "skilllist", label: "Skills", icon: faStar, path: "/recent-skills" },
   { key: "about", label: "About", icon: faInfoCircle, path: "/about" },
+  { key: "roster", label: "Roster", icon: faPersonRunning, action: "roster" },
 ];
 
 export default function TopHeader({ className, onToggleMenu, open, isVisible = true }) {
@@ -31,18 +31,8 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
   const isLoggedIn = Auth.loggedIn();
   const [showRosterDropdown, setShowRosterDropdown] = React.useState(false);
   const rosterBtnRef = useRef(null);
+  const mobileRosterBtnRef = useRef(null);
   const dropdownRef = useRef(null);
-  const [dropdownPos, setDropdownPos] = React.useState({ top: 0, left: 0 });
-
-  useEffect(() => {
-    if (showRosterDropdown && rosterBtnRef.current) {
-      const rect = rosterBtnRef.current.getBoundingClientRect();
-      setDropdownPos({
-        top: rect.bottom + 8,
-        left: rect.left + rect.width / 2,
-      });
-    }
-  }, [showRosterDropdown]);
 
   useEffect(() => {
     if (!showRosterDropdown) return;
@@ -51,7 +41,9 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
         dropdownRef.current &&
         !dropdownRef.current.contains(e.target) &&
         rosterBtnRef.current &&
-        !rosterBtnRef.current.contains(e.target)
+        !rosterBtnRef.current.contains(e.target) &&
+        mobileRosterBtnRef.current &&
+        !mobileRosterBtnRef.current.contains(e.target)
       ) {
         setShowRosterDropdown(false);
       }
@@ -61,11 +53,13 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
   }, [showRosterDropdown]);
 
   return (
-    <div className={`w-full flex flex-col md:flex-row items-center justify-between bg-gray-100 dark:bg-gray-800 py-2 shadow-md sticky z-[10] px-2 sm:px-4 ${isVisible ? 'top-40 lg:top-0' : 'top-0'} ${typeof className !== 'undefined' ? className : ''}`}>
+    <>
+      {/* Desktop TopHeader - Hidden below 976px, visible at 976px+ (custom lg breakpoint) */}
+      <div className={`hidden lg:flex w-full flex-row items-center justify-between bg-gray-100 dark:bg-gray-800 py-2 shadow-md sticky z-[10] px-2 sm:px-4 ${isVisible ? 'top-0' : 'top-0'} ${typeof className !== 'undefined' ? className : ''}`}>
       {/* Left: Logo and Title (always visible, beautiful UI) */}
       <Link
         to={"/"}
-        className="hidden md:flex items-center gap-3 no-underline group"
+        className="flex items-center gap-3 no-underline group"
         style={{ textDecoration: "none" }}
       >
         <div className="flex items-center gap-3 w-full md:w-auto justify-center py-1 px-2">
@@ -98,60 +92,64 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
         </div>
       </Link>
       {/* Center: Menu buttons or promo text */}
-      <div className={`flex flex-row items-center justify-center flex-1 w-full md:w-auto mt-4 md:mt-0`}>
+      <div className={`flex flex-row items-center justify-center flex-1 w-full mt-4 lg:mt-0`}>
         {isLoggedIn ? (
           <div className="w-full max-w-4xl mx-auto">
-            <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 md:pb-0 md:justify-center md:flex-wrap">
-              {BUTTONS.map(btn => {
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 lg:pb-0 lg:justify-center lg:flex-wrap">
+              {BUTTONS.map((btn) => {
+                // Hide roster button on small screens
                 if (btn.key === "roster") {
                   return (
-                    <div key={btn.key} className="relative flex-shrink-0">
-                      <button
-                        ref={rosterBtnRef}
-                        className={`flex flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-md font-semibold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl min-w-[80px] sm:min-w-0 justify-center backdrop-blur-sm ${
-                          isDarkMode
-                            ? "bg-gradient-to-br from-gray-800/80 to-gray-700/80 hover:from-gray-700/90 hover:to-gray-600/90 text-gray-200 shadow-gray-800/50 hover:shadow-gray-700/70"
-                            : "bg-gradient-to-br from-white/90 to-gray-50/90 hover:from-gray-50/95 hover:to-gray-100/95 text-gray-700 shadow-gray-200/50 hover:shadow-gray-300/70"
-                        }`}
-                        onClick={() => setShowRosterDropdown((prev) => !prev)}
-                      >
-                        <FontAwesomeIcon icon={btn.icon} className="text-xs sm:text-sm" />
-                        <span className="text-xs sm:text-sm font-oswald font-bold tracking-wide truncate">{btn.label.toUpperCase()}</span>
-                        <FaChevronDown 
-                          className={`text-xs sm:text-sm transition-transform duration-200 ${
-                            showRosterDropdown ? 'rotate-180' : 'rotate-0'
-                          }`} 
-                        />
-                      </button>
-                    </div>
+                    <React.Fragment key={btn.key}>
+                      <div className="hidden lg:block relative flex-shrink-0">
+                        <button
+                          ref={rosterBtnRef}
+                          className={`flex flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-md font-semibold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl min-w-[80px] sm:min-w-0 justify-center backdrop-blur-sm ${
+                            isDarkMode
+                              ? "bg-gradient-to-br from-gray-800/80 to-gray-700/80 hover:from-gray-700/90 hover:to-gray-600/90 text-gray-200 shadow-gray-800/50 hover:shadow-gray-700/70"
+                              : "bg-gradient-to-br from-white/90 to-gray-50/90 hover:from-gray-50/95 hover:to-gray-100/95 text-gray-700 shadow-gray-200/50 hover:shadow-gray-300/70"
+                          }`}
+                          onClick={() => setShowRosterDropdown((prev) => !prev)}
+                        >
+                          <FontAwesomeIcon icon={btn.icon} className="text-xs sm:text-sm" />
+                          <span className="text-xs sm:text-sm font-oswald font-bold tracking-wide truncate">{btn.label.toUpperCase()}</span>
+                          <FaChevronDown 
+                            className={`text-xs sm:text-sm transition-transform duration-200 ${
+                              showRosterDropdown ? 'rotate-180' : 'rotate-0'
+                            }`} 
+                          />
+                        </button>
+                      </div>
+                    </React.Fragment>
                   );
                 }
                 return (
-                  <button
-                    key={btn.key}
-                    className={`flex flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-sm font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl flex-shrink-0 min-w-[80px] sm:min-w-0 justify-center backdrop-blur-sm mb-1 md:mb-0 ${
-                      location.pathname === btn.path.split('#')[0]
-                        ? isDarkMode
-                          ? "bg-gradient-to-br from-blue-600 via-purple-600 to-blue-700 text-white shadow-blue-500/30 hover:shadow-blue-500/50"
-                          : "bg-gradient-to-br from-blue-500 via-purple-500 to-blue-600 text-white shadow-blue-500/30 hover:shadow-blue-500/50"
-                        : isDarkMode
-                          ? "bg-gradient-to-br from-gray-800/80 to-gray-700/80 hover:from-gray-700/90 hover:to-gray-600/90 text-gray-200 shadow-gray-800/50 hover:shadow-gray-700/70"
-                          : "bg-gradient-to-br from-white/90 to-gray-50/90 hover:from-gray-50/95 hover:to-gray-100/95 text-gray-700 shadow-gray-200/50 hover:shadow-gray-300/70"
-                    }`}
-                  onClick={() => {
-                    if (btn.action === "search") {
-                      // Navigate to dedicated game search page
-                      navigate("/game-search");
-                    } else if (btn.key === "creategame") {
-                      navigate("/game-create", { state: { showCreateGame: true } });
-                    } else {
-                      navigate(btn.path);
-                    }
-                  }}
-                >
-                  <FontAwesomeIcon icon={btn.icon} className="text-xs sm:text-sm" />
-                  <span className="text-xs sm:text-sm font-oswald font-bold tracking-wide truncate">{btn.label.toUpperCase()}</span>
-                </button>
+                  <React.Fragment key={btn.key}>
+                    <button
+                      className={`flex flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-sm font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl flex-shrink-0 min-w-[80px] sm:min-w-0 justify-center backdrop-blur-sm ${
+                        location.pathname === btn.path?.split('#')[0]
+                          ? isDarkMode
+                            ? "bg-gradient-to-br from-blue-600 via-purple-600 to-blue-700 text-white shadow-blue-500/30 hover:shadow-blue-500/50"
+                            : "bg-gradient-to-br from-blue-500 via-purple-500 to-blue-600 text-white shadow-blue-500/30 hover:shadow-blue-500/50"
+                          : isDarkMode
+                            ? "bg-gradient-to-br from-gray-800/80 to-gray-700/80 hover:from-gray-700/90 hover:to-gray-600/90 text-gray-200 shadow-gray-800/50 hover:shadow-gray-700/70"
+                            : "bg-gradient-to-br from-white/90 to-gray-50/90 hover:from-gray-50/95 hover:to-gray-100/95 text-gray-700 shadow-gray-200/50 hover:shadow-gray-300/70"
+                      }`}
+                      onClick={() => {
+                        if (btn.action === "search") {
+                          // Navigate to dedicated game search page
+                          navigate("/game-search");
+                        } else if (btn.key === "creategame") {
+                          navigate("/game-create", { state: { showCreateGame: true } });
+                        } else {
+                          navigate(btn.path);
+                        }
+                      }}
+                    >
+                      <FontAwesomeIcon icon={btn.icon} className="text-xs sm:text-sm" />
+                      <span className="text-xs sm:text-sm font-oswald font-bold tracking-wide truncate">{btn.label.toUpperCase()}</span>
+                    </button>
+                  </React.Fragment>
                 );
               })}
             </div>
@@ -264,26 +262,55 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
           </div>
         )}
       </div>
-      {/* Roster Dropdown (fixed position, outside scrolling container) */}
+      {/* Roster Dropdown (centered modal-style dropdown) */}
       {showRosterDropdown && (
-        <div
-          ref={dropdownRef}
-          className="fixed z-[9999] shadow-2xl border border-gray-200 dark:border-gray-600 rounded-2xl overflow-hidden backdrop-blur-sm transition-all duration-300 bg-white/95 dark:bg-gray-800/95 w-72 max-w-[90vw] md:max-w-sm"
-          style={{
-            top: dropdownPos.top,
-            left: dropdownPos.left,
-            transform: "translateX(-50%)",
-          }}
-        >
+        <>
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[99999] transition-all duration-300"
+            onClick={() => setShowRosterDropdown(false)}
+            aria-label="Close roster dropdown"
+          />
+          
+          {/* Centered Dropdown */}
+          <div
+            ref={dropdownRef}
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[999999] shadow-2xl border-2 border-gray-700 rounded-2xl overflow-hidden backdrop-blur-md transition-all duration-300 bg-gray-900 w-[90vw] sm:w-[85vw] max-w-md"
+            style={{
+              animation: 'modalSlideIn 0.3s ease-out forwards',
+              maxHeight: '80vh'
+            }}
+          >
+            <style>{`
+              @keyframes modalSlideIn {
+                from {
+                  opacity: 0;
+                  transform: translate(-50%, -50%) scale(0.9);
+                }
+                to {
+                  opacity: 1;
+                  transform: translate(-50%, -50%) scale(1);
+                }
+              }
+            `}</style>
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 px-3 sm:px-4 py-2 sm:py-3 border-b border-blue-300 dark:border-blue-500">
+          <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-3 sm:px-4 py-3 sm:py-4 border-b border-gray-700 shadow-sm">
             <div className="flex items-center justify-between">
-              <h3 className="text-white font-oswald font-semibold tracking-wide text-xs sm:text-sm flex items-center gap-1 sm:gap-2">
-                <FontAwesomeIcon icon={faPersonRunning} className="text-blue-100 text-xs sm:text-sm" />
+              <h3 className="text-white font-oswald font-bold tracking-wide text-sm sm:text-base flex items-center gap-2">
+                <FontAwesomeIcon icon={faPersonRunning} className="text-gray-300 text-base sm:text-lg" />
                 TEAM ROSTER
               </h3>
+              <button
+                onClick={() => setShowRosterDropdown(false)}
+                className="text-white hover:text-gray-300 transition-colors p-1 rounded-full hover:bg-white/10"
+                aria-label="Close"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
-            <p className="text-blue-100 text-xs mt-0.5 sm:mt-1">
+            <p className="text-gray-300 text-xs sm:text-sm mt-1">
               {profilesData?.profiles?.length || 0} team members
             </p>
           </div>
@@ -294,7 +321,7 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
                 {profilesData.profiles.map((player) => (
                   <li key={player._id}>
                     <button
-                      className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-gray-900 dark:text-white font-medium flex items-center gap-2 sm:gap-3 transition-all duration-200 group border-b border-gray-100 dark:border-gray-700 last:border-b-0"
+                      className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 hover:bg-gray-800 text-white font-medium flex items-center gap-2 sm:gap-3 transition-all duration-200 group border-b border-gray-700 last:border-b-0"
                       onClick={() => {
                         setShowRosterDropdown(false);
                         navigate(`/profiles/${player._id}`);
@@ -305,10 +332,10 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
                           <img 
                             src={player.profilePic} 
                             alt={`${player.name}'s avatar`} 
-                            className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600 group-hover:border-blue-300 dark:group-hover:border-blue-500 transition-colors" 
+                            className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover border-2 border-gray-600 group-hover:border-gray-500 transition-colors" 
                           />
                         ) : (
-                          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center border-2 border-gray-200 dark:border-gray-600 group-hover:border-blue-300 dark:group-hover:border-blue-500 transition-colors">
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center border-2 border-gray-600 group-hover:border-gray-500 transition-colors">
                             <FontAwesomeIcon 
                               icon={faPersonRunning} 
                               className="text-white text-sm sm:text-base" 
@@ -317,26 +344,26 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
                         )}
                         {/* Online indicator */}
                         {Auth.loggedIn() && Auth.getProfile().data._id === player._id && (
-                          <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
+                          <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-gray-900 rounded-full"></div>
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        <p className="text-xs sm:text-sm font-medium text-white truncate group-hover:text-gray-200 transition-colors">
                           {Auth.loggedIn() && Auth.getProfile().data._id === player._id ? "You" : player.name}
                         </p>
                         {player.position && (
-                          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                          <p className="text-xs text-gray-400 truncate">
                             {player.position}
                           </p>
                         )}
                       </div>
                       <div className="flex items-center gap-2">
                         {Auth.loggedIn() && Auth.getProfile().data._id === player._id && (
-                          <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 text-xs rounded-full font-medium">
+                          <span className="px-2 py-1 bg-blue-900 text-blue-300 text-xs rounded-full font-medium">
                             You
                           </span>
                         )}
-                        <svg className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                       </div>
@@ -346,19 +373,19 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
               </ul>
             ) : (
               <div className="px-4 py-8 text-center">
-                <FontAwesomeIcon icon={faPersonRunning} className="text-4xl text-gray-300 dark:text-gray-600 mb-3" />
-                <p className="text-gray-500 dark:text-gray-400 text-sm">No team members found</p>
+                <FontAwesomeIcon icon={faPersonRunning} className="text-4xl text-gray-600 mb-3" />
+                <p className="text-gray-400 text-sm">No team members found</p>
               </div>
             )}
           </div>
           {/* Footer */}
-          <div className="bg-gray-50 dark:bg-gray-700/50 px-3 sm:px-4 py-2 sm:py-3 border-t border-gray-200 dark:border-gray-600">
+          <div className="bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 border-t border-gray-700">
             <button
               onClick={() => {
                 setShowRosterDropdown(false);
                 navigate('/roster');
               }}
-              className="w-full text-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1 sm:gap-2"
+              className="w-full text-center text-blue-400 hover:text-blue-300 text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1 sm:gap-2"
             >
               <span>View Full Roster</span>
               <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -367,9 +394,10 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
             </button>
           </div>
         </div>
+        </>
       )}
-      {/* Right: Dark/Light mode toggle and sidebar toggle (arrow always visible) */}
-      <div className="hidden md:flex items-center ml-4 gap-2 mt-3">
+      {/* Right: Dark/Light mode toggle and sidebar toggle (arrow always visible) - Hidden on small screens */}
+      <div className="hidden lg:flex items-center ml-4 gap-2 mt-3">
         <button
           onClick={toggleDarkMode}
           className="rounded-full p-2 bg-gray-100 dark:bg-gray-600 shadow hover:bg-gray-600 dark:hover:bg-gray-400 transition-colors"
@@ -380,12 +408,93 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
         {/* Sidebar toggle controller - always visible */}
         <img
           src={controlImage}
-          className={`hidden lg:block cursor-pointer w-6 md:w-8 lg:w-10 border-dark-blue border-2 rounded-full bg-white transition-transform duration-300 ml-2 ${open ? '' : 'rotate-180'}`}
+          className={`cursor-pointer w-6 md:w-8 lg:w-10 border-dark-blue border-2 rounded-full bg-white transition-transform duration-300 ml-2 ${open ? '' : 'rotate-180'}`}
           style={{ marginTop: 2 }}
           onClick={onToggleMenu}
           alt="toggle menu"
         />
       </div>
     </div>
+
+      {/* Mobile Bottom Navigation - Visible below 976px, hidden at 976px+ (custom lg breakpoint) */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[50] bg-gray-100 dark:bg-gray-800 border-t-2 border-gray-300 dark:border-gray-700 shadow-2xl pb-safe">
+        <div className="flex items-center justify-around px-1 py-2 overflow-x-auto scrollbar-hide">
+          {BUTTONS.map((btn, index) => {
+            const isRoster = btn.key === "roster";
+            return (
+              <React.Fragment key={btn.key}>
+                {isRoster ? (
+                  <div className="relative flex-shrink-0">
+                    <button
+                      ref={mobileRosterBtnRef}
+                      className={`flex flex-col items-center gap-1 px-2 py-1.5 rounded-lg font-semibold text-xs transition-all duration-300 transform active:scale-95 min-w-[60px] justify-center ${
+                        isDarkMode
+                          ? "text-gray-200 hover:bg-gray-700/50"
+                          : "text-gray-700 hover:bg-gray-200/50"
+                      }`}
+                      onClick={() => setShowRosterDropdown((prev) => !prev)}
+                    >
+                      <FontAwesomeIcon icon={btn.icon} className="text-lg" />
+                      <span className="text-[10px] font-bold tracking-wide truncate">{btn.label}</span>
+                      <FaChevronDown 
+                        className={`text-[8px] transition-transform duration-200 ${
+                          showRosterDropdown ? 'rotate-0' : 'rotate-180'
+                        }`} 
+                      />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    className={`flex flex-col items-center gap-1 px-2 py-1.5 rounded-lg font-bold text-xs transition-all duration-300 transform active:scale-95 flex-shrink-0 min-w-[60px] justify-center ${
+                      location.pathname === btn.path?.split('#')[0]
+                        ? isDarkMode
+                          ? "bg-gradient-to-br from-blue-600 via-purple-600 to-blue-700 text-white shadow-lg"
+                          : "bg-gradient-to-br from-blue-500 via-purple-500 to-blue-600 text-white shadow-lg"
+                        : isDarkMode
+                          ? "text-gray-200 hover:bg-gray-700/50"
+                          : "text-gray-700 hover:bg-gray-200/50"
+                    }`}
+                    onClick={() => {
+                      if (btn.action === "search") {
+                        navigate("/game-search");
+                      } else if (btn.key === "creategame") {
+                        navigate("/game-create", { state: { showCreateGame: true } });
+                      } else {
+                        navigate(btn.path);
+                      }
+                    }}
+                  >
+                    <FontAwesomeIcon icon={btn.icon} className="text-lg" />
+                    <span className="text-[10px] font-bold tracking-wide truncate">{btn.label}</span>
+                  </button>
+                )}
+                
+                {/* Separator between buttons */}
+                {index < BUTTONS.length - 1 && (
+                  <div className={`h-8 w-px ${isDarkMode ? 'bg-gray-600' : 'bg-gray-400'}`}></div>
+                )}
+              </React.Fragment>
+            );
+          })}
+          
+          {/* Separator before theme toggle */}
+          <div className={`h-8 w-px ${isDarkMode ? 'bg-gray-600' : 'bg-gray-400'}`}></div>
+          
+          {/* Dark Mode Toggle for Mobile */}
+          <button
+            onClick={toggleDarkMode}
+            className={`flex flex-col items-center gap-1 px-2 py-1.5 rounded-lg font-bold text-xs transition-all duration-300 transform active:scale-95 flex-shrink-0 min-w-[60px] justify-center ${
+              isDarkMode
+                ? "text-gray-200 hover:bg-gray-700/50"
+                : "text-gray-700 hover:bg-gray-200/50"
+            }`}
+            aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} className="text-lg" />
+            <span className="text-[10px] font-bold tracking-wide">Theme</span>
+          </button>
+        </div>
+      </div>
+    </>
   );
 }
