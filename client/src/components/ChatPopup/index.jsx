@@ -367,56 +367,109 @@ const ChatPopup = ({ currentUser }) => {
   })();
 
   return (
-    <div className="fixed bottom-0 right-4 w-80 chat-popup-container z-[500]">
-      {/* Modern Header */}
-      <div
-        className={`flex items-center justify-between p-2 rounded-t-2xl cursor-pointer shadow-2xl backdrop-blur-sm border-t border-x transition-all duration-300 hover:shadow-lg chat-popup-header ${
-          isDarkMode 
-            ? 'bg-gradient-to-r from-gray-800 to-gray-900 border-gray-700 text-white' 
-            : 'bg-gradient-to-r from-blue-600 to-blue-700 border-blue-500 text-white'
-        }`}
-        onClick={() => setChatPopupOpen(o => !o)}
-        onKeyPress={e => e.key === 'Enter' && setChatPopupOpen(o => !o)}
-      >
-        <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-full flex items-center justify-center relative ${
-            isDarkMode ? 'bg-blue-600' : 'bg-blue-500'
-          } shadow-lg`}>
-            <FaComments className="text-lg text-white" />
-            {/* Primary notification badge */}
+    <div className="fixed bottom-0 right-4 chat-popup-container z-[500]">
+      {/* Mobile: Compact Icon Button (sm and below) */}
+      <div className="sm:hidden">
+        <button
+          onClick={() => setChatPopupOpen(o => !o)}
+          className={`w-14 h-14 rounded-full flex items-center justify-center relative shadow-2xl transition-all duration-300 hover:scale-110 ${
+            isDarkMode 
+              ? 'bg-gradient-to-r from-gray-800 to-gray-900 text-white' 
+              : 'bg-gradient-to-r from-blue-600 to-blue-700 text-white'
+          }`}
+          aria-label={`Chat${totalNotifications > 0 ? ` - ${totalNotifications} new messages` : ''}`}
+        >
+          <FaComments className="text-xl" />
+          {/* Notification badge for mobile */}
+          {totalNotifications > 0 && (
+            <div className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold rounded-full min-w-[22px] h-[22px] flex items-center justify-center shadow-lg animate-pulse border-2 border-white">
+              {totalNotifications > 99 ? '99+' : totalNotifications}
+            </div>
+          )}
+        </button>
+      </div>
+
+      {/* Desktop: Full Header (sm and above) */}
+      <div className="hidden sm:block w-80">
+        <div
+          className={`flex items-center justify-between p-2 rounded-t-2xl cursor-pointer shadow-2xl backdrop-blur-sm border-t border-x transition-all duration-300 hover:shadow-lg chat-popup-header ${
+            isDarkMode 
+              ? 'bg-gradient-to-r from-gray-800 to-gray-900 border-gray-700 text-white' 
+              : 'bg-gradient-to-r from-blue-600 to-blue-700 border-blue-500 text-white'
+          }`}
+          onClick={() => setChatPopupOpen(o => !o)}
+          onKeyPress={e => e.key === 'Enter' && setChatPopupOpen(o => !o)}
+        >
+          <div className="flex items-center gap-3">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center relative ${
+              isDarkMode ? 'bg-blue-600' : 'bg-blue-500'
+            } shadow-lg`}>
+              <FaComments className="text-lg text-white" />
+              {/* Primary notification badge */}
+              {totalNotifications > 0 && (
+                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center shadow-lg animate-pulse border-2 border-white">
+                  {totalNotifications > 99 ? '99+' : totalNotifications}
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col">
+              <span className="font-bold text-sm">ChatBox</span>
+              {totalNotifications > 0 && (
+                <span className="text-xs opacity-75">
+                  {totalNotifications} new message{totalNotifications > 1 ? 's' : ''}
+                </span>
+              )}
+            </div>
+            {/* Secondary notification badge (for emphasis) */}
             {totalNotifications > 0 && (
-              <div className="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center shadow-lg animate-pulse border-2 border-white">
+              <div className="bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold rounded-full min-w-[24px] h-6 flex items-center justify-center shadow-lg animate-pulse border border-white ml-auto">
                 {totalNotifications > 99 ? '99+' : totalNotifications}
               </div>
             )}
           </div>
-          <div className="flex flex-col">
-            <span className="font-bold text-sm">ChatBox</span>
-            {totalNotifications > 0 && (
-              <span className="text-xs opacity-75">
-                {totalNotifications} new message{totalNotifications > 1 ? 's' : ''}
-              </span>
-            )}
+          <div className="transition-transform duration-200">
+            {chatPopupOpen ? <FaChevronDown className="text-sm" /> : <FaChevronUp className="text-sm" />}
           </div>
-          {/* Secondary notification badge (for emphasis) */}
-          {totalNotifications > 0 && (
-            <div className="bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold rounded-full min-w-[24px] h-6 flex items-center justify-center shadow-lg animate-pulse border border-white ml-auto">
-              {totalNotifications > 99 ? '99+' : totalNotifications}
-            </div>
-          )}
-        </div>
-        <div className="transition-transform duration-200">
-          {chatPopupOpen ? <FaChevronDown className="text-sm" /> : <FaChevronUp className="text-sm" />}
         </div>
       </div>
 
       {/* Modern Body */}
       {chatPopupOpen && (
-        <div className={`flex flex-col border-x border-b rounded-b-2xl overflow-hidden shadow-2xl backdrop-blur-sm animate-chat-popup chat-popup-body ${
+        <div className={`flex flex-col overflow-hidden shadow-2xl backdrop-blur-sm animate-chat-popup chat-popup-body ${
           isDarkMode 
-            ? 'bg-gradient-to-b from-gray-900/95 to-gray-800/95 border-gray-700 text-white' 
-            : 'bg-gradient-to-b from-white/95 to-gray-50/95 border-gray-200 text-gray-800'
-        }`} style={{ height: '500px' }}>
+            ? 'bg-gradient-to-b from-gray-900/95 to-gray-800/95 text-white border-gray-700' 
+            : 'bg-gradient-to-b from-white/95 to-gray-50/95 text-gray-800 border-gray-200'
+        } 
+        sm:border-x sm:border-b sm:rounded-b-2xl sm:h-[500px]
+        fixed sm:static left-0 right-0 sm:left-auto sm:right-auto w-full sm:w-auto z-[600] sm:z-auto
+        `}>
+          
+          {/* Mobile Close Button - Only visible on small screens */}
+          <div className="sm:hidden flex items-center justify-between p-4 border-b sticky top-0 z-10 backdrop-blur-md" style={{
+            backgroundColor: isDarkMode ? 'rgba(17, 24, 39, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+            borderColor: isDarkMode ? 'rgb(55, 65, 81)' : 'rgb(229, 231, 235)'
+          }}>
+            <div className="flex-1">
+              <h3 className="font-bold text-lg flex items-center gap-2">
+                <FaComments className="text-blue-500" />
+                ChatBox
+              </h3>
+              <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                Choose any team member to start chatting
+              </p>
+            </div>
+            <button
+              onClick={() => setChatPopupOpen(false)}
+              className={`p-2 rounded-full transition-colors duration-200 ${
+                isDarkMode 
+                  ? 'hover:bg-gray-700 text-gray-400 hover:text-white' 
+                  : 'hover:bg-gray-100 text-gray-500 hover:text-gray-800'
+              }`}
+              aria-label="Close chat"
+            >
+              <FaTimes className="text-xl" />
+            </button>
+          </div>
           
           {/* Not logged in */}
           {!isLoggedIn && (
@@ -442,7 +495,7 @@ const ChatPopup = ({ currentUser }) => {
           {/* Players List */}
           {isLoggedIn && !selectedUserId && (
             <div className="flex flex-col h-full">
-              <div className={`p-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+              <div className={`p-4 border-b hidden sm:block ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                 <h3 className="font-bold text-lg flex items-center gap-2">
                   <FaComments className="text-blue-500" />
                   Team Members

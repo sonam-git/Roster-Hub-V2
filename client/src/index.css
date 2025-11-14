@@ -2006,6 +2006,29 @@ html {
   z-index: 100002 !important;
 }
 
+/* Mobile-specific chat popup styles */
+@media (max-width: 640px) {
+  .chat-popup-container {
+    right: 1rem !important;
+    bottom: 1rem !important;
+  }
+  
+  /* Full screen chat on mobile when open */
+  .chat-popup-body {
+    position: fixed !important;
+    top: 13rem !important; /* Increased from 4.5rem to avoid header overlap */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: calc(100vh - 7rem) !important; /* Adjusted to match new top value */
+    max-height: calc(100vh - 7rem) !important;
+    border-radius: 0 !important;
+    z-index: 100001 !important;
+    padding-top: env(safe-area-inset-top, 0) !important; /* Add safe area for notched devices */
+  }
+}
+
 /* Fade in up animation for skill cards */
 @keyframes fadeInUp {
   from {
