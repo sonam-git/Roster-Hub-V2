@@ -197,7 +197,7 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
                 </span>
                 
                 {/* Call-to-action with pulse effect */}
-                <span className=" md:inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-400 dark:to-emerald-500 text-white dark:text-gray-900 font-bold text-sm rounded-full shadow-lg animate-pulse border border-green-400/50 dark:border-green-300/50">
+                <span className="md:inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-400 dark:to-emerald-500 text-white dark:text-gray-900 font-bold text-sm rounded-full shadow-lg animate-pulse border border-green-400/50 dark:border-green-300/50">
                   <span>JOIN NOW</span>
                   <span className="animate-bounce">🚀</span>
                 </span>
@@ -263,7 +263,7 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
         )}
       </div>
       {/* Roster Dropdown (centered modal-style dropdown) */}
-      {showRosterDropdown && (
+      {isLoggedIn && showRosterDropdown && (
         <>
           {/* Backdrop */}
           <div 
@@ -396,7 +396,7 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
         </div>
         </>
       )}
-      {/* Right: Dark/Light mode toggle and sidebar toggle (arrow always visible) - Hidden on small screens */}
+      {/* Right: Dark/Light mode toggle and sidebar toggle (arrow always visible) */}
       <div className="hidden lg:flex items-center ml-4 gap-2 mt-3">
         <button
           onClick={toggleDarkMode}
@@ -416,7 +416,8 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
       </div>
     </div>
 
-      {/* Mobile Bottom Navigation - Visible below 976px, hidden at 976px+ (custom lg breakpoint) */}
+      {/* Mobile Bottom Navigation - Visible below 976px, hidden at 976px+ (custom lg breakpoint) - Only for logged in users */}
+      {isLoggedIn && (
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[50] bg-gray-100 dark:bg-gray-800 border-t-2 border-gray-300 dark:border-gray-700 shadow-2xl pb-safe">
         <div className="flex items-center justify-around px-1 py-2 overflow-x-auto scrollbar-hide">
           {BUTTONS.map((btn, index) => {
@@ -495,6 +496,7 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
           </button>
         </div>
       </div>
+      )}
     </>
   );
 }

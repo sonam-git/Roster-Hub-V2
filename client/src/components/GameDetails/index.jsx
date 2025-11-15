@@ -31,8 +31,6 @@ import Auth from "../../utils/auth";
 import { ThemeContext } from "../ThemeContext";
 import { getGameEffectiveStatus } from "../../utils/gameExpiration";
 import VotersList from "../VotersList";
-import GameUpdate from "../GameUpdate";
-import GameUpdateModal from "../GameUpdateModal";
 import GameComplete from "../GameComplete";
 import GameFeedback from "../GameFeedback";
 import GameFeedbackList from "../GameFeedbackList";
@@ -256,7 +254,6 @@ export default function GameDetails({ gameId }) {
   /* ─── LOCAL UI STATE ───────────────────────────────────────── */
   const [currentVote, setCurrentVote] = useState(null);
   const [updatedNote, setUpdatedNote] = useState("");
-  const [showUpdate, setShowUpdate] = useState(false);
   const [showComplete, setShowComplete] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
@@ -446,7 +443,7 @@ export default function GameDetails({ gameId }) {
                     <span className="text-sm sm:text-base">Confirm Game</span>
                   </button>
                   <button
-                    onClick={() => setShowUpdate(true)}
+                    onClick={() => navigate(`/game-update/${gameId}`)}
                     className="group px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-2 sm:gap-3"
                   >
                     <span className="text-lg sm:text-xl group-hover:scale-110 transition-transform duration-300">✏️</span>
@@ -1737,20 +1734,6 @@ export default function GameDetails({ gameId }) {
             </div>
           </div>
         </div>
-      )}
-
-      {isCreator && showUpdate && (
-        <GameUpdateModal
-          gameId={gameId}
-          initialDate={game.date}
-          initialTime={game.time}
-          initialVenue={game.venue}
-          initialCity={game.city}
-          initialNotes={game.notes}
-          initialOpponent={game.opponent}
-          isDarkMode={isDarkMode}
-          onClose={() => setShowUpdate(false)}
-        />
       )}
 
       {isCreator && showComplete && (

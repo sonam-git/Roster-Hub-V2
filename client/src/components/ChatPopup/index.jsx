@@ -391,7 +391,7 @@ const ChatPopup = ({ currentUser }) => {
         `}</style>
         
         {/* Mobile: Compact Icon Button (visible below lg, positioned above bottom nav) */}
-        <div className="block lg:hidden mb-5">
+        <div className="block lg:hidden mb-10">
         <button
           onClick={() => setChatPopupOpen(o => !o)}
           className={`w-14 h-14 rounded-full flex items-center justify-center relative shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95 ${

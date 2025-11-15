@@ -23,6 +23,9 @@ const GameUpdate = ({
     opponent: initialOpponent || "",
   });
 
+  const [successMessage, setSuccessMessage] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
+
   const [updateGame, { loading, error }] = useMutation(UPDATE_GAME, {
     refetchQueries: [
       { query: QUERY_GAME,  variables: { gameId } },
@@ -30,8 +33,14 @@ const GameUpdate = ({
     ],
     awaitRefetchQueries: true,
     onCompleted: () => {
-      setFormState(prev => ({ ...prev, notes: "" }));
-      onClose();
+      setShowSuccess(true);
+      // Auto-hide success message and close after 3 seconds
+      setTimeout(() => {
+        setShowSuccess(false);
+        setTimeout(() => {
+          onClose();
+        }, 300); // Small delay for fade out animation
+      }, 3000);
     },
   });
 
@@ -54,17 +63,59 @@ const GameUpdate = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     const input = {};
-    if (formState.date     !== initialDate)    input.date     = formState.date;
-    if (formState.time     !== initialTime)    input.time     = formState.time;
-    if (formState.venue    !== initialVenue)   input.venue    = formState.venue;
-    if (formState.city     !== initialCity)    input.city     = formState.city;
-    if (formState.notes    !== initialNotes)   input.notes    = formState.notes;
-    if (formState.opponent !== initialOpponent)input.opponent = formState.opponent;
+    const updatedFields = [];
+    
+    // Field name mapping for user-friendly display
+    const fieldLabels = {
+      date: 'Date',
+      time: 'Time',
+      venue: 'Venue',
+      city: 'City',
+      notes: 'Notes',
+      opponent: 'Opponent Team'
+    };
+    
+    if (formState.date     !== initialDate)    {
+      input.date     = formState.date;
+      updatedFields.push(fieldLabels.date);
+    }
+    if (formState.time     !== initialTime)    {
+      input.time     = formState.time;
+      updatedFields.push(fieldLabels.time);
+    }
+    if (formState.venue    !== initialVenue)   {
+      input.venue    = formState.venue;
+      updatedFields.push(fieldLabels.venue);
+    }
+    if (formState.city     !== initialCity)    {
+      input.city     = formState.city;
+      updatedFields.push(fieldLabels.city);
+    }
+    if (formState.notes    !== initialNotes)   {
+      input.notes    = formState.notes;
+      updatedFields.push(fieldLabels.notes);
+    }
+    if (formState.opponent !== initialOpponent){
+      input.opponent = formState.opponent;
+      updatedFields.push(fieldLabels.opponent);
+    }
 
     if (!Object.keys(input).length) {
       onClose();
       return;
     }
+
+    // Create success message
+    let message = "The ";
+    if (updatedFields.length === 1) {
+      message += `${updatedFields[0]} has been updated successfully!`;
+    } else if (updatedFields.length === 2) {
+      message += `${updatedFields[0]} and ${updatedFields[1]} have been updated successfully!`;
+    } else {
+      const lastField = updatedFields.pop();
+      message += `${updatedFields.join(', ')}, and ${lastField} have been updated successfully!`;
+    }
+    setSuccessMessage(message);
 
     try {
       await updateGame({ variables: { gameId, input } });
@@ -188,6 +239,30 @@ const GameUpdate = ({
             }`}
           />
         </div>
+
+        {/* Success Message */}
+        {showSuccess && (
+          <div className="p-4 rounded-xl bg-green-50 dark:bg-green-900/20 border-2 border-green-500 dark:border-green-700 animate-fade-in shadow-lg">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center animate-bounce">
+                  <span className="text-white text-lg">✓</span>
+                </div>
+              </div>
+              <div className="flex-1">
+                <h4 className="text-green-800 dark:text-green-300 font-bold text-base mb-1">
+                  Update Successful!
+                </h4>
+                <p className="text-green-700 dark:text-green-400 text-sm font-medium">
+                  {successMessage}
+                </p>
+                <p className="text-green-600 dark:text-green-500 text-xs mt-2">
+                  All players have been notified about the changes.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Error Message */}
         {error && (

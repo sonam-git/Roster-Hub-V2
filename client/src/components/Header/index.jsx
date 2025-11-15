@@ -56,7 +56,7 @@ const Header = ({ open, setOpen }) => {
 
   const Menus = Auth.loggedIn()
     ? [
-        { title: "Home", icon: HiHome, path: "/" },
+        { title: "Home", icon: HiHome, path: "/", hideOnMobile: true },
         { title: "My Profile", icon: HiUser, path: "/me" },
         { title: "Roster", icon: HiUserGroup, path: "/roster" },
         { title: "Skill - List", icon: HiSparkles, path: "/skill" },
@@ -221,8 +221,11 @@ const Header = ({ open, setOpen }) => {
               const isActive = location.pathname === Menu.path;
               const isLogout = Menu.title === "Logout";
               
+              // Skip rendering if hideOnMobile is true and screen is mobile (< lg breakpoint)
+              const shouldHideOnMobile = Menu.hideOnMobile;
+              
               return (
-                <div key={index}>
+                <div key={index} className={shouldHideOnMobile ? "hidden lg:block" : ""}>
                   {/* Divider before each menu item (except first one) */}
                   {index > 0 && open && (
                     <div className={`my-2 border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-300'}`}></div>

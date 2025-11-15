@@ -28,6 +28,7 @@ import Skill from "./pages/Skill";
 import Game from "./pages/Game";
 import GameCreate from "./pages/GameCreate";
 import GameSearch from "./pages/GameSearch";
+import GameUpdatePage from "./pages/GameUpdatePage";
 import Score from "./pages/Score";
 import ForgotPassword from "./pages/ForgetPassword";
 import PasswordReset from "./pages/PasswordReset";
@@ -158,6 +159,7 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
             />
             <Route path="/scoreboard" element={<Score />} />
             <Route path="/about" element={<About />} />
+            <Route path="/game-update/:gameId" element={<GameUpdatePage />} />
           </Routes>
           </div>
           {Auth.loggedIn() && currentUser && (

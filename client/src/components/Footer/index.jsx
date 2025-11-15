@@ -10,7 +10,7 @@ const Footer = ({ className = "" }) => {
     <footer className={`w-full bg-gray-800 text-white py-6 relative z-[400] mt-auto ${className}`} style={{boxShadow: '0 -2px 16px rgba(0,0,0,0.08)'}}>
       <div className="w-full mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 max-w-7xl flex flex-col md:flex-row items-center justify-between gap-3">
         <div className="flex flex-col md:flex-row items-center gap-3">
-          <span className="text-sm">&copy; {year} - Roster Hub | Sonam J Sherpa</span>
+          <span className="text-sm">&copy; {year} - Roster Hub </span>
         </div>
         <div className="flex items-center gap-4 mt-2 md:mt-0">
           <a
