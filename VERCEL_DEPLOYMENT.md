@@ -1,7 +1,30 @@
 # Vercel Deployment Guide
 
 ## Overview
-Your Roster Hub application is now configured to deploy entirely on Vercel (both frontend and backend).
+Your Roster Hub application is configured to deploy to Vercel with:
+- **Frontend**: React app served from `client/dist`
+- **Backend**: GraphQL API as Vercel Serverless Function in `/api/graphql.js`
+
+## Important: WebSocket Limitations
+
+⚠️ **Vercel does NOT support persistent WebSocket connections** on serverless functions.
+
+Your app uses WebSockets for:
+- Real-time chat
+- Online status updates
+- Live game updates
+
+### Recommended Solution: Hybrid Deployment
+
+**Option 1: Frontend on Vercel + Backend Elsewhere (RECOMMENDED)**
+- Deploy frontend to Vercel (fast, free)
+- Deploy backend to Railway, Render, or Fly.io (WebSocket support)
+- Update API URLs in `App.jsx` to point to your backend service
+
+**Option 2: Deploy Everything to Railway/Render**
+- Full WebSocket support
+- No serverless limitations
+- Single deployment
 
 ## Changes Made
 
