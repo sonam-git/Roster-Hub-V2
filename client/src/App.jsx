@@ -45,12 +45,12 @@ import About from "./pages/About";
 // Define HTTP and WebSocket URIs based on environment
 const httpUri =
   import.meta.env.MODE === "production"
-    ? "https://roster-hub-v2-240f2b371524.herokuapp.com/graphql"
+    ? "https://roster-hub-v2-y6j2.vercel.app/graphql"
     : "http://localhost:3001/graphql";
 
 const wsUri =
   import.meta.env.MODE === "production"
-    ? "wss://roster-hub-v2-240f2b371524.herokuapp.com/graphql"
+    ? "wss://roster-hub-v2-y6j2.vercel.app/graphql"
     : "ws://localhost:3001/graphql";
 
 const authLink = setContext((_, { headers }) => {
