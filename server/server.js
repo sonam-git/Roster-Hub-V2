@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const cors = require("cors");
 const { ApolloServer } = require("apollo-server-express");
 const { ApolloServerPluginDrainHttpServer } = require("apollo-server-core");
 const { makeExecutableSchema } = require("@graphql-tools/schema");
@@ -19,6 +20,28 @@ const app = express();
 //system for real-time GraphQL subscriptions
 const { PubSub } = require("graphql-subscriptions");
 const pubsub = new PubSub(); // Ensure this instance is used in the resolvers
+
+// CORS configuration - Allow requests from your Vercel frontend
+const allowedOrigins = [
+  "https://roster-hub-v2-y6j2.vercel.app",
+  "http://localhost:5173",
+  "http://localhost:3000",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
 // Middleware to handle file uploads
 app.use(graphqlUploadExpress());
@@ -119,10 +142,7 @@ const startApolloServer = async () => {
   server.applyMiddleware({
     app,
     path: "/graphql",
-    cors: {
-      origin: "*", // or specify your frontend's domain
-      credentials: true,
-    },
+    cors: false, // CORS is handled by Express middleware above
   });
 
   // Start the Express server

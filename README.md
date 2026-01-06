@@ -46,7 +46,7 @@ npm install
 ![Application Gif](./client/src/assets/videos/Roster-hub.gif)
 
 ## Deployed Heroku URl Roster-Hub Version 2 : 
-(https://roster-hub-v2-240f2b371524.herokuapp.com//)
+(https://roster-hub-v2-y6j2.vercel.app)
 
 
 ## License & Copyright ©
