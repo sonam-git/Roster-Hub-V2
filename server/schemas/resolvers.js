@@ -17,6 +17,7 @@ const {
   Chat,
   Game,
   Formation,
+  Organization,
 } = require("../models");
 const { signToken } = require("../utils/auth");
 const cloudinary = require("../utils/cloudinary");
@@ -326,13 +327,44 @@ const resolvers = {
     // **************************  SIGN UP / ADD USER *******************************************//
     addProfile: async (parent, { name, email, password }) => {
       const profile = await Profile.create({ name, email, password });
-      const token = signToken(profile);
+      
+      // Create default organization for new user
+      const slugBase = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      const organization = await Organization.create({
+        name: `${name}'s Team`,
+        slug: `${slugBase}-${Date.now()}`,
+        owner: profile._id,
+        members: [profile._id],
+        usage: { 
+          memberCount: 1, 
+          gameCount: 0, 
+          storageUsed: 0 
+        },
+      });
 
-      return { token, profile };
+      // Update profile with organization
+      profile.organizations = [{
+        organizationId: organization._id,
+        role: 'owner',
+      }];
+      profile.currentOrganization = organization._id;
+      await profile.save();
+
+      // Populate organization for response
+      await organization.populate('owner');
+
+      const token = signToken({
+        email: profile.email,
+        name: profile.name,
+        _id: profile._id,
+        organizationId: organization._id,
+      });
+
+      return { token, profile, organization };
     },
     // ************************** LOGIN  *******************************************//
     login: async (parent, { email, password }) => {
-      const profile = await Profile.findOne({ email });
+      const profile = await Profile.findOne({ email }).populate('currentOrganization');
 
       if (!profile) {
         throw new AuthenticationError(
@@ -346,8 +378,26 @@ const resolvers = {
         throw new AuthenticationError("Incorrect email or password!");
       }
 
-      const token = signToken(profile);
-      return { token, profile };
+      // Get current organization or first organization
+      let organizationId = null;
+      let organization = null;
+      
+      if (profile.currentOrganization) {
+        organizationId = profile.currentOrganization._id;
+        organization = profile.currentOrganization;
+      } else if (profile.organizations && profile.organizations.length > 0) {
+        organizationId = profile.organizations[0].organizationId;
+        organization = await Organization.findById(organizationId);
+      }
+
+      const token = signToken({
+        email: profile.email,
+        name: profile.name,
+        _id: profile._id,
+        organizationId: organizationId,
+      });
+
+      return { token, profile, organization };
     },
     // ************************** LOGIN WITH GOOGLE  *******************************************//
     loginWithGoogle: async (parent, { idToken }) => {
@@ -364,19 +414,63 @@ const resolvers = {
       } = ticket.getPayload();
 
       // Find or create user
-      let profile = await Profile.findOne({ email });
+      let profile = await Profile.findOne({ email }).populate('currentOrganization');
+      let organization = null;
+      let isNewUser = false;
+
       if (!profile) {
+        // Create new profile
         profile = await Profile.create({
           name,
           email,
           password: googleId,
           profilePic,
         });
+        isNewUser = true;
+
+        // Create default organization for new user
+        const slugBase = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        organization = await Organization.create({
+          name: `${name}'s Team`,
+          slug: `${slugBase}-${Date.now()}`,
+          owner: profile._id,
+          members: [profile._id],
+          usage: { 
+            memberCount: 1, 
+            gameCount: 0, 
+            storageUsed: 0 
+          },
+        });
+
+        // Update profile with organization
+        profile.organizations = [{
+          organizationId: organization._id,
+          role: 'owner',
+        }];
+        profile.currentOrganization = organization._id;
+        await profile.save();
+        await organization.populate('owner');
+      } else {
+        // Existing user - get their organization
+        if (profile.currentOrganization) {
+          organization = profile.currentOrganization;
+        } else if (profile.organizations && profile.organizations.length > 0) {
+          organization = await Organization.findById(profile.organizations[0].organizationId);
+        }
       }
 
+      // Get organization ID for token
+      const organizationId = organization ? organization._id : null;
+
       // Sign JWT
-      const token = signToken(profile);
-      return { token, profile };
+      const token = signToken({
+        email: profile.email,
+        name: profile.name,
+        _id: profile._id,
+        organizationId: organizationId,
+      });
+
+      return { token, profile, organization };
     },
     // ************************** ADD INFO *******************************************//
     addInfo: async (
@@ -2000,6 +2094,30 @@ const resolvers = {
       return await Profile.findById(parent.user);
     },
   },
+};
+
+// ########## INTEGRATE ORGANIZATION RESOLVERS ########## //
+const organizationResolvers = require('./organizationResolvers');
+
+// Merge organization queries
+resolvers.Query = {
+  ...resolvers.Query,
+  ...organizationResolvers.Query,
+};
+
+// Merge organization mutations
+resolvers.Mutation = {
+  ...resolvers.Mutation,
+  ...organizationResolvers.Mutation,
+};
+
+// Merge Profile field resolvers
+if (!resolvers.Profile) {
+  resolvers.Profile = {};
+}
+resolvers.Profile = {
+  ...resolvers.Profile,
+  ...organizationResolvers.Profile,
 };
 
 module.exports = resolvers;

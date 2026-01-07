@@ -22,6 +22,8 @@ const authMiddleware = function ({ req }) {
   try {
     const { data } = jwt.verify(token, secret, { maxAge: expiration });
     req.user = data;
+    // Add organizationId to request context for multi-tenant support
+    req.organizationId = data.organizationId;
   } catch {
     console.log('Invalid token!');
   }
@@ -30,8 +32,8 @@ const authMiddleware = function ({ req }) {
   return req;
 };
 
-const signToken = function ({ email, name, _id }) {
-  const payload = { email, name, _id };
+const signToken = function ({ email, name, _id, organizationId }) {
+  const payload = { email, name, _id, organizationId };
   return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
 };
 
