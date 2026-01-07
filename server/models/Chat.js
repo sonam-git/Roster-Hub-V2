@@ -30,7 +30,18 @@ const chatSchema = new Schema({
       default: [],
     },
   ],
+  // Multi-tenant: Organization this chat message belongs to
+  organizationId: {
+    type: Schema.Types.ObjectId,
+    ref: "Organization",
+    required: true,
+    index: true,
+  },
 });
+
+// Indexes for efficient organization-scoped queries
+chatSchema.index({ organizationId: 1, from: 1, createdAt: -1 });
+chatSchema.index({ organizationId: 1, to: 1, createdAt: -1 });
 
 const Chat = model("Chat", chatSchema);
 

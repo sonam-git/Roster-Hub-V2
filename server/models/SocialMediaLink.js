@@ -15,7 +15,17 @@ const socialMediaLinkSchema = new Schema({
     type: String,
     required: true,
   },
+  // Multi-tenant: Organization this social media link belongs to
+  organizationId: {
+    type: Schema.Types.ObjectId,
+    ref: "Organization",
+    required: true,
+    index: true,
+  },
 });
+
+// Index for efficient organization-scoped queries
+socialMediaLinkSchema.index({ organizationId: 1, userId: 1 });
 
 const SocialMediaLink = model("SocialMediaLink", socialMediaLinkSchema);
 

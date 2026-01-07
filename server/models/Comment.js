@@ -31,7 +31,17 @@ const commentSchema = new Schema({
     ref: "Profile",
     required: true,
   },
+  // Multi-tenant: Organization this comment belongs to
+  organizationId: {
+    type: Schema.Types.ObjectId,
+    ref: "Organization",
+    required: true,
+    index: true,
+  },
 });
+
+// Index for efficient organization-scoped queries
+commentSchema.index({ organizationId: 1, createdAt: -1 });
 
 const Comment = model("Comment", commentSchema);
 

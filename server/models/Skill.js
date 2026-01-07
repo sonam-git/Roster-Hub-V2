@@ -35,9 +35,19 @@ const skillSchema = new Schema(
         },
       },
     ],
+    // Multi-tenant: Organization this skill endorsement belongs to
+    organizationId: {
+      type: Schema.Types.ObjectId,
+      ref: "Organization",
+      required: true,
+      index: true,
+    },
   },
   {
     timestamps: true,
   }
 );
+
+// Index for efficient organization-scoped queries
+skillSchema.index({ organizationId: 1, recipient: 1, createdAt: -1 });
 module.exports = model("Skill", skillSchema);
