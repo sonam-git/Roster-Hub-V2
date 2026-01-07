@@ -58,12 +58,54 @@ const FOOTBALL_API = "https://api.football-data.org/v4";
 // In-memory set to track online users
 const onlineUsers = require("../utils/onlineUsers");
 
+// ########## HELPER FUNCTIONS FOR MULTI-TENANT SUPPORT ########## //
+
+/**
+ * Validates that the user is authenticated and has an active organization
+ * @param {Object} context - GraphQL context containing user and organizationId
+ * @throws {AuthenticationError} If user is not logged in or has no active organization
+ */
+const requireOrganizationContext = (context) => {
+  if (!context.user) {
+    throw new AuthenticationError("You need to be logged in!");
+  }
+  if (!context.organizationId) {
+    throw new AuthenticationError("You need to have an active organization! Please select or create an organization.");
+  }
+};
+
+/**
+ * Validates organization membership for a user
+ * @param {String} organizationId - Organization ID to check
+ * @param {String} userId - User ID to validate
+ * @throws {AuthenticationError} If user is not a member of the organization
+ */
+const validateOrganizationMembership = async (organizationId, userId) => {
+  const org = await Organization.findById(organizationId);
+  if (!org) {
+    throw new UserInputError("Organization not found!");
+  }
+  if (!org.isUserMember(userId)) {
+    throw new AuthenticationError("You are not a member of this organization!");
+  }
+  return org;
+};
+
 const resolvers = {
   // ############ QUERIES ########## //
   Query: {
     // ************************** QUERY ALL PROFILES *******************************************//
-    profiles: async () => {
-      return Profile.find()
+    profiles: async (parent, args, context) => {
+      requireOrganizationContext(context);
+      
+      // Get organization to filter by members
+      const org = await Organization.findById(context.organizationId);
+      if (!org) {
+        throw new UserInputError("Organization not found!");
+      }
+
+      // Return only profiles that are members of the current organization
+      return Profile.find({ _id: { $in: org.members } })
         .populate({
           path: "receivedMessages",
           populate: { path: "sender" },
@@ -81,7 +123,6 @@ const resolvers = {
           path: "posts",
           populate: { path: "comments" },
         });
-      // .populate("posts");
     },
     // ************************** QUERY SINGLE PROFILE *******************************************//
     profile: async (parent, { profileId }) => {
@@ -154,9 +195,11 @@ const resolvers = {
       }
     },
     // ************************** QUERY POSTS *******************************************//
-    posts: async () => {
+    posts: async (parent, args, context) => {
+      requireOrganizationContext(context);
+      
       try {
-        const posts = await Post.find()
+        const posts = await Post.find({ organizationId: context.organizationId })
           .sort({ createdAt: -1 })
           .populate("comments")
           .populate("likedBy")
@@ -204,9 +247,11 @@ const resolvers = {
       }
     },
     // ************************** QUERY SKILLS *******************************************//
-    skills: async () => {
+    skills: async (parent, args, context) => {
+      requireOrganizationContext(context);
+      
       try {
-        return await Skill.find()
+        return await Skill.find({ organizationId: context.organizationId })
           .sort({ createdAt: -1 })
           .populate("recipient", "name");
       } catch (err) {
@@ -266,10 +311,9 @@ const resolvers = {
     },
     // ************************** QUERY GAMES *******************************************//
     games: async (_, { status }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError("You need to be logged in to view games");
-      }
-      const filter = {};
+      requireOrganizationContext(context);
+      
+      const filter = { organizationId: context.organizationId };
       if (status) {
         filter.status = status;
       }
@@ -661,9 +705,8 @@ const resolvers = {
     },
     // ************************** ADD SKILL  *******************************************//
     addSkill: async (parent, { profileId, skillText }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError("You need to be logged in!");
-      }
+      requireOrganizationContext(context);
+      
       if (skillText.trim() === "") {
         throw new Error("skillText must not be empty");
       }
@@ -673,6 +716,7 @@ const resolvers = {
         skillText,
         skillAuthor: context.user.name,
         recipient: profileId,
+        organizationId: context.organizationId,
         createdAt: new Date().toISOString(),
       });
 
@@ -709,13 +753,8 @@ const resolvers = {
       }
     },
     // ************************** SEND MESSAGE (its different functionality, not related to the chat functionality)*******************************************//
-    sendMessage: async (_, { recipientId, text }, { user }) => {
-      // Check if the user is authenticated
-      if (!user) {
-        throw new AuthenticationError(
-          "You need to be logged in to send messages"
-        );
-      }
+    sendMessage: async (_, { recipientId, text }, context) => {
+      requireOrganizationContext(context);
 
       try {
         // Find the recipient user
@@ -726,9 +765,10 @@ const resolvers = {
 
         // Create a new message with the sender set to the authenticated user's ID
         const message = new Message({
-          sender: user._id, // Set the sender to the authenticated user's ID
+          sender: context.user._id, // Set the sender to the authenticated user's ID
           recipient: recipientId, // Set the recipient to the provided user ID
           text,
+          organizationId: context.organizationId,
           createdAt: new Date().toISOString(), // Format the current date and time
         });
 
@@ -736,7 +776,7 @@ const resolvers = {
         const savedMessage = await message.save();
         // Update sender's sentMessages and recipient's receivedMessages
         await Profile.findByIdAndUpdate(
-          user._id,
+          context.user._id,
           {
             $push: { sentMessages: savedMessage._id },
           },
@@ -810,11 +850,8 @@ const resolvers = {
 
     // ************************** CREATE CHAT AND SEND CHAT  *******************************************//
     createChat: async (parent, { from, to, content }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError(
-          "You need to be logged in to create a chat!"
-        );
-      }
+      requireOrganizationContext(context);
+      
       try {
         // Ensure the from, to, and content fields are provided
         if (!from || !to || !content) {
@@ -826,6 +863,7 @@ const resolvers = {
           from,
           to,
           content,
+          organizationId: context.organizationId,
         });
 
         const populatedChat = await Chat.findById(newChat._id).populate(
@@ -936,9 +974,7 @@ const resolvers = {
     },
     // ************************** ADD POST *******************************************//
     addPost: async (parent, { profileId, postText }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError("You need to be logged in!");
-      }
+      requireOrganizationContext(context);
 
       if (postText.trim() === "") {
         throw new Error("Post body must not be empty");
@@ -951,6 +987,7 @@ const resolvers = {
           postAuthor: context.user.name,
           createdAt: new Date().toISOString(),
           userId: context.user._id,
+          organizationId: context.organizationId,
         });
 
         // Update the profile to include the post
@@ -1054,15 +1091,15 @@ const resolvers = {
     },
     // ************************** ADD COMMENT *******************************************//
     addComment: async (parent, { postId, commentText }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError("You need to be logged in!");
-      }
+      requireOrganizationContext(context);
+      
       try {
         // 1️⃣ create the comment
         const newComment = await Comment.create({
           commentText,
           commentAuthor: context.user.name,
           userId: context.user._id,
+          organizationId: context.organizationId,
         });
 
         // 2️⃣ push its _id into the Post.comments array
@@ -1325,19 +1362,26 @@ const resolvers = {
     },
     // ************************** CREATE GAME *******************************************//
     createGame: async (_, { input }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError(
-          "You need to be logged in to create a game"
-        );
-      }
+      requireOrganizationContext(context);
+      
       const { date, time, venue, city, notes, opponent } = input;
       if (!date || !time || !venue || !city || !opponent) {
         throw new UserInputError(
           "Date, time, opponent, venue and city are required"
         );
       }
+
+      // Check if organization has reached game limit
+      const org = await Organization.findById(context.organizationId);
+      if (org.hasReachedGameLimit()) {
+        throw new UserInputError(
+          `Organization has reached its game limit of ${org.limits.maxGames}. Please upgrade your plan.`
+        );
+      }
+
       const newGame = await Game.create({
         creator: context.user._id,
+        organizationId: context.organizationId,
         date,
         time,
         venue,
@@ -1347,6 +1391,11 @@ const resolvers = {
         status: "PENDING",
         responses: [],
       });
+      
+      // Update organization usage
+      org.usage.gameCount += 1;
+      await org.save();
+
       const populated = await newGame.populate("creator");
 
       // publish creation
@@ -1563,7 +1612,7 @@ const resolvers = {
     },
     // ************************** CREATE A FORMATION | ONLY BY CREATOR *******************************************//
     createFormation: async (_, { gameId, formationType }, context) => {
-      if (!context.user) throw new AuthenticationError("Not logged in");
+      requireOrganizationContext(context);
 
       const game = await Game.findById(gameId);
       if (!game) throw new UserInputError("Game not found");
@@ -1578,6 +1627,7 @@ const resolvers = {
         game: gameId,
         formationType,
         positions: [],
+        organizationId: context.organizationId,
       });
 
       const full = await Formation.findById(formation._id)
