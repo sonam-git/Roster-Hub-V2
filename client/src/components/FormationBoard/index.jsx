@@ -135,17 +135,17 @@ function Slot({ slotId, player }) {
     <div
       ref={setNodeRef}
       className={`relative group transition-all duration-300 transform hover:scale-110 ${
-        isOver ? 'scale-125' : ''
+        isOver ? 'scale-125 z-10' : ''
       }`}
     >
-      {/* Player Circle */}
+      {/* Player Circle - Larger touch target for mobile */}
       <div
-        className={`w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full border-2 sm:border-4 flex flex-col items-center justify-center text-xs font-bold transition-all duration-300 shadow-lg ${
+        className={`w-14 h-14 sm:w-16 sm:h-16 lg:w-18 lg:h-18 rounded-full border-2 sm:border-4 flex flex-col items-center justify-center text-xs font-bold transition-all duration-300 shadow-lg ${
           isOver
-            ? 'bg-yellow-400 border-yellow-600 text-yellow-900 shadow-yellow-400/50'
+            ? 'bg-yellow-400 border-yellow-600 text-yellow-900 shadow-yellow-400/50 scale-110 ring-4 ring-yellow-300 animate-pulse'
             : hasPlayer
-            ? 'bg-gradient-to-br from-blue-500 to-blue-600 border-blue-300 text-white shadow-blue-500/30'
-            : 'bg-white border-gray-400 text-gray-600 shadow-gray-400/30 hover:border-blue-400'
+            ? 'bg-gradient-to-br from-blue-500 to-blue-600 border-blue-300 text-white shadow-blue-500/30 hover:shadow-blue-500/50'
+            : 'bg-white border-gray-400 text-gray-600 shadow-gray-400/30 hover:border-blue-400 hover:bg-blue-50'
         }`}
       >
         {hasPlayer ? (

@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from "react";
 import {
   DndContext,
   PointerSensor,
+  TouchSensor,
+  MouseSensor,
   useSensor,
   useSensors,
   DragOverlay,
@@ -114,7 +116,25 @@ export default function FormationSection({
   }, [formation]);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+    // Mouse sensor for desktop - very small delay for immediate response
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 3, // Reduced from 5 for easier dragging
+      },
+    }),
+    // Touch sensor for mobile devices - optimized for touch
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 100, // Short delay to distinguish from scrolling
+        tolerance: 5, // Allow small movements during delay
+      },
+    }),
+    // Pointer sensor as fallback for other input devices
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 3,
+      },
+    })
   );
 
   const handleDragStart = event => {
@@ -300,13 +320,18 @@ export default function FormationSection({
               />
             </div>
 
-            <DragOverlay>
+            <DragOverlay dropAnimation={null}>
               {draggingPlayer && (
-                <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-2xl shadow-2xl border-2 border-white/30 text-sm font-semibold flex items-center gap-3 backdrop-blur-sm transform scale-110">
-                  <span className="text-2xl">👤</span>
+                <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-4 rounded-2xl shadow-2xl border-4 border-white/40 text-sm font-semibold flex items-center gap-3 backdrop-blur-sm transform scale-110 ring-4 ring-blue-300/50 animate-pulse">
+                  <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                    <span className="text-2xl">👤</span>
+                  </div>
                   <div>
-                    <div className="font-bold">{draggingPlayer?.name || 'Unknown Player'}</div>
-                    <div className="text-xs opacity-75">• Dragging to position</div>
+                    <div className="font-bold text-lg">{draggingPlayer?.name || 'Unknown Player'}</div>
+                    <div className="text-xs opacity-90 flex items-center gap-1">
+                      <span>🎯</span>
+                      <span>Drop onto formation position</span>
+                    </div>
                   </div>
                 </div>
               )}

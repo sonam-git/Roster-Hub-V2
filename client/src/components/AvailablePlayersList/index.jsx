@@ -54,7 +54,7 @@ export default function AvailablePlayersList({ players, isCreator, isLoading = f
           </div>
         ) : (
           <FadeInOut show={validPlayers.length > 0} duration={300}>
-            <div className="grid grid-cols-3 gap-3 auto-rows-fr">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 auto-rows-fr">
               {validPlayers.map((player) =>
                 isCreator ? (
                   <DraggablePlayer key={player._id} player={player} />
@@ -112,9 +112,22 @@ function DraggablePlayer({ player }) {
     id: playerId,
   });
 
+  // Combine all inline styles to avoid duplicate style attributes
   const style = transform
-    ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` }
-    : undefined;
+    ? { 
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        transition: 'none', // Smooth dragging without transition
+        touchAction: 'none', // Prevent default touch behaviors
+        WebkitTouchCallout: 'none', // Disable callout on iOS
+        WebkitUserSelect: 'none',
+        userSelect: 'none',
+      }
+    : {
+        touchAction: 'none',
+        WebkitTouchCallout: 'none',
+        WebkitUserSelect: 'none',
+        userSelect: 'none',
+      };
 
   return (
     <div
@@ -122,13 +135,17 @@ function DraggablePlayer({ player }) {
       style={style}
       {...listeners}
       {...attributes}
-      className={`group bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-blue-300 dark:border-blue-600 p-3 shadow-sm hover:shadow-lg transition-all duration-200 transform hover:scale-105 cursor-move ${
-        isDragging ? 'opacity-50 rotate-3 scale-110 shadow-xl z-50' : ''
+      className={`group bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-blue-300 dark:border-blue-600 p-4 shadow-md hover:shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-105 touch-none select-none ${
+        isDragging 
+          ? 'opacity-60 rotate-2 scale-110 shadow-2xl ring-4 ring-blue-400/50 z-50 cursor-grabbing' 
+          : 'cursor-grab active:cursor-grabbing'
       }`}
     >
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-sm">
-          <span className="text-white font-bold text-sm">{initial}</span>
+        <div className={`w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg transition-transform duration-200 ${
+          isDragging ? 'scale-110' : 'group-hover:scale-110'
+        }`}>
+          <span className="text-white font-bold text-base">{initial}</span>
         </div>
         <div className="flex-1 min-w-0">
           <h4 className="font-semibold text-gray-800 dark:text-white text-sm truncate">
@@ -140,16 +157,19 @@ function DraggablePlayer({ player }) {
             </p>
           )}
         </div>
-        <div className="text-blue-500 group-hover:text-blue-600 transition-colors">
-          <span className="text-lg">↗️</span>
+        <div className={`text-blue-500 group-hover:text-blue-600 transition-all duration-200 ${
+          isDragging ? 'scale-125 rotate-45' : ''
+        }`}>
+          <span className="text-xl">🖐️</span>
         </div>
       </div>
       
       {!isDragging && (
         <div className="mt-2 text-xs text-blue-600 dark:text-blue-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <span className="flex items-center gap-1">
-            <span>🖱️</span>
-            <span>Drag to position</span>
+          <span className="flex items-center gap-1 justify-center">
+            <span>�</span>
+            <span className="hidden sm:inline">Drag to position</span>
+            <span className="sm:hidden">Tap & drag</span>
           </span>
         </div>
       )}
