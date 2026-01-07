@@ -127,7 +127,7 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
       >
         <Header open={sidebarOpen} setOpen={setSidebarOpen} />
         <div className={`flex-1 transition-all duration-300 pt-40 lg:pt-0 relative z-[2] flex flex-col`}>
-          <div className="flex-1">
+          <main role="main" className="flex-1">
             <Routes>
             <Route path="/" element={<Home />} />
             <Route
@@ -161,7 +161,7 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
             <Route path="/about" element={<About />} />
             <Route path="/game-update/:gameId" element={<GameUpdatePage />} />
           </Routes>
-          </div>
+          </main>
           {Auth.loggedIn() && currentUser && (
             <ChatPopup currentUser={currentUser} isDarkMode={isDarkMode} />
           )}

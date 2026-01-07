@@ -47,11 +47,12 @@ const MainHeader = ({ open, setOpen }) => {
               : "bg-gradient-to-r from-white to-gray-50 hover:from-gray-50 hover:to-gray-100 text-gray-900 shadow-lg border border-gray-200 scale-100"
           }`}
           onClick={toggleMenu}
+          aria-label={open ? "Close menu" : "Open menu"}
         >
           {open ? (
-            <HiXMark className={`text-2xl transition-all duration-500 ease-out rotate-180 scale-110`} />
+            <HiXMark className={`text-2xl transition-all duration-500 ease-out rotate-180 scale-110`} aria-hidden="true" />
           ) : (
-            <HiBars3 className={`text-2xl transition-all duration-500 ease-out rotate-0 scale-100`} />
+            <HiBars3 className={`text-2xl transition-all duration-500 ease-out rotate-0 scale-100`} aria-hidden="true" />
           )}
         </button>
 

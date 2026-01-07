@@ -457,9 +457,9 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
                           📅
                         </div>
                         <div>
-                          <h3 className={`text-xl md:text-2xl font-bold tracking-tight ${isDarkMode ? 'text-blue-200' : 'text-blue-700'}`}>
+                          <h2 className={`text-xl md:text-2xl font-bold tracking-tight ${isDarkMode ? 'text-blue-200' : 'text-blue-700'}`}>
                             {humanDate}
-                          </h3>
+                          </h2>
                           <p className={`text-sm font-medium ${isDarkMode ? 'text-blue-300' : 'text-blue-600'}`}>
                             🕐 {gameTime}
                           </p>
@@ -589,14 +589,16 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
         <button
           onClick={handlePrev}
           disabled={page === 0}
-          className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50"
+          className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 transition-colors"
+          aria-label="Previous page"
         >
           Prev
         </button>
         <button
           onClick={handleNext}
           disabled={page >= totalPages - 1}
-          className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50"
+          className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 transition-colors"
+          aria-label="Next page"
         >
           Next
         </button>
