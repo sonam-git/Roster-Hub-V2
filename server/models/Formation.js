@@ -28,6 +28,14 @@ const FormationCommentSchema = new Schema(
 
 const FormationSchema = new Schema(
   {
+    // Multi-tenant field
+    organizationId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Organization',
+      required: true,
+      index: true
+    },
+    
     game: {
       type: Schema.Types.ObjectId,
       ref: "Game",

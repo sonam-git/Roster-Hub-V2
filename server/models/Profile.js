@@ -21,7 +21,6 @@ const profileSchema = new Schema({
   name: {
     type: String,
     required: true,
-    unique: true,
     trim: true,
   },
   email: {
@@ -35,6 +34,29 @@ const profileSchema = new Schema({
     required: true,
     minlength: 5,
   },
+  
+  // Multi-tenant fields
+  currentOrganization: {
+    type: Schema.Types.ObjectId,
+    ref: 'Organization',
+    default: null
+  },
+  organizations: [{
+    organization: {
+      type: Schema.Types.ObjectId,
+      ref: 'Organization'
+    },
+    role: {
+      type: String,
+      enum: ['owner', 'admin', 'member'],
+      default: 'member'
+    },
+    joinedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  
   jerseyNumber: {
     type: Number,
     required: false,
@@ -110,6 +132,27 @@ profileSchema.methods.updateAverageRating = function () {
   const totalRatings = this.ratings.length;
   const sumRatings = this.ratings.reduce((sum, { rating }) => sum + rating, 0);
   this.averageRating = totalRatings > 0 ? sumRatings / totalRatings : 0;
+};
+
+// Check if user belongs to an organization
+profileSchema.methods.belongsToOrganization = function (organizationId) {
+  return this.organizations.some(
+    org => org.organization.toString() === organizationId.toString()
+  );
+};
+
+// Get user's role in an organization
+profileSchema.methods.getRoleInOrganization = function (organizationId) {
+  const org = this.organizations.find(
+    org => org.organization.toString() === organizationId.toString()
+  );
+  return org ? org.role : null;
+};
+
+// Check if user is admin or owner in an organization
+profileSchema.methods.isAdminInOrganization = function (organizationId) {
+  const role = this.getRoleInOrganization(organizationId);
+  return role === 'admin' || role === 'owner';
 };
 
 const Profile = model("Profile", profileSchema);

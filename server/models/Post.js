@@ -1,6 +1,14 @@
 const { Schema, model } = require("mongoose");
 
 const postSchema = new Schema({
+  // Multi-tenant field
+  organizationId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Organization',
+    required: true,
+    index: true
+  },
+  
   postText: {
     type: String,
     required: "You need to leave a post!",

@@ -30,6 +30,14 @@ const FeedbackSchema = new Schema({
 
 const GameSchema = new Schema(
   {
+    // Multi-tenant field
+    organizationId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Organization',
+      required: true,
+      index: true
+    },
+    
     creator: {
       type: Schema.Types.ObjectId,
       ref: "Profile",       // who created this game poll

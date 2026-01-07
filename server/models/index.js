@@ -7,5 +7,6 @@ const Comment = require('./Comment');
 const Chat = require('./Chat');
 const Game = require('./Game');
 const Formation = require('./Formation');
+const Organization = require('./Organization');
 
-module.exports = { Profile, Skill, Message,SocialMediaLink,Post,Comment,Chat,Game,Formation};
+module.exports = { Profile, Skill, Message, SocialMediaLink, Post, Comment, Chat, Game, Formation, Organization };
