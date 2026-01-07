@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useMutation } from '@apollo/client';
 import {
   UPDATE_FORMATION_COMMENT,
@@ -14,20 +14,36 @@ export default function FormationCommentItem({ comment, formationId }) {
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(comment.commentText);
 
-  const likedBy  = comment.likedBy ?? [];
-  const hasLiked = !!userId && likedBy.some(u => u._id === userId);
+  // Local state for likes to ensure UI consistency
+  const [localLikes, setLocalLikes] = useState(comment.likes || 0);
+  const [localLikedBy, setLocalLikedBy] = useState(comment.likedBy ?? []);
+
+  // Sync local state when comment prop changes (from subscription updates)
+  useEffect(() => {
+    setLocalLikes(comment.likes || 0);
+    setLocalLikedBy(comment.likedBy ?? []);
+  }, [comment.likes, comment.likedBy]);
+
+  const hasLiked = !!userId && localLikedBy.some(u => u._id === userId);
 
   // Like / Unlike
   const [likeComment] = useMutation(LIKE_FORMATION_COMMENT, {
     variables: { commentId: comment._id },
+    onCompleted: (data) => {
+      // Update local state with the mutation response
+      if (data?.likeFormationComment) {
+        setLocalLikes(data.likeFormationComment.likes);
+        setLocalLikedBy(data.likeFormationComment.likedBy ?? []);
+      }
+    },
     optimisticResponse: {
       likeFormationComment: {
         __typename: 'FormationComment',
         _id: comment._id,
-        likes: hasLiked ? comment.likes - 1 : comment.likes + 1,
+        likes: hasLiked ? localLikes - 1 : localLikes + 1,
         likedBy: hasLiked
-          ? likedBy.filter(u => u._id !== userId)
-          : [...likedBy, { __typename: 'Profile', _id: userId, name: comment.user.name }],
+          ? localLikedBy.filter(u => u._id !== userId)
+          : [...localLikedBy, { __typename: 'Profile', _id: userId, name: comment.user?.name || 'Anonymous' }],
       },
     },
   });
@@ -42,8 +58,8 @@ export default function FormationCommentItem({ comment, formationId }) {
         _id: comment._id,
         commentText: text,
         updatedAt: new Date().toISOString(),
-        likes: comment.likes,
-        likedBy,
+        likes: localLikes,
+        likedBy: localLikedBy,
       },
     },
   });
@@ -120,9 +136,9 @@ export default function FormationCommentItem({ comment, formationId }) {
           </div>
         </div>
       ) : (
-        <div className="space-y-3 bg-blue-100 dark:bg-gray-800 p-3 rounded-lg">
+        <div className="space-y-3 bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
           {/* Author Header */}
-          <div className="flex items-center justify-between ">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center shadow-sm">
                 <span className="text-white font-bold text-sm">
@@ -195,9 +211,9 @@ export default function FormationCommentItem({ comment, formationId }) {
                 {hasLiked ? '❤️' : '🤍'}
               </span>
               <div className="relative z-10 flex items-center gap-1">
-                <span className="font-bold">{comment.likes}</span>
+                <span className="font-bold">{localLikes}</span>
                 <span className="text-sm hidden sm:inline">
-                  {comment.likes === 1 ? 'like' : 'likes'}
+                  {localLikes === 1 ? 'like' : 'likes'}
                 </span>
               </div>
               

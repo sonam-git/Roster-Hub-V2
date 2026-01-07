@@ -1,4 +1,4 @@
-import { useEffect, useState, startTransition, Suspense } from "react";
+import { useEffect, useState, useRef, startTransition, Suspense } from "react";
 import { useQuery, useSubscription } from "@apollo/client";
 import {
   FORMATION_COMMENT_ADDED_SUBSCRIPTION,
@@ -20,11 +20,25 @@ function CommentsPane({ gameId }) {
   const formation = data?.formation || { _id: "", comments: [] };
   const formationId = formation?._id;
 
-  // instead, seed once when we get a new formationId:
+  // Track if we should sync from query (only on initial load or formationId change)
+  const isInitialMount = useRef(true);
+  const lastFormationId = useRef(formationId);
+
+  // Local state for comments
   const [comments, setComments] = useState(formation.comments);
+  
   useEffect(() => {
-    setComments(formation.comments);
-  }, [formationId, formation.comments]);
+    // Only sync from query data if:
+    // 1. Initial mount, OR
+    // 2. FormationId changed (different formation loaded)
+    if (isInitialMount.current || lastFormationId.current !== formationId) {
+      setComments(formation.comments);
+      isInitialMount.current = false;
+      lastFormationId.current = formationId;
+    }
+    // Don't sync on every formation.comments change to avoid duplicates from subscription
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formationId]); // Only depend on formationId, not formation.comments
 
   // subscriptions
   useSubscription(FORMATION_COMMENT_ADDED_SUBSCRIPTION, {
@@ -32,7 +46,15 @@ function CommentsPane({ gameId }) {
     skip: !formationId,
     onData: ({ data }) => {
       const newC = data.data?.formationCommentAdded;
-      if (newC) startTransition(() => setComments((prev) => [...prev, newC]));
+      if (newC) {
+        startTransition(() => 
+          setComments((prev) => {
+            // Prevent duplicates: only add if comment doesn't already exist
+            const exists = prev.some(c => c._id === newC._id);
+            return exists ? prev : [...prev, newC];
+          })
+        );
+      }
     },
   });
 
