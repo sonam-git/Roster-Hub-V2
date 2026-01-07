@@ -92,6 +92,36 @@ export default defineConfig({
       }
     })
   ],
+  build: {
+    // Code splitting and optimization
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor chunks for better caching
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'apollo-vendor': ['@apollo/client', 'graphql', 'graphql-ws'],
+          'ui-vendor': ['@headlessui/react', '@heroicons/react'],
+          'icons-vendor': ['react-icons', '@fortawesome/react-fontawesome', '@fortawesome/free-solid-svg-icons'],
+        },
+      },
+    },
+    // Chunk size warnings
+    chunkSizeWarningLimit: 600,
+    // Minification
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true, // Remove console.logs in production
+        drop_debugger: true,
+      },
+    },
+    // CSS code splitting
+    cssCodeSplit: true,
+  },
+  // Optimize dependencies
+  optimizeDeps: {
+    include: ['react', 'react-dom', '@apollo/client'],
+  },
   server: {
     port: 3000,
     proxy: {

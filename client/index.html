@@ -10,10 +10,39 @@
     <meta name="theme-color" content="#1F2937" media="(prefers-color-scheme: dark)" />
     <title>RosterHub - Team Management</title>
     
-    <!-- Google Fonts -->
+    <!-- Preconnect to critical origins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&family=Anton&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://rosterhub-production.up.railway.app">
+    <link rel="dns-prefetch" href="https://accounts.google.com">
+    
+    <!-- Google Fonts with font-display swap for performance -->
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&family=Anton&family=Bebas+Neue&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&family=Anton&family=Bebas+Neue&display=swap" rel="stylesheet">
+    </noscript>
+    
+    <!-- Inline critical font styles to prevent FOIT -->
+    <style>
+      /* Font face declarations with font-display: swap */
+      @font-face {
+        font-family: 'Oswald';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: local('Oswald Regular'), local('Oswald-Regular');
+      }
+      
+      /* Prevent layout shift from fonts */
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      }
+      
+      /* Reserve space for footer to prevent CLS */
+      footer {
+        min-height: 120px;
+      }
+    </style>
     
     <!-- PWA Meta Tags -->
     <meta name="description" content="Where Players Connect & Understand Before The Game! Manage your team roster, schedule games, track performance, and communicate with teammates." />

@@ -122,18 +122,20 @@ const Home = ({ isDarkMode }) => {
               <span className="text-xs">New Post</span>
             </button>
             <button
-              className={`bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all ${activeSection === "topplayers" ? "ring-4 ring-green-300" : ""}`}
+              className={`bg-green-700 hover:bg-green-800 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all ${activeSection === "topplayers" ? "ring-4 ring-green-300" : ""}`}
               onClick={() => setActiveSection("topplayers")}
+              aria-label="View top players"
             >
-              <FaStar className="text-2xl mb-1" />
-              <span className="text-xs">Top Players</span>
+              <FaStar className="text-2xl mb-1" aria-hidden="true" />
+              <span className="text-xs font-semibold">Top Players</span>
             </button>
             <button
-              className={`bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all ${activeSection === "upcominggames" ? "ring-4 ring-yellow-300" : ""}`}
+              className={`bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all ${activeSection === "upcominggames" ? "ring-4 ring-yellow-300" : ""}`}
               onClick={() => setActiveSection("upcominggames")}
+              aria-label="View upcoming games"
             >
-              <FaCalendarAlt className="text-2xl mb-1" />
-              <span className="text-xs">Upcoming Games</span>
+              <FaCalendarAlt className="text-2xl mb-1" aria-hidden="true" />
+              <span className="text-xs font-semibold">Upcoming Games</span>
             </button>
             <button
               className={`bg-gray-700 hover:bg-gray-800 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all ${activeSection === "recentskills" ? "ring-4 ring-gray-400" : ""}`}
