@@ -1,29 +1,5 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "api/graphql.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "client/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/graphql",
-      "dest": "api/graphql.js"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "client/dist/$1"
-    }
-  ]
+  "buildCommand": "cd client && npm install && npm run build",
+  "outputDirectory": "client/dist",
+  "installCommand": "npm install --prefix client"
 }
