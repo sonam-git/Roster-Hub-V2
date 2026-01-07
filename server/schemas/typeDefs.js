@@ -18,6 +18,10 @@ const typeDefs = gql`
     ratings: [Rating]
     averageRating: Float
     online: Boolean # Indicates if the user is currently online
+    # Multi-tenant fields
+    organizations: [Organization]
+    currentOrganization: Organization
+    roleInOrganization(organizationId: ID!): String
   }
 
   type Rating {
@@ -37,6 +41,7 @@ const typeDefs = gql`
     recipient: Profile!
     createdAt: String!
     reactions: [SkillReaction!]!
+    organizationId: ID!
   }
 
   type Post {
@@ -48,6 +53,7 @@ const typeDefs = gql`
     userId: Profile!
     likes: Int
     likedBy: [Profile]
+    organizationId: ID!
   }
 
   type Comment {
@@ -58,6 +64,7 @@ const typeDefs = gql`
     userId: ID!
     likes: Int
     likedBy: [Profile]
+    organizationId: ID!
   }
 
   type Message {
@@ -66,6 +73,7 @@ const typeDefs = gql`
     recipient: Profile!
     text: String!
     createdAt: String!
+    organizationId: ID!
   }
 
   type Chat {
@@ -75,6 +83,7 @@ const typeDefs = gql`
     content: String
     seen: Boolean
     createdAt: String!
+    organizationId: ID!
   }
 
   type SocialMediaLink {
@@ -82,6 +91,7 @@ const typeDefs = gql`
     userId: ID!
     type: String!
     link: String!
+    organizationId: ID!
   }
   type Game {
     _id: ID!
@@ -103,6 +113,7 @@ const typeDefs = gql`
     feedbacks: [Feedback!]!
     averageRating: Float!
     formation: Formation
+    organizationId: ID!
   }
 
   type Position {
@@ -120,6 +131,7 @@ const typeDefs = gql`
     likedBy: [Profile!]!
     createdAt: String!
     updatedAt: String!
+    organizationId: ID!
   }
 
   type FormationComment {
@@ -225,9 +237,130 @@ const typeDefs = gql`
     playerId: ID
   }
 
+  ########## ORGANIZATION TYPES ##########
+
+  type Organization {
+    _id: ID!
+    name: String!
+    slug: String!
+    description: String
+    logo: String
+    subdomain: String
+    customDomain: String
+    settings: OrganizationSettings
+    owner: Profile!
+    admins: [Profile!]
+    members: [Profile!]
+    subscription: OrganizationSubscription
+    limits: OrganizationLimits
+    usage: OrganizationUsage
+    invitations: [Invitation]
+    isActive: Boolean!
+    isVerified: Boolean!
+    createdAt: String!
+    updatedAt: String!
+  }
+
+  type OrganizationSettings {
+    theme: ThemeSettings
+    features: FeatureSettings
+    general: GeneralSettings
+  }
+
+  type ThemeSettings {
+    primaryColor: String
+    secondaryColor: String
+    logo: String
+    favicon: String
+  }
+
+  type FeatureSettings {
+    enableFormations: Boolean
+    enableChat: Boolean
+    enablePosts: Boolean
+    enableWeather: Boolean
+    enableSkills: Boolean
+    enableFeedback: Boolean
+  }
+
+  type GeneralSettings {
+    timezone: String
+    language: String
+    dateFormat: String
+  }
+
+  type OrganizationSubscription {
+    plan: String!
+    status: String!
+    trialEndsAt: String
+    currentPeriodStart: String
+    currentPeriodEnd: String
+  }
+
+  type OrganizationLimits {
+    maxMembers: Int!
+    maxGames: Int!
+    maxStorage: Int!
+  }
+
+  type OrganizationUsage {
+    memberCount: Int!
+    gameCount: Int!
+    storageUsed: Int!
+  }
+
+  type Invitation {
+    code: String!
+    email: String
+    role: String!
+    createdBy: Profile
+    expiresAt: String
+    usedBy: Profile
+    usedAt: String
+    status: String!
+  }
+
+  ########## ORGANIZATION INPUT TYPES ##########
+
+  input OrganizationInput {
+    name: String!
+    slug: String!
+    description: String
+    logo: String
+  }
+
+  input OrganizationSettingsInput {
+    theme: ThemeSettingsInput
+    features: FeatureSettingsInput
+    general: GeneralSettingsInput
+  }
+
+  input ThemeSettingsInput {
+    primaryColor: String
+    secondaryColor: String
+    logo: String
+    favicon: String
+  }
+
+  input FeatureSettingsInput {
+    enableFormations: Boolean
+    enableChat: Boolean
+    enablePosts: Boolean
+    enableWeather: Boolean
+    enableSkills: Boolean
+    enableFeedback: Boolean
+  }
+
+  input GeneralSettingsInput {
+    timezone: String
+    language: String
+    dateFormat: String
+  }
+
   type Auth {
     token: ID!
     profile: Profile
+    organization: Organization
   }
 
   type Query {
@@ -255,6 +388,14 @@ const typeDefs = gql`
       dateTo: String
     ): [SoccerScore!]!
     formation(gameId: ID!): Formation
+    # Organization queries
+    myOrganizations: [Organization]
+    organization(organizationId: ID!): Organization
+    organizationBySlug(slug: String!): Organization
+    organizationBySubdomain(subdomain: String!): Organization
+    isSlugAvailable(slug: String!): Boolean!
+    organizationMembers(organizationId: ID!): [Profile]
+    organizationInvitations(organizationId: ID!): [Invitation]
   }
 
   type Mutation {
@@ -329,6 +470,18 @@ const typeDefs = gql`
     removeSocialMediaLink(userId: ID!, type: String!): Boolean
     markChatAsSeen(userId: ID!): Boolean
     reactToSkill(skillId: ID!, emoji: String!): Skill!
+    # Organization mutations
+    createOrganization(input: OrganizationInput!): Auth!
+    updateOrganization(organizationId: ID!, input: OrganizationInput!): Organization!
+    updateOrganizationSettings(organizationId: ID!, settings: OrganizationSettingsInput!): Organization!
+    addOrganizationMember(organizationId: ID!, userId: ID!, role: String): Organization!
+    removeOrganizationMember(organizationId: ID!, userId: ID!): Organization!
+    updateMemberRole(organizationId: ID!, userId: ID!, role: String!): Organization!
+    createInvitation(organizationId: ID!, email: String, role: String): Invitation!
+    acceptInvitation(invitationCode: String!): Auth!
+    deleteInvitation(organizationId: ID!, invitationCode: String!): Boolean!
+    switchOrganization(organizationId: ID!): Auth!
+    deleteOrganization(organizationId: ID!): Boolean!
   }
   type Subscription {
     chatCreated: Chat
@@ -359,6 +512,10 @@ const typeDefs = gql`
     formationCommentLiked(formationId: ID!): FormationComment
     onlineStatusChanged(profileId: ID!): Profile
     skillReactionUpdated(skillId: ID!): Skill
+    # Organization subscriptions
+    organizationMemberAdded(organizationId: ID!): Profile!
+    organizationMemberRemoved(organizationId: ID!): Profile!
+    organizationUpdated(organizationId: ID!): Organization!
   }
 `;
 
