@@ -5,13 +5,14 @@ import {
   FORMATION_COMMENT_UPDATED_SUBSCRIPTION,
   FORMATION_COMMENT_DELETED_SUBSCRIPTION,
   FORMATION_COMMENT_LIKED_SUBSCRIPTION,
+  FORMATION_CREATED_SUBSCRIPTION,
 } from "../../utils/subscription";
 import { QUERY_FORMATION } from "../../utils/queries";
 import FormationCommentInput from "../FormationCommentInput";
 import FormationCommentItem from "../FormationCommentItem";
 
 function CommentsPane({ gameId }) {
-  const { data } = useQuery(QUERY_FORMATION, {
+  const { data, refetch } = useQuery(QUERY_FORMATION, {
     variables: { gameId },
     fetchPolicy: "cache-and-network",
     suspense: true,
@@ -39,6 +40,18 @@ function CommentsPane({ gameId }) {
     // Don't sync on every formation.comments change to avoid duplicates from subscription
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formationId]); // Only depend on formationId, not formation.comments
+
+  // Listen for formation creation to immediately show comment input
+  useSubscription(FORMATION_CREATED_SUBSCRIPTION, {
+    variables: { gameId },
+    onData: ({ data }) => {
+      const created = data.data?.formationCreated;
+      if (created) {
+        // Refetch the formation query to get the new formation ID
+        refetch();
+      }
+    },
+  });
 
   // subscriptions
   useSubscription(FORMATION_COMMENT_ADDED_SUBSCRIPTION, {

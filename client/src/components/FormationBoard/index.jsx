@@ -3,7 +3,7 @@ import { useDroppable } from "@dnd-kit/core";
 import { FormationBoardSkeleton } from "../LoadingSkeleton";
 import { FadeInOut } from "../SmoothTransition";
 
-export default function FormationBoard({ rows, assignments, formationType, creator, isLoading = false }) {
+export default function FormationBoard({ rows, assignments, formationType, creator, isLoading = false, isDragging = false }) {
   // Show loading skeleton while data is loading
   if (isLoading || !formationType) {
     return <FormationBoardSkeleton />;
@@ -84,7 +84,7 @@ export default function FormationBoard({ rows, assignments, formationType, creat
                   style={{ zIndex: 10 + rowIndex }}
                 >
                   {slotIds.map((slotId) => (
-                    <Slot key={slotId} slotId={slotId} player={assignments[slotId]} />
+                    <Slot key={slotId} slotId={slotId} player={assignments[slotId]} isDragging={isDragging} />
                   ))}
                 </div>
               </FadeInOut>
@@ -112,7 +112,7 @@ export default function FormationBoard({ rows, assignments, formationType, creat
   );
 }
 
-function Slot({ slotId, player }) {
+function Slot({ slotId, player, isDragging = false }) {
   function getFirstName(name) {
     if (!name || typeof name !== 'string') return '';
     return name.split(" ")[0];
@@ -136,15 +136,17 @@ function Slot({ slotId, player }) {
       ref={setNodeRef}
       className={`relative group transition-all duration-300 transform hover:scale-110 ${
         isOver ? 'scale-125 z-10' : ''
-      }`}
+      } ${isDragging && !hasPlayer ? 'animate-pulse' : ''}`}
     >
       {/* Player Circle - Larger touch target for mobile */}
       <div
         className={`w-14 h-14 sm:w-16 sm:h-16 lg:w-18 lg:h-18 rounded-full border-2 sm:border-4 flex flex-col items-center justify-center text-xs font-bold transition-all duration-300 shadow-lg ${
           isOver
-            ? 'bg-yellow-400 border-yellow-600 text-yellow-900 shadow-yellow-400/50 scale-110 ring-4 ring-yellow-300 animate-pulse'
+            ? 'bg-yellow-400 border-yellow-600 text-yellow-900 shadow-yellow-400/50 scale-110 ring-4 ring-yellow-300 animate-bounce'
             : hasPlayer
             ? 'bg-gradient-to-br from-blue-500 to-blue-600 border-blue-300 text-white shadow-blue-500/30 hover:shadow-blue-500/50'
+            : isDragging
+            ? 'bg-green-100 border-green-400 text-green-700 shadow-green-400/50 ring-2 ring-green-300'
             : 'bg-white border-gray-400 text-gray-600 shadow-gray-400/30 hover:border-blue-400 hover:bg-blue-50'
         }`}
       >

@@ -6,7 +6,6 @@ import {
   MouseSensor,
   useSensor,
   useSensors,
-  DragOverlay,
 } from "@dnd-kit/core";
 import { useMutation, useSubscription } from "@apollo/client";
 import {
@@ -116,23 +115,23 @@ export default function FormationSection({
   }, [formation]);
 
   const sensors = useSensors(
-    // Mouse sensor for desktop - very small delay for immediate response
+    // Mouse sensor for desktop - immediate response
     useSensor(MouseSensor, {
       activationConstraint: {
-        distance: 3, // Reduced from 5 for easier dragging
+        distance: 0, // Immediate drag, no delay
       },
     }),
-    // Touch sensor for mobile devices - optimized for touch
+    // Touch sensor for mobile devices - minimal delay
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 100, // Short delay to distinguish from scrolling
-        tolerance: 5, // Allow small movements during delay
+        delay: 50, // Very short delay to distinguish from tap/scroll
+        tolerance: 8,
       },
     }),
-    // Pointer sensor as fallback for other input devices
+    // Pointer sensor as fallback
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 3,
+        distance: 0,
       },
     })
   );
@@ -141,6 +140,10 @@ export default function FormationSection({
     const player = availablePlayers.find(p => p?._id === event.active.id);
     if (player && player.name) {
       setDraggingPlayer(player);
+      // Add haptic feedback on mobile
+      if (navigator.vibrate) {
+        navigator.vibrate(10);
+      }
     } else {
       setDraggingPlayer(null);
     }
@@ -148,12 +151,19 @@ export default function FormationSection({
 
   const handleDragEnd = ({ active, over }) => {
     setDraggingPlayer(null);
+    
+    // Haptic feedback on drop
+    if (navigator.vibrate && over) {
+      navigator.vibrate(20);
+    }
+    
     if (!isCreator || !over) return;
 
     const player = availablePlayers.find(u => u?._id === active.id);
     if (!player || !player.name) return;
 
     const newMap = { ...assignments };
+    // Remove player from previous position
     Object.entries(newMap).forEach(([slot, p]) => {
       if (p?._id === player._id) delete newMap[slot];
     });
@@ -317,25 +327,9 @@ export default function FormationSection({
                 formationType={formationType} 
                 creator={creator}
                 isLoading={isLoading}
+                isDragging={!!draggingPlayer}
               />
             </div>
-
-            <DragOverlay dropAnimation={null}>
-              {draggingPlayer && (
-                <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-4 rounded-2xl shadow-2xl border-4 border-white/40 text-sm font-semibold flex items-center gap-3 backdrop-blur-sm transform scale-110 ring-4 ring-blue-300/50 animate-pulse">
-                  <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                    <span className="text-2xl">👤</span>
-                  </div>
-                  <div>
-                    <div className="font-bold text-lg">{draggingPlayer?.name || 'Unknown Player'}</div>
-                    <div className="text-xs opacity-90 flex items-center gap-1">
-                      <span>🎯</span>
-                      <span>Drop onto formation position</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </DragOverlay>
 
             {isCreator && (
               <div className="flex flex-col sm:flex-row gap-4 mt-8">

@@ -117,10 +117,11 @@ function DraggablePlayer({ player }) {
     ? { 
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
         transition: 'none', // Smooth dragging without transition
-        touchAction: 'none', // Prevent default touch behaviors
-        WebkitTouchCallout: 'none', // Disable callout on iOS
+        touchAction: 'none',
+        WebkitTouchCallout: 'none',
         WebkitUserSelect: 'none',
         userSelect: 'none',
+        zIndex: 9999, // Bring to front while dragging
       }
     : {
         touchAction: 'none',
@@ -135,10 +136,10 @@ function DraggablePlayer({ player }) {
       style={style}
       {...listeners}
       {...attributes}
-      className={`group bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-blue-300 dark:border-blue-600 p-4 shadow-md hover:shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-105 touch-none select-none ${
+      className={`group bg-white dark:bg-gray-800 rounded-xl border-2 p-4 shadow-md transition-all duration-200 transform touch-none select-none ${
         isDragging 
-          ? 'opacity-60 rotate-2 scale-110 shadow-2xl ring-4 ring-blue-400/50 z-50 cursor-grabbing' 
-          : 'cursor-grab active:cursor-grabbing'
+          ? 'border-blue-500 dark:border-blue-400 opacity-90 scale-105 shadow-2xl ring-4 ring-blue-400/50 cursor-grabbing' 
+          : 'border-dashed border-blue-300 dark:border-blue-600 hover:border-blue-500 hover:shadow-xl hover:scale-105 cursor-grab active:cursor-grabbing'
       }`}
     >
       <div className="flex items-center gap-3">
