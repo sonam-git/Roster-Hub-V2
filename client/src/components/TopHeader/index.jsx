@@ -1,34 +1,69 @@
 import React, { useContext, useRef, useEffect } from "react";
 import { useNavigate, useLocation,Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPersonRunning, faCalendarAlt, faPlus, faInbox, faStar, faHome, faInfoCircle, faMoon, faSun, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faPersonRunning, faCalendarAlt, faPlus, faInbox, faStar, faHome, faInfoCircle, faMoon, faSun, faSearch, faShieldAlt } from "@fortawesome/free-solid-svg-icons";
 import { useQuery } from "@apollo/client";
 import { QUERY_ME, QUERY_PROFILES } from "../../utils/queries";
 import { ThemeContext } from "../ThemeContext";
 import controlImage from "../../assets/images/iconizer-arrow-left.png";
 import Auth from "../../utils/auth";
 import { FaChevronDown } from "react-icons/fa";
+import OrganizationSelector from "../OrganizationSelector/OrganizationSelector";
 // import lightLogo from "../../assets/images/roster-hub-logo.png";
 import lightLogo from "../../assets/images/roster-hub-logo.png";
 import darkLogo from "../../assets/images/dark-logo.png";
 
-const BUTTONS = [
-  { key: "home", label: "Home", icon: faHome, path: "/" },
-  { key: "gameschedule", label: "Upcoming", icon: faCalendarAlt, path: "/upcoming-games" },
-  { key: "creategame", label: "Create Game", icon: faPlus, path: "/game-create" },
- { key: "search", label: "Search", icon: faSearch, action: "search", path: "/game-search" },
-  { key: "messages", label: "Inbox", icon: faInbox, path: "/message" },
-  { key: "skilllist", label: "Skills", icon: faStar, path: "/recent-skills" },
-  { key: "about", label: "About", icon: faInfoCircle, path: "/about" },
-  { key: "roster", label: "Roster", icon: faPersonRunning, action: "roster" },
-];
-
 export default function TopHeader({ className, onToggleMenu, open, isVisible = true }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { data: profilesData } = useQuery(QUERY_PROFILES);
-  const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
   const isLoggedIn = Auth.loggedIn();
+  
+  // Safely get organizationId
+  let organizationId = null;
+  if (isLoggedIn) {
+    try {
+      const profile = Auth.getProfile();
+      organizationId = profile?.data?.organizationId || null;
+    } catch (error) {
+      console.error('Error getting profile:', error);
+    }
+  }
+  
+  // Query user data to check if owner
+  const { data: meData } = useQuery(QUERY_ME, {
+    skip: !isLoggedIn,
+  });
+  
+  const { data: profilesData } = useQuery(QUERY_PROFILES, {
+    skip: !isLoggedIn || !organizationId,
+    variables: { organizationId },
+  });
+  const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
+  
+  // Check if current user is owner
+  const currentUser = meData?.me;
+  const isOwner = currentUser?.currentOrganization?.owner?._id === currentUser?._id;
+  
+  // Dynamic buttons based on owner status
+  const BUTTONS = isOwner ? [
+    { key: "admin", label: "Admin", icon: faShieldAlt, path: "/admin" },
+    { key: "gameschedule", label: "Upcoming", icon: faCalendarAlt, path: "/upcoming-games" },
+    { key: "creategame", label: "Create Game", icon: faPlus, path: "/game-create" },
+    { key: "search", label: "Search", icon: faSearch, action: "search", path: "/game-search" },
+    { key: "messages", label: "Inbox", icon: faInbox, path: "/message" },
+    { key: "skilllist", label: "Skills", icon: faStar, path: "/recent-skills" },
+    { key: "about", label: "About", icon: faInfoCircle, path: "/about" },
+    { key: "roster", label: "Roster", icon: faPersonRunning, action: "roster" },
+  ] : [
+    { key: "home", label: "Home", icon: faHome, path: "/" },
+    { key: "gameschedule", label: "Upcoming", icon: faCalendarAlt, path: "/upcoming-games" },
+    { key: "creategame", label: "Create Game", icon: faPlus, path: "/game-create" },
+    { key: "search", label: "Search", icon: faSearch, action: "search", path: "/game-search" },
+    { key: "messages", label: "Inbox", icon: faInbox, path: "/message" },
+    { key: "skilllist", label: "Skills", icon: faStar, path: "/recent-skills" },
+    { key: "about", label: "About", icon: faInfoCircle, path: "/about" },
+    { key: "roster", label: "Roster", icon: faPersonRunning, action: "roster" },
+  ];
   const [showRosterDropdown, setShowRosterDropdown] = React.useState(false);
   const rosterBtnRef = useRef(null);
   const mobileRosterBtnRef = useRef(null);
@@ -91,6 +126,34 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
           </div>
         </div>
       </Link>
+      
+      {/* Invite Code Display - Only for Owners */}
+      {isLoggedIn && isOwner && currentUser?.currentOrganization?.inviteCode && (
+        <div className="hidden xl:flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl px-4 py-2 shadow-lg border border-emerald-400/50 ml-4 mt-3">
+          <div className="flex flex-col">
+            <span className="text-white/80 text-[10px] font-semibold uppercase tracking-wider">
+              Team Code
+            </span>
+            <code className="text-white font-mono font-black text-lg tracking-widest">
+              {currentUser.currentOrganization.inviteCode}
+            </code>
+          </div>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(currentUser.currentOrganization.inviteCode);
+              // You could add a toast notification here
+              alert("✅ Invite code copied!");
+            }}
+            className="bg-white hover:bg-gray-100 text-emerald-600 p-2 rounded-lg transition-all duration-300 transform hover:scale-110"
+            title="Copy invite code"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+          </button>
+        </div>
+      )}
+      
       {/* Center: Menu buttons or promo text */}
       <div className={`flex flex-row items-center justify-center flex-1 w-full mt-4 lg:mt-0`}>
         {isLoggedIn ? (
@@ -396,8 +459,11 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
         </div>
         </>
       )}
-      {/* Right: Dark/Light mode toggle and sidebar toggle (arrow always visible) */}
+      {/* Right: Organization Selector, Dark/Light mode toggle and sidebar toggle (arrow always visible) */}
       <div className="hidden lg:flex items-center ml-4 gap-2 mt-3">
+        {/* Organization Selector - Only shown when logged in */}
+        {isLoggedIn && <OrganizationSelector />}
+        
         <button
           onClick={toggleDarkMode}
           className="rounded-full p-2 bg-gray-100 dark:bg-gray-600 shadow hover:bg-gray-600 dark:hover:bg-gray-400 transition-colors"

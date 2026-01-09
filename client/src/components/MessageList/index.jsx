@@ -9,10 +9,17 @@ import UserListModal from "../UserListModal";
 import MessageCard from "../MessageCard";
 import DeleteMessageModal from "../DeleteMessageModal";
 import { getDateFromObjectId } from "../../utils/MessageUtils";
+import { useOrganization } from "../../contexts/OrganizationContext";
 
 const MessageList = ({ isLoggedInUser = false, isDarkMode }) => {
+  const { currentOrganization } = useOrganization();
   const { data: userData, loading: userLoading, error: userError } = useQuery(QUERY_ME);
-  const { data: profileData, loading: profilesLoading, error: profilesError } = useQuery(QUERY_PROFILES);
+  const { data: profileData, loading: profilesLoading, error: profilesError } = useQuery(QUERY_PROFILES, {
+    variables: {
+      organizationId: currentOrganization?._id
+    },
+    skip: !currentOrganization
+  });
   const [removeMessage] = useMutation(REMOVE_MESSAGE);
   const [sendMessage] = useMutation(SEND_MESSAGE);
   const [deleteConversation] = useMutation(DELETE_CONVERSATION, {
@@ -79,9 +86,18 @@ const handleSendMessage = async (recipientId) => {
     const text = inputValues?.[recipientId] ?? "";
     if (!text.trim()) return;
 
+    if (!currentOrganization) {
+      console.error('No organization selected');
+      return;
+    }
+
     try {
       await sendMessage({
-        variables: { recipientId, text },
+        variables: { 
+          recipientId, 
+          text,
+          organizationId: currentOrganization._id
+        },
         refetchQueries: [{ query: QUERY_ME }],
       });
       setInputValues((prev) => ({ ...prev, [recipientId]: "" }));
@@ -96,11 +112,28 @@ const handleSendMessage = async (recipientId) => {
   };
 
   const confirmDeleteMessage = async () => {
-    if (deleteMessageId) {
-      await removeMessage({ variables: { messageId: deleteMessageId }, refetchQueries: [{ query: QUERY_ME }] });
+    if (!deleteMessageId) return;
+    
+    if (!currentOrganization) {
+      console.error('No organization selected');
+      setShowDeleteModal(false);
+      return;
     }
-    setShowDeleteModal(false);
-    setDeleteMessageId(null);
+    
+    try {
+      await removeMessage({ 
+        variables: { 
+          messageId: deleteMessageId,
+          organizationId: currentOrganization._id
+        }, 
+        refetchQueries: [{ query: QUERY_ME }] 
+      });
+      setShowDeleteModal(false);
+      setDeleteMessageId(null);
+    } catch (error) {
+      console.error('Error deleting message:', error);
+      setShowDeleteModal(false);
+    }
   };
 
   const cancelDeleteMessage = () => {
@@ -110,8 +143,19 @@ const handleSendMessage = async (recipientId) => {
 
   const handleDeleteConversation = async (userId) => {
     if (!userId) return;
+    
+    if (!currentOrganization) {
+      console.error('No organization selected');
+      return;
+    }
+    
     try {
-      await deleteConversation({ variables: { userId } });
+      await deleteConversation({ 
+        variables: { 
+          userId,
+          organizationId: currentOrganization._id
+        } 
+      });
     } catch (err) {
       console.error("Error deleting conversation", err);
     }

@@ -18,8 +18,7 @@ const PORT = process.env.PORT || 3001;
 const app = express();
 
 //system for real-time GraphQL subscriptions
-const { PubSub } = require("graphql-subscriptions");
-const pubsub = new PubSub(); // Ensure this instance is used in the resolvers
+const pubsub = require("./pubsub"); // Use shared PubSub instance
 
 // CORS configuration - Allow requests from your Vercel frontend
 const allowedOrigins = [

@@ -6,6 +6,7 @@ import GameList from "../components/GameList";
 import GameForm from "../components/GameForm";
 import GameDetails from "../components/GameDetails";
 import { ThemeContext } from "../components/ThemeContext";
+import { useOrganization } from "../contexts/OrganizationContext";
 
 import { QUERY_GAME } from "../utils/queries";
 
@@ -14,18 +15,59 @@ const Game = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isDarkMode } = useContext(ThemeContext);
+  const { currentOrganization } = useOrganization();
   const [shouldRedirect, setShouldRedirect] = useState(false);
   const [showCreateGame, setShowCreateGame] = useState(false);
+
+  // Debug logging
+  console.log('🎮 Game Page Debug:', {
+    gameId,
+    organizationId: currentOrganization?._id,
+    organizationName: currentOrganization?.name,
+    hasOrganization: !!currentOrganization,
+    locationState: location.state
+  });
 
   // Fetch game
   const {
     loading: loadingGame,
     data: gameData,
     error: gameError,
+    refetch,
   } = useQuery(QUERY_GAME, {
-    variables: { gameId },
-    skip: !gameId,
+    variables: { 
+      gameId,
+      organizationId: currentOrganization?._id 
+    },
+    skip: !gameId || !currentOrganization,
   });
+  
+  // Debug logging for query results
+  useEffect(() => {
+    if (gameId && currentOrganization) {
+      console.log('🎮 Game Query Debug:', {
+        loading: loadingGame,
+        hasData: !!gameData,
+        hasError: !!gameError,
+        errorMessage: gameError?.message,
+        gameData: gameData?.game
+      });
+    }
+  }, [loadingGame, gameData, gameError, gameId, currentOrganization]);
+  
+  // Refetch when organization changes
+  useEffect(() => {
+    if (currentOrganization && gameId) {
+      console.log('🔄 Refetching game with:', {
+        gameId,
+        organizationId: currentOrganization._id
+      });
+      refetch({ 
+        gameId,
+        organizationId: currentOrganization._id 
+      });
+    }
+  }, [currentOrganization, gameId, refetch]);
 
   const game = gameData?.game;
 
@@ -52,6 +94,20 @@ const Game = () => {
       navigate('/game-schedule');
     }
   }, [shouldRedirect, navigate]);
+
+  // Loading state for organization
+  if (!currentOrganization) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
+            Loading organization...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   // Loading state
   if (!gameId) {

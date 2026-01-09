@@ -1,18 +1,51 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { useParams } from "react-router-dom";
 import { QUERY_ME, QUERY_SINGLE_PROFILE } from "../utils/queries";
+import { useOrganization } from "../contexts/OrganizationContext";
 import MessageList from "../components/MessageList";
 
 const Message = ({ isDarkMode }) => {
   const { profileId } = useParams();
-  const { loading, data, error } = useQuery(
+  const { currentOrganization } = useOrganization();
+  
+  const { loading, data, error, refetch } = useQuery(
     profileId ? QUERY_SINGLE_PROFILE : QUERY_ME,
     {
-      variables: { profileId },
+      variables: { 
+        profileId,
+        organizationId: currentOrganization?._id 
+      },
+      skip: !currentOrganization,
       pollInterval: profileId ? undefined : 5000,
     }
   );
+  
+  // Refetch when organization changes
+  useEffect(() => {
+    if (currentOrganization) {
+      refetch({ 
+        profileId,
+        organizationId: currentOrganization._id 
+      });
+    }
+  }, [currentOrganization, profileId, refetch]);
+
+  // Loading state for organization
+  if (!currentOrganization) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className={`text-center p-8 rounded-2xl shadow-xl ${
+          isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
+        }`}>
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className={`font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            Loading organization...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

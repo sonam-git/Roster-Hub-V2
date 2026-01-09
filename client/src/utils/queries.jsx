@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const QUERY_PROFILES = gql`
-  query allProfiles {
-    profiles {
+  query allProfiles($organizationId: ID!) {
+    profiles(organizationId: $organizationId) {
       _id
       name
       jerseyNumber
@@ -75,8 +75,8 @@ export const QUERY_PROFILES = gql`
 `;
 
 export const QUERY_SINGLE_PROFILE = gql`
-  query singleProfile($profileId: ID!) {
-    profile(profileId: $profileId) {
+  query singleProfile($profileId: ID!, $organizationId: ID!) {
+    profile(profileId: $profileId, organizationId: $organizationId) {
       _id
       name
       jerseyNumber
@@ -158,6 +158,53 @@ export const QUERY_ME = gql`
       phoneNumber
       profilePic
       averageRating
+      currentOrganization {
+        _id
+        name
+        slug
+        inviteCode
+        owner {
+          _id
+          name
+        }
+        admins {
+          _id
+          name
+          email
+        }
+        members {
+          _id
+          name
+          email
+          jerseyNumber
+          position
+          profilePic
+        }
+        subscription {
+          plan
+          status
+          trialEndsAt
+        }
+        usage {
+          memberCount
+          gameCount
+          storageUsed
+        }
+        limits {
+          maxMembers
+          maxGames
+          maxStorage
+        }
+      }
+      organizations {
+        _id
+        name
+        slug
+        inviteCode
+        subscription {
+          plan
+        }
+      }
       socialMediaLinks {
         _id
         userId
@@ -253,8 +300,8 @@ export const RECEIVED_MESSAGES = gql`
 `;
 
 export const GET_POSTS = gql`
-  query Posts {
-    posts {
+  query Posts($organizationId: ID!) {
+    posts(organizationId: $organizationId) {
       _id
       userId {
         _id
@@ -375,8 +422,8 @@ export const GET_COMMENT = gql`
 `;
 
 export const GET_ALL_CHATS = gql`
-  query GetAllChats {
-    getAllChats {
+  query GetAllChats($organizationId: ID!) {
+    getAllChats(organizationId: $organizationId) {
       id
       content
       createdAt
@@ -393,8 +440,8 @@ export const GET_ALL_CHATS = gql`
 `;
 
 export const GET_CHATS_BETWEEN_USERS = gql`
-  query GetChatsBetweenUsers($userId1: ID!, $userId2: ID!) {
-    getChatsBetweenUsers(userId1: $userId1, userId2: $userId2) {
+  query GetChatsBetweenUsers($userId1: ID!, $userId2: ID!, $organizationId: ID!) {
+    getChatsBetweenUsers(userId1: $userId1, userId2: $userId2, organizationId: $organizationId) {
       id
       from {
         _id
@@ -411,8 +458,8 @@ export const GET_CHATS_BETWEEN_USERS = gql`
 `;
 
 export const GET_CHAT_BY_USER = gql`
-  query GetChatByUser($to: ID!) {
-    getChatByUser(to: $to) {
+  query GetChatByUser($to: ID!, $organizationId: ID!) {
+    getChatByUser(to: $to, organizationId: $organizationId) {
       id
       content
       createdAt
@@ -432,9 +479,10 @@ export const GET_CHAT_BY_USER = gql`
 `;
 //Fetch all games (optionally filter by status)
 export const QUERY_GAMES = gql`
-  query Games($status: GameStatus) {
-    games(status: $status) {
+  query Games($organizationId: ID!, $status: GameStatus) {
+    games(organizationId: $organizationId, status: $status) {
       _id
+      organizationId
       creator {
         _id
         name
@@ -477,6 +525,7 @@ export const QUERY_GAMES = gql`
       formation {
         _id
         formationType
+        organizationId
         positions {
           slot
           player {
@@ -511,9 +560,10 @@ export const QUERY_GAMES = gql`
 `;
 //Fetch a single game by ID (with votes and counts)
 export const QUERY_GAME = gql`
-  query Game($gameId: ID!) {
-    game(gameId: $gameId) {
+  query Game($gameId: ID!, $organizationId: ID!) {
+    game(gameId: $gameId, organizationId: $organizationId) {
       _id
+      organizationId
       date
       time
       venue
@@ -556,6 +606,7 @@ export const QUERY_GAME = gql`
       formation {
         _id
         formationType
+        organizationId
         positions {
           slot
           player {
@@ -635,9 +686,10 @@ export const GET_MATCHES = gql`
 `;
 // Fetch formation by game ID
 export const QUERY_FORMATION = gql`
-  query QUERY_FORMATION($gameId: ID!) {
-    formation(gameId: $gameId) {
+  query QUERY_FORMATION($gameId: ID!, $organizationId: ID!) {
+    formation(gameId: $gameId, organizationId: $organizationId) {
       _id
+      organizationId
       formationType
       positions {
         slot

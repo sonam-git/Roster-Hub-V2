@@ -10,6 +10,7 @@ import { CHAT_SUBSCRIPTION } from '../../utils/subscription';
 import ChatMessage from '../ChatMessage';
 import ProfileAvatar from "../../assets/images/profile-avatar.png";
 import { ThemeContext } from "../ThemeContext";
+import { useOrganization } from "../../contexts/OrganizationContext";
 import Auth from "../../utils/auth";
 import { formatDate } from '../../utils/MessageUtils';
 import Modal from '../Modal';
@@ -19,6 +20,7 @@ import { ONLINE_STATUS_CHANGED_SUBSCRIPTION } from '../../utils/onlineStatusSubs
 
 const ChatPopup = ({ currentUser }) => {
   const { isDarkMode } = useContext(ThemeContext);
+  const { currentOrganization } = useOrganization();
   const isLoggedIn = Auth.loggedIn();
   const userId = currentUser?._id || null;
 
@@ -39,7 +41,10 @@ const ChatPopup = ({ currentUser }) => {
 
   // 1) Load player list if logged in
   useQuery(QUERY_PROFILES, {
-    skip: !isLoggedIn,
+    variables: {
+      organizationId: currentOrganization?._id
+    },
+    skip: !isLoggedIn || !currentOrganization,
     onCompleted: data => {
       if (Array.isArray(data?.profiles)) {
         setProfiles(data.profiles);
@@ -58,9 +63,10 @@ const ChatPopup = ({ currentUser }) => {
     return () => clearInterval(interval);
   }, [isLoggedIn, client]);
 
-  // Subscribe to online status for all users, including logged-in user
+  // Subscribe to online status for all users - use profile IDs only to prevent infinite loop
   useEffect(() => {
     if (!profiles.length) return;
+    
     const subscriptions = profiles.map(user =>
       client.subscribe({
         query: ONLINE_STATUS_CHANGED_SUBSCRIPTION,
@@ -68,7 +74,7 @@ const ChatPopup = ({ currentUser }) => {
       }).subscribe({
         next({ data }) {
           if (data?.onlineStatusChanged) {
-            console.log('Online status changed:', data.onlineStatusChanged);
+            // Update profiles state without causing re-subscription
             setProfiles(prev =>
               prev.map(p =>
                 p._id === data.onlineStatusChanged._id
@@ -78,17 +84,25 @@ const ChatPopup = ({ currentUser }) => {
             );
           }
         },
+        error(err) {
+          console.error('Online status subscription error:', err);
+        }
       })
     );
+    
     return () => {
       subscriptions.forEach(sub => sub && sub.unsubscribe());
     };
-  }, [profiles, client]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profiles.length, client]); // Only re-subscribe when number of profiles changes, not when their data changes
 
   // 2) Load chat for selectedUser (only when we have an ID)
   const { loading: chatLoading, refetch: refetchChat } = useQuery(GET_CHAT_BY_USER, {
-    skip: !isLoggedIn || !selectedUserId,
-    variables: { to: selectedUserId },
+    skip: !isLoggedIn || !selectedUserId || !currentOrganization,
+    variables: { 
+      to: selectedUserId,
+      organizationId: currentOrganization?._id 
+    },
     fetchPolicy: "network-only", // Always fetch latest data from server
     onCompleted: data => {
       setMessages(data.getChatByUser);
@@ -174,34 +188,52 @@ const ChatPopup = ({ currentUser }) => {
 
   // 4) Subscribe to seen status updates for real-time UI
   useSubscription(CHAT_SEEN_SUBSCRIPTION, {
-    variables: { chatId: messages.length > 0 ? messages[messages.length - 1].id : '', to: userId },
-    skip: !isLoggedIn || !selectedUserId || messages.length === 0,
+    variables: { to: userId },
+    skip: !isLoggedIn || !userId,
     onData: ({ data }) => {
-      const seenChat = data.data.chatSeen;
+      const seenChat = data.data?.chatSeen;
       if (!seenChat) return;
-      // Update the seen status for the relevant message
+      
+      console.log('📬 Received chatSeen subscription update:', {
+        messageId: seenChat.id,
+        from: seenChat.from?.name,
+        to: seenChat.to?.name,
+        seen: seenChat.seen
+      });
+      
+      // Update the seen status for all messages that match
       setMessages(prevMsgs => prevMsgs.map(m =>
-        m.id === seenChat.id ? { ...m, seen: seenChat.seen } : m
+        m.id === seenChat.id || m._id === seenChat.id 
+          ? { ...m, seen: seenChat.seen } 
+          : m
       ));
     },
   });
 
   // Refetch chat when selectedUserId changes
   useEffect(() => {
-    if (isLoggedIn && selectedUserId) {
-      refetchChat({ to: selectedUserId }).then(result => {
+    if (isLoggedIn && selectedUserId && currentOrganization) {
+      refetchChat({ 
+        to: selectedUserId,
+        organizationId: currentOrganization._id 
+      }).then(result => {
         // Remove any optimistic messages after refetch
         setMessages(result.data.getChatByUser || []);
         // Debug: log messages to check seen status
         console.log('Chat messages after refetch:', result.data.getChatByUser);
       });
     }
-  }, [selectedUserId, refetchChat, isLoggedIn]);
+  }, [selectedUserId, refetchChat, isLoggedIn, currentOrganization]);
 
   // Mark as seen when chat is opened
   useEffect(() => {
-    if (isLoggedIn && selectedUserId) {
-      markChatAsSeen({ variables: { userId: selectedUserId } }).then(() => {
+    if (isLoggedIn && selectedUserId && currentOrganization) {
+      markChatAsSeen({ 
+        variables: { 
+          userId: selectedUserId,
+          organizationId: currentOrganization._id
+        } 
+      }).then(() => {
         refetchChat({ to: selectedUserId, fetchPolicy: 'network-only' }).then(result => {
           setMessages(result.data.getChatByUser || []);
           // Only clear notification if chat is actually open
@@ -214,7 +246,7 @@ const ChatPopup = ({ currentUser }) => {
         });
       });
     }
-  }, [selectedUserId, isLoggedIn, markChatAsSeen, refetchChat, chatPopupOpen, selectedUser?.name]);
+  }, [selectedUserId, isLoggedIn, currentOrganization, markChatAsSeen, refetchChat, chatPopupOpen, selectedUser?.name]);
 
   // Refined: Mark as seen only when chat popup is open and user is viewing the conversation
   useEffect(() => {
@@ -222,20 +254,26 @@ const ChatPopup = ({ currentUser }) => {
       isLoggedIn &&
       selectedUserId &&
       chatPopupOpen &&
-      messages.length > 0
+      messages.length > 0 &&
+      currentOrganization
     ) {
       const lastMsg = messages[messages.length - 1];
       // Only mark as seen if the last message is from the other user and not already seen
       if (lastMsg.from._id === selectedUserId && !lastMsg.seen) {
         const timer = setTimeout(() => {
-          markChatAsSeen({ variables: { userId: selectedUserId } }).then(() => {
+          markChatAsSeen({ 
+            variables: { 
+              userId: selectedUserId,
+              organizationId: currentOrganization._id
+            } 
+          }).then(() => {
             refetchChat({ to: selectedUserId, fetchPolicy: 'network-only' });
           });
         }, 1500); // 1.5 seconds delay
         return () => clearTimeout(timer);
       }
     }
-  }, [messages, isLoggedIn, selectedUserId, chatPopupOpen, markChatAsSeen, refetchChat]);
+  }, [messages, isLoggedIn, selectedUserId, chatPopupOpen, currentOrganization, markChatAsSeen, refetchChat]);
 
   // Auto-scroll on new messages
   useEffect(() => {
@@ -301,6 +339,12 @@ const ChatPopup = ({ currentUser }) => {
       setErrorMessage("Select a user first.");
       return setTimeout(() => setErrorMessage(""), 2000);
     }
+    
+    if (!currentOrganization) {
+      setErrorMessage("No organization selected.");
+      return setTimeout(() => setErrorMessage(""), 2000);
+    }
+    
     try {
       // Optimistically add the message
       const optimisticMsg = {
@@ -312,10 +356,18 @@ const ChatPopup = ({ currentUser }) => {
       };
       setMessages(prev => [...prev, optimisticMsg]);
       await createChat({
-        variables: { from: userId, to: selectedUserId, content: text },
+        variables: { 
+          from: userId, 
+          to: selectedUserId, 
+          content: text,
+          organizationId: currentOrganization._id
+        },
       });
       setText("");
-      refetchChat({ to: selectedUserId });
+      refetchChat({ 
+        to: selectedUserId,
+        organizationId: currentOrganization._id 
+      });
     } catch (err) {
       console.error(err);
       setErrorMessage("Send failed.");
@@ -325,8 +377,20 @@ const ChatPopup = ({ currentUser }) => {
   // Add this function to handle conversation deletion
   const handleDeleteConversation = async () => {
     if (!selectedUserId) return;
+    
+    if (!currentOrganization) {
+      setErrorMessage('No organization selected.');
+      setShowDeleteModal(false);
+      return;
+    }
+    
     try {
-      await deleteConversation({ variables: { userId: selectedUserId } });
+      await deleteConversation({ 
+        variables: { 
+          userId: selectedUserId,
+          organizationId: currentOrganization._id
+        } 
+      });
       setMessages([]);
       setShowDeleteModal(false);
     } catch {

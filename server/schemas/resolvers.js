@@ -52,7 +52,7 @@ const FORMATION_LIKED = "FORMATION_LIKED";
 const FORMATION_COMMENT_LIKED = "FORMATION_COMMENT_LIKED";
 const SKILL_REACTION_UPDATED = "SKILL_REACTION_UPDATED";
 
-const pubsub = new PubSub(); // Ensure this instance is used in the resolvers
+const pubsub = require("../pubsub"); // Use shared PubSub instance
 const FOOTBALL_API = "https://api.football-data.org/v4";
 
 // In-memory set to track online users
@@ -96,16 +96,38 @@ const resolvers = {
   Query: {
     // ************************** QUERY ALL PROFILES *******************************************//
     profiles: async (parent, args, context) => {
-      requireOrganizationContext(context);
+      console.log('🔍 profiles resolver called with:', {
+        args,
+        organizationIdFromArgs: args.organizationId,
+        organizationIdFromContext: context.organizationId,
+        hasUser: !!context.user
+      });
+      
+      // Use organizationId from args if provided, otherwise use context
+      const organizationId = args.organizationId || context.organizationId;
+      
+      if (!organizationId) {
+        console.log('❌ No organizationId provided');
+        throw new AuthenticationError("Organization ID is required!");
+      }
+      
+      console.log('✅ Using organizationId:', organizationId);
       
       // Get organization to filter by members
-      const org = await Organization.findById(context.organizationId);
+      const org = await Organization.findById(organizationId);
       if (!org) {
+        console.log('❌ Organization not found:', organizationId);
         throw new UserInputError("Organization not found!");
       }
 
+      console.log('✅ Organization found:', {
+        id: org._id,
+        name: org.name,
+        memberCount: org.members.length
+      });
+
       // Return only profiles that are members of the current organization
-      return Profile.find({ _id: { $in: org.members } })
+      const profiles = await Profile.find({ _id: { $in: org.members } })
         .populate({
           path: "receivedMessages",
           populate: { path: "sender" },
@@ -123,10 +145,22 @@ const resolvers = {
           path: "posts",
           populate: { path: "comments" },
         });
+      
+      console.log('✅ Returning profiles:', profiles.length);
+      return profiles;
     },
     // ************************** QUERY SINGLE PROFILE *******************************************//
-    profile: async (parent, { profileId }) => {
-      return Profile.findOne({ _id: profileId })
+    profile: async (parent, { profileId, organizationId }, context) => {
+      console.log('🔍 profile resolver called with:', {
+        profileId,
+        organizationId,
+        organizationIdFromContext: context.organizationId
+      });
+      
+      // Use organizationId from args if provided, otherwise use context
+      const orgId = organizationId || context.organizationId;
+      
+      const profile = await Profile.findOne({ _id: profileId })
         .populate({
           path: "receivedMessages",
           populate: { path: "sender" },
@@ -140,6 +174,18 @@ const resolvers = {
           path: "posts",
           populate: { path: "comments" },
         });
+      
+      // If organizationId is provided, verify the profile is a member of that organization
+      if (orgId && profile) {
+        const org = await Organization.findById(orgId);
+        if (org && !org.members.some(memberId => memberId.toString() === profileId.toString())) {
+          console.log('❌ Profile is not a member of this organization');
+          throw new UserInputError("Profile not found in this organization");
+        }
+      }
+      
+      console.log('✅ Profile found:', profile?._id);
+      return profile;
     },
     // ************************** QUERY ME (LOGIN USER) *******************************************//
     me: async (parent, args, context) => {
@@ -195,11 +241,16 @@ const resolvers = {
       }
     },
     // ************************** QUERY POSTS *******************************************//
-    posts: async (parent, args, context) => {
-      requireOrganizationContext(context);
+    posts: async (parent, { organizationId }, context) => {
+      // Use organizationId from args if provided, otherwise use context
+      const orgId = organizationId || context.organizationId;
+      
+      if (!orgId) {
+        throw new AuthenticationError("Organization ID is required!");
+      }
       
       try {
-        const posts = await Post.find({ organizationId: context.organizationId })
+        const posts = await Post.find({ organizationId: orgId })
           .sort({ createdAt: -1 })
           .populate("comments")
           .populate("likedBy")
@@ -247,11 +298,16 @@ const resolvers = {
       }
     },
     // ************************** QUERY SKILLS *******************************************//
-    skills: async (parent, args, context) => {
-      requireOrganizationContext(context);
+    skills: async (parent, { organizationId }, context) => {
+      // Use organizationId from args if provided, otherwise use context
+      const orgId = organizationId || context.organizationId;
+      
+      if (!orgId) {
+        throw new AuthenticationError("Organization ID is required!");
+      }
       
       try {
-        return await Skill.find({ organizationId: context.organizationId })
+        return await Skill.find({ organizationId: orgId })
           .sort({ createdAt: -1 })
           .populate("recipient", "name");
       } catch (err) {
@@ -271,7 +327,7 @@ const resolvers = {
       return profile.ratings.length ? totalRatings / profile.ratings.length : 0;
     },
     // ************************** QUERY CHAT *******************************************//
-    getChatByUser: async (parent, { to }, context) => {
+    getChatByUser: async (parent, { to, organizationId }, context) => {
       const userId = context.user._id;
       // Check if user is authenticated
       if (!userId) {
@@ -280,15 +336,29 @@ const resolvers = {
         );
       }
 
+      // organizationId is now required in the query, use it directly
+      if (!organizationId) {
+        throw new AuthenticationError("Organization ID is required");
+      }
+
+      // Validate user is member of organization
+      const org = await Organization.findById(organizationId);
+      if (!org || !org.isUserMember(context.user._id)) {
+        throw new AuthenticationError("You are not a member of this organization");
+      }
+
       try {
-        // Query for chat using Chat model, only messages not deleted by current user
+        // Query for chat using Chat model, only messages not deleted by current user, scoped to organization
         const chat = await Chat.find({
+          organizationId: organizationId,
           $or: [
             { from: userId, to },
             { from: to, to: userId },
           ],
           deletedBy: { $ne: userId },
-        }).populate("from to"); // 'from' and 'to' are references to User model
+        })
+        .sort({ createdAt: 1 }) // Sort by creation time ascending
+        .populate("from to"); // 'from' and 'to' are references to User model
 
         return chat;
       } catch (error) {
@@ -297,23 +367,63 @@ const resolvers = {
       }
     },
     // ************************** QUERY ALL CHATS *******************************************//
-    getAllChats: async () => {
-      return await Chat.find().populate("from to");
+    getAllChats: async (parent, { organizationId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in");
+      }
+
+      // organizationId is now required in the query, use it directly
+      if (!organizationId) {
+        throw new AuthenticationError("Organization ID is required");
+      }
+
+      // Validate user is member of organization
+      const org = await Organization.findById(organizationId);
+      if (!org || !org.isUserMember(context.user._id)) {
+        throw new AuthenticationError("You are not a member of this organization");
+      }
+
+      return await Chat.find({ organizationId: organizationId })
+        .sort({ createdAt: -1 })
+        .populate("from to");
     },
     // ************************** QUERY CHATS BETWEEN TWO USERS *******************************************//
-    getChatsBetweenUsers: async (parent, { userId1, userId2 }) => {
+    getChatsBetweenUsers: async (parent, { userId1, userId2, organizationId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in");
+      }
+
+      // organizationId is now required in the query, use it directly
+      if (!organizationId) {
+        throw new AuthenticationError("Organization ID is required");
+      }
+
+      // Validate user is member of organization
+      const org = await Organization.findById(organizationId);
+      if (!org || !org.isUserMember(context.user._id)) {
+        throw new AuthenticationError("You are not a member of this organization");
+      }
+
       return await Chat.find({
+        organizationId: organizationId,
         $or: [
           { from: userId1, to: userId2 },
           { from: userId2, to: userId1 },
         ],
-      }).populate("from to");
+      })
+      .sort({ createdAt: 1 })
+      .populate("from to");
     },
     // ************************** QUERY GAMES *******************************************//
-    games: async (_, { status }, context) => {
-      requireOrganizationContext(context);
+    games: async (_, { organizationId, status }, context) => {
+      // Use organizationId from args if provided, otherwise use context
+      const orgId = organizationId || context.organizationId;
       
-      const filter = { organizationId: context.organizationId };
+      if (!orgId) {
+        throw new AuthenticationError("Organization ID is required!");
+      }
+      
+      const filter = { organizationId: orgId };
       if (status) {
         filter.status = status;
       }
@@ -324,13 +434,15 @@ const resolvers = {
         .sort({ date: 1, time: 1 });
     },
     // ************************** QUERY SINGLE GAME *******************************************//
-    game: async (_, { gameId }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError(
-          "You need to be logged in to view a game"
-        );
+    game: async (_, { gameId, organizationId }, context) => {
+      // Use organizationId from args if provided, otherwise use context
+      const orgId = organizationId || context.organizationId;
+      
+      if (!orgId) {
+        throw new AuthenticationError("Organization ID is required!");
       }
-      return Game.findById(gameId)
+      
+      return Game.findOne({ _id: gameId, organizationId: orgId })
         .populate("creator")
         .populate("responses.user")
         .populate("feedbacks.user");
@@ -356,42 +468,162 @@ const resolvers = {
       }));
     },
     // ************************** QUERY FORMATION *******************************************//
-    formation: async (_, { gameId }, context) => {
+    formation: async (_, { gameId, organizationId }, context) => {
       if (!context.user) throw new AuthenticationError("Not logged in");
-      return Formation.findOne({ game: gameId })
+      
+      // Use organizationId from args if provided, otherwise use context
+      const orgId = organizationId || context.organizationId;
+      
+      if (!orgId) {
+        throw new AuthenticationError("Organization ID is required!");
+      }
+      
+      return Formation.findOne({ game: gameId, organizationId: orgId })
         .populate("game")
         .populate("positions.player")
         .populate("likedBy")
         .populate("comments.user");
+    },
+    // ************************** QUERY MY ORGANIZATIONS *******************************************//
+    myOrganizations: async (parent, args, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in!");
+      }
+      
+      console.log('🔍 myOrganizations resolver called for user:', context.user._id);
+      
+      // Find all organizations where the user is a member
+      const organizations = await Organization.find({
+        members: context.user._id
+      });
+      
+      console.log('✅ Found organizations:', organizations.length);
+      return organizations;
     },
   },
 
   // ########## MUTAIIONS ########### //
   Mutation: {
     // **************************  SIGN UP / ADD USER *******************************************//
-    addProfile: async (parent, { name, email, password }) => {
-      const profile = await Profile.create({ name, email, password });
+    addProfile: async (parent, { name, email, password, organizationName, inviteCode }) => {
+      // Check if profile with this email already exists
+      let existingProfile = await Profile.findOne({ email });
       
-      // Create default organization for new user
-      const slugBase = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-      const organization = await Organization.create({
-        name: `${name}'s Team`,
-        slug: `${slugBase}-${Date.now()}`,
-        owner: profile._id,
-        members: [profile._id],
-        usage: { 
-          memberCount: 1, 
-          gameCount: 0, 
-          storageUsed: 0 
-        },
-      });
+      let profile;
+      let organization;
+      let role = 'owner';
+
+      // If inviteCode provided, join existing organization
+      if (inviteCode) {
+        organization = await Organization.findOne({ inviteCode });
+        
+        if (!organization) {
+          throw new AuthenticationError('Invalid invitation code');
+        }
+
+        // Check member limit for the organization's plan
+        const planLimits = {
+          free: 10,
+          starter: 50,
+          pro: 200,
+          enterprise: Infinity
+        };
+        
+        const memberLimit = planLimits[organization.plan] || 10;
+        if (organization.members.length >= memberLimit) {
+          throw new AuthenticationError(`Organization has reached its member limit (${memberLimit} members)`);
+        }
+
+        // If profile exists, use it (user is joining another team)
+        if (existingProfile) {
+          profile = existingProfile;
+          
+          // Check if already a member of this organization
+          const alreadyMember = organization.members.some(
+            memberId => memberId.toString() === profile._id.toString()
+          );
+          
+          if (alreadyMember) {
+            throw new AuthenticationError('You are already a member of this team');
+          }
+        } else {
+          // Create new profile for first-time user
+          profile = await Profile.create({ name, email, password });
+        }
+
+        // Add user to existing organization as member
+        organization.members.push(profile._id);
+        organization.usage.memberCount = organization.members.length;
+        await organization.save();
+        
+        role = 'member';
+      } else {
+        // Creating new team - profile must NOT already exist
+        if (existingProfile) {
+          throw new AuthenticationError('This email is already registered. Please login instead.');
+        }
+        
+        // Create new profile for team creator
+        profile = await Profile.create({ name, email, password });
+        // Create new organization for user
+        const orgName = organizationName || `${name}'s Team`;
+        const slugBase = orgName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        
+        // Generate unique invite code
+        const generateInviteCode = () => {
+          const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Exclude confusing chars
+          let code = '';
+          for (let i = 0; i < 8; i++) {
+            code += chars.charAt(Math.floor(Math.random() * chars.length));
+          }
+          return code;
+        };
+        
+        let inviteCodeUnique = false;
+        let newInviteCode;
+        
+        while (!inviteCodeUnique) {
+          newInviteCode = generateInviteCode();
+          const existing = await Organization.findOne({ inviteCode: newInviteCode });
+          if (!existing) inviteCodeUnique = true;
+        }
+
+        organization = await Organization.create({
+          name: orgName,
+          slug: `${slugBase}-${Date.now()}`,
+          owner: profile._id,
+          members: [profile._id],
+          inviteCode: newInviteCode,
+          usage: { 
+            memberCount: 1, 
+            gameCount: 0, 
+            storageUsed: 0 
+          },
+        });
+      }
 
       // Update profile with organization
-      profile.organizations = [{
-        organizationId: organization._id,
-        role: 'owner',
-      }];
-      profile.currentOrganization = organization._id;
+      // Check if profile already has this organization
+      const hasOrg = profile.organizations?.some(
+        org => org.organization.toString() === organization._id.toString()
+      );
+      
+      if (!hasOrg) {
+        // Add new organization to profile
+        if (!profile.organizations) {
+          profile.organizations = [];
+        }
+        profile.organizations.push({
+          organization: organization._id,
+          role: role,
+        });
+      }
+      
+      // Set as current organization if it's the first or if they're creating it
+      if (!profile.currentOrganization || role === 'owner') {
+        profile.currentOrganization = organization._id;
+      }
+      
       await profile.save();
 
       // Populate organization for response
@@ -632,31 +864,46 @@ const resolvers = {
       }
     },
     // ************************** ADD RATING *******************************************//
-    ratePlayer: async (parent, { profileId, ratingInput }, context) => {
-      if (context.user) {
-        const profile = await Profile.findById(profileId);
-
-        // Find existing rating from the user
-        const existingRatingIndex = profile.ratings.findIndex(
-          (rating) => rating.user.toString() === ratingInput.user
-        );
-
-        if (existingRatingIndex !== -1) {
-          // Update existing rating
-          profile.ratings[existingRatingIndex].rating = ratingInput.rating;
-        } else {
-          // Add new rating
-          profile.ratings.push(ratingInput);
-        }
-
-        // Calculate and update the average rating
-        profile.updateAverageRating();
-
-        await profile.save();
-
-        return profile;
+    ratePlayer: async (parent, { profileId, ratingInput, organizationId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in!");
       }
-      throw new AuthenticationError("You need to be logged in!");
+
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
+
+      // Validate user is member of organization
+      const org = await Organization.findById(organizationId);
+      if (!org || !org.isUserMember(context.user._id)) {
+        throw new AuthenticationError("You are not a member of this organization");
+      }
+
+      const profile = await Profile.findById(profileId);
+      if (!profile) {
+        throw new Error("Profile not found!");
+      }
+
+      // Find existing rating from the user
+      const existingRatingIndex = profile.ratings.findIndex(
+        (rating) => rating.user.toString() === ratingInput.user
+      );
+
+      if (existingRatingIndex !== -1) {
+        // Update existing rating
+        profile.ratings[existingRatingIndex].rating = ratingInput.rating;
+      } else {
+        // Add new rating
+        profile.ratings.push(ratingInput);
+      }
+
+      // Calculate and update the average rating
+      profile.updateAverageRating();
+
+      await profile.save();
+
+      return profile;
     },
     // ************************** UPLOAD PROFILE PIC USING CLOUDINARY  *******************************************//
     uploadProfilePic: async (_, { profileId, profilePic }, context) => {
@@ -704,8 +951,15 @@ const resolvers = {
       }
     },
     // ************************** ADD SKILL  *******************************************//
-    addSkill: async (parent, { profileId, skillText }, context) => {
-      requireOrganizationContext(context);
+    addSkill: async (parent, { profileId, skillText, organizationId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in!");
+      }
+
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
       
       if (skillText.trim() === "") {
         throw new Error("skillText must not be empty");
@@ -716,7 +970,7 @@ const resolvers = {
         skillText,
         skillAuthor: context.user.name,
         recipient: profileId,
-        organizationId: context.organizationId,
+        organizationId: organizationId,
         createdAt: new Date().toISOString(),
       });
 
@@ -737,11 +991,27 @@ const resolvers = {
       return fullSkill;
     },
     // ************************** REMOVE SKILL *******************************************//
-    removeSkill: async (parent, { skillId }, context) => {
+    removeSkill: async (parent, { skillId, organizationId }, context) => {
       if (!context.user._id) {
         throw new AuthenticationError("You need to be logged in!");
       }
+
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
+
       try {
+        const skill = await Skill.findById(skillId);
+        if (!skill) {
+          throw new Error("Skill not found");
+        }
+
+        // Validate skill belongs to organization
+        if (skill.organizationId.toString() !== organizationId) {
+          throw new AuthenticationError("Skill does not belong to this organization");
+        }
+
         const deleteSkill = await Skill.findOneAndDelete({ _id: skillId });
         if (deleteSkill) {
           pubsub.publish(SKILL_DELETED, { skillDeleted: skillId });
@@ -752,9 +1022,73 @@ const resolvers = {
         throw new Error("Error deleting Skill.");
       }
     },
+    // ************************** REACT TO SKILL *******************************************//
+    reactToSkill: async (parent, { skillId, emoji, organizationId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in!");
+      }
+
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
+
+      try {
+        const skill = await Skill.findById(skillId);
+        if (!skill) {
+          throw new Error("Skill not found");
+        }
+
+        // Validate skill belongs to organization
+        if (skill.organizationId.toString() !== organizationId) {
+          throw new AuthenticationError("Skill does not belong to this organization");
+        }
+
+        // Check if user already reacted
+        const existingReactionIndex = skill.reactions.findIndex(
+          (reaction) => reaction.user.toString() === context.user._id.toString()
+        );
+
+        if (existingReactionIndex !== -1) {
+          // Update existing reaction
+          skill.reactions[existingReactionIndex].emoji = emoji;
+        } else {
+          // Add new reaction
+          skill.reactions.push({
+            user: context.user._id,
+            emoji: emoji,
+          });
+        }
+
+        await skill.save();
+
+        // Populate user details for reactions
+        const populatedSkill = await Skill.findById(skillId)
+          .populate("recipient", "name")
+          .populate("reactions.user", "name");
+
+        // Publish update via subscription
+        pubsub.publish('SKILL_REACTION_UPDATED', {
+          skillReactionUpdated: populatedSkill,
+          skillId: skillId,
+        });
+
+        return populatedSkill;
+      } catch (error) {
+        console.error("Error reacting to skill:", error);
+        throw new Error("Error reacting to skill");
+      }
+    },
     // ************************** SEND MESSAGE (its different functionality, not related to the chat functionality)*******************************************//
-    sendMessage: async (_, { recipientId, text }, context) => {
-      requireOrganizationContext(context);
+    sendMessage: async (_, { recipientId, text, organizationId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in!");
+      }
+
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
 
       try {
         // Find the recipient user
@@ -768,7 +1102,7 @@ const resolvers = {
           sender: context.user._id, // Set the sender to the authenticated user's ID
           recipient: recipientId, // Set the recipient to the provided user ID
           text,
-          organizationId: context.organizationId,
+          organizationId: organizationId,
           createdAt: new Date().toISOString(), // Format the current date and time
         });
 
@@ -796,12 +1130,27 @@ const resolvers = {
       }
     },
     // ************************** REMOVE MESSAGE (its different functionality,not related to the chat functionality) *******************************************//
-    removeMessage: async (parent, { messageId }, context) => {
+    removeMessage: async (parent, { messageId, organizationId }, context) => {
       if (!context.user._id) {
         throw new AuthenticationError("You need to be logged in!");
       }
 
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
+
       try {
+        const message = await Message.findById(messageId);
+        if (!message) {
+          throw new Error("Message not found");
+        }
+
+        // Validate message belongs to organization
+        if (message.organizationId.toString() !== organizationId) {
+          throw new AuthenticationError("Message does not belong to this organization");
+        }
+
         const deletedMessage = await Message.findOneAndDelete({
           _id: messageId,
         });
@@ -817,15 +1166,28 @@ const resolvers = {
       }
     },
     // ************************** DELETE CONVERSATION HISTORY IN THE CHAT *******************************************//
-    deleteConversation: async (_, { userId }, context) => {
+    deleteConversation: async (_, { userId, organizationId }, context) => {
       if (!context.user) {
         throw new AuthenticationError("You must be logged in");
       }
+
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
+
+      // Validate user is member of organization
+      const org = await Organization.findById(organizationId);
+      if (!org || !org.isUserMember(context.user._id)) {
+        throw new AuthenticationError("You are not a member of this organization");
+      }
+
       const me = context.user._id;
       try {
         // Add the current user's ID to the deletedBy array for all relevant chats
         await Chat.updateMany(
           {
+            organizationId: organizationId,
             $or: [
               { from: me, to: userId },
               { from: userId, to: me },
@@ -834,8 +1196,9 @@ const resolvers = {
           },
           { $push: { deletedBy: me } }
         );
-        // remove every message where sender↔recipient is this pair
+        // remove every message where sender↔recipient is this pair within organization
         await Message.deleteMany({
+          organizationId: organizationId,
           $or: [
             { sender: me, recipient: userId },
             { sender: userId, recipient: me },
@@ -849,8 +1212,21 @@ const resolvers = {
     },
 
     // ************************** CREATE CHAT AND SEND CHAT  *******************************************//
-    createChat: async (parent, { from, to, content }, context) => {
-      requireOrganizationContext(context);
+    createChat: async (parent, { from, to, content, organizationId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in!");
+      }
+
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
+
+      // Validate user is member of organization
+      const org = await Organization.findById(organizationId);
+      if (!org || !org.isUserMember(context.user._id)) {
+        throw new AuthenticationError("You are not a member of this organization");
+      }
       
       try {
         // Ensure the from, to, and content fields are provided
@@ -863,7 +1239,7 @@ const resolvers = {
           from,
           to,
           content,
-          organizationId: context.organizationId,
+          organizationId: organizationId,
         });
 
         const populatedChat = await Chat.findById(newChat._id).populate(
@@ -880,12 +1256,90 @@ const resolvers = {
       }
     },
 
+    // ************************** MARK CHAT AS SEEN *******************************************//
+    markChatAsSeen: async (parent, { userId, organizationId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in!");
+      }
+
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
+
+      // Validate user is member of organization
+      const org = await Organization.findById(organizationId);
+      if (!org || !org.isUserMember(context.user._id)) {
+        throw new AuthenticationError("You are not a member of this organization");
+      }
+
+      try {
+        // Mark all unseen messages from userId to current user as seen
+        const result = await Chat.updateMany(
+          {
+            organizationId: organizationId,
+            from: userId,
+            to: context.user._id,
+            seen: false,
+          },
+          {
+            $set: { seen: true },
+          }
+        );
+
+        console.log(`✅ Marked ${result.modifiedCount} messages as seen from user ${userId}`);
+
+        // Get all the messages that were just marked as seen
+        const updatedChats = await Chat.find({
+          organizationId: organizationId,
+          from: userId,
+          to: context.user._id,
+        })
+        .sort({ createdAt: 1 }) // Ascending order to process chronologically
+        .populate("from to");
+
+        // Publish subscription event for each message that was updated
+        // This notifies the sender (userId) that their messages were seen
+        updatedChats.forEach((chat) => {
+          if (chat.seen) { // Only publish for seen messages
+            console.log(`📡 Publishing CHAT_SEEN for message ${chat._id} to user ${chat.from._id}`);
+            pubsub.publish("CHAT_SEEN", { 
+              chatSeen: chat,
+              to: chat.from._id.toString(), // Notify the sender
+            });
+          }
+        });
+
+        return true;
+
+        return true;
+      } catch (error) {
+        console.error("Error marking chat as seen:", error);
+        throw new Error("Failed to mark chat as seen");
+      }
+    },
+
     // ************************** SAVE SOCIAL MEDIA LINK  *******************************************//
-    saveSocialMediaLink: async (_, { userId, type, link }) => {
+    saveSocialMediaLink: async (_, { userId, type, link, organizationId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in!");
+      }
+
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
+
+      // Validate user is member of organization
+      const org = await Organization.findById(organizationId);
+      if (!org || !org.isUserMember(context.user._id)) {
+        throw new AuthenticationError("You are not a member of this organization");
+      }
+
       try {
         // Save or update the social media link in the SocialMediaLink model
         let socialMediaLink = await SocialMediaLink.findOneAndUpdate(
-          { userId, type },
+          { userId, type, organizationId },
           { link },
           { upsert: true, new: true }
         );
@@ -907,10 +1361,24 @@ const resolvers = {
       }
     },
     // ************************** REMOVE SOCIAL MEDIA LINK *******************************************//
-    removeSocialMediaLink: async (_, { userId, type }, context) => {
-      // Optional: check if context.user._id === userId for security
+    removeSocialMediaLink: async (_, { userId, type, organizationId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in!");
+      }
+
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
+
+      // Validate user is member of organization
+      const org = await Organization.findById(organizationId);
+      if (!org || !org.isUserMember(context.user._id)) {
+        throw new AuthenticationError("You are not a member of this organization");
+      }
+
       // Find the SocialMediaLink document
-      const linkDoc = await SocialMediaLink.findOne({ userId, type });
+      const linkDoc = await SocialMediaLink.findOne({ userId, type, organizationId });
       if (linkDoc) {
         await SocialMediaLink.deleteOne({ _id: linkDoc._id });
         // Remove the reference from the Profile
@@ -973,8 +1441,21 @@ const resolvers = {
       }
     },
     // ************************** ADD POST *******************************************//
-    addPost: async (parent, { profileId, postText }, context) => {
-      requireOrganizationContext(context);
+    addPost: async (parent, { profileId, postText, organizationId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in!");
+      }
+
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
+
+      // Validate user is member of organization
+      const org = await Organization.findById(organizationId);
+      if (!org || !org.isUserMember(context.user._id)) {
+        throw new AuthenticationError("You are not a member of this organization");
+      }
 
       if (postText.trim() === "") {
         throw new Error("Post body must not be empty");
@@ -987,7 +1468,7 @@ const resolvers = {
           postAuthor: context.user.name,
           createdAt: new Date().toISOString(),
           userId: context.user._id,
-          organizationId: context.organizationId,
+          organizationId: organizationId,
         });
 
         // Update the profile to include the post
@@ -1007,9 +1488,14 @@ const resolvers = {
       }
     },
     // ************************** UPDATE POST  *******************************************//
-    updatePost: async (_, { postId, postText }, context) => {
+    updatePost: async (_, { postId, postText, organizationId }, context) => {
       if (!context.user) {
         throw new AuthenticationError("You need to be logged in!");
+      }
+
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
       }
 
       try {
@@ -1018,6 +1504,11 @@ const resolvers = {
 
         if (!post) {
           throw new Error("Post not found.");
+        }
+
+        // Validate post belongs to organization
+        if (post.organizationId.toString() !== organizationId) {
+          throw new AuthenticationError("Post does not belong to this organization");
         }
 
         // Check if the current user is the author of the post
@@ -1045,11 +1536,33 @@ const resolvers = {
       }
     },
     // ************************** DELETE POST *******************************************//
-    removePost: async (parent, { postId }, context) => {
+    removePost: async (parent, { postId, organizationId }, context) => {
       if (!context.user) {
         throw new AuthenticationError("You need to be logged in!");
       }
+
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
+
       try {
+        const post = await Post.findById(postId);
+        
+        if (!post) {
+          throw new Error("Post not found.");
+        }
+
+        // Validate post belongs to organization
+        if (post.organizationId.toString() !== organizationId) {
+          throw new AuthenticationError("Post does not belong to this organization");
+        }
+
+        // Check if the current user is the author of the post
+        if (post.userId.toString() !== context.user._id) {
+          throw new AuthenticationError("You are not the author of this post.");
+        }
+
         const deletedPost = await Post.findOneAndDelete({ _id: postId });
         if (deletedPost) {
           pubsub.publish(POST_DELETED, { postDeleted: postId });
@@ -1062,36 +1575,53 @@ const resolvers = {
       }
     },
     // ************************** LIKE POST *******************************************//
-    likePost: async (parent, { postId }, context) => {
-      if (context.user) {
-        const post = await Post.findById(postId);
-        const userId = context.user._id;
-
-        if (!post) {
-          throw new Error("Post not found");
-        }
-
-        const alreadyLiked = post.likedBy.includes(userId);
-
-        if (alreadyLiked) {
-          post.likes -= 1;
-          post.likedBy = post.likedBy.filter((id) => id.toString() !== userId);
-        } else {
-          post.likes += 1;
-          post.likedBy.push(userId);
-        }
-
-        await post.save();
-        await post.populate("likedBy"); // Populate the likedBy field
-        pubsub.publish(POST_LIKED, { postLiked: post });
-        return post;
+    likePost: async (parent, { postId, organizationId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("Not logged in");
       }
 
-      throw new AuthenticationError("Not logged in");
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
+
+      const post = await Post.findById(postId);
+      const userId = context.user._id;
+
+      if (!post) {
+        throw new Error("Post not found");
+      }
+
+      // Validate post belongs to organization
+      if (post.organizationId.toString() !== organizationId) {
+        throw new AuthenticationError("Post does not belong to this organization");
+      }
+
+      const alreadyLiked = post.likedBy.includes(userId);
+
+      if (alreadyLiked) {
+        post.likes -= 1;
+        post.likedBy = post.likedBy.filter((id) => id.toString() !== userId);
+      } else {
+        post.likes += 1;
+        post.likedBy.push(userId);
+      }
+
+      await post.save();
+      await post.populate("likedBy"); // Populate the likedBy field
+      pubsub.publish(POST_LIKED, { postLiked: post });
+      return post;
     },
     // ************************** ADD COMMENT *******************************************//
-    addComment: async (parent, { postId, commentText }, context) => {
-      requireOrganizationContext(context);
+    addComment: async (parent, { postId, commentText, organizationId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in!");
+      }
+
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
       
       try {
         // 1️⃣ create the comment
@@ -1099,7 +1629,7 @@ const resolvers = {
           commentText,
           commentAuthor: context.user.name,
           userId: context.user._id,
-          organizationId: context.organizationId,
+          organizationId: organizationId,
         });
 
         // 2️⃣ push its _id into the Post.comments array
@@ -1125,88 +1655,130 @@ const resolvers = {
       }
     },
     // ************************** UPDATE COMMENT *******************************************//
-    updateComment: async (parent, { commentId, commentText }, context) => {
-      if (context.user) {
-        try {
-          const updatedComment = await Comment.findOneAndUpdate(
-            { _id: commentId, userId: context.user._id },
-            { commentText },
-            { new: true }
-          );
-
-          if (!updatedComment) {
-            throw new Error("Comment not found or not authorized");
-          }
-
-          pubsub.publish(COMMENT_UPDATED, { commentUpdated: updatedComment });
-
-          return updatedComment;
-        } catch (err) {
-          console.error(err);
-          throw new Error("Error updating comment");
-        }
-      }
-      throw new AuthenticationError("You need to be logged in!");
-    },
-    // ************************** REMOVE COMMENT *******************************************//
-    removeComment: async (parent, { postId, commentId }, context) => {
-      if (!context.user)
+    updateComment: async (parent, { commentId, commentText, organizationId }, context) => {
+      if (!context.user) {
         throw new AuthenticationError("You need to be logged in!");
-      if (context.user) {
-        try {
-          const deletedComment = await Comment.findOneAndDelete({
-            _id: commentId,
-            userId: context.user._id,
-          });
-
-          if (!deletedComment) {
-            throw new Error("Comment not found or not authorized");
-          }
-
-          await Post.findByIdAndUpdate(postId, {
-            $pull: { comments: commentId },
-          });
-
-          pubsub.publish(COMMENT_DELETED, { commentDeleted: commentId });
-
-          return commentId;
-        } catch (err) {
-          console.error(err);
-          throw new Error("Error removing comment");
-        }
       }
-      throw new AuthenticationError("You need to be logged in!");
-    },
-    // ************************** LIKE COMMENT *******************************************//
-    likeComment: async (parent, { commentId }, context) => {
-      // Check if the user is authenticated
-      if (context.user) {
-        const comment = await Comment.findById(commentId);
-        const userId = context.user._id;
 
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
+
+      try {
+        const comment = await Comment.findById(commentId);
+        
         if (!comment) {
           throw new Error("Comment not found");
         }
 
-        const alreadyLiked = comment.likedBy.includes(userId);
-
-        if (alreadyLiked) {
-          comment.likes -= 1;
-          comment.likedBy = comment.likedBy.filter(
-            (id) => id.toString() !== userId
-          );
-        } else {
-          comment.likes += 1;
-          comment.likedBy.push(userId);
+        // Validate comment belongs to organization
+        if (comment.organizationId.toString() !== organizationId) {
+          throw new AuthenticationError("Comment does not belong to this organization");
         }
 
-        await comment.save();
-        await comment.populate("likedBy"); // Populate the likedBy field
-        pubsub.publish(COMMENT_LIKED, { commentLiked: comment });
-        return comment;
+        // Validate user is author
+        if (comment.userId.toString() !== context.user._id) {
+          throw new AuthenticationError("Not authorized");
+        }
+
+        const updatedComment = await Comment.findOneAndUpdate(
+          { _id: commentId, userId: context.user._id },
+          { commentText },
+          { new: true }
+        );
+
+        pubsub.publish(COMMENT_UPDATED, { commentUpdated: updatedComment });
+
+        return updatedComment;
+      } catch (err) {
+        console.error(err);
+        throw new Error("Error updating comment");
+      }
+    },
+    // ************************** REMOVE COMMENT *******************************************//
+    removeComment: async (parent, { postId, commentId, organizationId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in!");
       }
 
-      throw new AuthenticationError("Not logged in");
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
+
+      try {
+        const comment = await Comment.findById(commentId);
+        
+        if (!comment) {
+          throw new Error("Comment not found");
+        }
+
+        // Validate comment belongs to organization
+        if (comment.organizationId.toString() !== organizationId) {
+          throw new AuthenticationError("Comment does not belong to this organization");
+        }
+
+        const deletedComment = await Comment.findOneAndDelete({
+          _id: commentId,
+          userId: context.user._id,
+        });
+
+        if (!deletedComment) {
+          throw new Error("Comment not found or not authorized");
+        }
+
+        await Post.findByIdAndUpdate(postId, {
+          $pull: { comments: commentId },
+        });
+
+        pubsub.publish(COMMENT_DELETED, { commentDeleted: commentId });
+
+        return commentId;
+      } catch (err) {
+        console.error(err);
+        throw new Error("Error removing comment");
+      }
+    },
+    // ************************** LIKE COMMENT *******************************************//
+    likeComment: async (parent, { commentId, organizationId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("Not logged in");
+      }
+
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
+
+      const comment = await Comment.findById(commentId);
+      const userId = context.user._id;
+
+      if (!comment) {
+        throw new Error("Comment not found");
+      }
+
+      // Validate comment belongs to organization
+      if (comment.organizationId.toString() !== organizationId) {
+        throw new AuthenticationError("Comment does not belong to this organization");
+      }
+
+      const alreadyLiked = comment.likedBy.includes(userId);
+
+      if (alreadyLiked) {
+        comment.likes -= 1;
+        comment.likedBy = comment.likedBy.filter(
+          (id) => id.toString() !== userId
+        );
+      } else {
+        comment.likes += 1;
+        comment.likedBy.push(userId);
+      }
+
+      await comment.save();
+      await comment.populate("likedBy"); // Populate the likedBy field
+      pubsub.publish(COMMENT_LIKED, { commentLiked: comment });
+      return comment;
     },
     // ************************** DELETE PROFILE *******************************************//
     deleteProfile: async (_, { profileId }, context) => {
@@ -1360,559 +1932,119 @@ const resolvers = {
         }
       }
     },
-    // ************************** CREATE GAME *******************************************//
-    createGame: async (_, { input }, context) => {
-      requireOrganizationContext(context);
-      
-      const { date, time, venue, city, notes, opponent } = input;
-      if (!date || !time || !venue || !city || !opponent) {
-        throw new UserInputError(
-          "Date, time, opponent, venue and city are required"
-        );
-      }
+    // ************************** SEND TEAM INVITE EMAILS *******************************************//
+    sendTeamInvite: async (_, { emails, organizationId }, context) => {
+      try {
+        // Get organization details
+        const organization = await Organization.findById(organizationId).populate('owner');
+        
+        if (!organization) {
+          throw new AuthenticationError('Organization not found');
+        }
 
-      // Check if organization has reached game limit
-      const org = await Organization.findById(context.organizationId);
-      if (org.hasReachedGameLimit()) {
-        throw new UserInputError(
-          `Organization has reached its game limit of ${org.limits.maxGames}. Please upgrade your plan.`
-        );
-      }
+        // Verify the sender is the owner or admin
+        if (!context.user || context.user._id.toString() !== organization.owner._id.toString()) {
+          throw new AuthenticationError('Only team owners can send invites');
+        }
 
-      const newGame = await Game.create({
-        creator: context.user._id,
-        organizationId: context.organizationId,
-        date,
-        time,
-        venue,
-        city,
-        notes: notes || "",
-        opponent,
-        status: "PENDING",
-        responses: [],
-      });
-      
-      // Update organization usage
-      org.usage.gameCount += 1;
-      await org.save();
-
-      const populated = await newGame.populate("creator");
-
-      // publish creation
-      pubsub.publish(GAME_CREATED, { gameCreated: populated });
-
-      return populated;
-    },
-    // ************************** RESPOND YES / NO TO GAME *******************************************//
-    respondToGame: async (_, { input }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError("You need to be logged in to vote");
-      }
-      const { gameId, isAvailable } = input;
-      const game = await Game.findById(gameId);
-      if (!game) {
-        throw new UserInputError("Game not found");
-      }
-      if (game.status !== "PENDING") {
-        throw new UserInputError("Cannot vote on a game that is not pending");
-      }
-      const existingIndex = game.responses.findIndex((r) =>
-        r.user.equals(context.user._id)
-      );
-      if (existingIndex !== -1) {
-        // update existing vote
-        game.responses[existingIndex].isAvailable = isAvailable;
-      } else {
-        game.responses.push({
-          user: context.user._id,
-          isAvailable,
-        });
-      }
-      await game.save();
-      return Game.findById(gameId)
-        .populate("creator")
-        .populate("responses.user");
-    },
-    // ************************** UNVOTE GAME POLL *******************************************//
-    unvoteGame: async (_, { gameId }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError("You need to be logged in to unvote");
-      }
-      const game = await Game.findById(gameId);
-      if (!game) {
-        throw new UserInputError("Game not found");
-      }
-      const beforeCount = game.responses.length;
-      game.responses = game.responses.filter(
-        (r) => !r.user.equals(context.user._id)
-      );
-      if (game.responses.length === beforeCount) {
-        throw new UserInputError("You have not voted on this game");
-      }
-      await game.save();
-      return Game.findById(gameId)
-        .populate("creator")
-        .populate("responses.user");
-    },
-    // ************************** CONFIRM A GAME | ONLY BY CREATOR *******************************************//
-    confirmGame: async (_, { gameId, note }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError(
-          "You need to be logged in to confirm a game"
-        );
-      }
-      const game = await Game.findById(gameId);
-      if (!game) throw new UserInputError("Game not found");
-      if (!game.creator.equals(context.user._id)) {
-        throw new AuthenticationError("Not authorized");
-      }
-      if (game.status === "CONFIRMED") {
-        throw new UserInputError("Game is already confirmed");
-      }
-
-      game.status = "CONFIRMED";
-      if (note !== undefined) game.notes = note;
-      await game.save();
-      const updated = await Game.findById(gameId)
-        .populate("creator")
-        .populate("responses.user");
-
-      pubsub.publish(GAME_CONFIRMED, { gameConfirmed: updated });
-      return updated;
-    },
-    // ************************** COMPLETE A GAME | ONLY BY CREATOR *******************************************//
-    completeGame: async (_, { gameId, score, result, note }, context) => {
-      if (!context.user) throw new AuthenticationError("You must be logged in");
-      const game = await Game.findById(gameId);
-      if (!game) throw new Error("Game not found");
-      if (!game.creator.equals(context.user._id)) {
-        throw new AuthenticationError("Not authorized");
-      }
-
-      game.status = "COMPLETED";
-      if (typeof note === "string") game.notes = note;
-      game.score = score;
-      game.result = result;
-      await game.save();
-      const updated = await Game.findById(gameId)
-        .populate("creator")
-        .populate("responses.user");
-
-      pubsub.publish(GAME_COMPLETED, { gameCompleted: updated });
-      return updated;
-    },
-    // ************************** CANCEL  A GAME | ONLY BY CREATOR *******************************************//
-    cancelGame: async (_, { gameId, note }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError(
-          "You need to be logged in to cancel a game"
-        );
-      }
-      const game = await Game.findById(gameId);
-      if (!game) throw new UserInputError("Game not found");
-      if (!game.creator.equals(context.user._id)) {
-        throw new AuthenticationError("Not authorized");
-      }
-      if (game.status === "CANCELLED") {
-        throw new UserInputError("Game is already cancelled");
-      }
-
-      game.status = "CANCELLED";
-      if (note !== undefined) game.notes = note;
-      await game.save();
-      const updated = await Game.findById(gameId)
-        .populate("creator")
-        .populate("responses.user");
-
-      pubsub.publish(GAME_CANCELLED, { gameCancelled: updated });
-      return updated;
-    },
-    // ************************** UPDATE A GAME | ONLY BY CREATOR *******************************************//
-    updateGame: async (_, { gameId, input }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError("You must be logged in");
-      }
-      // load the game
-      const game = await Game.findById(gameId);
-      if (!game) {
-        throw new UserInputError("Game not found");
-      }
-      // only creator can edit
-      if (game.creator.toString() !== context.user._id) {
-        throw new AuthenticationError("Not authorized");
-      }
-
-      // update only the provided fields
-      if (input.date !== undefined) game.date = input.date;
-      if (input.time !== undefined) game.time = input.time;
-      if (input.venue !== undefined) game.venue = input.venue;
-      if (input.city !== undefined) game.city = input.city;
-      if (input.notes !== undefined) game.notes = input.notes;
-      if (input.opponent !== undefined) game.opponent = input.opponent;
-
-      await game.save();
-
-      // return with populated creator and responses
-      await Game.findById(gameId)
-        .populate("creator", "name")
-        .populate("responses.user", "name");
-      pubsub.publish(GAME_UPDATED, { gameUpdated: game });
-      return game;
-    },
-    // ************************** DELETE A GAME | ONLY BY CREATOR *******************************************//
-    deleteGame: async (_, { gameId }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError("You must be logged in to delete games");
-      }
-      const game = await Game.findById(gameId);
-      if (!game) throw new Error("Game not found");
-      if (!game.creator.equals(context.user._id)) {
-        throw new AuthenticationError("Not authorized");
-      }
-
-      await Game.findByIdAndDelete(gameId);
-      // publish only the ID
-      pubsub.publish(GAME_DELETED, { gameDeleted: gameId });
-      return game;
-    },
-    // ************************** ADD A FEEDBACK TO COMPLETED GAME *******************************************//
-    addFeedback: async (_, { gameId, comment, rating }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError("Must be logged in");
-      }
-
-      const game = await Game.findById(gameId).populate("feedbacks.user");
-      if (!game) {
-        throw new Error("Game not found");
-      }
-      if (game.status !== "COMPLETED") {
-        throw new Error("Can only leave feedback on completed games");
-      }
-
-      // **NEW CHECK**: has this user already left feedback?
-      if (
-        game.feedbacks.some((f) => f.user._id.toString() === context.user._id)
-      ) {
-        throw new Error("You have already left feedback for this game");
-      }
-
-      // push new feedback
-      game.feedbacks.push({
-        user: context.user._id,
-        comment,
-        rating,
-      });
-
-      // recalc average
-      const sum = game.feedbacks.reduce((sum, f) => sum + f.rating, 0);
-      game.averageRating = sum / game.feedbacks.length;
-
-      await game.save();
-      return game;
-    },
-    // ************************** CREATE A FORMATION | ONLY BY CREATOR *******************************************//
-    createFormation: async (_, { gameId, formationType }, context) => {
-      requireOrganizationContext(context);
-
-      const game = await Game.findById(gameId);
-      if (!game) throw new UserInputError("Game not found");
-
-      if (game.creator.toString() !== context.user._id)
-        throw new AuthenticationError("Only creator can make formation");
-
-      const existing = await Formation.findOne({ game: gameId });
-      if (existing) throw new UserInputError("Formation already exists");
-
-      const formation = await Formation.create({
-        game: gameId,
-        formationType,
-        positions: [],
-        organizationId: context.organizationId,
-      });
-
-      const full = await Formation.findById(formation._id)
-        .populate("game")
-        .populate("positions.player");
-
-      pubsub.publish("FORMATION_CREATED", {
-        formationCreated: full,
-        gameId: gameId.toString(),
-      });
-
-      return full;
-    },
-    // ************************** UPDATE FORMATION | ONLY BY CREATOR *******************************************//
-    updateFormation: async (_, { gameId, positions }, context) => {
-      if (!context.user) throw new AuthenticationError("Not logged in");
-
-      const formation = await Formation.findOne({ game: gameId });
-      if (!formation) throw new UserInputError("No formation to update");
-
-      const game = await Game.findById(gameId);
-      if (!game) throw new UserInputError("Game not found");
-
-      if (game.creator.toString() !== context.user._id)
-        throw new AuthenticationError("Only creator can update");
-
-      formation.positions = positions.map((p) => ({
-        slot: p.slot,
-        player: p.playerId || null,
-      }));
-      await formation.save();
-
-      const full = await Formation.findById(formation._id)
-        .populate("game")
-        .populate("positions.player");
-
-      pubsub.publish("FORMATION_UPDATED", {
-        formationUpdated: full,
-        gameId: gameId.toString(),
-      });
-
-      return full;
-    },
-    // ************************** DELETE A FORMATION | ONLY BY CREATOR *******************************************//
-    deleteFormation: async (_, { gameId }, context) => {
-      if (!context.user) throw new AuthenticationError("Not logged in");
-
-      const formation = await Formation.findOne({ game: gameId });
-      if (!formation) return false;
-
-      const game = await Game.findById(gameId);
-      if (!game) throw new UserInputError("Game not found");
-
-      if (game.creator.toString() !== context.user._id)
-        throw new AuthenticationError("Only creator can delete");
-
-      await Formation.deleteOne({ game: gameId });
-
-      pubsub.publish("FORMATION_DELETED", {
-        formationDeleted: gameId,
-        gameId,
-      });
-
-      return true;
-    },
-    // ************************** LIKE / UNLIKE FORMATION *******************************************//
-    likeFormation: async (_, { formationId }, { user }) => {
-      if (!user) throw new AuthenticationError("Login required");
-
-      const formation = await Formation.findById(formationId);
-      if (!formation) throw new Error("Formation not found");
-
-      const alreadyLiked = formation.likedBy.includes(user._id);
-
-      if (alreadyLiked) {
-        // UNLIKE
-        formation.likes = Math.max(0, formation.likes - 1);
-        formation.likedBy.pull(user._id);
-      } else {
-        // LIKE
-        formation.likes += 1;
-        formation.likedBy.push(user._id);
-      }
-
-      await formation.save();
-
-      const full = await Formation.findById(formationId)
-        .populate("game")
-        .populate("positions.player")
-        .populate("likedBy")
-        .populate("comments.user");
-
-      pubsub.publish(FORMATION_LIKED, {
-        formationLiked: full,
-        formationId: formationId.toString(),
-      });
-
-      return full;
-    },
-    // ************************** ADD FORMATION COMMENT *******************************************//
-    addFormationComment: async (_, { formationId, commentText }, { user }) => {
-      if (!user) throw new AuthenticationError("Login required");
-      if (!commentText.trim())
-        throw new UserInputError("Comment cannot be empty");
-
-      // build the new subdoc
-      const newComment = {
-        commentText,
-        commentAuthor: user.name,
-        user: user._id,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        likes: 0,
-        likedBy: [],
-      };
-
-      // push it onto the formation.comments array
-      const updatedFormation = await Formation.findByIdAndUpdate(
-        formationId,
-        { $push: { comments: newComment } },
-        { new: true }
-      ).populate("comments.user");
-
-      if (!updatedFormation) throw new Error("Formation not found");
-
-      // pull out the comment we just added
-      const added =
-        updatedFormation.comments[updatedFormation.comments.length - 1];
-
-      // publish just that subdoc
-      pubsub.publish(FORMATION_COMMENT_ADDED, {
-        formationCommentAdded: added,
-        formationId,
-      });
-
-      // return the full formation (with comments populated)
-      return updatedFormation;
-    },
-    // ************************** UPDATE FORMATION COMMENT *******************************************//
-    updateFormationComment: async (_, { commentId, commentText }, { user }) => {
-      if (!user) throw new AuthenticationError("Login required");
-      if (!commentText.trim())
-        throw new UserInputError("Comment cannot be empty");
-
-      // atomically update the matching comment subdoc
-      const updatedFormation = await Formation.findOneAndUpdate(
-        { "comments._id": commentId, "comments.user": user._id },
-        {
-          $set: {
-            "comments.$.commentText": commentText,
-            "comments.$.updatedAt": new Date().toISOString(),
+        // Setup email transporter
+        const transporter = nodemailer.createTransport({
+          service: "Gmail",
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD,
           },
-        },
-        { new: true }
-      ).populate("comments.user");
-
-      if (!updatedFormation)
-        throw new Error("Comment not found or not authorized");
-
-      // pull out the updated subdoc
-      const updated = updatedFormation.comments.id(commentId);
-
-      // publish just that subdoc
-      pubsub.publish(FORMATION_COMMENT_UPDATED, {
-        formationCommentUpdated: updated,
-        formationId: updatedFormation._id.toString(),
-      });
-
-      return updated;
-    },
-    // ************************** DELETE FORMATION COMMENT *******************************************//
-    deleteFormationComment: async (_, { formationId, commentId }, { user }) => {
-      if (!user) throw new AuthenticationError("Login required");
-
-      // pull it out of the array
-      const updatedFormation = await Formation.findByIdAndUpdate(
-        formationId,
-        { $pull: { comments: { _id: commentId, user: user._id } } },
-        { new: true }
-      );
-
-      if (!updatedFormation) throw new Error("Formation not found");
-
-      // publish the ID
-      pubsub.publish(FORMATION_COMMENT_DELETED, {
-        formationCommentDeleted: commentId,
-        formationId: formationId.toString(),
-      });
-
-      return commentId;
-    },
-    // ************************** LIKE / UNLIKE FORMATION COMMENT *******************************************//
-    likeFormationComment: async (_, { commentId }, { user }) => {
-      if (!user) throw new AuthenticationError("Login required");
-
-      // first, find which formation holds that comment
-      const formation = await Formation.findOne({ "comments._id": commentId });
-      if (!formation) throw new Error("Comment not found");
-
-      // find the comment subdoc
-      const comment = formation.comments.id(commentId);
-      const userId = user._id.toString();
-
-      // decide if we should like or unlike
-      const already = comment.likedBy
-        .map((id) => id.toString())
-        .includes(userId);
-      const operator = already ? "$pull" : "$push";
-      const inc = already ? -1 : +1;
-
-      // atomically update that one comment’s likes and likedBy
-      await Formation.findOneAndUpdate(
-        { "comments._id": commentId },
-        {
-          $inc: { "comments.$.likes": inc },
-          [operator]: { "comments.$.likedBy": user._id },
-        },
-        { new: true }
-      );
-
-      // re-fetch and populate
-      const updatedFormation = await Formation.findOne({
-        "comments._id": commentId,
-      }).populate("comments.user");
-      const updatedComment = updatedFormation.comments.id(commentId);
-
-      // publish the new subdoc
-      pubsub.publish(FORMATION_COMMENT_LIKED, {
-        formationCommentLiked: updatedComment,
-        formationId: updatedFormation._id.toString(),
-      });
-
-      return updatedComment;
-    },
-    // ************************** MARK CHAT AS SEEN *******************************************//
-    markChatAsSeen: async (_, { userId }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError("You must be logged in");
-      }
-      const me = context.user._id;
-      // Mark all messages sent FROM userId TO me as seen (i.e., userId is the sender, me is the recipient)
-      const result = await Chat.updateMany(
-        { from: userId, to: me, seen: false },
-        { $set: { seen: true } }
-      );
-      // Publish chatSeen event for all updated chats
-      const updatedChats = await Chat.find({
-        from: userId,
-        to: me,
-        seen: true,
-      });
-      updatedChats.forEach((chat) => {
-        pubsub.publish("CHAT_SEEN", {
-          chatSeen: chat,
-          to: chat.from, // notify the sender
         });
-      });
-      return true;
-    },
-    // ************************** REACT TO SKILL *******************************************//
-    reactToSkill: async (_, { skillId, emoji }, context) => {
-      if (!context.user)
-        throw new AuthenticationError("You need to be logged in!");
-      const skill = await Skill.findById(skillId);
-      if (!skill) throw new UserInputError("Skill not found");
-      // Check if user already reacted
-      const idx = skill.reactions.findIndex(
-        (r) => r.user.toString() === context.user._id.toString()
-      );
-      if (idx > -1) {
-        // Update existing reaction
-        skill.reactions[idx].emoji = emoji;
-      } else {
-        // Add new reaction
-        skill.reactions.push({ user: context.user._id, emoji });
+
+        // Get the app URL from environment or use default
+        const appUrl = process.env.APP_URL || 'http://localhost:3000';
+        const joinUrl = `${appUrl}/login?inviteCode=${organization.inviteCode}`;
+
+        // Send email to each recipient
+        const sendPromises = emails.map(async (email) => {
+          const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: `You're invited to join ${organization.name} on RosterHub!`,
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9fafb;">
+                <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                  <h2 style="color: #059669; margin-bottom: 20px;">🎉 You're Invited to Join a Team!</h2>
+                  
+                  <p style="font-size: 16px; color: #374151; margin-bottom: 15px;">
+                    <strong>${organization.owner.name}</strong> has invited you to join <strong>${organization.name}</strong> on RosterHub.
+                  </p>
+                  
+                  <p style="font-size: 14px; color: #6b7280; margin-bottom: 25px;">
+                    RosterHub is where teams connect, communicate, and manage games together.
+                  </p>
+                  
+                  <div style="background-color: #ecfdf5; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                    <p style="font-size: 14px; color: #065f46; margin-bottom: 10px; font-weight: bold;">
+                      Your Team Invite Code:
+                    </p>
+                    <p style="font-size: 24px; font-weight: bold; color: #059669; letter-spacing: 2px; margin: 0;">
+                      ${organization.inviteCode}
+                    </p>
+                  </div>
+                  
+                  <div style="margin-bottom: 25px;">
+                    <a href="${joinUrl}" style="display: inline-block; background-color: #059669; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                      Join ${organization.name}
+                    </a>
+                  </div>
+                  
+                  <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 25px;">
+                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 8px;">
+                      <strong>How to join:</strong>
+                    </p>
+                    <ol style="font-size: 13px; color: #6b7280; margin: 0; padding-left: 20px;">
+                      <li style="margin-bottom: 5px;">Click the button above or visit <a href="${appUrl}/login" style="color: #059669;">${appUrl}/login</a></li>
+                      <li style="margin-bottom: 5px;">Click the "Join Team" tab</li>
+                      <li style="margin-bottom: 5px;">Enter your name, email, password, and the invite code above</li>
+                      <li>Start collaborating with your team!</li>
+                    </ol>
+                  </div>
+                  
+                  <p style="font-size: 12px; color: #9ca3af; margin-top: 25px; text-align: center;">
+                    If you didn't expect this invitation, you can safely ignore this email.
+                  </p>
+                </div>
+              </div>
+            `,
+            text: `
+You're invited to join ${organization.name} on RosterHub!
+
+${organization.owner.name} has invited you to join their team.
+
+Your Team Invite Code: ${organization.inviteCode}
+
+To join:
+1. Visit ${appUrl}/login
+2. Click "Join Team"
+3. Enter your details and the invite code: ${organization.inviteCode}
+
+Or click this link: ${joinUrl}
+
+If you didn't expect this invitation, you can safely ignore this email.
+            `,
+          };
+
+          return transporter.sendMail(mailOptions);
+        });
+
+        // Wait for all emails to send
+        await Promise.all(sendPromises);
+
+        return {
+          message: `Invitations sent successfully to ${emails.length} email(s)`,
+        };
+      } catch (error) {
+        console.error('Error sending team invites:', error);
+        return { 
+          message: "An error occurred while sending invitations. Please try again." 
+        };
       }
-      await skill.save();
-      const populatedSkill = await Skill.findById(skillId)
-        .populate("recipient")
-        .populate("reactions.user");
-      pubsub.publish(SKILL_REACTION_UPDATED, {
-        skillReactionUpdated: populatedSkill,
-        skillId,
-      });
-      return populatedSkill;
     },
   },
 
@@ -1999,9 +2131,21 @@ const resolvers = {
     formationCreated: {
       subscribe: withFilter(
         () => pubsub.asyncIterator([FORMATION_CREATED]),
-        (payload, variables) =>
-          payload?.formationCreated?.game?._id.toString() ===
-          variables?.gameId?.toString()
+        (payload, variables) => {
+          console.log('🔍 FORMATION_CREATED filter called with:', {
+            hasPayload: !!payload,
+            hasFormationCreated: !!payload?.formationCreated,
+            hasGame: !!payload?.formationCreated?.game,
+            payloadGameId: payload?.formationCreated?.game?._id?.toString(),
+            payloadGameType: typeof payload?.formationCreated?.game,
+            variableGameId: variables?.gameId?.toString(),
+            variablesKeys: Object.keys(variables || {})
+          });
+          
+          const match = payload?.formationCreated?.game?._id.toString() === variables?.gameId?.toString();
+          console.log('🔍 FORMATION_CREATED filter result:', { match });
+          return match;
+        }
       ),
       resolve: (payload) => payload.formationCreated,
     },
@@ -2009,9 +2153,21 @@ const resolvers = {
     formationUpdated: {
       subscribe: withFilter(
         () => pubsub.asyncIterator([FORMATION_UPDATED]),
-        (payload, variables) =>
-          payload?.formationUpdated?.game?._id.toString() ===
-          variables?.gameId?.toString()
+        (payload, variables) => {
+          console.log('🔍 FORMATION_UPDATED filter called with:', {
+            hasPayload: !!payload,
+            hasFormationUpdated: !!payload?.formationUpdated,
+            hasGame: !!payload?.formationUpdated?.game,
+            payloadGameId: payload?.formationUpdated?.game?._id?.toString(),
+            payloadGameType: typeof payload?.formationUpdated?.game,
+            variableGameId: variables?.gameId?.toString(),
+            variablesKeys: Object.keys(variables || {})
+          });
+          
+          const match = payload?.formationUpdated?.game?._id.toString() === variables?.gameId?.toString();
+          console.log('🔍 FORMATION_UPDATED filter result:', { match });
+          return match;
+        }
       ),
       resolve: (payload) => payload.formationUpdated,
     },
@@ -2019,7 +2175,19 @@ const resolvers = {
     formationDeleted: {
       subscribe: withFilter(
         () => pubsub.asyncIterator([FORMATION_DELETED]),
-        (payload, variables) => payload.gameId === variables.gameId
+        (payload, variables) => {
+          console.log('🔍 FORMATION_DELETED filter called with:', {
+            hasPayload: !!payload,
+            payloadGameId: payload.gameId,
+            payloadFormationDeleted: payload.formationDeleted,
+            variableGameId: variables.gameId,
+            variablesKeys: Object.keys(variables || {})
+          });
+          
+          const match = payload.gameId === variables.gameId;
+          console.log('🔍 FORMATION_DELETED filter result:', { match });
+          return match;
+        }
       ),
       resolve: (payload) => payload.formationDeleted,
     },
@@ -2036,14 +2204,23 @@ const resolvers = {
     formationCommentAdded: {
       subscribe: withFilter(
         () => pubsub.asyncIterator(FORMATION_COMMENT_ADDED),
-        (payload, vars) => payload.formationId === vars.formationId
+        (payload, vars) => {
+          const match = payload.formationId?.toString() === vars.formationId?.toString();
+          console.log('➕ Subscription filter - payload formationId:', payload.formationId, 'vars:', vars.formationId, 'match:', match);
+          return match;
+        }
       ),
+      resolve: (payload) => payload.formationCommentAdded,
     },
 
     formationCommentUpdated: {
       subscribe: withFilter(
         () => pubsub.asyncIterator(FORMATION_COMMENT_UPDATED),
-        (p, v) => p.formationId === v.formationId
+        (p, v) => {
+          const match = p.formationId?.toString() === v.formationId?.toString();
+          console.log('🔄 Subscription filter - payload formationId:', p.formationId, 'vars:', v.formationId, 'match:', match);
+          return match;
+        }
       ),
       resolve: (payload) => payload.formationCommentUpdated,
     },
@@ -2051,7 +2228,11 @@ const resolvers = {
     formationCommentDeleted: {
       subscribe: withFilter(
         () => pubsub.asyncIterator([FORMATION_COMMENT_DELETED]),
-        (payload, variables) => payload.formationId === variables.formationId
+        (payload, variables) => {
+          const match = payload.formationId?.toString() === variables.formationId?.toString();
+          console.log('🗑️ Subscription filter - payload formationId:', payload.formationId, 'vars:', variables.formationId, 'match:', match);
+          return match;
+        }
       ),
       resolve: (payload) => payload.formationCommentDeleted,
     },
@@ -2059,8 +2240,11 @@ const resolvers = {
     formationCommentLiked: {
       subscribe: withFilter(
         () => pubsub.asyncIterator(FORMATION_COMMENT_LIKED),
-
-        (p, v) => p.formationId === v.formationId
+        (p, v) => {
+          const match = p.formationId?.toString() === v.formationId?.toString();
+          console.log('❤️ Subscription filter - payload formationId:', p.formationId, 'vars:', v.formationId, 'match:', match);
+          return match;
+        }
       ),
       resolve: (payload) => payload.formationCommentLiked,
     },
@@ -2169,5 +2353,16 @@ resolvers.Profile = {
   ...resolvers.Profile,
   ...organizationResolvers.Profile,
 };
+
+// ########## INTEGRATE GAME RESOLVERS ########## //
+const { gameResolvers } = require('./gameResolvers');
+
+// Merge game mutations
+resolvers.Mutation = {
+  ...resolvers.Mutation,
+  ...gameResolvers.Mutation,
+};
+
+console.log('✅ Game resolvers integrated successfully');
 
 module.exports = resolvers;

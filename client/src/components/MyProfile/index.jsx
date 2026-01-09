@@ -8,6 +8,7 @@ import ProfilePicUploader from "../ProfilePicUploader";
 import ProfileManagement from "../ProfileManangement";
 import ProfileAvatar from "../../assets/images/profile-avatar.png";
 import { ThemeContext } from "../ThemeContext";
+import { OrganizationContext } from "../../contexts/OrganizationContext";
 import PostForm from "../PostForm";
 import PostsList from "../PostsList";
 import Auth from "../../utils/auth";
@@ -19,6 +20,7 @@ import ProfileCard from "../ProfileCard";
 const MyProfile = () => {
   const userId = Auth.getProfile()?.data?._id;
   const { isDarkMode } = useContext(ThemeContext);
+  const { currentOrganization } = useContext(OrganizationContext);
 
   const { loading, data } = useQuery(QUERY_ME);
   const me = data?.me || {};
@@ -46,6 +48,12 @@ const MyProfile = () => {
       setError(true);
       return;
     }
+
+    if (!currentOrganization?._id) {
+      console.error("No organization selected");
+      setError(true);
+      return;
+    }
     
     // Handle phone number separately
     if (selectedSocialMedia === "phone") {
@@ -61,6 +69,7 @@ const MyProfile = () => {
         setError(false);
       } catch (e) {
         console.error("Error updating phone number:", e);
+        setError(true);
       }
       return;
     }
@@ -72,6 +81,7 @@ const MyProfile = () => {
           userId: me._id,
           type: selectedSocialMedia,
           link: socialMediaLink,
+          organizationId: currentOrganization._id,
         },
       });
       setSelectedSocialMedia(null);
@@ -79,6 +89,7 @@ const MyProfile = () => {
       setError(false);
     } catch (e) {
       console.error("Error saving social media link:", e);
+      setError(true);
     }
   };
 
@@ -342,7 +353,17 @@ const MyProfile = () => {
                       if (selectedSocialMedia === "phone") {
                         await updatePhoneNumber({ variables: { profileId: me._id, phoneNumber: "" } });
                       } else {
-                        await removeSocialMediaLink({ variables: { userId: me._id, type: selectedSocialMedia } });
+                        if (!currentOrganization?._id) {
+                          console.error("No organization selected");
+                          return;
+                        }
+                        await removeSocialMediaLink({ 
+                          variables: { 
+                            userId: me._id, 
+                            type: selectedSocialMedia,
+                            organizationId: currentOrganization._id,
+                          } 
+                        });
                       }
                     } catch (e) {
                       console.error("Error deleting:", e);

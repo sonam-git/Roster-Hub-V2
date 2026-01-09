@@ -3,8 +3,10 @@ import { useMutation } from "@apollo/client";
 import { ADD_POST } from "../../utils/mutations";
 import Auth from "../../utils/auth";
 import { Link } from "react-router-dom";
+import { useOrganization } from "../../contexts/OrganizationContext";
 
 const PostForm = () => {
+  const { currentOrganization } = useOrganization();
   const userId = Auth.getProfile()?.data?._id;
   const [clientError, setClientError] = useState("");
   const [serverError, setServerError] = useState("");
@@ -21,13 +23,23 @@ const PostForm = () => {
       return;
     }
 
+    if (!currentOrganization) {
+      setClientError("No organization selected.");
+      setTimeout(() => setClientError(""), 3000);
+      return;
+    }
+
     setClientError("");
     setServerError("");
     setIsPending(true);
 
     try {
       await addPost({
-        variables: { profileId: userId, postText },
+        variables: { 
+          profileId: userId, 
+          postText,
+          organizationId: currentOrganization._id
+        },
       });
       event.target.reset();
     } catch (err) {

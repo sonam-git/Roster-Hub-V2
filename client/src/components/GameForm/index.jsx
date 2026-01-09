@@ -4,12 +4,14 @@ import { useMutation } from "@apollo/client";
 import { CREATE_GAME } from "../../utils/mutations";
 import { QUERY_GAMES } from "../../utils/queries";
 import { ThemeContext } from "../ThemeContext";
+import { OrganizationContext } from "../../contexts/OrganizationContext";
 import { filterCities } from "../../utils/usCities";
 import Auth from "../../utils/auth";
 
 const GameForm = ({ onGameCreated, onBackToGames }) => {
   const navigate = useNavigate();
   const { isDarkMode } = useContext(ThemeContext);
+  const { currentOrganization } = useContext(OrganizationContext);
 
   const [formState, setFormState] = useState({
     date: "",
@@ -48,16 +50,23 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
   const [createGame, { loading, error }] = useMutation(CREATE_GAME, {
     update(cache, { data: { createGame } }) {
       try {
-        const existing = cache.readQuery({ query: QUERY_GAMES }) || { games: [] };
+        const existing = cache.readQuery({ 
+          query: QUERY_GAMES,
+          variables: { organizationId: currentOrganization?._id }
+        }) || { games: [] };
         cache.writeQuery({
           query: QUERY_GAMES,
+          variables: { organizationId: currentOrganization?._id },
           data: { games: [createGame, ...existing.games] },
         });
       } catch (e) {
         console.error("Error updating cache after creating game", e);
       }
     },
-    refetchQueries: [{ query: QUERY_GAMES }],
+    refetchQueries: [{ 
+      query: QUERY_GAMES,
+      variables: { organizationId: currentOrganization?._id }
+    }],
     awaitRefetchQueries: true,
   });
 
@@ -120,12 +129,21 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
       return;
     }
 
+    // Check if organization is selected
+    if (!currentOrganization) {
+      alert('Please select an organization first');
+      return;
+    }
+
     setIsSubmitting(true);
     const { date, time, venue, city, notes, opponent } = formState;
     
     try {
       const { data } = await createGame({
-        variables: { input: { date, time, venue, city, notes, opponent } },
+        variables: { 
+          input: { date, time, venue, city, notes, opponent },
+          organizationId: currentOrganization._id
+        },
       });
       
       // Reset form on success
@@ -146,6 +164,9 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
       }
     } catch (err) {
       console.error("Create game failed", err);
+      if (err.message.includes('organization')) {
+        alert('Organization access error: ' + err.message);
+      }
     } finally {
       setIsSubmitting(false);
     }

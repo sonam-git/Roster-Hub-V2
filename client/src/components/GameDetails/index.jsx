@@ -9,13 +9,13 @@ import {
 import { useQuery, useMutation, useSubscription } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 
-import { QUERY_GAME, QUERY_GAMES, QUERY_FORMATION } from "../../utils/queries";
+import { QUERY_GAME, QUERY_GAMES, QUERY_FORMATION, QUERY_ME } from "../../utils/queries";
 import {
   RESPOND_TO_GAME,
   UNVOTE_GAME,
   CONFIRM_GAME,
   CANCEL_GAME,
-  COMPLETE_GAME,
+  // COMPLETE_GAME, // Handled by GameComplete component
 } from "../../utils/mutations";
 import {
   FORMATION_CREATED_SUBSCRIPTION,
@@ -29,6 +29,7 @@ import {
 
 import Auth from "../../utils/auth";
 import { ThemeContext } from "../ThemeContext";
+import { useOrganization } from "../../contexts/OrganizationContext";
 import { getGameEffectiveStatus } from "../../utils/gameExpiration";
 import VotersList from "../VotersList";
 import GameComplete from "../GameComplete";
@@ -128,7 +129,13 @@ function RightColumn({
 export default function GameDetails({ gameId }) {
   const navigate = useNavigate();
   const { isDarkMode } = useContext(ThemeContext);
+  const { currentOrganization } = useOrganization();
   const userId = Auth.getProfile()?.data?._id;
+
+  // Query current user data to check if they're the organization owner or admin
+  const { data: meData } = useQuery(QUERY_ME);
+  const isOrganizationOwner = meData?.me?.currentOrganization?.owner?._id === userId;
+  const isOrganizationAdmin = meData?.me?.currentOrganization?.admins?.some(admin => admin._id === userId);
 
   /* ──────────────────────────────────────────────────────────── */
   /*  Local helpers                                               */
@@ -146,17 +153,33 @@ export default function GameDetails({ gameId }) {
     data: gameData,
     refetch: refetchGame,
   } = useQuery(QUERY_GAME, {
-    variables: { gameId },
-    skip: !gameId,
+    variables: { 
+      gameId,
+      organizationId: currentOrganization?._id 
+    },
+    skip: !gameId || !currentOrganization,
     fetchPolicy: "cache-first", // Prefer cache to reduce flickering
     errorPolicy: "ignore", // Ignore network errors
   });
+  
+  // Refetch game when organization changes
+  useEffect(() => {
+    if (currentOrganization && gameId) {
+      refetchGame({ 
+        gameId,
+        organizationId: currentOrganization._id 
+      });
+    }
+  }, [currentOrganization, gameId, refetchGame]);
 
   /* ─── FORMATION QUERY ──────────────────────────────────────── */
   const [formation, setFormation] = useState(null);
   useQuery(QUERY_FORMATION, {
-    variables: { gameId },
-    skip: !gameId,
+    variables: { 
+      gameId,
+      organizationId: currentOrganization?._id 
+    },
+    skip: !gameId || !currentOrganization,
     fetchPolicy: "network-only",
     onCompleted: (d) => isMounted.current && setFormation(d?.formation ?? null),
   });
@@ -225,31 +248,47 @@ export default function GameDetails({ gameId }) {
   /* ─── GAME MUTATIONS ───────────────────────────────────────── */
   const [respondToGame] = useMutation(RESPOND_TO_GAME, {
     onCompleted: () => refetchGame(),
+    onError: (error) => {
+      if (error.message.includes('organization')) {
+        alert('Organization access error: ' + error.message);
+      }
+    }
   });
   const [unvoteGame] = useMutation(UNVOTE_GAME, {
     onCompleted: () => refetchGame(),
+    onError: (error) => {
+      if (error.message.includes('organization')) {
+        alert('Organization access error: ' + error.message);
+      }
+    }
   });
   const [confirmGame] = useMutation(CONFIRM_GAME, {
     refetchQueries: [
-      { query: QUERY_GAME, variables: { gameId } },
-      { query: QUERY_GAMES, variables: { status: "PENDING" } },
+      { query: QUERY_GAME, variables: { gameId, organizationId: currentOrganization?._id } },
+      { query: QUERY_GAMES, variables: { status: "PENDING", organizationId: currentOrganization?._id } },
     ],
     awaitRefetchQueries: true,
+    onError: (error) => {
+      if (error.message.includes('organization')) {
+        alert('Organization access error: ' + error.message);
+      }
+    }
   });
   const [cancelGame] = useMutation(CANCEL_GAME, {
     refetchQueries: [
-      { query: QUERY_GAME, variables: { gameId } },
-      { query: QUERY_GAMES, variables: { status: "PENDING" } },
+      { query: QUERY_GAME, variables: { gameId, organizationId: currentOrganization?._id } },
+      { query: QUERY_GAMES, variables: { status: "PENDING", organizationId: currentOrganization?._id } },
     ],
     awaitRefetchQueries: true,
+    onError: (error) => {
+      if (error.message.includes('organization')) {
+        alert('Organization access error: ' + error.message);
+      }
+    }
   });
-  const [completeGame] = useMutation(COMPLETE_GAME, {
-    refetchQueries: [
-      { query: QUERY_GAME, variables: { gameId } },
-      { query: QUERY_GAMES, variables: { status: "PENDING" } },
-    ],
-    awaitRefetchQueries: true,
-  });
+  // Note: completeGame mutation is handled by GameComplete component
+  // const [completeGame] = useMutation(COMPLETE_GAME, {...});
+
 
   /* ─── LOCAL UI STATE ───────────────────────────────────────── */
   const [currentVote, setCurrentVote] = useState(null);
@@ -520,7 +559,10 @@ export default function GameDetails({ gameId }) {
                       <button
                         onClick={() =>
                           respondToGame({
-                            variables: { input: { gameId, isAvailable: true } },
+                            variables: { 
+                              input: { gameId, isAvailable: true },
+                              organizationId: currentOrganization?._id
+                            },
                           })
                         }
                         className="group px-4 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
@@ -531,7 +573,10 @@ export default function GameDetails({ gameId }) {
                       <button
                         onClick={() =>
                           respondToGame({
-                            variables: { input: { gameId, isAvailable: false } },
+                            variables: { 
+                              input: { gameId, isAvailable: false },
+                              organizationId: currentOrganization?._id
+                            },
                           })
                         }
                         className="group px-4 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
@@ -560,6 +605,7 @@ export default function GameDetails({ gameId }) {
                           respondToGame({
                             variables: {
                               input: { gameId, isAvailable: !currentVote },
+                              organizationId: currentOrganization?._id
                             },
                           })
                         }
@@ -570,7 +616,12 @@ export default function GameDetails({ gameId }) {
                         <span className="hidden lg:inline text-xs sm:text-sm">Change to {currentVote ? "Not Available" : "Available"}</span>
                       </button>
                       <button
-                        onClick={() => unvoteGame({ variables: { gameId } })}
+                        onClick={() => unvoteGame({ 
+                          variables: { 
+                            gameId,
+                            organizationId: currentOrganization?._id
+                          } 
+                        })}
                         className="group px-4 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
                       >
                         <span className="text-sm sm:text-base group-hover:scale-110 transition-transform duration-300">🗑️</span>
@@ -866,7 +917,8 @@ export default function GameDetails({ gameId }) {
     isExpired: effectiveStatus === 'EXPIRED'
   });
   
-  const isCreator = game.creator._id === userId;
+  // Allow game creator, organization owner, and organization admins to manage the game
+  const isCreator = game.creator._id === userId || isOrganizationOwner || isOrganizationAdmin;
 
   /* ─── Human-friendly date/time ─────────────────────────────── */
   const humanDate = new Date(+game.date).toLocaleDateString();
@@ -1611,7 +1663,7 @@ export default function GameDetails({ gameId }) {
                       })()
                     ) : (
                       <div className="h-full">
-                        <FormationCommentList gameId={gameId} />
+                        <FormationCommentList gameId={gameId} formationId={formation?._id} />
                       </div>
                     )}
                   </div>
@@ -1656,7 +1708,13 @@ export default function GameDetails({ gameId }) {
               <div className="flex gap-3 mt-6">
                 <button
                   onClick={() => {
-                    confirmGame({ variables: { gameId, note: updatedNote } });
+                    confirmGame({ 
+                      variables: { 
+                        gameId, 
+                        organizationId: currentOrganization?._id,
+                        note: updatedNote 
+                      } 
+                    });
                     setShowConfirm(false);
                   }}
                   className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105"
@@ -1706,7 +1764,13 @@ export default function GameDetails({ gameId }) {
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={() => {
-                    cancelGame({ variables: { gameId, note: updatedNote || "Game cancelled by organizer" } });
+                    cancelGame({ 
+                      variables: { 
+                        gameId, 
+                        organizationId: currentOrganization?._id,
+                        note: updatedNote || "Game cancelled by organizer" 
+                      } 
+                    });
                     setShowCancel(false);
                   }}
                   className="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg flex items-center justify-center gap-2"
@@ -1741,11 +1805,10 @@ export default function GameDetails({ gameId }) {
           gameId={gameId}
           note={updatedNote}
           isDarkMode={isDarkMode}
-          onComplete={(score, result) =>
-            completeGame({
-              variables: { gameId, score, result, note: updatedNote },
-            })
-          }
+          onComplete={(score, result) => {
+            // Just update local UI state - GameComplete already handles the mutation
+            console.log('Game completed with score:', score, 'result:', result);
+          }}
           onClose={() => setShowComplete(false)}
         />
       )}
@@ -1784,7 +1847,7 @@ export default function GameDetails({ gameId }) {
               <div className="flex gap-3 mt-6">
                 <button
                   onClick={() => {
-                    confirmGame({ variables: { gameId, note: updatedNote } });
+                    confirmGame({ variables: { gameId, organizationId: currentOrganization?._id, note: updatedNote } });
                     setShowReconfirm(false);
                   }}
                   className="flex-1 px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105"

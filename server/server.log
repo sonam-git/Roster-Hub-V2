@@ -1,0 +1,323 @@
+✅ Game resolvers integrated successfully
+API server running on port 3001!
+Use GraphQL at http://localhost:3001/graphql
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 profiles resolver called with: {
+  args: { organizationId: '69601b3aa3f990576ebeab96' },
+  organizationIdFromArgs: '69601b3aa3f990576ebeab96',
+  organizationIdFromContext: '69601b3aa3f990576ebeab96',
+  hasUser: true
+}
+✅ Using organizationId: 69601b3aa3f990576ebeab96
+✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  memberCount: 3
+}
+✅ Returning profiles: 3
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 profiles resolver called with: {
+  args: { organizationId: '69601b3aa3f990576ebeab96' },
+  organizationIdFromArgs: '69601b3aa3f990576ebeab96',
+  organizationIdFromContext: '69601b3aa3f990576ebeab96',
+  hasUser: true
+}
+✅ Using organizationId: 69601b3aa3f990576ebeab96
+✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  memberCount: 3
+}
+✅ Returning profiles: 3
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 profiles resolver called with: {
+  args: { organizationId: '69601b3aa3f990576ebeab96' },
+  organizationIdFromArgs: '69601b3aa3f990576ebeab96',
+  organizationIdFromContext: '69601b3aa3f990576ebeab96',
+  hasUser: true
+}
+✅ Using organizationId: 69601b3aa3f990576ebeab96
+✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  memberCount: 3
+}
+✅ Returning profiles: 3
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 profiles resolver called with: {
+  args: { organizationId: '69601b3aa3f990576ebeab96' },
+  organizationIdFromArgs: '69601b3aa3f990576ebeab96',
+  organizationIdFromContext: '69601b3aa3f990576ebeab96',
+  hasUser: true
+}
+✅ Using organizationId: 69601b3aa3f990576ebeab96
+✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  memberCount: 3
+}
+✅ Returning profiles: 3
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 profiles resolver called with: {
+  args: { organizationId: '69601b3aa3f990576ebeab96' },
+  organizationIdFromArgs: '69601b3aa3f990576ebeab96',
+  organizationIdFromContext: '69601b3aa3f990576ebeab96',
+  hasUser: true
+}
+✅ Using organizationId: 69601b3aa3f990576ebeab96
+✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  memberCount: 3
+}
+✅ Returning profiles: 3
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 profiles resolver called with: {
+  args: { organizationId: '69601b3aa3f990576ebeab96' },
+  organizationIdFromArgs: '69601b3aa3f990576ebeab96',
+  organizationIdFromContext: '69601b3aa3f990576ebeab96',
+  hasUser: true
+}
+✅ Using organizationId: 69601b3aa3f990576ebeab96
+✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  memberCount: 3
+}
+✅ Returning profiles: 3
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 profiles resolver called with: {
+  args: { organizationId: '69601b3aa3f990576ebeab96' },
+  organizationIdFromArgs: '69601b3aa3f990576ebeab96',
+  organizationIdFromContext: '69601b3aa3f990576ebeab96',
+  hasUser: true
+}
+✅ Using organizationId: 69601b3aa3f990576ebeab96
+✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  memberCount: 3
+}
+✅ Returning profiles: 3
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}
+🔍 profiles resolver called with: {
+  args: { organizationId: '69601b3aa3f990576ebeab96' },
+  organizationIdFromArgs: '69601b3aa3f990576ebeab96',
+  organizationIdFromContext: '69601b3aa3f990576ebeab96',
+  hasUser: true
+}
+✅ Using organizationId: 69601b3aa3f990576ebeab96
+✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  memberCount: 3
+}
+✅ Returning profiles: 3
+🔍 currentOrganization resolver called
+  parent.currentOrganization: new ObjectId("69601b3aa3f990576ebeab96")
+  ✅ Organization found: {
+  id: new ObjectId("69601b3aa3f990576ebeab96"),
+  name: 'Arsenal',
+  inviteCode: 'E7HXNY9Z',
+  ownerId: new ObjectId("69601b39a3f990576ebeab93"),
+  memberCount: 3
+}

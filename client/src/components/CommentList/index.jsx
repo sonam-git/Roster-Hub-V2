@@ -3,13 +3,15 @@ import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { PencilAltIcon, TrashIcon } from "@heroicons/react/solid";
 import { REMOVE_COMMENT, UPDATE_COMMENT } from "../../utils/mutations";
-import CommentLike from "../CommentLike"; 
+import CommentLike from "../CommentLike";
+import { useOrganization } from "../../contexts/OrganizationContext";
 
 export default function CommentList({
   postId,
   comments,
   currentUserId,
 }) {
+  const { currentOrganization } = useOrganization();
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [text, setText] = useState("");
 
@@ -17,18 +19,46 @@ export default function CommentList({
   const [updateComment] = useMutation(UPDATE_COMMENT);
 
   const handleDelete = async (commentId) => {
-    await removeComment({
-      variables: { postId, commentId },
-    });
-    // Post.jsx subscription will remove it from UI
+    if (!currentOrganization) {
+      console.error('No organization selected');
+      return;
+    }
+    
+    try {
+      await removeComment({
+        variables: { 
+          postId, 
+          commentId,
+          organizationId: currentOrganization._id
+        },
+      });
+      // Post.jsx subscription will remove it from UI
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      alert('Failed to delete comment. Please try again.');
+    }
   };
 
   const handleSave = async (commentId) => {
-    await updateComment({
-      variables: { commentId, commentText: text },
-    });
-    setEditingCommentId(null);
-    // Post.jsx subscription will update it in UI
+    if (!currentOrganization) {
+      console.error('No organization selected');
+      return;
+    }
+    
+    try {
+      await updateComment({
+        variables: { 
+          commentId, 
+          commentText: text,
+          organizationId: currentOrganization._id
+        },
+      });
+      setEditingCommentId(null);
+      // Post.jsx subscription will update it in UI
+    } catch (error) {
+      console.error('Error updating comment:', error);
+      alert('Failed to update comment. Please try again.');
+    }
   };
 
   

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useMutation } from "@apollo/client";
 import { COMPLETE_GAME } from "../../utils/mutations";
 import { QUERY_GAME, QUERY_GAMES } from "../../utils/queries";
+import { useOrganization } from "../../contexts/OrganizationContext";
 
 const GameComplete = ({
   gameId,
@@ -11,18 +12,20 @@ const GameComplete = ({
   isDarkMode,
   onComplete,
 }) => {
+  const { currentOrganization } = useOrganization();
   const [score, setScore]   = useState("");
   const [result, setResult] = useState("NOT_PLAYED");
 
   const [completeGame, { loading, error }] = useMutation(COMPLETE_GAME, {
     refetchQueries: [
-      { query: QUERY_GAME,  variables: { gameId} },
-      { query: QUERY_GAMES, variables: { status: "PENDING" } },
+      { query: QUERY_GAME,  variables: { gameId, organizationId: currentOrganization?._id } },
+      { query: QUERY_GAMES, variables: { status: "PENDING", organizationId: currentOrganization?._id } },
+      { query: QUERY_GAMES, variables: { status: "COMPLETED", organizationId: currentOrganization?._id } },
     ],
     awaitRefetchQueries: true,
     onCompleted: () => {
       // notify parent so it can update UI
-      onComplete(score, result);
+      if (onComplete) onComplete(score, result);
       onClose();
     },
   });
@@ -30,12 +33,19 @@ const GameComplete = ({
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (!currentOrganization) {
+      console.error('No organization selected');
+      alert('Please select an organization to complete the game.');
+      return;
+    }
+
     completeGame({
       variables: {
         gameId,
         score,
         result,
         note,         // ⬅️ pass the note here
+        organizationId: currentOrganization._id,
       },
     });
   };

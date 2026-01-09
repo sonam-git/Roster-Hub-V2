@@ -5,8 +5,10 @@ import { useMutation } from "@apollo/client";
 import { ADD_SKILL } from "../../utils/mutations";
 import { QUERY_ME, QUERY_SINGLE_PROFILE, GET_SKILLS } from "../../utils/queries";
 import Auth from "../../utils/auth";
+import { useOrganization } from "../../contexts/OrganizationContext";
 
 const SkillForm = ({ profileId, teamMate }) => {
+  const { currentOrganization } = useOrganization();
   const authProfileId = Auth.getProfile().data._id;
   const [skillText, setSkillText] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -21,9 +23,22 @@ const SkillForm = ({ profileId, teamMate }) => {
       setTimeout(() => setErrorMessage(""), 3000);
       return;
     }
+    
+    if (!currentOrganization) {
+      setErrorMessage("No organization selected.");
+      setTimeout(() => setErrorMessage(""), 3000);
+      return;
+    }
+    
     setErrorMessage("");
     try {
-      await addSkill({ variables: { profileId, skillText: text } });
+      await addSkill({ 
+        variables: { 
+          profileId, 
+          skillText: text,
+          organizationId: currentOrganization._id
+        } 
+      });
       setSkillText("");
       // Force refetch of all skills for recents list
       if (client) {
@@ -31,6 +46,8 @@ const SkillForm = ({ profileId, teamMate }) => {
       }
     } catch (err) {
       console.error("Submission error:", err);
+      setErrorMessage("Failed to submit endorsement. Please try again.");
+      setTimeout(() => setErrorMessage(""), 3000);
     }
   };
 

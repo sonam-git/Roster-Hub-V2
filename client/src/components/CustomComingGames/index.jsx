@@ -1,12 +1,26 @@
 import { useQuery, useSubscription } from "@apollo/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { QUERY_GAMES } from "../../utils/queries";
 import { GAME_CREATED_SUBSCRIPTION, GAME_CONFIRMED_SUBSCRIPTION, GAME_UPDATED_SUBSCRIPTION, GAME_COMPLETED_SUBSCRIPTION, GAME_CANCELLED_SUBSCRIPTION, GAME_DELETED_SUBSCRIPTION } from "../../utils/subscription";
 import { categorizeGamesByStatus, getGameEffectiveStatus } from "../../utils/gameExpiration";
+import { useOrganization } from "../../contexts/OrganizationContext";
 
 export default function CustomComingGames({ isDarkMode }) {
   const [selectedCategory, setSelectedCategory] = useState("ALL");
-  const { loading, error, data } = useQuery(QUERY_GAMES);
+  const { currentOrganization } = useOrganization();
+  const { loading, error, data, refetch } = useQuery(QUERY_GAMES, {
+    variables: {
+      organizationId: currentOrganization?._id
+    },
+    skip: !currentOrganization
+  });
+  
+  // Refetch when organization changes
+  useEffect(() => {
+    if (currentOrganization) {
+      refetch({ organizationId: currentOrganization._id });
+    }
+  }, [currentOrganization, refetch]);
 
   // Subscribe to all relevant game events for real-time updates
   useSubscription(GAME_CREATED_SUBSCRIPTION, {
@@ -27,6 +41,20 @@ export default function CustomComingGames({ isDarkMode }) {
   useSubscription(GAME_DELETED_SUBSCRIPTION, {
     onData: ({ client }) => { client.refetchQueries({ include: [QUERY_GAMES] }); },
   });
+
+  // Loading state for organization
+  if (!currentOrganization) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
+            Loading organization...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) return <div className="text-center mt-4">Loading games...</div>;
   if (error) return <div className="text-center mt-4 text-red-600">Error: {error.message}</div>;

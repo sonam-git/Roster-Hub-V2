@@ -1,5 +1,5 @@
 // src/components/ComingGames.jsx
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useMemo, useEffect } from "react";
 import { useQuery, useSubscription, useApolloClient } from "@apollo/client";
 import { Link } from "react-router-dom";
 import { QUERY_FORMATION, QUERY_GAMES } from "../../utils/queries";
@@ -15,6 +15,7 @@ import {
   FORMATION_DELETED_SUBSCRIPTION,
 } from "../../utils/subscription";
 import { ThemeContext } from "../ThemeContext";
+import { useOrganization } from "../../contexts/OrganizationContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faTimes, faClock } from "@fortawesome/free-solid-svg-icons";
 
@@ -22,10 +23,23 @@ import { faCheck, faTimes, faClock } from "@fortawesome/free-solid-svg-icons";
 
 export default function ComingGames() {
   const { isDarkMode } = useContext(ThemeContext);
+  const { currentOrganization } = useOrganization();
   const client = useApolloClient();
 
-  // Query games
-  const { loading, error, data } = useQuery(QUERY_GAMES);
+  // Query games with organization context
+  const { loading, error, data, refetch } = useQuery(QUERY_GAMES, {
+    variables: {
+      organizationId: currentOrganization?._id
+    },
+    skip: !currentOrganization
+  });
+  
+  // Refetch when organization changes
+  useEffect(() => {
+    if (currentOrganization) {
+      refetch({ organizationId: currentOrganization._id });
+    }
+  }, [currentOrganization, refetch]);
 
   // Refetch helper
   const refetchGames = () => {
@@ -66,6 +80,20 @@ export default function ComingGames() {
       .filter((g) => g.dateObj >= today)
       .sort((a, b) => a.dateObj - b.dateObj);
   }, [data, today]);
+
+  // Loading state for organization
+  if (!currentOrganization) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+          <p className={isDarkMode ? 'text-gray-400 text-sm' : 'text-gray-600 text-sm'}>
+            Loading games...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   // Group games by status
   const grouped = {

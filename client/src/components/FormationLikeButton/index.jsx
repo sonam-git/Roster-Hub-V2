@@ -3,6 +3,7 @@ import { useMutation, useSubscription } from "@apollo/client";
 import { LIKE_FORMATION } from "../../utils/mutations";
 import { FORMATION_LIKED_SUBSCRIPTION } from "../../utils/subscription";
 import Auth from "../../utils/auth";
+import { useOrganization } from "../../contexts/OrganizationContext";
 
 export default function FormationLikeButton({
   formationId,
@@ -10,6 +11,7 @@ export default function FormationLikeButton({
   likedBy: propLikedBy = [],
   onUpdate,
 }) {
+  const { currentOrganization } = useOrganization();
   /* ---------- constants ---------- */
   const user = Auth.loggedIn() ? Auth.getProfile().data : null;
   const userId = user?._id ?? null;
@@ -69,6 +71,11 @@ export default function FormationLikeButton({
       return;
     }
 
+    if (!currentOrganization) {
+      console.error('No organization selected');
+      return;
+    }
+
     /* optimistic UI */
     const optimistic = {
       __typename: "Formation",
@@ -83,7 +90,10 @@ export default function FormationLikeButton({
     };
 
     runToggle({
-      variables: { formationId },
+      variables: { 
+        formationId,
+        organizationId: currentOrganization._id
+      },
       optimisticResponse: { likeFormation: optimistic },
     });
   };

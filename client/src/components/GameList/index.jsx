@@ -1,8 +1,8 @@
 // src/components/GameList.jsx
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/client";
-import { QUERY_GAMES } from "../../utils/queries";
+import { QUERY_GAMES, QUERY_ME } from "../../utils/queries";
 import { DELETE_GAME } from "../../utils/mutations";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -14,17 +14,36 @@ import {
   faCalendarTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import { ThemeContext } from "../ThemeContext";
+import { useOrganization } from "../../contexts/OrganizationContext";
 import Auth from "../../utils/auth";
 import { getStatusCounts, filterGamesByStatus, getGameEffectiveStatus } from "../../utils/gameExpiration";
 
 const GameList = ({ onCreateGame, searchFilters = null }) => {
   const { isDarkMode } = useContext(ThemeContext);
+  const { currentOrganization } = useOrganization();
   const navigate = useNavigate();
 
+  // Query current user data to check if they're the organization owner or admin
+  const { data: meData } = useQuery(QUERY_ME);
+  const userId = Auth.getProfile()?.data?._id || null;
+  const isOrganizationOwner = meData?.me?.currentOrganization?.owner?._id === userId;
+  const isOrganizationAdmin = meData?.me?.currentOrganization?.admins?.some(admin => admin._id === userId);
+
   // Fetch all games (no status filter)
-  const { loading, error, data } = useQuery(QUERY_GAMES, {
+  const { loading, error, data, refetch } = useQuery(QUERY_GAMES, {
+    variables: {
+      organizationId: currentOrganization?._id
+    },
+    skip: !currentOrganization,
     pollInterval: 10000,
   });
+  
+  // Refetch when organization changes
+  useEffect(() => {
+    if (currentOrganization) {
+      refetch({ organizationId: currentOrganization._id });
+    }
+  }, [currentOrganization, refetch]);
 
   const [deleteGame] = useMutation(DELETE_GAME, {
     update(cache, { data: { deleteGame } }) {
@@ -33,13 +52,26 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
     },
   });
 
-  const userId = Auth.getProfile()?.data?._id || null;
   const [page, setPage] = useState(0);
   const itemsPerPage = 3;
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [gameToDelete, setGameToDelete] = useState(null);
   const [statusFilter, setStatusFilter] = useState('ALL');
+
+  // Loading state for organization
+  if (!currentOrganization) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
+            Loading organization...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) return <div className="text-center mt-4">Loading games...</div>;
   if (error) return <div className="text-center mt-4 text-red-600">Error: {error.message}</div>;
@@ -278,8 +310,23 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
   const openDeleteModal = id => { setGameToDelete(id); setShowDeleteModal(true); };
   const closeDeleteModal = () => setShowDeleteModal(false);
   const confirmDelete = async () => {
-    await deleteGame({ variables: { gameId: gameToDelete } });
-    closeDeleteModal();
+    if (!currentOrganization) {
+      console.error('No organization selected');
+      return;
+    }
+    
+    try {
+      await deleteGame({ 
+        variables: { 
+          gameId: gameToDelete,
+          organizationId: currentOrganization._id
+        } 
+      });
+      closeDeleteModal();
+    } catch (error) {
+      console.error('Error deleting game:', error);
+      alert('Failed to delete game. Please try again.');
+    }
   };
 
   return (
@@ -399,7 +446,8 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
           pagedGames.map(game => {
             const dateObj = new Date(Number(game.date));
             const humanDate = isNaN(dateObj) ? game.date : dateObj.toLocaleDateString();
-            const isCreator = game.creator._id === userId;
+            // Allow both game creator and organization owner/admin to manage the game
+            const isCreator = game.creator._id === userId || isOrganizationOwner || isOrganizationAdmin;
 
             // Determine status display, including expired games
             const effectiveStatus = getGameEffectiveStatus(game);

@@ -7,9 +7,12 @@ import {
   HiSun, 
   HiMoon,
 } from "react-icons/hi2";
+import Auth from "../../utils/auth";
+import OrganizationSelector from "../OrganizationSelector/OrganizationSelector";
 
 const MainHeader = ({ open, setOpen }) => {
   const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
+  const isLoggedIn = Auth.loggedIn();
 
   const toggleMenu = () => {
     setOpen(!open);
@@ -94,6 +97,13 @@ const MainHeader = ({ open, setOpen }) => {
 
       {/* Bottom gradient line */}
       <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-blue-500 to-transparent dark:via-green-400 opacity-60"></div>
+      
+      {/* Organization Selector for Mobile - Show below main header when logged in */}
+      {isLoggedIn && (
+        <div className="px-4 pb-3 pt-2">
+          <OrganizationSelector />
+        </div>
+      )}
     </div>
     </>
   );

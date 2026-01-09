@@ -1,14 +1,43 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import SkillsList from "../components/SkillsList";
 import { QUERY_ME } from "../utils/queries";
+import { useOrganization } from "../contexts/OrganizationContext";
 
 const Skill = ({ isDarkMode }) => {
   const { profileId } = useParams();
+  const { currentOrganization } = useOrganization();
 
-  const { loading, data, error } = useQuery(QUERY_ME);
+  const { loading, data, error, refetch } = useQuery(QUERY_ME, {
+    variables: {
+      organizationId: currentOrganization?._id
+    },
+    skip: !currentOrganization
+  });
+  
+  // Refetch when organization changes
+  useEffect(() => {
+    if (currentOrganization) {
+      refetch({ organizationId: currentOrganization._id });
+    }
+  }, [currentOrganization, refetch]);
+  
   const profile = data?.me || {};
+
+  // Loading state for organization
+  if (!currentOrganization) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className={`text-center p-8 rounded-2xl shadow-lg ${
+          isDarkMode ? 'bg-gray-800/50' : 'bg-white/80'
+        }`}>
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>Loading organization...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

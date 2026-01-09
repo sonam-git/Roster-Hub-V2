@@ -2,7 +2,8 @@
 import React, { useContext, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@apollo/client";
-import { QUERY_GAME } from "../utils/queries";
+import { QUERY_GAME, QUERY_ME } from "../utils/queries";
+import { useOrganization } from "../contexts/OrganizationContext";
 import GameUpdate from "../components/GameUpdate";
 import { ThemeContext } from "../components/ThemeContext";
 import Auth from "../utils/auth";
@@ -11,11 +12,31 @@ const GameUpdatePage = () => {
   const { gameId } = useParams();
   const navigate = useNavigate();
   const { isDarkMode } = useContext(ThemeContext);
+  const { currentOrganization } = useOrganization();
 
-  const { data, loading, error } = useQuery(QUERY_GAME, {
-    variables: { gameId },
-    skip: !gameId,
+  // Query current user data to check if they're the organization owner or admin
+  const { data: meData } = useQuery(QUERY_ME);
+  const currentUserId = Auth.getProfile()?.data?._id;
+  const isOrganizationOwner = meData?.me?.currentOrganization?.owner?._id === currentUserId;
+  const isOrganizationAdmin = meData?.me?.currentOrganization?.admins?.some(admin => admin._id === currentUserId);
+
+  const { data, loading, error, refetch } = useQuery(QUERY_GAME, {
+    variables: { 
+      gameId,
+      organizationId: currentOrganization?._id 
+    },
+    skip: !gameId || !currentOrganization,
   });
+  
+  // Refetch when organization changes
+  useEffect(() => {
+    if (currentOrganization && gameId) {
+      refetch({ 
+        gameId,
+        organizationId: currentOrganization._id 
+      });
+    }
+  }, [currentOrganization, gameId, refetch]);
 
   const game = data?.game;
   
@@ -26,29 +47,32 @@ const GameUpdatePage = () => {
     }
   }, [navigate]);
 
-  // Handle permission check - only redirect if we have game data and user is NOT creator
+  // Handle permission check - only redirect if we have game data and user is NOT creator OR admin
   useEffect(() => {
     if (!loading && game) {
       const currentUser = Auth.getProfile()?.data;
-      const gameCreatorId = game?.creator?._id; // Fixed: using 'creator' instead of 'createdBy'
+      const gameCreatorId = game?.creator?._id;
       const currentUserId = currentUser?._id;
-      const isCreator = gameCreatorId === currentUserId;
+      // Allow game creator, organization owner, and organization admins to update the game
+      const isCreator = gameCreatorId === currentUserId || isOrganizationOwner || isOrganizationAdmin;
       
       console.log('Permission check:', {
         gameCreatorId,
         currentUserId,
+        isOrganizationOwner,
+        isOrganizationAdmin,
         isCreator,
         match: gameCreatorId === currentUserId
       });
       
       if (!isCreator) {
-        console.log('Not creator, redirecting to game-schedule');
+        console.log('Not creator or admin, redirecting to game-schedule');
         navigate("/game-schedule", { replace: true });
       } else {
-        console.log('✅ User IS the creator, staying on page');
+        console.log('✅ User IS the creator or admin, staying on page');
       }
     }
-  }, [loading, game, navigate]);
+  }, [loading, game, navigate, isOrganizationOwner, isOrganizationAdmin]);
 
   const handleClose = () => {
     navigate(-1); // Go back to previous page (likely GameDetails)
@@ -56,6 +80,20 @@ const GameUpdatePage = () => {
 
   // Debug logging
   console.log('GameUpdatePage render:', { gameId, loading, error, game: !!game });
+
+  // Loading state for organization
+  if (!currentOrganization) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center px-4 ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}>
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className={`text-lg font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+            Loading organization...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

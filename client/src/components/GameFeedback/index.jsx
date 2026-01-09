@@ -3,8 +3,10 @@ import React, { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { ADD_FEEDBACK } from "../../utils/mutations";
 import { QUERY_GAME } from "../../utils/queries";
+import { useOrganization } from "../../contexts/OrganizationContext";
 
 const GameFeedback = ({ gameId, isDarkMode, onFeedback }) => {
+  const { currentOrganization } = useOrganization();
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(5);
   const [playerOfTheMatchId, setPlayerOfTheMatchId] = useState("");
@@ -12,12 +14,22 @@ const GameFeedback = ({ gameId, isDarkMode, onFeedback }) => {
 
   // Get game data to access available players
   const { data: gameData } = useQuery(QUERY_GAME, {
-    variables: { gameId },
+    variables: { 
+      gameId,
+      organizationId: currentOrganization?._id 
+    },
+    skip: !currentOrganization,
     fetchPolicy: "cache-first",
   });
 
   const [addFeedback, { loading, error }] = useMutation(ADD_FEEDBACK, {
-    refetchQueries: [{ query: QUERY_GAME, variables: { gameId } }],
+    refetchQueries: [{ 
+      query: QUERY_GAME, 
+      variables: { 
+        gameId,
+        organizationId: currentOrganization?._id 
+      } 
+    }],
     awaitRefetchQueries: true,
     onCompleted: () => {
       // clear form
@@ -37,10 +49,17 @@ const GameFeedback = ({ gameId, isDarkMode, onFeedback }) => {
       return;
     }
     
+    if (!currentOrganization) {
+      setValidationError("No organization selected.");
+      setTimeout(() => setValidationError(""), 3000);
+      return;
+    }
+    
     const variables = { 
       gameId, 
       comment: comment.trim(), 
-      rating 
+      rating,
+      organizationId: currentOrganization._id
     };
     
     // Only add playerOfTheMatchId if a player is selected
@@ -48,7 +67,13 @@ const GameFeedback = ({ gameId, isDarkMode, onFeedback }) => {
       variables.playerOfTheMatchId = playerOfTheMatchId;
     }
     
-    await addFeedback({ variables });
+    try {
+      await addFeedback({ variables });
+    } catch (error) {
+      console.error('Error adding feedback:', error);
+      setValidationError("Failed to submit feedback. Please try again.");
+      setTimeout(() => setValidationError(""), 3000);
+    }
   };
 
   // Get available players for the dropdown

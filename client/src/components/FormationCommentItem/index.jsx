@@ -6,13 +6,21 @@ import {
   LIKE_FORMATION_COMMENT,
 } from '../../utils/mutations';
 import Auth from '../../utils/auth';
+import { useOrganization } from '../../contexts/OrganizationContext';
 
 export default function FormationCommentItem({ comment, formationId }) {
+  const { currentOrganization } = useOrganization();
   const userId = Auth.loggedIn() ? Auth.getProfile().data._id : null;
   const isMine = userId && comment.user?._id === userId;
 
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(comment.commentText);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  // Sync text when comment is updated from subscription
+  useEffect(() => {
+    setText(comment.commentText);
+  }, [comment.commentText]);
 
   // Local state for likes to ensure UI consistency
   const [localLikes, setLocalLikes] = useState(comment.likes || 0);
@@ -20,71 +28,85 @@ export default function FormationCommentItem({ comment, formationId }) {
 
   // Sync local state when comment prop changes (from subscription updates)
   useEffect(() => {
+    console.log('🔄 FormationCommentItem syncing from props:', {
+      commentId: comment._id,
+      oldLikes: localLikes,
+      newLikes: comment.likes,
+      oldLikedBy: localLikedBy.length,
+      newLikedBy: comment.likedBy?.length
+    });
     setLocalLikes(comment.likes || 0);
     setLocalLikedBy(comment.likedBy ?? []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [comment.likes, comment.likedBy]);
 
   const hasLiked = !!userId && localLikedBy.some(u => u._id === userId);
 
   // Like / Unlike
   const [likeComment] = useMutation(LIKE_FORMATION_COMMENT, {
-    variables: { commentId: comment._id },
+    variables: { 
+      commentId: comment._id,
+      organizationId: currentOrganization?._id
+    },
     onCompleted: (data) => {
-      // Update local state with the mutation response
+      console.log('❤️ LIKE mutation completed:', data);
+      // Update local state immediately for this user
       if (data?.likeFormationComment) {
         setLocalLikes(data.likeFormationComment.likes);
         setLocalLikedBy(data.likeFormationComment.likedBy ?? []);
       }
     },
-    optimisticResponse: {
-      likeFormationComment: {
-        __typename: 'FormationComment',
-        _id: comment._id,
-        likes: hasLiked ? localLikes - 1 : localLikes + 1,
-        likedBy: hasLiked
-          ? localLikedBy.filter(u => u._id !== userId)
-          : [...localLikedBy, { __typename: 'Profile', _id: userId, name: comment.user?.name || 'Anonymous' }],
-      },
+    onError: (error) => {
+      console.error('❤️ LIKE mutation error:', error);
     },
   });
 
   // Update
   const [updateComment] = useMutation(UPDATE_FORMATION_COMMENT, {
-    variables: { commentId: comment._id, commentText: text },
-    onCompleted: () => setEditing(false),
-    optimisticResponse: {
-      updateFormationComment: {
-        __typename: 'FormationComment',
-        _id: comment._id,
-        commentText: text,
-        updatedAt: new Date().toISOString(),
-        likes: localLikes,
-        likedBy: localLikedBy,
-      },
+    variables: { 
+      commentId: comment._id, 
+      commentText: text,
+      organizationId: currentOrganization?._id
+    },
+    onCompleted: (data) => {
+      console.log('🔄 UPDATE mutation completed:', data);
+      setEditing(false);
+      // Text will be synced via useEffect when comment prop updates
+    },
+    onError: (error) => {
+      console.error('🔄 UPDATE mutation error:', error);
     },
   });
 
   // Delete
-  const [deleteComment] = useMutation(DELETE_FORMATION_COMMENT, {
-    variables: { formationId, commentId: comment._id },
-    optimisticResponse: {
-      deleteFormationComment: comment._id
+  const [deleteComment, { loading: deleteLoading }] = useMutation(DELETE_FORMATION_COMMENT, {
+    variables: { 
+      formationId, 
+      commentId: comment._id,
+      organizationId: currentOrganization?._id
     },
-    update(cache, { data: { deleteFormationComment } }) {
-      // Evict that ID from the Formation.comments[] in the cache:
-      const formationRef = cache.identify({ __typename: 'Formation', _id: formationId });
-      cache.modify({
-        id: formationRef,
-        fields: {
-          comments(existing = [], { readField }) {
-            return existing.filter(
-              ref => readField('_id', ref) !== deleteFormationComment
-            );
-          }
-        }
-      });
-    }
+    onCompleted: (data) => {
+      console.log('🗑️ DELETE mutation completed:', data);
+      setShowDeleteModal(false);
+    },
+    onError: (error) => {
+      console.error('🗑️ DELETE mutation error:', error);
+      alert('Failed to delete comment. Please try again.');
+      setShowDeleteModal(false);
+    },
   });
+
+  const handleDeleteClick = () => {
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = () => {
+    deleteComment();
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false);
+  };
 
   return (
     <div className="group p-4 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-200">
@@ -170,7 +192,7 @@ export default function FormationCommentItem({ comment, formationId }) {
                   <span className="text-sm">✏️</span>
                 </button>
                 <button 
-                  onClick={() => deleteComment()} 
+                  onClick={handleDeleteClick} 
                   title="Delete comment"
                   className="p-1.5 rounded-lg hover:bg-red-100 dark:hover:bg-red-900 text-red-600 dark:text-red-400 transition-colors duration-200"
                 >
@@ -225,6 +247,65 @@ export default function FormationCommentItem({ comment, formationId }) {
                 edited
               </span>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-6 border border-gray-200 dark:border-gray-600">
+            {/* Icon */}
+            <div className="flex justify-center mb-4">
+              <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+                <span className="text-4xl">🗑️</span>
+              </div>
+            </div>
+
+            {/* Title */}
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white text-center mb-2">
+              Delete Comment?
+            </h3>
+
+            {/* Message */}
+            <p className="text-gray-600 dark:text-gray-300 text-center mb-6">
+              Are you sure you want to delete this comment? This action cannot be undone.
+            </p>
+
+            {/* Comment Preview */}
+            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 mb-6 border-l-4 border-red-500">
+              <p className="text-sm text-gray-700 dark:text-gray-200 line-clamp-3">
+                {comment.commentText}
+              </p>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-3">
+              <button
+                onClick={handleCancelDelete}
+                disabled={deleteLoading}
+                className="flex-1 px-4 py-2.5 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                disabled={deleteLoading}
+                className="flex-1 px-4 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg font-medium hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {deleteLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Deleting...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>🗑️</span>
+                    <span>Delete</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}

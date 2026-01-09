@@ -7,8 +7,10 @@ import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { FaTimes, FaTrophy, FaFire, FaThumbsUp, FaMedal, FaRocket } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi";
 import ProfileAvatar from "../../assets/images/profile-avatar.png";
+import { useOrganization } from "../../contexts/OrganizationContext";
 
 const RatingModal = ({ profile, onClose, isDarkMode }) => {
+  const { currentOrganization } = useOrganization();
   const [rating, setRating] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,6 +23,11 @@ const RatingModal = ({ profile, onClose, isDarkMode }) => {
       return;
     }
     
+    if (!currentOrganization) {
+      setErrorMessage("No organization selected.");
+      return;
+    }
+    
     setIsSubmitting(true);
     try {
       await ratePlayer({
@@ -30,6 +37,7 @@ const RatingModal = ({ profile, onClose, isDarkMode }) => {
             user: Auth.getProfile().data._id,
             rating,
           },
+          organizationId: currentOrganization._id,
         },
       });
       setErrorMessage("");

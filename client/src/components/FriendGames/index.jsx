@@ -2,9 +2,16 @@ import React, { useMemo, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { QUERY_GAMES } from '../../utils/queries';
 import { Link } from 'react-router-dom';
+import { useOrganization } from '../../contexts/OrganizationContext';
 
 const FriendGames = ({ friendId, friendName, isDarkMode }) => {
-  const { loading, data, error } = useQuery(QUERY_GAMES);
+  const { currentOrganization } = useOrganization();
+  const { loading, data, error } = useQuery(QUERY_GAMES, {
+    variables: { 
+      organizationId: currentOrganization?._id 
+    },
+    skip: !currentOrganization,
+  });
   const [filter, setFilter] = useState('available'); // 'available' or 'unavailable'
 
   const friendGames = useMemo(() => {
@@ -128,6 +135,21 @@ const FriendGames = ({ friendId, friendName, isDarkMode }) => {
     </Link>
   );
 
+  // Loading state for organization
+  if (!currentOrganization) {
+    return (
+      <div className="space-y-3 sm:space-y-4">
+        {[...Array(2)].map((_, i) => (
+          <div key={i} className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl animate-pulse ${
+            isDarkMode ? 'bg-gray-800/50' : 'bg-gray-200/50'
+          }`}>
+            <div className={`h-3 sm:h-4 rounded mb-2 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`}></div>
+            <div className={`h-2 sm:h-3 rounded w-3/4 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`}></div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
 
   if (loading) {

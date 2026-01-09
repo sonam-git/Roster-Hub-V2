@@ -19,6 +19,13 @@ const ProfileList = ({ profiles, title, isDarkMode }) => {
   const [following, setFollowing] = useState(new Set());
   const profilesPerPage = 4;
 
+  // Debug logging
+  console.log("🔍 ProfileList Debug:", {
+    profilesReceived: profiles?.length,
+    profilesArray: profiles,
+    title,
+  });
+
   const handleChatClick = (user) => {
     setSelectedUser(user);
     setShowModal(true);
@@ -67,6 +74,14 @@ const ProfileList = ({ profiles, title, isDarkMode }) => {
 
   // Filter out the logged-in user from the profiles list
   const filteredProfiles = profiles?.filter((profile) => profile._id !== loggedInUserId);
+
+  // Debug logging
+  console.log("🔍 ProfileList Filtered Debug:", {
+    loggedInUserId,
+    totalProfiles: profiles?.length,
+    filteredProfilesCount: filteredProfiles?.length,
+    filteredProfiles,
+  });
 
   if (!filteredProfiles.length) {
     return (

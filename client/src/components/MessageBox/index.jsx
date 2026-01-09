@@ -6,8 +6,10 @@ import MessageSentModal from "../MessageSentModal";
 import { QUERY_ME } from "../../utils/queries";
 import { HiPaperAirplane, HiX, HiUser, HiReply, HiExclamationCircle } from "react-icons/hi";
 import ProfileAvatar from "../../assets/images/profile-avatar.png";
+import { useOrganization } from "../../contexts/OrganizationContext";
 
 const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode, skipSuccessModal = false, skipNavigation = false }) => {
+  const { currentOrganization } = useOrganization();
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
   const [messageSent, setMessageSent] = useState(false);
@@ -27,6 +29,12 @@ const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode, skip
       return;
     }
 
+    if (!currentOrganization) {
+      console.error('No organization selected');
+      setError(true);
+      return;
+    }
+
     try {
       console.log('🔵 MessageBox: Sending message...');
       console.log('🔵 skipSuccessModal:', skipSuccessModal);
@@ -36,6 +44,7 @@ const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode, skip
         variables: {
           recipientId: recipient._id,
           text: message,
+          organizationId: currentOrganization._id,
         },
         refetchQueries: [{ query: QUERY_ME }],
       });
@@ -57,6 +66,7 @@ const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode, skip
       }
     } catch (error) {
       console.error("❌ Error sending message:", error);
+      setError(true);
     }
   };
 

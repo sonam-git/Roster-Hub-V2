@@ -1,20 +1,35 @@
 import { useQuery, useSubscription, useMutation } from "@apollo/client";
+import { useEffect, useState } from "react";
 import { QUERY_PROFILES } from "../../utils/queries";
 import { SKILL_ADDED_SUBSCRIPTION, SKILL_DELETED_SUBSCRIPTION } from "../../utils/subscription";
 import SkillReaction from "../SkillsList/SkillReaction";
 import { REACT_TO_SKILL, ADD_SKILL } from "../../utils/mutations";
-import { useState } from "react";
 import { FaUserCircle, FaStar, FaTimes } from "react-icons/fa";
 import ProfileAvatar from '../../assets/images/profile-avatar.png';
 import Auth from "../../utils/auth";
+import { useOrganization } from "../../contexts/OrganizationContext";
 
 export default function AllSkillsList({ isDarkMode }) {
-  const { loading, error, data } = useQuery(QUERY_PROFILES);
+  const { currentOrganization } = useOrganization();
+  const { loading, error, data, refetch } = useQuery(QUERY_PROFILES, {
+    variables: {
+      organizationId: currentOrganization?._id
+    },
+    skip: !currentOrganization
+  });
+  
+  // Refetch when organization changes
+  useEffect(() => {
+    if (currentOrganization) {
+      refetch({ organizationId: currentOrganization._id });
+    }
+  }, [currentOrganization, refetch]);
+  
   const [reactToSkill] = useMutation(REACT_TO_SKILL, {
-    refetchQueries: [{ query: QUERY_PROFILES }],
+    refetchQueries: [{ query: QUERY_PROFILES, variables: { organizationId: currentOrganization?._id } }],
   });
   const [addSkill] = useMutation(ADD_SKILL, {
-    refetchQueries: [{ query: QUERY_PROFILES }],
+    refetchQueries: [{ query: QUERY_PROFILES, variables: { organizationId: currentOrganization?._id } }],
   });
 
   const [selectedPlayer, setSelectedPlayer] = useState(null);
@@ -35,13 +50,21 @@ export default function AllSkillsList({ isDarkMode }) {
       setTimeout(() => setErrorMessage(""), 3000);
       return;
     }
+    
+    if (!currentOrganization) {
+      setErrorMessage("No organization selected.");
+      setTimeout(() => setErrorMessage(""), 3000);
+      return;
+    }
+    
     setErrorMessage("");
     setIsSubmitting(true);
     try {
       await addSkill({ 
         variables: { 
           profileId: selectedPlayer._id, 
-          skillText: text 
+          skillText: text,
+          organizationId: currentOrganization._id
         } 
       });
       setSkillText("");
@@ -66,6 +89,20 @@ export default function AllSkillsList({ isDarkMode }) {
       client.refetchQueries({ include: [QUERY_PROFILES] });
     },
   });
+
+  // Loading state for organization
+  if (!currentOrganization) {
+    return (
+      <div className="flex items-center justify-center min-h-[40vh]">
+        <div className={`text-center p-8 rounded-2xl shadow-2xl backdrop-blur-sm border ${
+          isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 border-gray-200'
+        }`}>
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className={`font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading organization...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -556,7 +593,19 @@ export default function AllSkillsList({ isDarkMode }) {
               </span>
               <div className="flex items-center">
                 <SkillReaction 
-                  onReact={emoji => reactToSkill({ variables: { skillId: skill._id, emoji } })}
+                  onReact={emoji => {
+                    if (!currentOrganization) {
+                      console.error('No organization selected');
+                      return;
+                    }
+                    reactToSkill({ 
+                      variables: { 
+                        skillId: skill._id, 
+                        emoji,
+                        organizationId: currentOrganization._id
+                      } 
+                    });
+                  }}
                   isDarkMode={isDarkMode}
                 />
               </div>

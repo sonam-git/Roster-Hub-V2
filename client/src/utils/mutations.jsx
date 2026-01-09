@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 //  Mutation to add a new profile
 export const ADD_PROFILE = gql`
-  mutation addProfile($name: String!, $email: String!, $password: String!) {
-    addProfile(name: $name, email: $email, password: $password) {
+  mutation addProfile($name: String!, $email: String!, $password: String!, $organizationName: String, $inviteCode: String) {
+    addProfile(name: $name, email: $email, password: $password, organizationName: $organizationName, inviteCode: $inviteCode) {
       token
       profile {
         _id
@@ -12,6 +12,20 @@ export const ADD_PROFILE = gql`
           skillAuthor
           _id
           createdAt
+        }
+      }
+      organization {
+        _id
+        name
+        slug
+        inviteCode
+        owner {
+          _id
+          name
+        }
+        members {
+          _id
+          name
         }
       }
     }
@@ -80,8 +94,8 @@ export const UPLOAD_PROFILE_PIC = gql`
 `;
 // Mutation to add a skill
 export const ADD_SKILL = gql`
-  mutation addSkill($profileId: ID!, $skillText: String!) {
-    addSkill(profileId: $profileId, skillText: $skillText) {
+  mutation addSkill($profileId: ID!, $skillText: String!, $organizationId: ID!) {
+    addSkill(profileId: $profileId, skillText: $skillText, organizationId: $organizationId) {
       _id
       skillText
       skillAuthor
@@ -107,16 +121,16 @@ export const LOGIN_USER = gql`
 `;
 // Mutation to update a skill
 export const REMOVE_SKILL = gql`
-  mutation removeSkill($skillId: ID!) {
-    removeSkill(skillId: $skillId) {
+  mutation removeSkill($skillId: ID!, $organizationId: ID!) {
+    removeSkill(skillId: $skillId, organizationId: $organizationId) {
       _id
     }
   }
 `;
 // Mutation to remove a message
 export const REMOVE_MESSAGE = gql`
-  mutation Mutation($messageId: ID!) {
-    removeMessage(messageId: $messageId) {
+  mutation Mutation($messageId: ID!, $organizationId: ID!) {
+    removeMessage(messageId: $messageId, organizationId: $organizationId) {
       _id
       text
     }
@@ -124,14 +138,14 @@ export const REMOVE_MESSAGE = gql`
 `;
 // Mutation to delete a conversation history
 export const DELETE_CONVERSATION = gql`
-  mutation deleteConversation($userId: ID!) {
-    deleteConversation(userId: $userId)
+  mutation deleteConversation($userId: ID!, $organizationId: ID!) {
+    deleteConversation(userId: $userId, organizationId: $organizationId)
   }
 `;
 // Mutation to send a message
 export const SEND_MESSAGE = gql`
-  mutation SendMessage($recipientId: ID!, $text: String!) {
-    sendMessage(recipientId: $recipientId, text: $text) {
+  mutation SendMessage($recipientId: ID!, $text: String!, $organizationId: ID!) {
+    sendMessage(recipientId: $recipientId, text: $text, organizationId: $organizationId) {
       text
       _id
       createdAt
@@ -148,8 +162,8 @@ export const SEND_MESSAGE = gql`
 `;
 // Mutation to save a social media link
 export const SAVE_SOCIAL_MEDIA_LINK = gql`
-  mutation saveSocialMediaLink($userId: ID!, $type: String!, $link: String!) {
-    saveSocialMediaLink(userId: $userId, type: $type, link: $link) {
+  mutation saveSocialMediaLink($userId: ID!, $type: String!, $link: String!, $organizationId: ID!) {
+    saveSocialMediaLink(userId: $userId, type: $type, link: $link, organizationId: $organizationId) {
       _id
       userId
       type
@@ -159,8 +173,8 @@ export const SAVE_SOCIAL_MEDIA_LINK = gql`
 `;
 // Mutation to remove a social media link
 export const REMOVE_SOCIAL_MEDIA_LINK = gql`
-  mutation removeSocialMediaLink($userId: ID!, $type: String!) {
-    removeSocialMediaLink(userId: $userId, type: $type)
+  mutation removeSocialMediaLink($userId: ID!, $type: String!, $organizationId: ID!) {
+    removeSocialMediaLink(userId: $userId, type: $type, organizationId: $organizationId)
   }
 `;
 // Mutation to update the name
@@ -209,10 +223,18 @@ export const RESET_PASSWORD = gql`
     }
   }
 `;
+// Mutation to send team invite emails
+export const SEND_TEAM_INVITE = gql`
+  mutation sendTeamInvite($emails: [String!]!, $organizationId: ID!) {
+    sendTeamInvite(emails: $emails, organizationId: $organizationId) {
+      message
+    }
+  }
+`;
 // Mutation to add a post
 export const ADD_POST = gql`
-  mutation addPost($profileId: ID!, $postText: String!) {
-    addPost(profileId: $profileId, postText: $postText) {
+  mutation addPost($profileId: ID!, $postText: String!, $organizationId: ID!) {
+    addPost(profileId: $profileId, postText: $postText, organizationId: $organizationId) {
       _id
       postText
       postAuthor
@@ -244,8 +266,8 @@ export const ADD_POST = gql`
 `;
 // Mutation to remove a post
 export const REMOVE_POST = gql`
-  mutation RemovePost($postId: ID!) {
-    removePost(postId: $postId) {
+  mutation RemovePost($postId: ID!, $organizationId: ID!) {
+    removePost(postId: $postId, organizationId: $organizationId) {
       _id
       postText
       postAuthor
@@ -254,8 +276,8 @@ export const REMOVE_POST = gql`
 `;
 // Mutation to update a post
 export const UPDATE_POST = gql`
-  mutation updatePost($postId: ID!, $postText: String!) {
-    updatePost(postId: $postId, postText: $postText) {
+  mutation updatePost($postId: ID!, $postText: String!, $organizationId: ID!) {
+    updatePost(postId: $postId, postText: $postText, organizationId: $organizationId) {
       _id
       postText
     }
@@ -263,8 +285,8 @@ export const UPDATE_POST = gql`
 `;
 // Mutation to add a comment to a post
 export const ADD_COMMENT = gql`
-  mutation addComment($postId: ID!, $commentText: String!) {
-    addComment(postId: $postId, commentText: $commentText) {
+  mutation addComment($postId: ID!, $commentText: String!, $organizationId: ID!) {
+    addComment(postId: $postId, commentText: $commentText, organizationId: $organizationId) {
       _id
       comments {
         _id
@@ -283,8 +305,8 @@ export const ADD_COMMENT = gql`
 `;
 // Mutation to update a comment on a post
 export const UPDATE_COMMENT = gql`
-  mutation updateComment($commentId: ID!, $commentText: String!) {
-    updateComment(commentId: $commentId, commentText: $commentText) {
+  mutation updateComment($commentId: ID!, $commentText: String!, $organizationId: ID!) {
+    updateComment(commentId: $commentId, commentText: $commentText, organizationId: $organizationId) {
       _id
       commentText
       commentAuthor
@@ -300,14 +322,14 @@ export const UPDATE_COMMENT = gql`
 `;
 // Mutation to remove a comment from a post
 export const REMOVE_COMMENT = gql`
-  mutation removeComment($postId: ID!, $commentId: ID!) {
-    removeComment(postId: $postId, commentId: $commentId)
+  mutation removeComment($postId: ID!, $commentId: ID!, $organizationId: ID!) {
+    removeComment(postId: $postId, commentId: $commentId, organizationId: $organizationId)
   }
 `;
 // like post mutation
 export const LIKE_POST = gql`
-  mutation likePost($postId: ID!) {
-    likePost(postId: $postId) {
+  mutation likePost($postId: ID!, $organizationId: ID!) {
+    likePost(postId: $postId, organizationId: $organizationId) {
       _id
       likes
       likedBy {
@@ -319,8 +341,8 @@ export const LIKE_POST = gql`
 `;
 // like post mutation
 export const LIKE_COMMENT = gql`
-  mutation likeComment($commentId: ID!) {
-    likeComment(commentId: $commentId) {
+  mutation likeComment($commentId: ID!, $organizationId: ID!) {
+    likeComment(commentId: $commentId, organizationId: $organizationId) {
       _id
       likes
           likedBy {
@@ -332,8 +354,8 @@ export const LIKE_COMMENT = gql`
 `;
 // rating mutation
 export const RATE_PLAYER = gql`
-  mutation ratePlayer($profileId: ID!, $ratingInput: RatingInput!) {
-    ratePlayer(profileId: $profileId, ratingInput: $ratingInput) {
+  mutation ratePlayer($profileId: ID!, $ratingInput: RatingInput!, $organizationId: ID!) {
+    ratePlayer(profileId: $profileId, ratingInput: $ratingInput, organizationId: $organizationId) {
       _id
       ratings {
         user
@@ -345,8 +367,8 @@ export const RATE_PLAYER = gql`
 `;
 // create chat
 export const CREATE_CHAT = gql`
-  mutation CreateChat($from: ID!, $to: ID!, $content: String!) {
-    createChat(from: $from, to: $to, content: $content) {
+  mutation CreateChat($from: ID!, $to: ID!, $content: String!, $organizationId: ID!) {
+    createChat(from: $from, to: $to, content: $content, organizationId: $organizationId) {
       id
       from {
         _id
@@ -363,8 +385,8 @@ export const CREATE_CHAT = gql`
 `;
 //Create a new game poll
 export const CREATE_GAME = gql`
-  mutation CreateGame($input: CreateGameInput!) {
-    createGame(input: $input) {
+  mutation CreateGame($input: CreateGameInput!, $organizationId: ID!) {
+    createGame(input: $input, organizationId: $organizationId) {
       _id
       creator {
         _id
@@ -438,8 +460,8 @@ export const CREATE_GAME = gql`
 `;
 //update game date, time, venue, notes, and status
 export const UPDATE_GAME = gql`
-  mutation UpdateGame($gameId: ID!, $input: UpdateGameInput!) {
-    updateGame(gameId: $gameId, input: $input) {
+  mutation UpdateGame($gameId: ID!, $organizationId: ID!, $input: UpdateGameInput!) {
+    updateGame(gameId: $gameId, organizationId: $organizationId, input: $input) {
       _id
       creator {
         _id
@@ -513,8 +535,8 @@ export const UPDATE_GAME = gql`
 `;
 //Respond (Yes/No) to a game
 export const RESPOND_TO_GAME = gql`
-  mutation RespondToGame($input: RespondToGameInput!) {
-    respondToGame(input: $input) {
+  mutation RespondToGame($input: RespondToGameInput!, $organizationId: ID!) {
+    respondToGame(input: $input, organizationId: $organizationId) {
       _id
       status
       notes
@@ -532,8 +554,8 @@ export const RESPOND_TO_GAME = gql`
 `;
 //Confirm a pending game (only creator), now with an optional `note` argument
 export const CONFIRM_GAME = gql`
-  mutation ConfirmGame($gameId: ID!, $note: String) {
-    confirmGame(gameId: $gameId, note: $note) {
+  mutation ConfirmGame($gameId: ID!, $organizationId: ID!, $note: String) {
+    confirmGame(gameId: $gameId, organizationId: $organizationId, note: $note) {
       _id
       status
       notes
@@ -556,8 +578,8 @@ export const CONFIRM_GAME = gql`
 `;
 //Cancel a pending game (only creator), now with an optional `note` argument
 export const CANCEL_GAME = gql`
-  mutation CancelGame($gameId: ID!, $note: String) {
-    cancelGame(gameId: $gameId, note: $note) {
+  mutation CancelGame($gameId: ID!, $organizationId: ID!, $note: String) {
+    cancelGame(gameId: $gameId, organizationId: $organizationId, note: $note) {
       _id
       status
       notes
@@ -581,12 +603,14 @@ export const CANCEL_GAME = gql`
 export const COMPLETE_GAME = gql`
   mutation CompleteGame(
     $gameId: ID!
+    $organizationId: ID!
     $score: String!
     $result: GameResult!
     $note: String
   ) {
     completeGame(
       gameId: $gameId
+      organizationId: $organizationId
       score: $score
       result: $result
       note: $note
@@ -609,8 +633,8 @@ export const COMPLETE_GAME = gql`
 `;
 //Unvote or change response to a game
 export const UNVOTE_GAME = gql`
-  mutation UnvoteGame($gameId: ID!) {
-    unvoteGame(gameId: $gameId) {
+  mutation UnvoteGame($gameId: ID!, $organizationId: ID!) {
+    unvoteGame(gameId: $gameId, organizationId: $organizationId) {
       _id
       status
       notes
@@ -628,8 +652,8 @@ export const UNVOTE_GAME = gql`
 `;
 //Delete a game (only for creator)
 export const DELETE_GAME = gql`
-  mutation DeleteGame($gameId: ID!) {
-    deleteGame(gameId: $gameId) {
+  mutation DeleteGame($gameId: ID!, $organizationId: ID!) {
+    deleteGame(gameId: $gameId, organizationId: $organizationId) {
       _id
     }
   }
@@ -650,8 +674,8 @@ export const LOGIN_WITH_GOOGLE = gql`
 `;
 // Mutation to add feedback for a game
 export const ADD_FEEDBACK = gql`
-  mutation AddFeedback($gameId: ID!, $comment: String, $rating: Int!, $playerOfTheMatchId: ID) {
-    addFeedback(gameId: $gameId, comment: $comment, rating: $rating, playerOfTheMatchId: $playerOfTheMatchId) {
+  mutation AddFeedback($gameId: ID!, $organizationId: ID!, $comment: String, $rating: Int!, $playerOfTheMatchId: ID) {
+    addFeedback(gameId: $gameId, organizationId: $organizationId, comment: $comment, rating: $rating, playerOfTheMatchId: $playerOfTheMatchId) {
       _id
       feedbacks {
         _id
@@ -666,8 +690,8 @@ export const ADD_FEEDBACK = gql`
 `;
 // Mutation to create formation for a game
 export const CREATE_FORMATION = gql`
-  mutation createFormation($gameId: ID!, $formationType: String!) {
-    createFormation(gameId: $gameId, formationType: $formationType) {
+  mutation createFormation($gameId: ID!, $formationType: String!, $organizationId: ID!) {
+    createFormation(gameId: $gameId, formationType: $formationType, organizationId: $organizationId) {
       _id
       formationType
       positions { slot player { _id name } }
@@ -676,8 +700,8 @@ export const CREATE_FORMATION = gql`
 `;
 // Mutation to add or update a player to a formation
 export const UPDATE_FORMATION = gql`
-  mutation updateFormation($gameId: ID!, $positions: [PositionInput!]!) {
-    updateFormation(gameId: $gameId, positions: $positions) {
+  mutation updateFormation($gameId: ID!, $positions: [PositionInput!]!, $organizationId: ID!) {
+    updateFormation(gameId: $gameId, positions: $positions, organizationId: $organizationId) {
       _id
       formationType
       positions { slot player { _id name } }
@@ -686,14 +710,14 @@ export const UPDATE_FORMATION = gql`
 `;
 // Mutation to delete a formation for a game
 export const DELETE_FORMATION = gql`
-  mutation deleteFormation($gameId: ID!) {
-    deleteFormation(gameId: $gameId)
+  mutation deleteFormation($gameId: ID!, $organizationId: ID!) {
+    deleteFormation(gameId: $gameId, organizationId: $organizationId)
   }
 `;
 // Mutation to like a formation
 export const LIKE_FORMATION = gql`
-  mutation LikeFormation($formationId: ID!) {
-    likeFormation(formationId: $formationId) {
+  mutation LikeFormation($formationId: ID!, $organizationId: ID!) {
+    likeFormation(formationId: $formationId, organizationId: $organizationId) {
       _id
       likes
       likedBy {
@@ -708,10 +732,12 @@ export const ADD_FORMATION_COMMENT = gql`
   mutation AddFormationComment(
     $formationId: ID!
     $commentText: String!
+    $organizationId: ID!
   ) {
     addFormationComment(
       formationId: $formationId
       commentText: $commentText
+      organizationId: $organizationId
     ) {
       _id
       comments {
@@ -732,10 +758,12 @@ export const UPDATE_FORMATION_COMMENT = gql`
   mutation UpdateFormationComment(
     $commentId: ID!
     $commentText: String!
+    $organizationId: ID!
   ) {
     updateFormationComment(
       commentId: $commentId
       commentText: $commentText
+      organizationId: $organizationId
     ) {
       _id
       commentText
@@ -751,17 +779,19 @@ export const DELETE_FORMATION_COMMENT = gql`
   mutation DeleteFormationComment(
     $formationId: ID!
     $commentId:   ID!
+    $organizationId: ID!
   ) {
     deleteFormationComment(
       formationId: $formationId,
       commentId:   $commentId
+      organizationId: $organizationId
     )
   }
 `;
 // Mutation to like a formation comment
 export const LIKE_FORMATION_COMMENT = gql`
-  mutation LikeFormationComment($commentId: ID!) {
-    likeFormationComment(commentId: $commentId) {
+  mutation LikeFormationComment($commentId: ID!, $organizationId: ID!) {
+    likeFormationComment(commentId: $commentId, organizationId: $organizationId) {
       _id
       likes
       likedBy { _id name }
@@ -770,8 +800,8 @@ export const LIKE_FORMATION_COMMENT = gql`
 `;
 // Mutation to react to a skill with an emoji
 export const REACT_TO_SKILL = gql`
-  mutation ReactToSkill($skillId: ID!, $emoji: String!) {
-    reactToSkill(skillId: $skillId, emoji: $emoji) {
+  mutation ReactToSkill($skillId: ID!, $emoji: String!, $organizationId: ID!) {
+    reactToSkill(skillId: $skillId, emoji: $emoji, organizationId: $organizationId) {
       _id
       reactions {
         emoji
@@ -780,4 +810,3 @@ export const REACT_TO_SKILL = gql`
     }
   }
 `;
-

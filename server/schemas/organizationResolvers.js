@@ -26,8 +26,14 @@ const organizationResolvers = {
         throw new AuthenticationError("You need to be logged in!");
       }
 
-      const profile = await Profile.findById(context.user._id).populate('organizations');
-      return profile.organizations;
+      const profile = await Profile.findById(context.user._id)
+        .populate({
+          path: 'organizations.organization',
+          model: 'Organization'
+        });
+      
+      // Extract just the organization objects from the organizations array
+      return profile.organizations.map(org => org.organization).filter(org => org !== null);
     },
 
     /**
@@ -176,7 +182,7 @@ const organizationResolvers = {
       // Update user's profile to include this organization
       const profile = await Profile.findById(context.user._id);
       profile.organizations.push({
-        organizationId: organization._id,
+        organization: organization._id,
         role: 'owner',
       });
       profile.currentOrganization = organization._id;
@@ -312,7 +318,7 @@ const organizationResolvers = {
 
       // Update user's profile
       profile.organizations.push({
-        organizationId: org._id,
+        organization: org._id,
         role: role || 'member',
       });
       await profile.save();
@@ -532,7 +538,7 @@ const organizationResolvers = {
       // Update user's profile
       const profile = await Profile.findById(context.user._id);
       profile.organizations.push({
-        organizationId: org._id,
+        organization: org._id,
         role: invitation.role,
       });
       profile.currentOrganization = org._id;
@@ -650,6 +656,33 @@ const organizationResolvers = {
   // ############ FIELD RESOLVERS ########## //
   Profile: {
     /**
+     * Get user's organizations (transform from array of objects to array of Organizations)
+     */
+    organizations: async (parent) => {
+      try {
+        if (!parent.organizations || parent.organizations.length === 0) {
+          return [];
+        }
+        
+        // Extract organization IDs from the array of objects
+        const orgIds = parent.organizations
+          .map(org => org.organization)
+          .filter(id => id != null);
+        
+        if (orgIds.length === 0) {
+          return [];
+        }
+        
+        // Fetch all organizations
+        const orgs = await Organization.find({ _id: { $in: orgIds } });
+        return orgs;
+      } catch (error) {
+        console.error('❌ Error in organizations resolver:', error);
+        return [];
+      }
+    },
+    
+    /**
      * Get user's role in a specific organization
      */
     roleInOrganization: async (parent, { organizationId }) => {
@@ -657,6 +690,38 @@ const organizationResolvers = {
         o => o.organizationId.toString() === organizationId
       );
       return orgData ? orgData.role : null;
+    },
+    
+    /**
+     * Get user's current organization with full details
+     */
+    currentOrganization: async (parent) => {
+      try {
+        console.log('🔍 currentOrganization resolver called');
+        console.log('  parent.currentOrganization:', parent.currentOrganization);
+        
+        if (!parent.currentOrganization) {
+          console.log('  ⚠️ No currentOrganization on parent, returning null');
+          return null;
+        }
+        
+        const org = await Organization.findById(parent.currentOrganization)
+          .populate('owner')
+          .populate('members');
+        
+        console.log('  ✅ Organization found:', {
+          id: org?._id,
+          name: org?.name,
+          inviteCode: org?.inviteCode,
+          ownerId: org?.owner?._id,
+          memberCount: org?.members?.length
+        });
+        
+        return org;
+      } catch (error) {
+        console.error('❌ Error in currentOrganization resolver:', error);
+        throw error;
+      }
     },
   },
 };

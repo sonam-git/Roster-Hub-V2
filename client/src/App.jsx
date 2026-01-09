@@ -32,7 +32,10 @@ import GameUpdatePage from "./pages/GameUpdatePage";
 import Score from "./pages/Score";
 import ForgotPassword from "./pages/ForgetPassword";
 import PasswordReset from "./pages/PasswordReset";
+import AdminPanel from "./components/AdminPanel";
 import { ThemeProvider, ThemeContext } from "./components/ThemeContext";
+import { OrganizationProvider } from "./contexts/OrganizationContext";
+// import { OrganizationProvider } from "./contexts/OrganizationContext-simple"; // TEMPORARY: Using simplified version
 import ChatPopup from "./components/ChatPopup";
 import { QUERY_ME } from "./utils/queries";
 import Auth from "./utils/auth";
@@ -41,6 +44,7 @@ import TopHeader from "./components/TopHeader";
 import CustomComingGames from "./components/CustomComingGames";
 import AllSkillsList from "./components/AllSkillsList";
 import About from "./pages/About";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 // Define HTTP and WebSocket URIs based on environment
 const httpUri =
@@ -93,7 +97,9 @@ const client = new ApolloClient({
 // ─── App Content ───
 function AppContent({ sidebarOpen, setSidebarOpen }) {
   const { isDarkMode } = useContext(ThemeContext);
-  const { data } = useQuery(QUERY_ME);
+  const { data } = useQuery(QUERY_ME, {
+    skip: !Auth.loggedIn(), // Only run query if user is logged in
+  });
   const currentUser = data?.me;
   const location = useLocation();
 
@@ -160,6 +166,7 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
             <Route path="/scoreboard" element={<Score />} />
             <Route path="/about" element={<About />} />
             <Route path="/game-update/:gameId" element={<GameUpdatePage />} />
+            <Route path="/admin" element={<AdminPanel />} />
           </Routes>
           </main>
           {Auth.loggedIn() && currentUser && (
@@ -179,28 +186,32 @@ function App() {
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <ApolloProvider client={client}>
-        <ThemeProvider>
-          <Router
-            future={{
-              v7_startTransition: true,
-              v7_relativeSplatPath: true,
-            }}
-          >
-            <MainHeader 
-              open={sidebarOpen} 
-              setOpen={setSidebarOpen} 
-            />
-            {/* TopHeader - always visible, positioned with fixed */}
-            <TopHeader 
-              onToggleMenu={() => setSidebarOpen((v) => !v)} 
-              open={sidebarOpen} 
-            />
-            <AppContent 
-              sidebarOpen={sidebarOpen} 
-              setSidebarOpen={setSidebarOpen} 
-            />
-          </Router>
-        </ThemeProvider>
+        <ErrorBoundary fallbackMessage="Failed to load the application. Please refresh the page.">
+          <OrganizationProvider>
+            <ThemeProvider>
+              <Router
+                future={{
+                  v7_startTransition: true,
+                  v7_relativeSplatPath: true,
+                }}
+              >
+                <MainHeader 
+                  open={sidebarOpen} 
+                  setOpen={setSidebarOpen} 
+                />
+                {/* TopHeader - always visible, positioned with fixed */}
+                <TopHeader 
+                  onToggleMenu={() => setSidebarOpen((v) => !v)} 
+                  open={sidebarOpen} 
+                />
+                <AppContent 
+                  sidebarOpen={sidebarOpen} 
+                  setSidebarOpen={setSidebarOpen} 
+                />
+              </Router>
+            </ThemeProvider>
+          </OrganizationProvider>
+        </ErrorBoundary>
       </ApolloProvider>
     </GoogleOAuthProvider>
   );

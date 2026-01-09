@@ -5,8 +5,10 @@ import { ThumbUpIcon as SolidThumbUpIcon } from "@heroicons/react/solid";
 
 import { LIKE_COMMENT } from "../../utils/mutations";
 import { COMMENT_LIKED_SUBSCRIPTION } from "../../utils/subscription";
+import { useOrganization } from "../../contexts/OrganizationContext";
 
 export default function CommentLike({ comment, currentUserId }) {
+  const { currentOrganization } = useOrganization();
   const [likes, setLikes]         = useState(comment.likes);
   const [likedBy, setLikedBy]     = useState(comment.likedBy || []);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -27,10 +29,18 @@ export default function CommentLike({ comment, currentUserId }) {
 
   // 2️⃣ Fire the mutation
   const [likeComment] = useMutation(LIKE_COMMENT, {
-    variables: { commentId: comment._id },
+    variables: { 
+      commentId: comment._id,
+      organizationId: currentOrganization?._id
+    },
   });
 
   const handleLike = () => {
+    if (!currentOrganization) {
+      console.error('No organization selected');
+      return;
+    }
+    
     likeComment();
     // let subscription update the counts
   };

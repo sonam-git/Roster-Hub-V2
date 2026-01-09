@@ -2,19 +2,46 @@
 import React, { useContext, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { Link } from "react-router-dom";
-import { QUERY_GAMES } from "../../utils/queries";
+import { QUERY_GAMES, QUERY_ME } from "../../utils/queries";
 import { ThemeContext } from "../ThemeContext";
+import { useOrganization } from "../../contexts/OrganizationContext";
 import Auth from "../../utils/auth";
 import { getGameEffectiveStatus } from "../../utils/gameExpiration";
 
 const MyGames = () => {
   const { isDarkMode } = useContext(ThemeContext);
+  const { currentOrganization } = useOrganization();
   const userId = Auth.getProfile()?.data?._id;
-  const [filter, setFilter] = useState('available'); // 'available' or 'unavailable'
+  const [filter, setFilter] = useState('all'); // 'all', 'created', 'available', 'unavailable'
+
+  // Query current user data to check if they're the organization owner or admin
+  const { data: meData } = useQuery(QUERY_ME);
+  const isOrganizationOwner = meData?.me?.currentOrganization?.owner?._id === userId;
+  const isOrganizationAdmin = meData?.me?.currentOrganization?.admins?.some(admin => admin._id === userId);
 
   const { loading, error, data } = useQuery(QUERY_GAMES, {
+    variables: { 
+      organizationId: currentOrganization?._id 
+    },
+    skip: !currentOrganization,
     pollInterval: 10000,
   });
+
+  // Loading state for organization
+  if (!currentOrganization) {
+    return (
+      <div className="space-y-3 sm:space-y-4">
+        {[...Array(2)].map((_, i) => (
+          <div key={i} className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl animate-pulse ${
+            isDarkMode ? 'bg-gray-800/50' : 'bg-gray-200/50'
+          }`}>
+            <div className={`h-3 sm:h-4 rounded mb-2 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`}></div>
+            <div className={`h-2 sm:h-3 rounded w-3/4 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`}></div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -44,33 +71,50 @@ const MyGames = () => {
 
   const games = data?.games || [];
   
-  // Filter games where the current user has voted and effective status is PENDING, CONFIRMED, or EXPIRED
-  // Keep COMPLETED games as they have valuable feedback
-  const myVotedGames = games.filter(game => {
+  // Get games created by the user
+  const createdGames = games.filter(game => game.creator._id === userId);
+  
+  // Get games where the user has voted (and effective status is PENDING, CONFIRMED, or EXPIRED)
+  const votedGames = games.filter(game => {
     if (!game.responses.some(response => response.user._id === userId)) return false;
     const effectiveStatus = getGameEffectiveStatus(game);
     return ['PENDING', 'CONFIRMED', 'EXPIRED'].includes(effectiveStatus) || game.status === 'COMPLETED';
   });
-
-  // Filter games based on user's availability vote
-  const filteredGames = myVotedGames.filter(game => {
-    const userResponse = game.responses.find(response => response.user._id === userId);
-    if (filter === 'available') {
-      return userResponse?.isAvailable === true;
-    } else {
-      return userResponse?.isAvailable === false;
-    }
+  
+  // Combine and remove duplicates (user might have created and voted on same game)
+  const myGamesMap = new Map();
+  [...createdGames, ...votedGames].forEach(game => {
+    myGamesMap.set(game._id, game);
   });
+  const myGames = Array.from(myGamesMap.values());
 
-  const availableGamesCount = myVotedGames.filter(game => 
-    game.responses.find(r => r.user._id === userId)?.isAvailable
+  // Filter games based on selected filter
+  let filteredGames = [];
+  if (filter === 'all') {
+    filteredGames = myGames;
+  } else if (filter === 'created') {
+    filteredGames = createdGames;
+  } else if (filter === 'available' || filter === 'unavailable') {
+    filteredGames = myGames.filter(game => {
+      const userResponse = game.responses.find(response => response.user._id === userId);
+      if (!userResponse) return false; // Not voted
+      if (filter === 'available') {
+        return userResponse.isAvailable === true;
+      } else {
+        return userResponse.isAvailable === false;
+      }
+    });
+  }
+
+  // Count games by category
+  const availableGamesCount = myGames.filter(game => 
+    game.responses.find(r => r.user._id === userId)?.isAvailable === true
+  ).length;
+  const unavailableGamesCount = myGames.filter(game => 
+    game.responses.find(r => r.user._id === userId)?.isAvailable === false
   ).length;
 
-  const unavailableGamesCount = myVotedGames.filter(game => 
-    !game.responses.find(r => r.user._id === userId)?.isAvailable
-  ).length;
-
-  if (myVotedGames.length === 0) {
+  if (myGames.length === 0) {
     return (
       <div className={`p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-lg text-center ${
         isDarkMode ? 'bg-gray-800/50 text-gray-400 border border-gray-700' : 'bg-gray-50 text-gray-500 border border-gray-200'
@@ -101,20 +145,56 @@ const MyGames = () => {
       {/* Header with filter buttons */}
       <div className={`p-3 sm:p-4 rounded-xl ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-blue-50 border border-blue-200'}`}>
         <h3 className={`text-base sm:text-lg font-bold mb-2 sm:mb-3 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-          My Game Votes
+          My Games
         </h3>
         <p className={`text-xs sm:text-sm mb-3 sm:mb-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-          Games you've voted on ({myVotedGames.length} total)
+          Games you've created or voted on ({myGames.length} total)
         </p>
 
         {/* Filter Buttons */}
-        <div className={`flex rounded-xl p-1 shadow-md border ${
+        <div className={`grid grid-cols-2 sm:grid-cols-4 gap-2 rounded-xl p-1 shadow-md border ${
           isDarkMode 
             ? 'bg-gray-700/60 border-gray-600/50 shadow-gray-900/20' 
             : 'bg-white/80 border-gray-200/60 shadow-blue-100/50'
         }`}>
           <button
-            className={`flex-1 px-3 py-2 sm:px-4 sm:py-2 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-1 sm:gap-2 ${
+            className={`px-2 py-2 sm:px-3 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-1 ${
+              filter === 'all'
+                ? `${isDarkMode 
+                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/30' 
+                    : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25'
+                  }` 
+                : `${isDarkMode 
+                    ? 'text-gray-300 hover:text-white hover:bg-gray-600/50' 
+                    : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50/80'
+                  }`
+            }`}
+            onClick={() => setFilter('all')}
+          >
+            <span className="text-sm">⚽</span>
+            <span className="hidden xs:inline">All ({myGames.length})</span>
+            <span className="xs:hidden">{myGames.length}</span>
+          </button>
+          <button
+            className={`px-2 py-2 sm:px-3 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-1 ${
+              filter === 'created'
+                ? `${isDarkMode 
+                    ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-500/30' 
+                    : 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/25'
+                  }` 
+                : `${isDarkMode 
+                    ? 'text-gray-300 hover:text-white hover:bg-gray-600/50' 
+                    : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50/80'
+                  }`
+            }`}
+            onClick={() => setFilter('created')}
+          >
+            <span className="text-sm">➕</span>
+            <span className="hidden xs:inline">Created ({createdGames.length})</span>
+            <span className="xs:hidden">{createdGames.length}</span>
+          </button>
+          <button
+            className={`px-2 py-2 sm:px-3 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-1 ${
               filter === 'available'
                 ? `${isDarkMode 
                     ? 'bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg shadow-green-500/30' 
@@ -129,10 +209,10 @@ const MyGames = () => {
           >
             <span className="text-sm">✅</span>
             <span className="hidden xs:inline">Available ({availableGamesCount})</span>
-            <span className="xs:hidden">Avail ({availableGamesCount})</span>
+            <span className="xs:hidden">{availableGamesCount}</span>
           </button>
           <button
-            className={`flex-1 px-3 py-2 sm:px-4 sm:py-2 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-1 sm:gap-2 ${
+            className={`px-2 py-2 sm:px-3 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-1 ${
               filter === 'unavailable'
                 ? `${isDarkMode 
                     ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg shadow-red-500/30' 
@@ -147,7 +227,7 @@ const MyGames = () => {
           >
             <span className="text-sm">❌</span>
             <span className="hidden xs:inline">Unavailable ({unavailableGamesCount})</span>
-            <span className="xs:hidden">Unav ({unavailableGamesCount})</span>
+            <span className="xs:hidden">{unavailableGamesCount}</span>
           </button>
         </div>
       </div>
@@ -157,17 +237,27 @@ const MyGames = () => {
           <div className={`p-4 sm:p-6 rounded-xl text-center ${
             isDarkMode ? 'bg-gray-800/50 text-gray-400' : 'bg-gray-50 text-gray-500'
           }`}>
-            <div className="text-2xl sm:text-4xl mb-2">{filter === 'available' ? '✅' : '❌'}</div>
+            <div className="text-2xl sm:text-4xl mb-2">
+              {filter === 'all' && '⚽'}
+              {filter === 'created' && '➕'}
+              {filter === 'available' && '✅'}
+              {filter === 'unavailable' && '❌'}
+            </div>
             <p className="font-medium text-sm sm:text-base">
-              No {filter} games found
+              No {filter === 'all' ? '' : filter} games found
             </p>
             <p className="text-xs sm:text-sm mt-1">
-              You haven't voted as {filter} for any games yet.
+              {filter === 'all' && "You haven't created or voted on any games yet."}
+              {filter === 'created' && "You haven't created any games yet."}
+              {filter === 'available' && "You haven't voted as available for any games yet."}
+              {filter === 'unavailable' && "You haven't voted as unavailable for any games yet."}
             </p>
           </div>
         ) : (
           filteredGames.map(game => {
           const userResponse = game.responses.find(response => response.user._id === userId);
+          // Allow both game creator and organization owner/admin to manage the game
+          const isCreator = game.creator._id === userId || isOrganizationOwner || isOrganizationAdmin;
           const gameDate = new Date(+game.date);
           const humanDate = gameDate.toLocaleDateString();
           const effectiveStatus = getGameEffectiveStatus(game);
@@ -231,10 +321,20 @@ const MyGames = () => {
                     <div className={`px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-bold border ${getStatusColor(effectiveStatus)}`}>
                       {effectiveStatus}
                     </div>
-                    <div className={`px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-bold border flex items-center gap-1 ${getVoteColor(userResponse.isAvailable)}`}>
-                      <span>{userResponse.isAvailable ? '✅' : '❌'}</span>
-                      <span className="hidden xs:inline">{userResponse.isAvailable ? 'Available' : 'Not Available'}</span>
-                    </div>
+                    {isCreator && (
+                      <div className={`px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-bold border flex items-center gap-1 ${
+                        isDarkMode ? 'bg-purple-900/30 text-purple-200 border-purple-700' : 'bg-purple-100 text-purple-800 border-purple-200'
+                      }`}>
+                        <span>👤</span>
+                        <span className="hidden xs:inline">Creator</span>
+                      </div>
+                    )}
+                    {userResponse && (
+                      <div className={`px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-bold border flex items-center gap-1 ${getVoteColor(userResponse.isAvailable)}`}>
+                        <span>{userResponse.isAvailable ? '✅' : '❌'}</span>
+                        <span className="hidden xs:inline">{userResponse.isAvailable ? 'Available' : 'Not Available'}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -281,15 +381,31 @@ const MyGames = () => {
       {/* Statistics */}
       <div className={`p-3 sm:p-4 rounded-xl ${isDarkMode ? 'bg-gray-800/50 border border-gray-700' : 'bg-gray-50 border border-gray-200'}`}>
         <h4 className={`font-bold mb-2 sm:mb-3 text-sm sm:text-base ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-          Your Voting Stats
+          Your Game Stats
         </h4>
-        <div className="grid grid-cols-2 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="text-center">
+            <div className={`text-lg sm:text-2xl font-bold ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+              {myGames.length}
+            </div>
+            <div className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              Total Games
+            </div>
+          </div>
+          <div className="text-center">
+            <div className={`text-lg sm:text-2xl font-bold ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`}>
+              {createdGames.length}
+            </div>
+            <div className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              Created
+            </div>
+          </div>
           <div className="text-center">
             <div className={`text-lg sm:text-2xl font-bold ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>
               {availableGamesCount}
             </div>
             <div className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-              Available Votes
+              Available
             </div>
           </div>
           <div className="text-center">
@@ -297,7 +413,7 @@ const MyGames = () => {
               {unavailableGamesCount}
             </div>
             <div className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-              Not Available Votes
+              Unavailable
             </div>
           </div>
         </div>

@@ -2,14 +2,20 @@ import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { ADD_FORMATION_COMMENT } from '../../utils/mutations';
 import Auth from '../../utils/auth';
+import { useOrganization } from '../../contexts/OrganizationContext';
 
 export default function FormationCommentInput({ formationId }) {
+  const { currentOrganization } = useOrganization();
   const [text, setText] = useState('');
   const isLoggedIn = Auth.loggedIn();
   const currentUser = isLoggedIn ? Auth.getProfile()?.data : null;
 
   const [addComment, { loading }] = useMutation(ADD_FORMATION_COMMENT, {
-    variables: { formationId, commentText: text },
+    variables: { 
+      formationId, 
+      commentText: text,
+      organizationId: currentOrganization?._id
+    },
     onCompleted: () => setText(''),
   });
 
@@ -45,6 +51,11 @@ export default function FormationCommentInput({ formationId }) {
       <form
         onSubmit={e => {
           e.preventDefault();
+          if (!currentOrganization) {
+            console.error('No organization selected');
+            alert('Please select an organization to comment.');
+            return;
+          }
           if (text.trim()) addComment();
         }}
         className="space-y-3"

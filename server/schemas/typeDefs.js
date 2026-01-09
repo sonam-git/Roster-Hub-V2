@@ -247,6 +247,7 @@ const typeDefs = gql`
     logo: String
     subdomain: String
     customDomain: String
+    inviteCode: String
     settings: OrganizationSettings
     owner: Profile!
     admins: [Profile!]
@@ -364,30 +365,32 @@ const typeDefs = gql`
   }
 
   type Query {
-    profiles: [Profile]!
-    profile(profileId: ID!): Profile
+    profiles(organizationId: ID!): [Profile]!
+    profile(profileId: ID!, organizationId: ID): Profile
     me: Profile
-    skills: [Skill]
+    skills(organizationId: ID): [Skill]
     skill(skillId: ID!): Skill
+    # Message queries (for profile/kudos messages)
     receivedMessages: [Message]!
     socialMediaLinks(userId: ID!): [SocialMediaLink]!
-    posts: [Post]
+    posts(organizationId: ID): [Post]
     post(postId: ID!): Post
     comments: [Comment]
     comment(commentId: ID!): Comment
     getPlayerRating(profileId: ID!): Float
-    getChatByUser(to: ID!): [Chat]
-    getAllChats: [Chat]
-    getChatsBetweenUsers(userId1: ID!, userId2: ID!): [Chat]
-    games(status: GameStatus): [Game!]!
-    game(gameId: ID!): Game
+    # Chat queries (for real-time chat feature)
+    getChatByUser(to: ID!, organizationId: ID!): [Chat]
+    getAllChats(organizationId: ID!): [Chat]
+    getChatsBetweenUsers(userId1: ID!, userId2: ID!, organizationId: ID!): [Chat]
+    games(organizationId: ID!, status: GameStatus): [Game!]!
+    game(gameId: ID!, organizationId: ID!): Game
     soccerMatches(
       competitionCode: String!
       status: String!
       dateFrom: String
       dateTo: String
     ): [SoccerScore!]!
-    formation(gameId: ID!): Formation
+    formation(gameId: ID!, organizationId: ID!): Formation
     # Organization queries
     myOrganizations: [Organization]
     organization(organizationId: ID!): Organization
@@ -399,9 +402,10 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    addProfile(name: String!, email: String!, password: String!): Auth
+    addProfile(name: String!, email: String!, password: String!, organizationName: String, inviteCode: String): Auth
     login(email: String!, password: String!): Auth
     loginWithGoogle(idToken: String!): Auth
+    sendTeamInvite(emails: [String!]!, organizationId: ID!): ResponseMessage!
     addInfo(
       profileId: ID!
       jerseyNumber: Int!
@@ -412,64 +416,70 @@ const typeDefs = gql`
     updatePosition(profileId: ID!, position: String!): Profile
     updatePhoneNumber(profileId: ID!, phoneNumber: String!): Profile
     uploadProfilePic(profileId: ID!, profilePic: Upload!): Profile
-    addSkill(profileId: ID!, skillText: String!): Skill
-    sendMessage(recipientId: ID!, text: String!): Message!
-    removeSkill(skillId: ID!): Skill
-    removeMessage(messageId: ID!): Message
-    deleteConversation(userId: ID!): Boolean!
+    addSkill(profileId: ID!, skillText: String!, organizationId: ID!): Skill
+    removeSkill(skillId: ID!, organizationId: ID!): Skill
+    # Message mutations (for profile/kudos messages - different from Chat)
+    sendMessage(recipientId: ID!, text: String!, organizationId: ID!): Message!
+    removeMessage(messageId: ID!, organizationId: ID!): Message
+    # Chat mutations (for real-time chat feature)
+    createChat(from: ID!, to: ID!, content: String!, organizationId: ID!): Chat
+    deleteConversation(userId: ID!, organizationId: ID!): Boolean!
+    markChatAsSeen(userId: ID!, organizationId: ID!): Boolean
     saveSocialMediaLink(
       userId: ID!
       type: String!
       link: String!
+      organizationId: ID!
     ): SocialMediaLink!
     updateName(name: String!): Profile
     updatePassword(currentPassword: String!, newPassword: String!): Profile
     deleteProfile(profileId: ID!): Profile
-    addPost(profileId: ID!, postText: String!): Post
-    updatePost(postId: ID!, postText: String!): Post
-    removePost(postId: ID!): Post
-    addComment(postId: ID!, commentText: String!): Post
-    updateComment(commentId: ID!, commentText: String!): Comment
-    removeComment(postId: ID!, commentId: ID!): ID!
+    addPost(profileId: ID!, postText: String!, organizationId: ID!): Post
+    updatePost(postId: ID!, postText: String!, organizationId: ID!): Post
+    removePost(postId: ID!, organizationId: ID!): Post
+    addComment(postId: ID!, commentText: String!, organizationId: ID!): Post
+    updateComment(commentId: ID!, commentText: String!, organizationId: ID!): Comment
+    removeComment(postId: ID!, commentId: ID!, organizationId: ID!): ID!
     sendResetPasswordEmail(email: String!): ResponseMessage!
     resetPassword(token: String!, newPassword: String!): ResponseMessage!
-    likePost(postId: ID!): Post
-    likeComment(commentId: ID!): Comment
-    ratePlayer(profileId: ID!, ratingInput: RatingInput!): Profile
-    createChat(from: ID!, to: ID!, content: String!): Chat
-    createGame(input: CreateGameInput!): Game!
-    respondToGame(input: RespondToGameInput!): Game!
-    confirmGame(gameId: ID!, note: String): Game
-    cancelGame(gameId: ID!, note: String): Game
+    likePost(postId: ID!, organizationId: ID!): Post
+    likeComment(commentId: ID!, organizationId: ID!): Comment
+    ratePlayer(profileId: ID!, ratingInput: RatingInput!, organizationId: ID!): Profile
+    createGame(input: CreateGameInput!, organizationId: ID!): Game!
+    respondToGame(input: RespondToGameInput!, organizationId: ID!): Game!
+    confirmGame(gameId: ID!, organizationId: ID!, note: String): Game
+    cancelGame(gameId: ID!, organizationId: ID!, note: String): Game
     completeGame(
       gameId: ID!
+      organizationId: ID!
       score: String!
       note: String
       result: GameResult!
     ): Game!
-    unvoteGame(gameId: ID!): Game!
-    deleteGame(gameId: ID!): Game!
-    updateGame(gameId: ID!, input: UpdateGameInput!): Game!
+    unvoteGame(gameId: ID!, organizationId: ID!): Game!
+    deleteGame(gameId: ID!, organizationId: ID!): Game!
+    updateGame(gameId: ID!, organizationId: ID!, input: UpdateGameInput!): Game!
     addFeedback(
       gameId: ID!
+      organizationId: ID!
       comment: String
       rating: Int!
       playerOfTheMatchId: ID
     ): Game!
-    createFormation(gameId: ID!, formationType: String!): Formation!
-    updateFormation(gameId: ID!, positions: [PositionInput!]!): Formation!
-    deleteFormation(gameId: ID!): Boolean!
-    addFormationComment(formationId: ID!, commentText: String!): Formation
+    createFormation(gameId: ID!, formationType: String!, organizationId: ID!): Formation!
+    updateFormation(gameId: ID!, positions: [PositionInput!]!, organizationId: ID!): Formation!
+    deleteFormation(gameId: ID!, organizationId: ID!): Boolean!
+    addFormationComment(formationId: ID!, commentText: String!, organizationId: ID!): Formation
     updateFormationComment(
       commentId: ID!
       commentText: String!
+      organizationId: ID!
     ): FormationComment
-    deleteFormationComment(formationId: ID!, commentId: ID!): ID!
-    likeFormationComment(commentId: ID!): FormationComment
-    likeFormation(formationId: ID!): Formation
-    removeSocialMediaLink(userId: ID!, type: String!): Boolean
-    markChatAsSeen(userId: ID!): Boolean
-    reactToSkill(skillId: ID!, emoji: String!): Skill!
+    deleteFormationComment(formationId: ID!, commentId: ID!, organizationId: ID!): ID!
+    likeFormationComment(commentId: ID!, organizationId: ID!): FormationComment
+    likeFormation(formationId: ID!, organizationId: ID!): Formation
+    removeSocialMediaLink(userId: ID!, type: String!, organizationId: ID!): Boolean
+    reactToSkill(skillId: ID!, emoji: String!, organizationId: ID!): Skill!
     # Organization mutations
     createOrganization(input: OrganizationInput!): Auth!
     updateOrganization(organizationId: ID!, input: OrganizationInput!): Organization!

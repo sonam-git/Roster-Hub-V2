@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useMutation } from "@apollo/client";
 import { UPDATE_GAME } from "../../utils/mutations";
 import { QUERY_GAME, QUERY_GAMES } from "../../utils/queries";
+import { useOrganization } from "../../contexts/OrganizationContext";
 
 const GameUpdateModal = ({
   gameId,
@@ -14,6 +15,7 @@ const GameUpdateModal = ({
   onClose,
   isDarkMode,
 }) => {
+  const { currentOrganization } = useOrganization();
   // Step 1: Field selection, Step 2: Update form
   const [step, setStep] = useState(1);
   const [selectedFields, setSelectedFields] = useState([]);
@@ -30,8 +32,19 @@ const GameUpdateModal = ({
 
   const [updateGame, { loading, error }] = useMutation(UPDATE_GAME, {
     refetchQueries: [
-      { query: QUERY_GAME, variables: { gameId } },
-      { query: QUERY_GAMES, variables: { status: "PENDING" } },
+      { 
+        query: QUERY_GAME, 
+        variables: { 
+          gameId,
+          organizationId: currentOrganization?._id 
+        } 
+      },
+      { 
+        query: QUERY_GAMES, 
+        variables: { 
+          organizationId: currentOrganization?._id 
+        } 
+      },
     ],
     awaitRefetchQueries: true,
     onCompleted: () => {
@@ -110,10 +123,23 @@ const GameUpdateModal = ({
       return;
     }
 
+    if (!currentOrganization) {
+      console.error('No organization selected');
+      alert('Please select an organization to update the game.');
+      return;
+    }
+
     try {
-      await updateGame({ variables: { gameId, input } });
+      await updateGame({ 
+        variables: { 
+          gameId, 
+          input,
+          organizationId: currentOrganization._id
+        } 
+      });
     } catch (e) {
       console.error("Update failed", e);
+      alert('Failed to update game. Please try again.');
     }
   };
 

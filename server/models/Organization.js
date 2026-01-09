@@ -27,6 +27,7 @@ const organizationSchema = new Schema({
   subdomain: {
     type: String,
     unique: true,
+    sparse: true,  // Allow multiple null values
     lowercase: true,
     trim: true,
     match: /^[a-z0-9-]+$/
@@ -34,6 +35,17 @@ const organizationSchema = new Schema({
   customDomain: {
     type: String,
     default: null
+  },
+  
+  // Invitation code for joining organization
+  inviteCode: {
+    type: String,
+    unique: true,
+    sparse: true,
+    uppercase: true,
+    trim: true,
+    minlength: 6,
+    maxlength: 12
   },
   
   // Branding & Settings
@@ -165,7 +177,8 @@ const organizationSchema = new Schema({
   invitations: [{
     code: {
       type: String,
-      unique: true
+      unique: true,
+      sparse: true  // Allow multiple null values
     },
     email: String,
     role: {

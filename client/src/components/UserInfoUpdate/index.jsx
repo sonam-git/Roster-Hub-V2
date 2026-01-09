@@ -261,6 +261,8 @@ const UserInfoUpdate = ({ profile }) => {
                   <option value="RW">RW - Right Winger</option>
                   <option value="ST">ST - Striker</option>
                   <option value="CF">CF - Center Forward</option>
+                  <option value="MG">MG - Manager</option>
+                  <option value="COACH">COACH - Coach</option>
                 </select>
               </div>
               <div className="flex gap-3 justify-end">

@@ -7,12 +7,14 @@ import {
   SKILL_DELETED_SUBSCRIPTION,
 } from "../../utils/subscription";
 import { ThemeContext } from "../ThemeContext";
+import { useOrganization } from "../../contexts/OrganizationContext";
 import { FaFutbol } from "react-icons/fa";
 import SkillReaction from "../SkillsList/SkillReaction";
 import { REACT_TO_SKILL } from "../../utils/mutations";
 
 export default function RecentSkillsList() {
   const { isDarkMode } = useContext(ThemeContext);
+  const { currentOrganization } = useOrganization();
   const { loading, error, data, subscribeToMore } = useQuery(GET_SKILLS);
   const [reactToSkill] = useMutation(REACT_TO_SKILL);
 
@@ -205,9 +207,19 @@ export default function RecentSkillsList() {
                     </span>
                     <div className="flex items-center">
                       <SkillReaction
-                        onReact={(emoji) =>
-                          reactToSkill({ variables: { skillId: skill._id, emoji } })
-                        }
+                        onReact={(emoji) => {
+                          if (!currentOrganization) {
+                            console.error('No organization selected');
+                            return;
+                          }
+                          reactToSkill({ 
+                            variables: { 
+                              skillId: skill._id, 
+                              emoji,
+                              organizationId: currentOrganization._id
+                            } 
+                          });
+                        }}
                         isDarkMode={isDarkMode}
                       />
                     </div>

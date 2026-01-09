@@ -316,7 +316,10 @@ export const FORMATION_COMMENT_UPDATED_SUBSCRIPTION = gql`
     formationCommentUpdated(formationId: $formationId) {
       _id
       commentText
+      commentAuthor
+      createdAt
       updatedAt
+      user { _id name }
       likes
       likedBy { _id name }
     }

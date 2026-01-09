@@ -3,18 +3,23 @@ import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { ADD_PROFILE } from "../utils/mutations";
 import Auth from "../utils/auth";
-import sketchImage from "../assets/images/sketch-removebg.png"; 
+import sketchImage from "../assets/images/sketch-removebg.png";
+import InvitePlayersModal from "../components/InvitePlayersModal"; 
 
 const Signup = () => {
   const [formState, setFormState] = useState({
     name: "",
     email: "",
     password: "",
+    teamName: "",
   });
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [newOrganization, setNewOrganization] = useState(null);
+  const [showInviteModal, setShowInviteModal] = useState(false);
 
-  const [addProfile, { data }] = useMutation(ADD_PROFILE);
+  const [addProfile] = useMutation(ADD_PROFILE);
   const [isPending, startTransition] = useTransition();
 
   const handleChange = (event) => {
@@ -29,12 +34,48 @@ const Signup = () => {
     event.preventDefault();
     startTransition(async () => {
       try {
+        const variables = {
+          name: formState.name,
+          email: formState.email,
+          password: formState.password,
+        };
+
+        // Add organizationName for team creation
+        if (formState.teamName.trim()) {
+          variables.organizationName = formState.teamName.trim();
+        }
+
         const { data } = await addProfile({
-          variables: { ...formState },
+          variables,
         });
-        Auth.login(data.addProfile.token);
+
+        // Store organization info before logging in
+        if (data?.addProfile?.organization) {
+          setNewOrganization(data.addProfile.organization);
+          setShowSuccess(true);
+        }
+
+        // Wait a moment to show success message before redirect
+        setTimeout(() => {
+          Auth.login(data.addProfile.token);
+        }, 2000);
       } catch (e) {
-        setErrorMessage(e.message || "Signup failed. Please try again.");
+        console.error("Signup error:", e);
+        
+        // Handle duplicate email error specifically
+        let friendlyMessage = "Team creation failed. Please try again.";
+        
+        if (e.message && e.message.includes("E11000") && e.message.includes("email")) {
+          friendlyMessage = "This email is already registered. Please login with your existing account or use a different email.";
+        } else if (e.message && e.message.includes("duplicate key")) {
+          friendlyMessage = "This email is already in use. Please login with your existing account or use a different email.";
+        } else if (e.message && e.message.includes("already registered")) {
+          friendlyMessage = "This email is already registered. Please login with your existing account or use a different email.";
+        } else if (e.message) {
+          friendlyMessage = e.message;
+        }
+        
+        setErrorMessage(friendlyMessage);
         setShowError(true);
       }
     });
@@ -42,7 +83,7 @@ const Signup = () => {
 
   useEffect(() => {
     if (showError) {
-      const timer = setTimeout(() => setShowError(false), 3000);
+      const timer = setTimeout(() => setShowError(false), 5000); // Increased to 5 seconds
       return () => clearTimeout(timer);
     }
   }, [showError]);
@@ -140,30 +181,89 @@ const Signup = () => {
             <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-xl p-8 border border-white/30 dark:border-gray-700/40 w-full max-w-md mx-auto">
               <div className="text-center mb-6">
                 <h2 className="text-2xl font-oswald font-black text-gray-900 dark:text-white mb-2 tracking-wide">
-                  CREATE ACCOUNT 🚀
+                  CREATE YOUR TEAM 🚀
                 </h2>
                 <p className="text-gray-600 dark:text-gray-300 text-sm font-oswald font-medium tracking-wider">
-                  JOIN THOUSANDS OF TEAMS ALREADY USING ROSTERHUB
+                  START MANAGING YOUR TEAM TODAY
                 </p>
               </div>
 
               {/* Error Alert */}
               {showError && (
                 <div className="mb-6">
-                  <div className="bg-red-100/80 dark:bg-red-900/30 backdrop-blur-md border border-red-300/50 dark:border-red-700/50 text-red-800 dark:text-red-200 px-4 py-3 rounded-xl shadow-lg text-sm flex items-center gap-2 animate-pulse">
-                    <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
-                    </svg>
-                    <span>{errorMessage}</span>
+                  <div className="bg-red-100/80 dark:bg-red-900/30 backdrop-blur-md border border-red-300/50 dark:border-red-700/50 text-red-800 dark:text-red-200 px-4 py-3 rounded-xl shadow-lg text-sm">
+                    <div className="flex items-start gap-2">
+                      <svg className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
+                      </svg>
+                      <div className="flex-1">
+                        <p className="font-semibold mb-1">{errorMessage}</p>
+                        {errorMessage.includes("already registered") && (
+                          <Link
+                            to="/login"
+                            className="inline-flex items-center gap-1 text-red-700 dark:text-red-300 hover:text-red-900 dark:hover:text-red-100 font-semibold underline mt-2"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                            Go to Login Page
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Success Message with Invite Code */}
+              {showSuccess && newOrganization && (
+                <div className="mb-6">
+                  <div className="bg-green-100/80 dark:bg-green-900/30 backdrop-blur-md border border-green-300/50 dark:border-green-700/50 text-green-800 dark:text-green-200 px-4 py-3 rounded-xl shadow-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="font-bold">🎉 Team Created!</span>
+                    </div>
+                    <p className="text-sm mb-3">Your team "{newOrganization.name}" has been created successfully!</p>
+                    <div className="bg-white/50 dark:bg-gray-800/50 p-3 rounded-lg border border-green-300/30 dark:border-green-700/30 mb-3">
+                      <p className="text-xs font-semibold mb-1">📋 Share this code with your team:</p>
+                      <div className="flex items-center gap-2">
+                        <code className="text-lg font-bold bg-green-50 dark:bg-green-950/50 px-3 py-1 rounded border border-green-300 dark:border-green-700">
+                          {newOrganization.inviteCode}
+                        </code>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            navigator.clipboard.writeText(newOrganization.inviteCode);
+                            alert("Invite code copied to clipboard!");
+                          }}
+                          className="text-xs bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded transition"
+                        >
+                          Copy
+                        </button>
+                      </div>
+                    </div>
+                    {/* Invite via Email Button */}
+                    <button
+                      type="button"
+                      onClick={() => setShowInviteModal(true)}
+                      className="w-full bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      📧 Invite Players via Email
+                    </button>
                   </div>
                 </div>
               )}
 
               <form onSubmit={handleFormSubmit} className="space-y-5">
-                {/* Name */}
+                {/* Name / Username */}
                 <div>
                   <label htmlFor="name" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                    Full Name
+                    Your Name
                   </label>
                   <input
                     id="name"
@@ -173,7 +273,7 @@ const Signup = () => {
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-gray-600/50 bg-gray-50/50 dark:bg-gray-700/30 backdrop-blur-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-300"
-                    placeholder="Enter your full name"
+                    placeholder="Enter your name"
                     disabled={isPending}
                   />
                 </div>
@@ -181,7 +281,7 @@ const Signup = () => {
                 {/* Email */}
                 <div>
                   <label htmlFor="email" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                    Email address
+                    Email Address
                   </label>
                   <input
                     id="email"
@@ -191,7 +291,7 @@ const Signup = () => {
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-gray-600/50 bg-gray-50/50 dark:bg-gray-700/30 backdrop-blur-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-300"
-                    placeholder="Enter your email"
+                    placeholder="your.email@example.com"
                     disabled={isPending}
                   />
                 </div>
@@ -208,10 +308,31 @@ const Signup = () => {
                     value={formState.password}
                     onChange={handleChange}
                     required
+                    minLength={6}
                     className="w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-gray-600/50 bg-gray-50/50 dark:bg-gray-700/30 backdrop-blur-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-300"
-                    placeholder="Create a password"
+                    placeholder="Minimum 6 characters"
                     disabled={isPending}
                   />
+                </div>
+
+                {/* Team Name */}
+                <div>
+                  <label htmlFor="teamName" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                    Team Name <span className="text-gray-500 font-normal text-xs">(Optional)</span>
+                  </label>
+                  <input
+                    id="teamName"
+                    name="teamName"
+                    type="text"
+                    value={formState.teamName}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-gray-600/50 bg-gray-50/50 dark:bg-gray-700/30 backdrop-blur-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-300"
+                    placeholder="e.g., My Team FC"
+                    disabled={isPending}
+                  />
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Leave blank to use "{formState.name}'s Team"
+                  </p>
                 </div>
 
                 {/* Submit Button */}
@@ -227,10 +348,10 @@ const Signup = () => {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        CREATING ACCOUNT...
+                        CREATING TEAM...
                       </span>
                     ) : (
-                      "🚀 CREATE ACCOUNT"
+                      "🚀 CREATE TEAM"
                     )}
                   </button>
                 </div>
@@ -259,17 +380,19 @@ const Signup = () => {
                   </Link>
                 </p>
               </div>
-
-              {/* Success Message */}
-              {data && (
-                <div className="mt-4 bg-green-100/80 dark:bg-green-900/30 backdrop-blur-md border border-green-300/50 text-green-800 dark:text-green-200 px-4 py-3 rounded-xl text-center font-semibold">
-                  🎉 Account created successfully! Welcome to RosterHub!
-                </div>
-              )}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Invite Players Modal */}
+      {newOrganization && (
+        <InvitePlayersModal
+          isOpen={showInviteModal}
+          onClose={() => setShowInviteModal(false)}
+          organization={newOrganization}
+        />
+      )}
     </main>
   );
 };

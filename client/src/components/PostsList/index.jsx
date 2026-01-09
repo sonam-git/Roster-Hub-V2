@@ -8,12 +8,27 @@ import {
 } from "../../utils/subscription";
 import Post from "../Post";
 import Auth from "../../utils/auth";
+import { useOrganization } from "../../contexts/OrganizationContext";
 
 const PAGE_SIZE = 3;
 
 const PostsList = ({ profileId, profile }) => {
-  const { loading, data, error, subscribeToMore } = useQuery(GET_POSTS);
+  const { currentOrganization } = useOrganization();
+  const { loading, data, error, subscribeToMore, refetch } = useQuery(GET_POSTS, {
+    variables: {
+      organizationId: currentOrganization?._id
+    },
+    skip: !currentOrganization
+  });
   const [currentPage, setCurrentPage] = useState(1);
+  
+  // Refetch when organization changes
+  useEffect(() => {
+    if (currentOrganization) {
+      refetch({ organizationId: currentOrganization._id });
+      setCurrentPage(1); // Reset to first page
+    }
+  }, [currentOrganization, refetch]);
 
   // Wire up all three subscriptions
   useEffect(() => {
@@ -58,6 +73,18 @@ const PostsList = ({ profileId, profile }) => {
       unsubDelete();
     };
   }, [subscribeToMore]);
+
+  // Loading state for organization
+  if (!currentOrganization) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+          <p className="text-gray-600 dark:text-gray-300 text-sm">Loading organization...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) return <div>Loading posts...</div>;
   if (error) return <div>Error loading posts.</div>;

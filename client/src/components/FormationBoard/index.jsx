@@ -77,14 +77,20 @@ export default function FormationBoard({ rows, assignments, formationType, creat
 
           {/* Player Rows */}
           <div className="absolute inset-0 flex flex-col justify-between p-3 py-6 sm:p-6 sm:py-8 lg:p-8 lg:py-12">
-            {rows.map(({ rowIndex, slotIds }) => (
+            {rows.map(({ rowIndex, slotIds, isGoalkeeper }) => (
               <FadeInOut key={rowIndex} show={true} duration={200}>
                 <div
-                  className="flex justify-center space-x-2 sm:space-x-4 lg:space-x-6"
-                  style={{ zIndex: 10 + rowIndex }}
+                  className={`flex justify-center ${isGoalkeeper ? 'space-x-0' : 'space-x-2 sm:space-x-4 lg:space-x-6'}`}
+                  style={{ zIndex: isGoalkeeper ? 20 : 10 + rowIndex }}
                 >
                   {slotIds.map((slotId) => (
-                    <Slot key={slotId} slotId={slotId} player={assignments[slotId]} isDragging={isDragging} />
+                    <Slot 
+                      key={slotId} 
+                      slotId={slotId} 
+                      player={assignments[slotId]} 
+                      isDragging={isDragging}
+                      isGoalkeeper={isGoalkeeper}
+                    />
                   ))}
                 </div>
               </FadeInOut>
@@ -93,7 +99,11 @@ export default function FormationBoard({ rows, assignments, formationType, creat
         </div>
         
         {/* Field Info */}
-        <div className="mt-2 sm:mt-4 flex items-center justify-center gap-2 sm:gap-4 text-xs text-gray-500 dark:text-gray-400 px-2">
+        <div className="mt-2 sm:mt-4 flex items-center justify-center gap-2 sm:gap-4 text-xs text-gray-500 dark:text-gray-400 px-2 flex-wrap">
+          <div className="flex items-center gap-1">
+            <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-orange-500"></div>
+            <span className="text-xs sm:text-sm">Goalkeeper</span>
+          </div>
           <div className="flex items-center gap-1">
             <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-blue-500"></div>
             <span className="text-xs sm:text-sm">Assigned</span>
@@ -112,7 +122,7 @@ export default function FormationBoard({ rows, assignments, formationType, creat
   );
 }
 
-function Slot({ slotId, player, isDragging = false }) {
+function Slot({ slotId, player, isDragging = false, isGoalkeeper = false }) {
   function getFirstName(name) {
     if (!name || typeof name !== 'string') return '';
     return name.split(" ")[0];
@@ -138,13 +148,19 @@ function Slot({ slotId, player, isDragging = false }) {
         isOver ? 'scale-125 z-10' : ''
       } ${isDragging && !hasPlayer ? 'animate-pulse' : ''}`}
     >
-      {/* Player Circle - Larger touch target for mobile */}
+      {/* Player Circle - Larger for goalkeeper */}
       <div
-        className={`w-14 h-14 sm:w-16 sm:h-16 lg:w-18 lg:h-18 rounded-full border-2 sm:border-4 flex flex-col items-center justify-center text-xs font-bold transition-all duration-300 shadow-lg ${
+        className={`${
+          isGoalkeeper 
+            ? 'w-16 h-16 sm:w-18 sm:h-18 lg:w-20 lg:h-20' 
+            : 'w-14 h-14 sm:w-16 sm:h-16 lg:w-18 lg:h-18'
+        } rounded-full border-2 sm:border-4 flex flex-col items-center justify-center text-xs font-bold transition-all duration-300 shadow-lg ${
           isOver
             ? 'bg-yellow-400 border-yellow-600 text-yellow-900 shadow-yellow-400/50 scale-110 ring-4 ring-yellow-300 animate-bounce'
             : hasPlayer
-            ? 'bg-gradient-to-br from-blue-500 to-blue-600 border-blue-300 text-white shadow-blue-500/30 hover:shadow-blue-500/50'
+            ? isGoalkeeper
+              ? 'bg-gradient-to-br from-orange-500 to-orange-600 border-orange-300 text-white shadow-orange-500/30 hover:shadow-orange-500/50'
+              : 'bg-gradient-to-br from-blue-500 to-blue-600 border-blue-300 text-white shadow-blue-500/30 hover:shadow-blue-500/50'
             : isDragging
             ? 'bg-green-100 border-green-400 text-green-700 shadow-green-400/50 ring-2 ring-green-300'
             : 'bg-white border-gray-400 text-gray-600 shadow-gray-400/30 hover:border-blue-400 hover:bg-blue-50'
@@ -152,20 +168,25 @@ function Slot({ slotId, player, isDragging = false }) {
       >
         {hasPlayer ? (
           <>
-            <span className="font-bold text-sm sm:text-lg leading-none">{initial}</span>
-            <span className="text-[6px] sm:text-[8px] leading-none mt-0.5 opacity-90">
+            <span className={`font-bold ${isGoalkeeper ? 'text-base sm:text-xl' : 'text-sm sm:text-lg'} leading-none`}>
+              {isGoalkeeper ? '🧤' : initial}
+            </span>
+            <span className={`${isGoalkeeper ? 'text-[7px] sm:text-[9px]' : 'text-[6px] sm:text-[8px]'} leading-none mt-0.5 opacity-90`}>
               {firstName.length > 6 ? firstName.substring(0, 6) : firstName}
             </span>
           </>
         ) : (
-          <span className="text-lg sm:text-2xl text-gray-400">+</span>
+          <span className={`${isGoalkeeper ? 'text-2xl sm:text-3xl' : 'text-lg sm:text-2xl'} text-gray-400`}>
+            {isGoalkeeper ? '🧤' : '+'}
+          </span>
         )}
       </div>
 
       {/* Player Name Tooltip */}
       {hasPlayer && (
-        <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+        <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50">
           <div className="bg-black text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
+            {isGoalkeeper && <span className="mr-1">🧤 GK:</span>}
             {playerName}
             {player?.jerseyNumber && (
               <span className="ml-1 opacity-75">#{player.jerseyNumber}</span>

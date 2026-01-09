@@ -2,10 +2,17 @@
 import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { QUERY_GAME } from "../../utils/queries";
+import { useOrganization } from "../../contexts/OrganizationContext";
 
 const GameFeedbackList = ({ gameId, isDarkMode }) => {
+  const { currentOrganization } = useOrganization();
+  
   const { loading, error, data } = useQuery(QUERY_GAME, {
-    variables: { gameId },
+    variables: { 
+      gameId,
+      organizationId: currentOrganization?._id 
+    },
+    skip: !currentOrganization,
     fetchPolicy: "network-only",
   });
   const [page, setPage] = useState(0);

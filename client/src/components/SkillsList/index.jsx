@@ -11,6 +11,7 @@ import {
 import { AiOutlineDelete } from "react-icons/ai";
 import Auth from "../../utils/auth";
 import SkillReaction from "./SkillReaction";
+import { useOrganization } from "../../contexts/OrganizationContext";
 
 const PAGE_SIZE = 6; // 3 rows x 2 columns
 
@@ -21,6 +22,7 @@ const SkillsList = ({
   isDarkMode,
   columns = 0, // default to 0 columns
 }) => {
+  const { currentOrganization } = useOrganization();
   const apolloClient = useApolloClient();
   const [currentPage, setCurrentPage] = useState(1);
   const [isPending, startTransition] = useTransition();
@@ -107,8 +109,21 @@ const SkillsList = ({
   };
 
   const confirmRemoveSkill = (skillId) => {
+    if (!currentOrganization) {
+      console.error('No organization selected');
+      alert('Please select an organization to remove skill.');
+      return;
+    }
+    
     setShowDeleteModal(null);
-    startTransition(() => removeSkill({ variables: { skillId } }));
+    startTransition(() => 
+      removeSkill({ 
+        variables: { 
+          skillId,
+          organizationId: currentOrganization._id
+        } 
+      })
+    );
   };
 
   // Filter skills for /skill-list page: only show skills received from other users for the logged-in user
@@ -252,10 +267,20 @@ const SkillsList = ({
                 </span>
                 <div className="flex items-center gap-2">
                   <SkillReaction
-                    onReact={emoji => apolloClient.mutate({
-                      mutation: REACT_TO_SKILL,
-                      variables: { skillId: skill._id, emoji }
-                    })}
+                    onReact={emoji => {
+                      if (!currentOrganization) {
+                        console.error('No organization selected');
+                        return;
+                      }
+                      return apolloClient.mutate({
+                        mutation: REACT_TO_SKILL,
+                        variables: { 
+                          skillId: skill._id, 
+                          emoji,
+                          organizationId: currentOrganization._id
+                        }
+                      });
+                    }}
                     isDarkMode={isDarkMode}
                     buttonClass={`transition-colors duration-150 px-3 py-1 rounded-full font-semibold shadow focus:outline-none focus:ring-2 focus:ring-yellow-400 hover:bg-yellow-400 hover:text-white border-2 ${isDarkMode ? 'bg-yellow-500 text-white border-yellow-300' : 'bg-yellow-300 text-yellow-900 border-yellow-500'}`}
                   />

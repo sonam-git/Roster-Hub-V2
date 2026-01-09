@@ -3,13 +3,24 @@ import { jwtDecode } from 'jwt-decode';
 class AuthService {
   // Get user profile from decoded token
   getProfile() {
-    return jwtDecode(this.getToken());
+    try {
+      return jwtDecode(this.getToken());
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      localStorage.removeItem('id_token');
+      return null;
+    }
   }
 
   // Check if user is logged in by verifying token existence and expiration
   loggedIn() {
-    const token = this.getToken();
-    return token && !this.isTokenExpired(token);
+    try {
+      const token = this.getToken();
+      return token && !this.isTokenExpired(token);
+    } catch (error) {
+      console.error('Error checking login status:', error);
+      return false;
+    }
   }
 
   // Check if token is expired
@@ -19,13 +30,18 @@ class AuthService {
       localStorage.removeItem('id_token');
       return true;
     }
-    const decoded = jwtDecode(token);
-    if (decoded.exp < Date.now() / 1000) {
+    try {
+      const decoded = jwtDecode(token);
+      if (decoded.exp < Date.now() / 1000) {
+        localStorage.removeItem('id_token');
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error decoding token:', error);
       localStorage.removeItem('id_token');
-      this.logout();
       return true;
     }
-    return false;
   }
 
   // Get token from local storage

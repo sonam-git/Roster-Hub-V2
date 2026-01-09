@@ -18,22 +18,38 @@ import {
   HiArrowLeftOnRectangle,
   HiUserPlus,
   HiSparkles,
-  HiInformationCircle
+  HiInformationCircle,
+  HiShieldCheck
 } from "react-icons/hi2";
 
 const Header = ({ open, setOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
+  const isLoggedIn = Auth.loggedIn();
+
+  // Safely get organizationId
+  let organizationId = null;
+  if (isLoggedIn) {
+    try {
+      const profile = Auth.getProfile();
+      organizationId = profile?.data?.organizationId || null;
+    } catch (error) {
+      console.error('Error getting profile:', error);
+    }
+  }
 
   // 1) live message count
   const { data: meData } = useQuery(QUERY_ME, {
+    skip: !isLoggedIn,
     pollInterval: 5000,
   });
   const messageCount = meData?.me?.receivedMessages?.length || 0;
 
   // 2) fetch all games to compute badges
   const { data: allGamesData } = useQuery(QUERY_GAMES, {
+    skip: !isLoggedIn || !organizationId,
+    variables: { organizationId },
     fetchPolicy: "network-only",
   });
   const allGames = allGamesData?.games || [];
@@ -54,11 +70,16 @@ const Header = ({ open, setOpen }) => {
     Auth.logout();
   };
 
+  // Check if current user is owner
+  const currentUser = meData?.me;
+  const isOwner = currentUser?.currentOrganization?.owner?._id === currentUser?._id;
+
   const Menus = Auth.loggedIn()
     ? [
         { title: "Home", icon: HiHome, path: "/", hideOnMobile: true },
         { title: "My Profile", icon: HiUser, path: "/me" },
         { title: "Roster", icon: HiUserGroup, path: "/roster" },
+        ...(isOwner ? [{ title: "Admin Panel", icon: HiShieldCheck, path: "/admin" }] : []),
         { title: "Skill - List", icon: HiSparkles, path: "/skill" },
         {
           title: "Message",

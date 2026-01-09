@@ -25,8 +25,10 @@ import {
 import Auth from "../../utils/auth";
 import CommentList from "../CommentList";
 import ProfileAvatar from "../../assets/images/profile-avatar.png";
+import { useOrganization } from "../../contexts/OrganizationContext";
 
 export default function Post({ post }) {
+  const { currentOrganization } = useOrganization();
   // UI State
   const [isEditing, setIsEditing] = useState(false);
   const [postText, setPostText] = useState(post.postText);
@@ -125,21 +127,64 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
   // Handlers
 
   const handleDeletePost = async () => {
-    await removePost({ variables: { postId: post._id } });
-    setShowDeleteModal(false);
+    if (!currentOrganization) {
+      console.error('No organization selected');
+      return;
+    }
+    
+    try {
+      await removePost({ 
+        variables: { 
+          postId: post._id,
+          organizationId: currentOrganization._id
+        } 
+      });
+      setShowDeleteModal(false);
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      alert('Failed to delete post. Please try again.');
+    }
   };
 
   const handleUpdatePost = async () => {
-    const { data } = await updatePost({
-      variables: { postId: post._id, postText },
-    });
-    setIsEditing(false);
-    setIsEdited(true);
-    setPostText(data.updatePost.postText);
+    if (!currentOrganization) {
+      console.error('No organization selected');
+      return;
+    }
+    
+    try {
+      const { data } = await updatePost({
+        variables: { 
+          postId: post._id, 
+          postText,
+          organizationId: currentOrganization._id
+        },
+      });
+      setIsEditing(false);
+      setIsEdited(true);
+      setPostText(data.updatePost.postText);
+    } catch (error) {
+      console.error('Error updating post:', error);
+      alert('Failed to update post. Please try again.');
+    }
   };
 
   const handleLike = async () => {
-    await likePost({ variables: { postId: post._id } });
+    if (!currentOrganization) {
+      console.error('No organization selected');
+      return;
+    }
+    
+    try {
+      await likePost({ 
+        variables: { 
+          postId: post._id,
+          organizationId: currentOrganization._id
+        } 
+      });
+    } catch (error) {
+      console.error('Error liking post:', error);
+    }
   };
 
   const handleAddComment = async () => {
@@ -147,9 +192,19 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
       setErrorMessage("Please write a comment.");
       return setTimeout(() => setErrorMessage(""), 2000);
     }
+    
+    if (!currentOrganization) {
+      console.error('No organization selected');
+      return;
+    }
+    
     try {
       const { data } = await addComment({
-        variables: { postId: post._id, commentText },
+        variables: { 
+          postId: post._id, 
+          commentText,
+          organizationId: currentOrganization._id
+        },
       });
       // use the server's returned comments (which now include userId)
       setComments(data.addComment.comments);
@@ -157,7 +212,9 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
       setShowComments(true);
       setCommentText("");
     } catch (e) {
-      console.error(e);
+      console.error('Error adding comment:', e);
+      setErrorMessage("Failed to add comment. Please try again.");
+      setTimeout(() => setErrorMessage(""), 2000);
     }
   };
 // Cancel comment input

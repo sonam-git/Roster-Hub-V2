@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import Hero from "../components/Hero";
 import { QUERY_ME, QUERY_GAMES } from "../utils/queries";
@@ -10,6 +10,7 @@ import RatingDisplay from "../components/RatingDisplay";
 import RecentSkillsList from "../components/RecentSkillsList";
 import UserInfoUpdate from "../components/UserInfoUpdate";
 import MetricDescription from "../components/MetricDescription";
+import { useOrganization } from "../contexts/OrganizationContext";
 import { FaFutbol, FaRegListAlt, FaStar, FaCalendarAlt } from "react-icons/fa";
 import ProfileAvatar from '../assets/images/profile-avatar.png';
 
@@ -18,6 +19,7 @@ import ProfileAvatar from '../assets/images/profile-avatar.png';
 const Home = ({ isDarkMode }) => {
   // Check login
   const isLoggedIn = Auth.loggedIn();
+  const { currentOrganization } = useOrganization();
 
   // Fetch profile if logged in
   const { loading, error, data } = useQuery(QUERY_ME, {
@@ -25,9 +27,19 @@ const Home = ({ isDarkMode }) => {
   });
   
   // Fetch games data for metrics
-  const { data: gamesData } = useQuery(QUERY_GAMES, {
-    skip: !isLoggedIn,
+  const { data: gamesData, refetch: refetchGames } = useQuery(QUERY_GAMES, {
+    variables: {
+      organizationId: currentOrganization?._id
+    },
+    skip: !isLoggedIn || !currentOrganization,
   });
+  
+  // Refetch games when organization changes
+  useEffect(() => {
+    if (currentOrganization && isLoggedIn) {
+      refetchGames({ organizationId: currentOrganization._id });
+    }
+  }, [currentOrganization, isLoggedIn, refetchGames]);
   
   const profile = data?.me || {};
   const allGames = gamesData?.games || [];

@@ -19,6 +19,7 @@ import {
   FORMATION_DELETED_SUBSCRIPTION,
 } from "../../utils/subscription";
 import { ThemeContext } from "../ThemeContext";
+import { useOrganization } from "../../contexts/OrganizationContext";
 import AvailablePlayersList from "../AvailablePlayersList";
 import FormationBoard from "../FormationBoard";
 import FormationLikeButton from "../FormationLikeButton";
@@ -40,6 +41,7 @@ export default function FormationSection({
   isLoading = false,
 }) {
   const { isDarkMode } = useContext(ThemeContext);
+  const { currentOrganization } = useOrganization();
   const [createFormation] = useMutation(CREATE_FORMATION);
   const [updateFormation] = useMutation(UPDATE_FORMATION);
   const [deleteFormation] = useMutation(DELETE_FORMATION);
@@ -47,42 +49,98 @@ export default function FormationSection({
   const [selectedFormation, setSelectedFormation] = useState("");
   const [draggingPlayer, setDraggingPlayer] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   const gameId   = game._id;
   const isFormed = Boolean(formation);
   const creator = game.creator || {};
 
+  // Debug logging
+  useEffect(() => {
+    console.log('🎮 FormationSection Debug:', {
+      gameId,
+      isFormed,
+      hasFormation: !!formation,
+      formationType: formation?.formationType,
+      positionsCount: formation?.positions?.length
+    });
+  }, [gameId, isFormed, formation]);
+
   // ─── Subscriptions ───────────────────────────────────────────────────────
+  console.log('🔗 Setting up subscriptions for gameId:', gameId);
+
   useSubscription(FORMATION_CREATED_SUBSCRIPTION, {
     variables: { gameId },
-    onData: ({ data }) => {
-      const created = data.data?.formationCreated;
-      if (created) {
+    skip: !gameId,
+    onSubscriptionData: ({ subscriptionData }) => {
+      console.log('📥 FORMATION_CREATED raw subscription data:', subscriptionData);
+      if (subscriptionData.data?.formationCreated) {
+        const created = subscriptionData.data.formationCreated;
+        console.log('🔔 Formation created subscription received:', created);
         setFormation(created);
+        
+        // Update assignments from subscription data
+        const newAssignments = {};
+        created.positions?.forEach(p => {
+          if (p.player) {
+            newAssignments[p.slot] = p.player;
+          }
+        });
+        setAssignments(newAssignments);
+        
         refetchFormation?.();
       }
+    },
+    onError: (error) => {
+      console.error('❌ Formation created subscription error:', error);
     },
   });
 
   useSubscription(FORMATION_UPDATED_SUBSCRIPTION, {
     variables: { gameId },
-    onData: ({ data }) => {
-      const updated = data.data?.formationUpdated;
-      if (updated) {
+    skip: !gameId,
+    onSubscriptionData: ({ subscriptionData }) => {
+      console.log('� FORMATION_UPDATED raw subscription data:', subscriptionData);
+      if (subscriptionData.data?.formationUpdated) {
+        const updated = subscriptionData.data.formationUpdated;
+        console.log('🔔 Formation updated subscription received:', updated);
         setFormation(updated);
+        
+        // Update assignments from subscription data
+        const newAssignments = {};
+        updated.positions?.forEach(p => {
+          if (p.player) {
+            newAssignments[p.slot] = p.player;
+          }
+        });
+        setAssignments(newAssignments);
+        
         refetchFormation?.();
       }
+    },
+    onError: (error) => {
+      console.error('❌ Formation updated subscription error:', error);
     },
   });
 
   useSubscription(FORMATION_DELETED_SUBSCRIPTION, {
     variables: { gameId },
-    onData: ({ data }) => {
-      const deleted = data.data?.formationDeleted;
-      if (deleted === gameId) {
-        setFormation(null);
-        refetchFormation?.();
+    skip: !gameId,
+    onSubscriptionData: ({ subscriptionData }) => {
+      console.log('� FORMATION_DELETED raw subscription data:', subscriptionData);
+      if (subscriptionData.data?.formationDeleted) {
+        const deleted = subscriptionData.data.formationDeleted;
+        console.log('🔔 Formation deleted subscription received:', deleted);
+        if (deleted === gameId) {
+          setFormation(null);
+          setAssignments({});
+          refetchFormation?.();
+        }
       }
+    },
+    onError: (error) => {
+      console.error('❌ Formation deleted subscription error:', error);
     },
   });
   // ─────────────────────────────────────────────────────────────────────────
@@ -95,13 +153,30 @@ export default function FormationSection({
       .map(r => r.user);
   }, [game?.responses]);
 
-  const formationType = formation?.formationType.slice(2) || selectedFormation;
-  const rows = formationType
-    .split("-")
-    .map((n, idx) => ({
-      rowIndex: idx,
-      slotIds: Array.from({ length: +n }, (_, i) => (idx + 1) * 10 + i),
-    }));
+  // Backend returns formations without goalkeeper (e.g., "4-3-3")
+  // Frontend displays with goalkeeper (e.g., "1-4-3-3")
+  // selectedFormation already has "1-" prefix, so remove it for processing
+  const formationType = formation?.formationType || 
+    (selectedFormation.startsWith("1-") ? selectedFormation.slice(2) : selectedFormation);
+  
+  // Create rows including goalkeeper (slot 0)
+  const rows = React.useMemo(() => {
+    if (!formationType) return [];
+    
+    // Goalkeeper row (always 1 player, slot 0)
+    const goalkeeperRow = { rowIndex: -1, slotIds: [0], isGoalkeeper: true };
+    
+    // Outfield rows
+    const outfieldRows = formationType
+      .split("-")
+      .map((n, idx) => ({
+        rowIndex: idx,
+        slotIds: Array.from({ length: +n }, (_, i) => (idx + 1) * 10 + i),
+        isGoalkeeper: false
+      }));
+    
+    return [goalkeeperRow, ...outfieldRows];
+  }, [formationType]);
 
   const [assignments, setAssignments] = useState({});
   useEffect(() => {
@@ -171,34 +246,104 @@ export default function FormationSection({
     setAssignments(newMap);
   };
 
+  // Function to show success popup
+  const showSuccess = (message) => {
+    setSuccessMessage(message);
+    setShowSuccessPopup(true);
+    setTimeout(() => {
+      setShowSuccessPopup(false);
+    }, 3000); // Hide after 3 seconds
+  };
+
   const handleSubmitFormation = async () => {
+    if (!currentOrganization) {
+      console.error('No organization selected');
+      alert('Please select an organization to create or update formation.');
+      return;
+    }
+    
     const positions = rows.flatMap(r =>
       r.slotIds.map(slot => ({
         slot,
         playerId: assignments[slot]?._id || null,
       }))
     );
+    
     try {
       if (!isFormed) {
-        await createFormation({ variables: { gameId, formationType: selectedFormation } });
+        // Remove the goalkeeper prefix "1-" before sending to backend
+        const backendFormationType = selectedFormation.startsWith("1-") 
+          ? selectedFormation.slice(2) 
+          : selectedFormation;
+        
+        await createFormation({ 
+          variables: { 
+            gameId, 
+            formationType: backendFormationType,
+            organizationId: currentOrganization._id
+          } 
+        });
+        
+        console.log('✅ Formation created successfully!');
+        showSuccess('Formation created successfully!');
       }
-      const { data } = await updateFormation({ variables: { gameId, positions } });
-      setFormation(data.updateFormation);
+      
+      // Update formation with player positions
+      const { data } = await updateFormation({ 
+        variables: { 
+          gameId, 
+          positions,
+          organizationId: currentOrganization._id
+        } 
+      });
+      
+      // Update local formation state with the response
+      if (data?.updateFormation) {
+        setFormation(data.updateFormation);
+        
+        // Update assignments from the response to keep players visible
+        const newAssignments = {};
+        data.updateFormation.positions?.forEach(p => {
+          if (p.player) {
+            newAssignments[p.slot] = p.player;
+          }
+        });
+        setAssignments(newAssignments);
+      }
+      
       refetchFormation?.();
+      
+      // Show success message for update
+      if (isFormed) {
+        console.log('✅ Formation updated successfully!');
+        showSuccess('Formation updated successfully!');
+      }
     } catch (err) {
       console.error("❌ Formation submit error:", err.message);
+      alert('Failed to save formation. Please try again.');
     }
   };
 
   const handleDelete = async () => {
+    if (!currentOrganization) {
+      console.error('No organization selected');
+      return;
+    }
+    
     try {
-      await deleteFormation({ variables: { gameId } });
+      await deleteFormation({ 
+        variables: { 
+          gameId,
+          organizationId: currentOrganization._id
+        } 
+      });
       setFormation(null);
       setSelectedFormation("");
       setAssignments({});
       setShowDeleteModal(false);
     } catch (err) {
       console.error("❌ Delete failed:", err.message);
+      alert('Failed to delete formation. Please try again.');
     }
   };
 
@@ -324,7 +469,7 @@ export default function FormationSection({
               <FormationBoard 
                 rows={rows} 
                 assignments={assignments} 
-                formationType={formationType} 
+                formationType={`1-${formationType}`}  // Add goalkeeper prefix for display
                 creator={creator}
                 isLoading={isLoading}
                 isDragging={!!draggingPlayer}
@@ -332,7 +477,39 @@ export default function FormationSection({
             </div>
 
             {isCreator && (
-              <div className="flex flex-col sm:flex-row gap-4 mt-8">
+              <>
+                {/* Success Popup Message */}
+                {showSuccessPopup && (
+                  <div className="mt-6 animate-fade-in">
+                    <div className={`rounded-2xl p-4 border-2 shadow-lg ${
+                      isDarkMode 
+                        ? "bg-gradient-to-r from-green-900 to-green-800 border-green-600 text-green-100" 
+                        : "bg-gradient-to-r from-green-50 to-green-100 border-green-400 text-green-800"
+                    }`}>
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center shadow-lg flex-shrink-0">
+                          <span className="text-2xl">✅</span>
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-bold text-lg">{successMessage}</p>
+                        </div>
+                        <button
+                          onClick={() => setShowSuccessPopup(false)}
+                          className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 ${
+                            isDarkMode 
+                              ? "text-green-300 hover:text-white hover:bg-green-700" 
+                              : "text-green-600 hover:text-green-800 hover:bg-green-200"
+                          }`}
+                          aria-label="Close"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex flex-col sm:flex-row gap-4 mt-8">
                 <button
                   onClick={handleSubmitFormation}
                   className="group relative overflow-hidden bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-3 min-w-[200px]"
@@ -357,6 +534,7 @@ export default function FormationSection({
                   </button>
                 )}
               </div>
+              </>
             )}
           </DndContext>
 
