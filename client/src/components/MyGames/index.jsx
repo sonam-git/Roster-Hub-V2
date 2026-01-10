@@ -2,7 +2,7 @@
 import React, { useContext, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { Link } from "react-router-dom";
-import { QUERY_GAMES, QUERY_ME } from "../../utils/queries";
+import { QUERY_GAMES } from "../../utils/queries";
 import { ThemeContext } from "../ThemeContext";
 import { useOrganization } from "../../contexts/OrganizationContext";
 import Auth from "../../utils/auth";
@@ -13,11 +13,6 @@ const MyGames = () => {
   const { currentOrganization } = useOrganization();
   const userId = Auth.getProfile()?.data?._id;
   const [filter, setFilter] = useState('all'); // 'all', 'created', 'available', 'unavailable'
-
-  // Query current user data to check if they're the organization owner or admin
-  const { data: meData } = useQuery(QUERY_ME);
-  const isOrganizationOwner = meData?.me?.currentOrganization?.owner?._id === userId;
-  const isOrganizationAdmin = meData?.me?.currentOrganization?.admins?.some(admin => admin._id === userId);
 
   const { loading, error, data } = useQuery(QUERY_GAMES, {
     variables: { 
@@ -256,8 +251,7 @@ const MyGames = () => {
         ) : (
           filteredGames.map(game => {
           const userResponse = game.responses.find(response => response.user._id === userId);
-          // Allow both game creator and organization owner/admin to manage the game
-          const isCreator = game.creator._id === userId || isOrganizationOwner || isOrganizationAdmin;
+          const isCreator = game.creator._id === userId;
           const gameDate = new Date(+game.date);
           const humanDate = gameDate.toLocaleDateString();
           const effectiveStatus = getGameEffectiveStatus(game);

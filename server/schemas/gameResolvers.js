@@ -19,38 +19,6 @@ const FORMATION_COMMENT_DELETED = "FORMATION_COMMENT_DELETED";
 const FORMATION_COMMENT_LIKED = "FORMATION_COMMENT_LIKED";
 
 /**
- * Helper function to check if user can manage a game
- * Returns true if user is:
- * - The game creator
- * - Organization owner
- * - Organization admin
- */
-async function canManageGame(game, userId, organizationId) {
-  // Check if user is the game creator
-  if (game.creator.toString() === userId) {
-    return true;
-  }
-
-  // Check if user is organization owner or admin
-  const org = await Organization.findById(organizationId);
-  if (!org) {
-    return false;
-  }
-
-  // Check if user is the owner
-  if (org.owner.toString() === userId) {
-    return true;
-  }
-
-  // Check if user is an admin
-  if (org.admins && org.admins.some(adminId => adminId.toString() === userId)) {
-    return true;
-  }
-
-  return false;
-}
-
-/**
  * Game Resolvers for Multi-Tenant Architecture
  * 
  * These resolvers handle all game-related operations including:
@@ -228,10 +196,9 @@ const gameResolvers = {
           throw new UserInputError("Game not found!");
         }
 
-        // Check if user can manage this game (creator, owner, or admin)
-        const canManage = await canManageGame(game, context.user._id, organizationId);
-        if (!canManage) {
-          throw new AuthenticationError("Only the game creator, organization owner, or admins can confirm the game!");
+        // Check if user is the creator
+        if (game.creator.toString() !== context.user._id) {
+          throw new AuthenticationError("Only the game creator can confirm the game!");
         }
 
         game.status = "CONFIRMED";
@@ -272,10 +239,9 @@ const gameResolvers = {
           throw new UserInputError("Game not found!");
         }
 
-        // Check if user can manage this game (creator, owner, or admin)
-        const canManage = await canManageGame(game, context.user._id, organizationId);
-        if (!canManage) {
-          throw new AuthenticationError("Only the game creator, organization owner, or admins can cancel the game!");
+        // Check if user is the creator
+        if (game.creator.toString() !== context.user._id) {
+          throw new AuthenticationError("Only the game creator can cancel the game!");
         }
 
         game.status = "CANCELLED";
@@ -316,10 +282,9 @@ const gameResolvers = {
           throw new UserInputError("Game not found!");
         }
 
-        // Check if user can manage this game (creator, owner, or admin)
-        const canManage = await canManageGame(game, context.user._id, organizationId);
-        if (!canManage) {
-          throw new AuthenticationError("Only the game creator, organization owner, or admins can complete the game!");
+        // Check if user is the creator
+        if (game.creator.toString() !== context.user._id) {
+          throw new AuthenticationError("Only the game creator can complete the game!");
         }
 
         game.status = "COMPLETED";
@@ -362,10 +327,9 @@ const gameResolvers = {
           throw new UserInputError("Game not found!");
         }
 
-        // Check if user can manage this game (creator, owner, or admin)
-        const canManage = await canManageGame(game, context.user._id, organizationId);
-        if (!canManage) {
-          throw new AuthenticationError("Only the game creator, organization owner, or admins can update the game!");
+        // Check if user is the creator
+        if (game.creator.toString() !== context.user._id) {
+          throw new AuthenticationError("Only the game creator can update the game!");
         }
 
         // Update game fields
@@ -407,10 +371,9 @@ const gameResolvers = {
           throw new UserInputError("Game not found!");
         }
 
-        // Check if user can manage this game (creator, owner, or admin)
-        const canManage = await canManageGame(game, context.user._id, organizationId);
-        if (!canManage) {
-          throw new AuthenticationError("Only the game creator, organization owner, or admins can delete the game!");
+        // Check if user is the creator
+        if (game.creator.toString() !== context.user._id) {
+          throw new AuthenticationError("Only the game creator can delete the game!");
         }
 
         // Delete associated formation
@@ -516,10 +479,9 @@ const gameResolvers = {
           throw new UserInputError("Game not found!");
         }
 
-        // Check if user can manage this game (creator, owner, or admin)
-        const canManage = await canManageGame(game, context.user._id, organizationId);
-        if (!canManage) {
-          throw new AuthenticationError("Only the game creator, organization owner, or admins can create formations!");
+        // Check if user is the creator
+        if (game.creator.toString() !== context.user._id) {
+          throw new AuthenticationError("Only the game creator can create formations!");
         }
 
         // Check if formation already exists
@@ -593,10 +555,9 @@ const gameResolvers = {
           throw new UserInputError("Game not found!");
         }
 
-        // Check if user can manage this game (creator, owner, or admin)
-        const canManage = await canManageGame(game, context.user._id, organizationId);
-        if (!canManage) {
-          throw new AuthenticationError("Only the game creator, organization owner, or admins can update formations!");
+        // Check if user is the creator
+        if (game.creator.toString() !== context.user._id) {
+          throw new AuthenticationError("Only the game creator can update formations!");
         }
 
         const formation = await Formation.findOne({ game: gameId, organizationId });
@@ -649,10 +610,9 @@ const gameResolvers = {
           throw new UserInputError("Game not found!");
         }
 
-        // Check if user can manage this game (creator, owner, or admin)
-        const canManage = await canManageGame(game, context.user._id, organizationId);
-        if (!canManage) {
-          throw new AuthenticationError("Only the game creator, organization owner, or admins can delete formations!");
+        // Check if user is the creator
+        if (game.creator.toString() !== context.user._id) {
+          throw new AuthenticationError("Only the game creator can delete formations!");
         }
 
         const formation = await Formation.findOne({ game: gameId, organizationId });

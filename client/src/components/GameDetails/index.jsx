@@ -9,7 +9,7 @@ import {
 import { useQuery, useMutation, useSubscription } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 
-import { QUERY_GAME, QUERY_GAMES, QUERY_FORMATION, QUERY_ME } from "../../utils/queries";
+import { QUERY_GAME, QUERY_GAMES, QUERY_FORMATION } from "../../utils/queries";
 import {
   RESPOND_TO_GAME,
   UNVOTE_GAME,
@@ -131,11 +131,6 @@ export default function GameDetails({ gameId }) {
   const { isDarkMode } = useContext(ThemeContext);
   const { currentOrganization } = useOrganization();
   const userId = Auth.getProfile()?.data?._id;
-
-  // Query current user data to check if they're the organization owner or admin
-  const { data: meData } = useQuery(QUERY_ME);
-  const isOrganizationOwner = meData?.me?.currentOrganization?.owner?._id === userId;
-  const isOrganizationAdmin = meData?.me?.currentOrganization?.admins?.some(admin => admin._id === userId);
 
   /* ──────────────────────────────────────────────────────────── */
   /*  Local helpers                                               */
@@ -917,8 +912,7 @@ export default function GameDetails({ gameId }) {
     isExpired: effectiveStatus === 'EXPIRED'
   });
   
-  // Allow game creator, organization owner, and organization admins to manage the game
-  const isCreator = game.creator._id === userId || isOrganizationOwner || isOrganizationAdmin;
+  const isCreator = game.creator._id === userId;
 
   /* ─── Human-friendly date/time ─────────────────────────────── */
   const humanDate = new Date(+game.date).toLocaleDateString();

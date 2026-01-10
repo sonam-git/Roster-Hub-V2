@@ -167,11 +167,6 @@ export const QUERY_ME = gql`
           _id
           name
         }
-        admins {
-          _id
-          name
-          email
-        }
         members {
           _id
           name
@@ -422,8 +417,8 @@ export const GET_COMMENT = gql`
 `;
 
 export const GET_ALL_CHATS = gql`
-  query GetAllChats($organizationId: ID!) {
-    getAllChats(organizationId: $organizationId) {
+  query GetAllChats {
+    getAllChats {
       id
       content
       createdAt
@@ -440,8 +435,8 @@ export const GET_ALL_CHATS = gql`
 `;
 
 export const GET_CHATS_BETWEEN_USERS = gql`
-  query GetChatsBetweenUsers($userId1: ID!, $userId2: ID!, $organizationId: ID!) {
-    getChatsBetweenUsers(userId1: $userId1, userId2: $userId2, organizationId: $organizationId) {
+  query GetChatsBetweenUsers($userId1: ID!, $userId2: ID!) {
+    getChatsBetweenUsers(userId1: $userId1, userId2: $userId2) {
       id
       from {
         _id
@@ -458,8 +453,8 @@ export const GET_CHATS_BETWEEN_USERS = gql`
 `;
 
 export const GET_CHAT_BY_USER = gql`
-  query GetChatByUser($to: ID!, $organizationId: ID!) {
-    getChatByUser(to: $to, organizationId: $organizationId) {
+  query GetChatByUser($to: ID!) {
+    getChatByUser(to: $to) {
       id
       content
       createdAt

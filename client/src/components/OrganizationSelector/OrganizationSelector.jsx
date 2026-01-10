@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useOrganization } from '../../contexts/OrganizationContext';
-import { ChevronDownIcon, OfficeBuildingIcon, CheckIcon } from '@heroicons/react/outline';
+import { FaChevronDown, FaBuilding, FaCheck } from 'react-icons/fa';
 
 const OrganizationSelector = () => {
   const {
@@ -39,11 +39,11 @@ const OrganizationSelector = () => {
         disabled={switchingOrg}
         className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
       >
-        <OfficeBuildingIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+        <FaBuilding className="h-5 w-5 text-gray-600 dark:text-gray-400" />
         <span className="text-sm font-medium text-gray-900 dark:text-gray-100 max-w-32 truncate">
           {currentOrganization.name}
         </span>
-        <ChevronDownIcon
+        <FaChevronDown
           className={`h-4 w-4 text-gray-500 transition-transform ${
             isOpen ? 'transform rotate-180' : ''
           }`}
@@ -101,7 +101,7 @@ const OrganizationSelector = () => {
                         {org.name}
                       </p>
                       {org._id === currentOrganization._id && (
-                        <CheckIcon className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                        <FaCheck className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
                       )}
                     </div>
 
@@ -139,7 +139,7 @@ const OrganizationSelector = () => {
                 href="/organizations/new"
                 className="flex items-center justify-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
               >
-                <BuildingOfficeIcon className="h-4 w-4" />
+                <FaBuilding className="h-4 w-4" />
                 <span>Create New Organization</span>
               </a>
             </div>

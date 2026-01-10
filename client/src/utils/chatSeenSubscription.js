@@ -1,18 +1,12 @@
 import { gql } from '@apollo/client';
 
 export const CHAT_SEEN_SUBSCRIPTION = gql`
-  subscription OnChatSeen($to: ID!) {
-    chatSeen(to: $to) {
+  subscription OnChatSeen($chatId: ID!, $to: ID!) {
+    chatSeen(chatId: $chatId, to: $to) {
       id
       seen
-      from { 
-        _id 
-        name
-      }
-      to { 
-        _id 
-        name
-      }
+      from { _id }
+      to { _id }
       content
       createdAt
     }

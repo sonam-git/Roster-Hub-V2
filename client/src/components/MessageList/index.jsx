@@ -15,10 +15,8 @@ const MessageList = ({ isLoggedInUser = false, isDarkMode }) => {
   const { currentOrganization } = useOrganization();
   const { data: userData, loading: userLoading, error: userError } = useQuery(QUERY_ME);
   const { data: profileData, loading: profilesLoading, error: profilesError } = useQuery(QUERY_PROFILES, {
-    variables: {
-      organizationId: currentOrganization?._id
-    },
-    skip: !currentOrganization
+    skip: !currentOrganization,
+    variables: { organizationId: currentOrganization?._id }
   });
   const [removeMessage] = useMutation(REMOVE_MESSAGE);
   const [sendMessage] = useMutation(SEND_MESSAGE);

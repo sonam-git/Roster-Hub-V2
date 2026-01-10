@@ -370,7 +370,6 @@ const typeDefs = gql`
     me: Profile
     skills(organizationId: ID): [Skill]
     skill(skillId: ID!): Skill
-    # Message queries (for profile/kudos messages)
     receivedMessages: [Message]!
     socialMediaLinks(userId: ID!): [SocialMediaLink]!
     posts(organizationId: ID): [Post]
@@ -378,10 +377,9 @@ const typeDefs = gql`
     comments: [Comment]
     comment(commentId: ID!): Comment
     getPlayerRating(profileId: ID!): Float
-    # Chat queries (for real-time chat feature)
-    getChatByUser(to: ID!, organizationId: ID!): [Chat]
-    getAllChats(organizationId: ID!): [Chat]
-    getChatsBetweenUsers(userId1: ID!, userId2: ID!, organizationId: ID!): [Chat]
+    getChatByUser(to: ID!): [Chat]
+    getAllChats: [Chat]
+    getChatsBetweenUsers(userId1: ID!, userId2: ID!): [Chat]
     games(organizationId: ID!, status: GameStatus): [Game!]!
     game(gameId: ID!, organizationId: ID!): Game
     soccerMatches(
@@ -417,14 +415,10 @@ const typeDefs = gql`
     updatePhoneNumber(profileId: ID!, phoneNumber: String!): Profile
     uploadProfilePic(profileId: ID!, profilePic: Upload!): Profile
     addSkill(profileId: ID!, skillText: String!, organizationId: ID!): Skill
-    removeSkill(skillId: ID!, organizationId: ID!): Skill
-    # Message mutations (for profile/kudos messages - different from Chat)
     sendMessage(recipientId: ID!, text: String!, organizationId: ID!): Message!
+    removeSkill(skillId: ID!, organizationId: ID!): Skill
     removeMessage(messageId: ID!, organizationId: ID!): Message
-    # Chat mutations (for real-time chat feature)
-    createChat(from: ID!, to: ID!, content: String!, organizationId: ID!): Chat
     deleteConversation(userId: ID!, organizationId: ID!): Boolean!
-    markChatAsSeen(userId: ID!, organizationId: ID!): Boolean
     saveSocialMediaLink(
       userId: ID!
       type: String!
@@ -445,6 +439,7 @@ const typeDefs = gql`
     likePost(postId: ID!, organizationId: ID!): Post
     likeComment(commentId: ID!, organizationId: ID!): Comment
     ratePlayer(profileId: ID!, ratingInput: RatingInput!, organizationId: ID!): Profile
+    createChat(from: ID!, to: ID!, content: String!, organizationId: ID!): Chat
     createGame(input: CreateGameInput!, organizationId: ID!): Game!
     respondToGame(input: RespondToGameInput!, organizationId: ID!): Game!
     confirmGame(gameId: ID!, organizationId: ID!, note: String): Game
@@ -479,6 +474,7 @@ const typeDefs = gql`
     likeFormationComment(commentId: ID!, organizationId: ID!): FormationComment
     likeFormation(formationId: ID!, organizationId: ID!): Formation
     removeSocialMediaLink(userId: ID!, type: String!, organizationId: ID!): Boolean
+    markChatAsSeen(userId: ID!, organizationId: ID!): Boolean
     reactToSkill(skillId: ID!, emoji: String!, organizationId: ID!): Skill!
     # Organization mutations
     createOrganization(input: OrganizationInput!): Auth!

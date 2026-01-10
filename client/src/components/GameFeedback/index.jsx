@@ -14,22 +14,12 @@ const GameFeedback = ({ gameId, isDarkMode, onFeedback }) => {
 
   // Get game data to access available players
   const { data: gameData } = useQuery(QUERY_GAME, {
-    variables: { 
-      gameId,
-      organizationId: currentOrganization?._id 
-    },
-    skip: !currentOrganization,
+    variables: { gameId },
     fetchPolicy: "cache-first",
   });
 
   const [addFeedback, { loading, error }] = useMutation(ADD_FEEDBACK, {
-    refetchQueries: [{ 
-      query: QUERY_GAME, 
-      variables: { 
-        gameId,
-        organizationId: currentOrganization?._id 
-      } 
-    }],
+    refetchQueries: [{ query: QUERY_GAME, variables: { gameId } }],
     awaitRefetchQueries: true,
     onCompleted: () => {
       // clear form

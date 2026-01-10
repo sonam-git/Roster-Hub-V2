@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
-import { PencilAltIcon, TrashIcon } from "@heroicons/react/solid";
+import { FaPencilAlt, FaTrash } from "react-icons/fa";
 import { REMOVE_COMMENT, UPDATE_COMMENT } from "../../utils/mutations";
 import CommentLike from "../CommentLike";
 import { useOrganization } from "../../contexts/OrganizationContext";
@@ -85,10 +85,10 @@ export default function CommentList({
                   {currentUserId === c.userId && (
                     <div className="flex space-x-2">
                       <button title="Edit Comment" className="flex items-center px-2 py-1 rounded hover:bg-blue-100 dark:hover:bg-blue-900" onClick={() => { setEditingCommentId(c._id); setText(c.commentText); }}>
-                        <PencilAltIcon className="h-5 w-5 text-blue-500 cursor-pointer" />
+                        <FaPencilAlt className="h-5 w-5 text-blue-500 cursor-pointer" />
                       </button>
                       <button title="Delete Comment" className="flex items-center px-2 py-1 rounded hover:bg-red-100 dark:hover:bg-red-900" onClick={() => handleDelete(c._id)}>
-                        <TrashIcon className="h-5 w-5 text-red-500 cursor-pointer" />
+                        <FaTrash className="h-5 w-5 text-red-500 cursor-pointer" />
                       </button>
                     </div>
                   )}

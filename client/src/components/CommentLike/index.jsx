@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useMutation, useSubscription } from "@apollo/client";
-import { ThumbUpIcon as OutlineThumbUpIcon } from "@heroicons/react/outline";
-import { ThumbUpIcon as SolidThumbUpIcon } from "@heroicons/react/solid";
+import { FaRegThumbsUp, FaThumbsUp } from "react-icons/fa";
 
 import { LIKE_COMMENT } from "../../utils/mutations";
 import { COMMENT_LIKED_SUBSCRIPTION } from "../../utils/subscription";
@@ -55,8 +54,8 @@ export default function CommentLike({ comment, currentUserId }) {
         title={isLiked ? "Unlike" : "Like"}
       >
         {isLiked 
-          ? <SolidThumbUpIcon className="h-5 w-5 text-blue-500" />
-          : <OutlineThumbUpIcon className="h-5 w-5 text-gray-400" />
+          ? <FaThumbsUp className="h-5 w-5 text-blue-500" />
+          : <FaRegThumbsUp className="h-5 w-5 text-gray-400" />
         }
       </button>
 

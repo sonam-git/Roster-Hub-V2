@@ -2,7 +2,7 @@
 import React, { useContext, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@apollo/client";
-import { QUERY_GAME, QUERY_ME } from "../utils/queries";
+import { QUERY_GAME } from "../utils/queries";
 import { useOrganization } from "../contexts/OrganizationContext";
 import GameUpdate from "../components/GameUpdate";
 import { ThemeContext } from "../components/ThemeContext";
@@ -13,12 +13,6 @@ const GameUpdatePage = () => {
   const navigate = useNavigate();
   const { isDarkMode } = useContext(ThemeContext);
   const { currentOrganization } = useOrganization();
-
-  // Query current user data to check if they're the organization owner or admin
-  const { data: meData } = useQuery(QUERY_ME);
-  const currentUserId = Auth.getProfile()?.data?._id;
-  const isOrganizationOwner = meData?.me?.currentOrganization?.owner?._id === currentUserId;
-  const isOrganizationAdmin = meData?.me?.currentOrganization?.admins?.some(admin => admin._id === currentUserId);
 
   const { data, loading, error, refetch } = useQuery(QUERY_GAME, {
     variables: { 
@@ -47,32 +41,29 @@ const GameUpdatePage = () => {
     }
   }, [navigate]);
 
-  // Handle permission check - only redirect if we have game data and user is NOT creator OR admin
+  // Handle permission check - only redirect if we have game data and user is NOT creator
   useEffect(() => {
     if (!loading && game) {
       const currentUser = Auth.getProfile()?.data;
-      const gameCreatorId = game?.creator?._id;
+      const gameCreatorId = game?.creator?._id; // Fixed: using 'creator' instead of 'createdBy'
       const currentUserId = currentUser?._id;
-      // Allow game creator, organization owner, and organization admins to update the game
-      const isCreator = gameCreatorId === currentUserId || isOrganizationOwner || isOrganizationAdmin;
+      const isCreator = gameCreatorId === currentUserId;
       
       console.log('Permission check:', {
         gameCreatorId,
         currentUserId,
-        isOrganizationOwner,
-        isOrganizationAdmin,
         isCreator,
         match: gameCreatorId === currentUserId
       });
       
       if (!isCreator) {
-        console.log('Not creator or admin, redirecting to game-schedule');
+        console.log('Not creator, redirecting to game-schedule');
         navigate("/game-schedule", { replace: true });
       } else {
-        console.log('✅ User IS the creator or admin, staying on page');
+        console.log('✅ User IS the creator, staying on page');
       }
     }
-  }, [loading, game, navigate, isOrganizationOwner, isOrganizationAdmin]);
+  }, [loading, game, navigate]);
 
   const handleClose = () => {
     navigate(-1); // Go back to previous page (likely GameDetails)

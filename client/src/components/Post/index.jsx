@@ -1,13 +1,7 @@
-import {
-  PencilAltIcon,
-  TrashIcon,
-  ChatAltIcon,
-  XIcon,
-  HeartIcon,
-} from "@heroicons/react/solid";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useSubscription } from "@apollo/client";
+import { FaPencilAlt, FaTrash, FaComment, FaTimes, FaHeart } from "react-icons/fa";
 import {
   REMOVE_POST,
   UPDATE_POST,
@@ -272,10 +266,10 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
               {!isEditing && (
                 <>
                   <button title="Edit Post" className="flex items-center px-2 py-1 rounded hover:bg-blue-100 dark:hover:bg-blue-900" onClick={() => setIsEditing(true)}>
-                    <PencilAltIcon className="h-5 w-5 text-blue-500 cursor-pointer" />
+                    <FaPencilAlt className="h-5 w-5 text-blue-500 cursor-pointer" />
                   </button>
                   <button title="Delete Post" className="flex items-center px-2 py-1 rounded hover:bg-red-100 dark:hover:bg-red-900" onClick={() => setShowDeleteModal(true)}>
-                    <TrashIcon className="h-5 w-5 text-red-500 cursor-pointer" />
+                    <FaTrash className="h-5 w-5 text-red-500 cursor-pointer" />
                   </button>
                 </>
               )}
@@ -311,7 +305,7 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
                 onMouseEnter={() => setShowTooltip(true)}
                 onMouseLeave={() => setShowTooltip(false)}
               >
-                <HeartIcon className="h-4 w-4" /> {likes}
+                <FaHeart className="h-4 w-4" /> {likes}
               </button>
               {/* Tooltip for liked users */}
               {showTooltip && likedBy.length > 0 && (
@@ -323,7 +317,7 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
               )}
             </div>
             <button className={`flex items-center gap-1 px-3 py-1 rounded-full font-semibold shadow transition bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-700 text-xs sm:text-sm`} onClick={() => setShowComments((v) => !v)}>
-              <ChatAltIcon className="h-4 w-4" /> {comments.length}
+              <FaComment className="h-4 w-4" /> {comments.length}
             </button>
           </div>
           <span className="text-xs text-gray-500 dark:text-gray-400">{new Date(parseInt(post.createdAt)).toLocaleString()}</span>

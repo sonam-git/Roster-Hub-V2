@@ -100,7 +100,6 @@ export default defineConfig({
           // Vendor chunks for better caching
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
           'apollo-vendor': ['@apollo/client', 'graphql', 'graphql-ws'],
-          'ui-vendor': ['@headlessui/react', '@heroicons/react'],
           'icons-vendor': ['react-icons', '@fortawesome/react-fontawesome', '@fortawesome/free-solid-svg-icons'],
         },
       },

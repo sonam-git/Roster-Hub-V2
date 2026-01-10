@@ -2,8 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@apollo/client";
-import { StarIcon as SolidStar } from "@heroicons/react/solid";
-import { StarIcon as OutlineStar } from "@heroicons/react/outline";
+import { FaStar, FaRegStar } from "react-icons/fa";
 import ProfileAvatar from "../../assets/images/profile-avatar.png";
 import { QUERY_PROFILES } from "../../utils/queries";
 import { useOrganization } from "../../contexts/OrganizationContext";
@@ -100,7 +99,7 @@ export default function RatingDisplay({ limit = 10 }) {
       {displayProfiles.length > 0 && (
         <div className="mb-6 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-xl border-2 border-yellow-300 dark:border-yellow-700">
           <h3 className="text-lg font-bold mb-3 text-gray-800 dark:text-white flex items-center gap-2">
-            <SolidStar className="h-6 w-6 text-yellow-500" />
+            <FaStar className="h-6 w-6 text-yellow-500" />
             Top {Math.min(limit, displayProfiles.length)} Players
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
@@ -129,7 +128,7 @@ export default function RatingDisplay({ limit = 10 }) {
                   />
                   {/* Rating Badge */}
                   <div className="absolute -bottom-1 -right-1 bg-gradient-to-br from-yellow-400 to-yellow-500 dark:from-yellow-500 dark:to-yellow-600 rounded-full px-2 py-0.5 shadow-lg border-2 border-white dark:border-gray-800 flex items-center gap-1">
-                    <SolidStar className="h-3 w-3 text-white" />
+                    <FaStar className="h-3 w-3 text-white" />
                     <span className="text-xs font-bold text-white">
                       {player.averageRating ? player.averageRating.toFixed(1) : '0.0'}
                     </span>
@@ -167,9 +166,9 @@ export default function RatingDisplay({ limit = 10 }) {
               <div className="flex">
                 {Array.from({ length: 5 }).map((_, i) =>
                   i < col.stars ? (
-                    <SolidStar key={i} className="h-5 w-5 text-yellow-500" />
+                    <FaStar key={i} className="h-5 w-5 text-yellow-500" />
                   ) : (
-                    <OutlineStar key={i} className="h-5 w-5 text-gray-300" />
+                    <FaRegStar key={i} className="h-5 w-5 text-gray-300" />
                   )
                 )}
               </div>

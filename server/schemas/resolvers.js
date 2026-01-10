@@ -327,7 +327,7 @@ const resolvers = {
       return profile.ratings.length ? totalRatings / profile.ratings.length : 0;
     },
     // ************************** QUERY CHAT *******************************************//
-    getChatByUser: async (parent, { to, organizationId }, context) => {
+    getChatByUser: async (parent, { to }, context) => {
       const userId = context.user._id;
       // Check if user is authenticated
       if (!userId) {
@@ -336,29 +336,15 @@ const resolvers = {
         );
       }
 
-      // organizationId is now required in the query, use it directly
-      if (!organizationId) {
-        throw new AuthenticationError("Organization ID is required");
-      }
-
-      // Validate user is member of organization
-      const org = await Organization.findById(organizationId);
-      if (!org || !org.isUserMember(context.user._id)) {
-        throw new AuthenticationError("You are not a member of this organization");
-      }
-
       try {
-        // Query for chat using Chat model, only messages not deleted by current user, scoped to organization
+        // Query for chat using Chat model, only messages not deleted by current user
         const chat = await Chat.find({
-          organizationId: organizationId,
           $or: [
             { from: userId, to },
             { from: to, to: userId },
           ],
           deletedBy: { $ne: userId },
-        })
-        .sort({ createdAt: 1 }) // Sort by creation time ascending
-        .populate("from to"); // 'from' and 'to' are references to User model
+        }).populate("from to"); // 'from' and 'to' are references to User model
 
         return chat;
       } catch (error) {
@@ -367,52 +353,17 @@ const resolvers = {
       }
     },
     // ************************** QUERY ALL CHATS *******************************************//
-    getAllChats: async (parent, { organizationId }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError("You need to be logged in");
-      }
-
-      // organizationId is now required in the query, use it directly
-      if (!organizationId) {
-        throw new AuthenticationError("Organization ID is required");
-      }
-
-      // Validate user is member of organization
-      const org = await Organization.findById(organizationId);
-      if (!org || !org.isUserMember(context.user._id)) {
-        throw new AuthenticationError("You are not a member of this organization");
-      }
-
-      return await Chat.find({ organizationId: organizationId })
-        .sort({ createdAt: -1 })
-        .populate("from to");
+    getAllChats: async () => {
+      return await Chat.find().populate("from to");
     },
     // ************************** QUERY CHATS BETWEEN TWO USERS *******************************************//
-    getChatsBetweenUsers: async (parent, { userId1, userId2, organizationId }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError("You need to be logged in");
-      }
-
-      // organizationId is now required in the query, use it directly
-      if (!organizationId) {
-        throw new AuthenticationError("Organization ID is required");
-      }
-
-      // Validate user is member of organization
-      const org = await Organization.findById(organizationId);
-      if (!org || !org.isUserMember(context.user._id)) {
-        throw new AuthenticationError("You are not a member of this organization");
-      }
-
+    getChatsBetweenUsers: async (parent, { userId1, userId2 }) => {
       return await Chat.find({
-        organizationId: organizationId,
         $or: [
           { from: userId1, to: userId2 },
           { from: userId2, to: userId1 },
         ],
-      })
-      .sort({ createdAt: 1 })
-      .populate("from to");
+      }).populate("from to");
     },
     // ************************** QUERY GAMES *******************************************//
     games: async (_, { organizationId, status }, context) => {
@@ -1253,69 +1204,6 @@ const resolvers = {
       } catch (error) {
         console.error("Error creating chat:", error);
         throw new Error("Failed to create chat");
-      }
-    },
-
-    // ************************** MARK CHAT AS SEEN *******************************************//
-    markChatAsSeen: async (parent, { userId, organizationId }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError("You need to be logged in!");
-      }
-
-      // Validate organizationId
-      if (!organizationId || context.organizationId !== organizationId) {
-        throw new AuthenticationError("Invalid organization access");
-      }
-
-      // Validate user is member of organization
-      const org = await Organization.findById(organizationId);
-      if (!org || !org.isUserMember(context.user._id)) {
-        throw new AuthenticationError("You are not a member of this organization");
-      }
-
-      try {
-        // Mark all unseen messages from userId to current user as seen
-        const result = await Chat.updateMany(
-          {
-            organizationId: organizationId,
-            from: userId,
-            to: context.user._id,
-            seen: false,
-          },
-          {
-            $set: { seen: true },
-          }
-        );
-
-        console.log(`✅ Marked ${result.modifiedCount} messages as seen from user ${userId}`);
-
-        // Get all the messages that were just marked as seen
-        const updatedChats = await Chat.find({
-          organizationId: organizationId,
-          from: userId,
-          to: context.user._id,
-        })
-        .sort({ createdAt: 1 }) // Ascending order to process chronologically
-        .populate("from to");
-
-        // Publish subscription event for each message that was updated
-        // This notifies the sender (userId) that their messages were seen
-        updatedChats.forEach((chat) => {
-          if (chat.seen) { // Only publish for seen messages
-            console.log(`📡 Publishing CHAT_SEEN for message ${chat._id} to user ${chat.from._id}`);
-            pubsub.publish("CHAT_SEEN", { 
-              chatSeen: chat,
-              to: chat.from._id.toString(), // Notify the sender
-            });
-          }
-        });
-
-        return true;
-
-        return true;
-      } catch (error) {
-        console.error("Error marking chat as seen:", error);
-        throw new Error("Failed to mark chat as seen");
       }
     },
 
