@@ -61,6 +61,12 @@ const Signup = () => {
         }, 2000);
       } catch (e) {
         console.error("Signup error:", e);
+        console.error("Error details:", {
+          message: e.message,
+          graphQLErrors: e.graphQLErrors,
+          networkError: e.networkError,
+          extraInfo: e.extraInfo
+        });
         
         // Handle duplicate email error specifically
         let friendlyMessage = "Team creation failed. Please try again.";
@@ -71,6 +77,8 @@ const Signup = () => {
           friendlyMessage = "This email is already in use. Please login with your existing account or use a different email.";
         } else if (e.message && e.message.includes("already registered")) {
           friendlyMessage = "This email is already registered. Please login with your existing account or use a different email.";
+        } else if (e.graphQLErrors && e.graphQLErrors.length > 0) {
+          friendlyMessage = e.graphQLErrors[0].message || friendlyMessage;
         } else if (e.message) {
           friendlyMessage = e.message;
         }
