@@ -127,7 +127,7 @@ const AdminPanel = () => {
   };
 
   return (
-    <div className="mt-4 mb-6">
+    <div className="mt-4 mb-6 w-full max-w-full overflow-hidden">
       {/* Header */}
       <div className="mb-6 sm:mb-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4 sm:mb-6">
@@ -176,11 +176,11 @@ const AdminPanel = () => {
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-          <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 lg:p-6 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8 max-w-full">
+          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 lg:p-6 border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between ">
               <div>
-                <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Total Members</p>
+                <p className="text-xs sm:text-sm font-medium  text-gray-600 dark:text-gray-400">Total Members</p>
                 <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mt-1 sm:mt-2">
                   {stats.totalMembers}
                 </p>
@@ -193,7 +193,7 @@ const AdminPanel = () => {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 lg:p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 lg:p-6 border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Regular Members</p>
@@ -209,7 +209,7 @@ const AdminPanel = () => {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 lg:p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 lg:p-6 border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">With Jersey #</p>
@@ -225,7 +225,7 @@ const AdminPanel = () => {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 lg:p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 lg:p-6 border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">With Position</p>
@@ -243,7 +243,7 @@ const AdminPanel = () => {
         </div>
 
         {/* Game Statistics Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-3 sm:p-4 lg:p-6 mb-6 sm:mb-8 border border-gray-200 dark:border-gray-700">
+        <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow-lg p-3 sm:p-4 lg:p-6 mb-6 sm:mb-8 border border-gray-200 dark:border-gray-700 max-w-full">
           <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 flex items-center gap-2">
             <svg className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -251,7 +251,7 @@ const AdminPanel = () => {
             Game Statistics
           </h2>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 max-w-full">
             {/* Total Games */}
             <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-blue-200 dark:border-blue-700">
               <div className="flex items-center justify-between mb-1 sm:mb-2">
@@ -347,11 +347,11 @@ const AdminPanel = () => {
         </div>
 
         {/* Team Information */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-3 sm:p-4 lg:p-6 mb-6 sm:mb-8 border border-gray-200 dark:border-gray-700">
+        <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow-lg p-3 sm:p-4 lg:p-6 mb-6 sm:mb-8 border border-gray-200 dark:border-gray-700 max-w-full">
           <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-4">
             📋 Team Information
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-full">
             <div>
               <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Team Name</p>
               <p className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">{organization.name}</p>
@@ -368,7 +368,7 @@ const AdminPanel = () => {
         </div>
 
         {/* Search and Filter */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow-lg p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6 border border-gray-200 dark:border-gray-700 max-w-full">
           <div className="flex flex-col gap-4">
             <div className="flex-1">
               <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -405,7 +405,7 @@ const AdminPanel = () => {
         </div>
 
         {/* Members List */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 max-w-full">
           <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 dark:border-gray-700">
             <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
               👥 Team Roster ({filteredMembers.length})
@@ -420,7 +420,7 @@ const AdminPanel = () => {
               <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">No players found matching your search</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto max-w-full">
               <table className="w-full min-w-[640px]">
                 <thead className="bg-gray-50 dark:bg-gray-900">
                   <tr>

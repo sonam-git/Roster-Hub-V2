@@ -96,35 +96,18 @@ const resolvers = {
   Query: {
     // ************************** QUERY ALL PROFILES *******************************************//
     profiles: async (parent, args, context) => {
-      console.log('🔍 profiles resolver called with:', {
-        args,
-        organizationIdFromArgs: args.organizationId,
-        organizationIdFromContext: context.organizationId,
-        hasUser: !!context.user
-      });
-      
       // Use organizationId from args if provided, otherwise use context
       const organizationId = args.organizationId || context.organizationId;
       
       if (!organizationId) {
-        console.log('❌ No organizationId provided');
         throw new AuthenticationError("Organization ID is required!");
       }
-      
-      console.log('✅ Using organizationId:', organizationId);
       
       // Get organization to filter by members
       const org = await Organization.findById(organizationId);
       if (!org) {
-        console.log('❌ Organization not found:', organizationId);
         throw new UserInputError("Organization not found!");
       }
-
-      console.log('✅ Organization found:', {
-        id: org._id,
-        name: org.name,
-        memberCount: org.members.length
-      });
 
       // Return only profiles that are members of the current organization
       const profiles = await Profile.find({ _id: { $in: org.members } })
@@ -146,17 +129,10 @@ const resolvers = {
           populate: { path: "comments" },
         });
       
-      console.log('✅ Returning profiles:', profiles.length);
       return profiles;
     },
     // ************************** QUERY SINGLE PROFILE *******************************************//
     profile: async (parent, { profileId, organizationId }, context) => {
-      console.log('🔍 profile resolver called with:', {
-        profileId,
-        organizationId,
-        organizationIdFromContext: context.organizationId
-      });
-      
       // Use organizationId from args if provided, otherwise use context
       const orgId = organizationId || context.organizationId;
       
@@ -179,12 +155,10 @@ const resolvers = {
       if (orgId && profile) {
         const org = await Organization.findById(orgId);
         if (org && !org.members.some(memberId => memberId.toString() === profileId.toString())) {
-          console.log('❌ Profile is not a member of this organization');
           throw new UserInputError("Profile not found in this organization");
         }
       }
       
-      console.log('✅ Profile found:', profile?._id);
       return profile;
     },
     // ************************** QUERY ME (LOGIN USER) *******************************************//
@@ -1845,7 +1819,7 @@ const resolvers = {
         });
 
         // Get the app URL from environment or use default
-        const appUrl = process.env.APP_URL || 'http://localhost:3000';
+        const appUrl = process.env.APP_URL || 'https://roster-hub-v2-y6j2.vercel.app';
         const joinUrl = `${appUrl}/login?inviteCode=${organization.inviteCode}`;
 
         // Send email to each recipient

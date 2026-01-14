@@ -697,25 +697,13 @@ const organizationResolvers = {
      */
     currentOrganization: async (parent) => {
       try {
-        console.log('🔍 currentOrganization resolver called');
-        console.log('  parent.currentOrganization:', parent.currentOrganization);
-        
         if (!parent.currentOrganization) {
-          console.log('  ⚠️ No currentOrganization on parent, returning null');
           return null;
         }
         
         const org = await Organization.findById(parent.currentOrganization)
           .populate('owner')
           .populate('members');
-        
-        console.log('  ✅ Organization found:', {
-          id: org?._id,
-          name: org?.name,
-          inviteCode: org?.inviteCode,
-          ownerId: org?.owner?._id,
-          memberCount: org?.members?.length
-        });
         
         return org;
       } catch (error) {

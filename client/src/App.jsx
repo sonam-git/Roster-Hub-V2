@@ -128,12 +128,12 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
   return (
     <>
       <div
-        className={`flex min-h-screen transition-colors duration-300 ${backgroundConfig.className}`}
+        className={`flex min-h-screen transition-colors duration-300 overflow-x-hidden ${backgroundConfig.className}`}
         style={backgroundConfig.style}
       >
         <Header open={sidebarOpen} setOpen={setSidebarOpen} />
-        <div className={`flex-1 transition-all duration-300 pt-40 lg:pt-0 relative z-[2] flex flex-col`}>
-          <main role="main" className="flex-1">
+        <div className={`flex-1 transition-all duration-300 pt-40 lg:pt-0 relative z-[2] flex flex-col overflow-x-hidden`}>
+          <main role="main" className="flex-1 overflow-x-hidden">
             <Routes>
             <Route path="/" element={<Home />} />
             <Route
