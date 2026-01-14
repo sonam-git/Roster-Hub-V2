@@ -32,7 +32,7 @@ import GameUpdatePage from "./pages/GameUpdatePage";
 import Score from "./pages/Score";
 import ForgotPassword from "./pages/ForgetPassword";
 import PasswordReset from "./pages/PasswordReset";
-import AdminPanel from "./components/AdminPanel";
+import AdminPanel from "./pages/AdminPanel";
 import { ThemeProvider, ThemeContext } from "./components/ThemeContext";
 import { OrganizationProvider } from "./contexts/OrganizationContext";
 // import { OrganizationProvider } from "./contexts/OrganizationContext-simple"; // TEMPORARY: Using simplified version
