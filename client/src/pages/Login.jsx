@@ -51,20 +51,15 @@ const Login = () => {
         });
         Auth.login(data.login.token);
       } else {
-        // New player joining team
-        const variables = {
-          name: formState.name,
-          email: formState.email,
-          password: formState.password,
-        };
-        
-        // Only include inviteCode if it's not empty
-        const trimmedCode = formState.inviteCode.trim().toUpperCase();
-        if (trimmedCode) {
-          variables.inviteCode = trimmedCode;
-        }
-        
-        const { data } = await addProfile({ variables });
+        // New player joining existing team with invite code
+        const { data } = await addProfile({
+          variables: {
+            name: formState.name,
+            email: formState.email,
+            password: formState.password,
+            inviteCode: formState.inviteCode.trim().toUpperCase(),
+          },
+        });
         Auth.login(data.addProfile.token);
       }
       setFormState({ name: "", email: "", password: "", inviteCode: "" });
@@ -203,13 +198,13 @@ const Login = () => {
             <div className="backdrop-blur-xl bg-white/40 dark:bg-black/20 rounded-3xl shadow-2xl p-8 border border-white/50 dark:border-white/20 w-full max-w-md mx-auto hover:shadow-3xl transition-all duration-500">
               <div className="text-center mb-6">
                 <h2 className="text-2xl font-oswald font-black bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 dark:from-green-400 dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-2 drop-shadow-2xl tracking-wide">
-                  {loginMode === "login" ? "WELCOME BACK! 👋" : "CREATE OR JOIN TEAM! 🎯"}
+                  {loginMode === "login" ? "WELCOME BACK! 👋" : "JOIN YOUR TEAM! 🎯"}
                 </h2>
                 <div className="max-w-sm mx-auto p-3 rounded-2xl backdrop-blur-sm bg-white/60 dark:bg-black/30 border border-white/40 dark:border-white/10">
                   <p className="text-gray-800 dark:text-gray-100 text-sm font-oswald font-semibold tracking-wide drop-shadow-lg">
                     {loginMode === "login" 
                       ? "SIGN IN TO YOUR ACCOUNT TO CONTINUE" 
-                      : "START YOUR JOURNEY WITH YOUR TEAM"
+                      : "ENTER YOUR TEAM CODE TO GET STARTED"
                     }
                   </p>
                 </div>
@@ -246,7 +241,7 @@ const Login = () => {
                         : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                     }`}
                   >
-                    👥 Sign Up
+                    👥 Join Team
                   </button>
                 </div>
               </div>
@@ -325,7 +320,7 @@ const Login = () => {
                 {loginMode === "join" && (
                   <div>
                     <label htmlFor="inviteCode" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                      Team Invite Code (Optional)
+                      Team Invite Code
                     </label>
                     <input
                       id="inviteCode"
@@ -333,13 +328,14 @@ const Login = () => {
                       type="text"
                       value={formState.inviteCode}
                       onChange={handleChange}
+                      required
                       className="w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-gray-600/50 bg-gray-50/50 dark:bg-gray-700/30 backdrop-blur-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 uppercase"
-                      placeholder="Enter 8-digit team code or leave empty"
+                      placeholder="Enter 8-digit team code"
                       maxLength={12}
                       disabled={isSubmitting}
                     />
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      🔑 Enter code to join existing team, or leave empty to create new team
+                      🔑 Get this code from your team administrator
                     </p>
                   </div>
                 )}
@@ -377,7 +373,13 @@ const Login = () => {
                 </div>
 
                 {/* Navigation Links */}
-                <div className="flex justify-center pt-4 gap-3 text-sm">
+                <div className="flex flex-col sm:flex-row justify-between pt-4 gap-3 text-sm">
+                  <Link
+                    to="/signup"
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold text-center py-2 transition-colors hover:underline"
+                  >
+                    🆕 Create New Team
+                  </Link>
                   {loginMode === "login" && (
                     <Link
                       to="/forgot-password"
