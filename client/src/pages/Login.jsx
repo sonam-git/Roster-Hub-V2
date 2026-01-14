@@ -203,13 +203,13 @@ const Login = () => {
             <div className="backdrop-blur-xl bg-white/40 dark:bg-black/20 rounded-3xl shadow-2xl p-8 border border-white/50 dark:border-white/20 w-full max-w-md mx-auto hover:shadow-3xl transition-all duration-500">
               <div className="text-center mb-6">
                 <h2 className="text-2xl font-oswald font-black bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 dark:from-green-400 dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-2 drop-shadow-2xl tracking-wide">
-                  {loginMode === "login" ? "WELCOME BACK! 👋" : "JOIN YOUR TEAM! 🎯"}
+                  {loginMode === "login" ? "WELCOME BACK! 👋" : "CREATE OR JOIN TEAM! 🎯"}
                 </h2>
                 <div className="max-w-sm mx-auto p-3 rounded-2xl backdrop-blur-sm bg-white/60 dark:bg-black/30 border border-white/40 dark:border-white/10">
                   <p className="text-gray-800 dark:text-gray-100 text-sm font-oswald font-semibold tracking-wide drop-shadow-lg">
                     {loginMode === "login" 
                       ? "SIGN IN TO YOUR ACCOUNT TO CONTINUE" 
-                      : "ENTER YOUR TEAM CODE TO GET STARTED"
+                      : "START YOUR JOURNEY WITH YOUR TEAM"
                     }
                   </p>
                 </div>
@@ -246,7 +246,7 @@ const Login = () => {
                         : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                     }`}
                   >
-                    👥 Join Team
+                    👥 Sign Up
                   </button>
                 </div>
               </div>
@@ -325,7 +325,7 @@ const Login = () => {
                 {loginMode === "join" && (
                   <div>
                     <label htmlFor="inviteCode" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                      Team Invite Code
+                      Team Invite Code (Optional)
                     </label>
                     <input
                       id="inviteCode"
@@ -333,14 +333,13 @@ const Login = () => {
                       type="text"
                       value={formState.inviteCode}
                       onChange={handleChange}
-                      required
                       className="w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-gray-600/50 bg-gray-50/50 dark:bg-gray-700/30 backdrop-blur-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 uppercase"
-                      placeholder="Enter 8-digit team code"
+                      placeholder="Enter 8-digit team code or leave empty"
                       maxLength={12}
                       disabled={isSubmitting}
                     />
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      🔑 Get this code from your team administrator
+                      🔑 Enter code to join existing team, or leave empty to create new team
                     </p>
                   </div>
                 )}
@@ -366,11 +365,11 @@ const Login = () => {
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                           </svg>
-                          {loginMode === "login" ? "SIGNING IN..." : "JOINING TEAM..."}
+                          {loginMode === "login" ? "SIGNING IN..." : "CREATING ACCOUNT..."}
                         </>
                       ) : (
                         <>
-                          {loginMode === "login" ? "🚀 SIGN IN" : "👥 JOIN TEAM"}
+                          {loginMode === "login" ? "🚀 SIGN IN" : "� GET STARTED"}
                         </>
                       )}
                     </span>
@@ -378,13 +377,7 @@ const Login = () => {
                 </div>
 
                 {/* Navigation Links */}
-                <div className="flex flex-col sm:flex-row justify-between pt-4 gap-3 text-sm">
-                  <Link
-                    to="/signup"
-                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold text-center py-2 transition-colors hover:underline"
-                  >
-                    🆕 Create New Team
-                  </Link>
+                <div className="flex justify-center pt-4 gap-3 text-sm">
                   {loginMode === "login" && (
                     <Link
                       to="/forgot-password"
