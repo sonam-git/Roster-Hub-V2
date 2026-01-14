@@ -48,14 +48,16 @@ import ErrorBoundary from "./components/ErrorBoundary";
 
 // Define HTTP and WebSocket URIs based on environment
 const httpUri =
-  import.meta.env.MODE === "production"
+  import.meta.env.VITE_API_URL || 
+  (import.meta.env.PROD
     ? "https://rosterhub-production.up.railway.app/graphql"
-    : "http://localhost:3001/graphql";
+    : "http://localhost:3001/graphql");
 
 const wsUri =
-  import.meta.env.MODE === "production"
+  import.meta.env.VITE_WS_URL ||
+  (import.meta.env.PROD
     ? "wss://rosterhub-production.up.railway.app/graphql"
-    : "ws://localhost:3001/graphql";
+    : "ws://localhost:3001/graphql");
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem("id_token");
