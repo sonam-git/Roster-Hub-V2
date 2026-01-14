@@ -52,14 +52,19 @@ const Login = () => {
         Auth.login(data.login.token);
       } else {
         // New player joining team
-        const { data } = await addProfile({
-          variables: {
-            name: formState.name,
-            email: formState.email,
-            password: formState.password,
-            inviteCode: formState.inviteCode.trim().toUpperCase(),
-          },
-        });
+        const variables = {
+          name: formState.name,
+          email: formState.email,
+          password: formState.password,
+        };
+        
+        // Only include inviteCode if it's not empty
+        const trimmedCode = formState.inviteCode.trim().toUpperCase();
+        if (trimmedCode) {
+          variables.inviteCode = trimmedCode;
+        }
+        
+        const { data } = await addProfile({ variables });
         Auth.login(data.addProfile.token);
       }
       setFormState({ name: "", email: "", password: "", inviteCode: "" });
