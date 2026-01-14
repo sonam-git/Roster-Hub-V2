@@ -431,12 +431,22 @@ const resolvers = {
   Mutation: {
     // **************************  SIGN UP / ADD USER *******************************************//
     addProfile: async (parent, { name, email, password, organizationName, inviteCode }) => {
-      // Check if profile with this email already exists
-      let existingProfile = await Profile.findOne({ email });
-      
-      let profile;
-      let organization;
-      let role = 'owner';
+      try {
+        // Input validation
+        if (!name || !email || !password) {
+          throw new AuthenticationError('Name, email, and password are required');
+        }
+
+        if (password.length < 5) {
+          throw new AuthenticationError('Password must be at least 5 characters long');
+        }
+
+        // Check if profile with this email already exists
+        let existingProfile = await Profile.findOne({ email });
+        
+        let profile;
+        let organization;
+        let role = 'owner';
 
       // If inviteCode provided, join existing organization
       if (inviteCode) {
@@ -562,6 +572,10 @@ const resolvers = {
       });
 
       return { token, profile, organization };
+      } catch (error) {
+        console.error('❌ addProfile error:', error);
+        throw error;
+      }
     },
     // ************************** LOGIN  *******************************************//
     login: async (parent, { email, password }) => {
