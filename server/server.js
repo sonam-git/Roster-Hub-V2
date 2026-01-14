@@ -14,6 +14,12 @@ const { graphqlUploadExpress } = require("graphql-upload");
 const db = require("./config/connection");
 const onlineUsers = require("./utils/onlineUsers");
 
+console.log('🚀 Starting RosterHub Server...');
+console.log('📝 Environment:', process.env.NODE_ENV || 'development');
+console.log('🔌 Port:', process.env.PORT || 3001);
+console.log('🗄️  MongoDB URI exists:', !!process.env.MONGODB_URI);
+console.log('🔑 JWT Secret exists:', !!process.env.JWT_SECRET);
+
 const PORT = process.env.PORT || 3001;
 const app = express();
 
@@ -49,6 +55,27 @@ app.use(graphqlUploadExpress());
 // Body parser middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+// Health check endpoint for Railway
+app.get('/health', (req, res) => {
+  const healthcheck = {
+    uptime: process.uptime(),
+    status: 'OK',
+    timestamp: Date.now(),
+    mongodb: db.readyState === 1 ? 'connected' : 'disconnected',
+  };
+  res.status(200).json(healthcheck);
+});
+
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({
+    message: 'RosterHub API Server',
+    status: 'running',
+    graphql: '/graphql',
+    health: '/health',
+  });
+});
 
 // In production, serve the Vite build output from client/dist
 if (process.env.NODE_ENV === "production") {
@@ -138,23 +165,48 @@ const server = new ApolloServer({
 
 // Start the Apollo server
 const startApolloServer = async () => {
-  await server.start();
-  server.applyMiddleware({
-    app,
-    path: "/graphql",
-    cors: false, // CORS is handled by Express middleware above
-  });
-
-  // Start the Express server
-  db.once("open", () => {
-    httpServer.listen(PORT, () => {
-      console.log(`API server running on port ${PORT}!`);
-      console.log(
-        `Use GraphQL at http://localhost:${PORT}${server.graphqlPath}`
-      );
+  try {
+    console.log('⚙️  Starting Apollo Server...');
+    await server.start();
+    console.log('✅ Apollo Server started');
+    
+    server.applyMiddleware({
+      app,
+      path: "/graphql",
+      cors: false, // CORS is handled by Express middleware above
     });
-  });
+    console.log('✅ GraphQL middleware applied');
+
+    // Add error handler for database connection
+    db.on('error', (err) => {
+      console.error('❌ MongoDB connection error:', err);
+    });
+
+    // Start the Express server immediately
+    // Don't wait for MongoDB - let it connect in the background
+    httpServer.listen(PORT, () => {
+      console.log(`✅ HTTP server running on port ${PORT}!`);
+      console.log(`🔗 GraphQL endpoint: http://localhost:${PORT}${server.graphqlPath}`);
+      console.log(`🔌 WebSocket endpoint: ws://localhost:${PORT}/graphql`);
+      
+      // Check if DB is already connected
+      if (db.readyState === 1) {
+        console.log('✅ MongoDB already connected');
+      } else {
+        console.log('⏳ Waiting for MongoDB connection...');
+        db.once("open", () => {
+          console.log('✅ MongoDB connected');
+        });
+      }
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
 };
 
 // Call the async function to start the server
-startApolloServer();
+startApolloServer().catch(err => {
+  console.error('❌ Fatal error starting server:', err);
+  process.exit(1);
+});
