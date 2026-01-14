@@ -59,6 +59,16 @@ const wsUri =
     ? "wss://rosterhub-production.up.railway.app/graphql"
     : "ws://localhost:3001/graphql");
 
+// Debug logging
+console.log('🔧 Environment Debug:', {
+  MODE: import.meta.env.MODE,
+  PROD: import.meta.env.PROD,
+  DEV: import.meta.env.DEV,
+  httpUri,
+  wsUri,
+  VITE_API_URL: import.meta.env.VITE_API_URL,
+});
+
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem("id_token");
   return {
