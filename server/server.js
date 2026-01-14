@@ -14,6 +14,7 @@ const { graphqlUploadExpress } = require("graphql-upload");
 const db = require("./config/connection");
 const onlineUsers = require("./utils/onlineUsers");
 
+// RosterHub Server v2.0 - Updated Jan 14, 2026
 console.log('🚀 Starting RosterHub Server...');
 console.log('📝 Environment:', process.env.NODE_ENV || 'development');
 console.log('🔌 Port:', process.env.PORT || 3001);
