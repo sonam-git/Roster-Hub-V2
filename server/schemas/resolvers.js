@@ -1753,12 +1753,12 @@ const resolvers = {
         });
 
         const transporter = nodemailer.createTransport({
-          host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+          host: (process.env.EMAIL_HOST || 'smtp.gmail.com').trim(),
           port: parseInt(process.env.EMAIL_PORT) || 587,
           secure: false, // true for 465, false for other ports
           auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASSWORD,
+            user: (process.env.EMAIL_USER || '').trim(),
+            pass: (process.env.EMAIL_PASSWORD || '').trim(),
           },
           tls: {
             rejectUnauthorized: false
@@ -1830,12 +1830,12 @@ const resolvers = {
 
         // Setup email transporter
         const transporter = nodemailer.createTransport({
-          host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+          host: (process.env.EMAIL_HOST || 'smtp.gmail.com').trim(),
           port: parseInt(process.env.EMAIL_PORT) || 587,
           secure: false, // true for 465, false for other ports
           auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASSWORD,
+            user: (process.env.EMAIL_USER || '').trim(),
+            pass: (process.env.EMAIL_PASSWORD || '').trim(),
           },
           tls: {
             rejectUnauthorized: false
@@ -1843,7 +1843,7 @@ const resolvers = {
         });
 
         // Get the app URL from environment or use default
-        const appUrl = process.env.APP_URL || 'https://roster-hub-v2-y6j2.vercel.app';
+        const appUrl = (process.env.APP_URL || 'https://roster-hub-v2-y6j2.vercel.app').trim();
         const joinUrl = `${appUrl}/login?inviteCode=${organization.inviteCode}`;
 
         // Send email to each recipient
