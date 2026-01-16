@@ -1828,14 +1828,30 @@ const resolvers = {
           throw new AuthenticationError('Only team owners can send invites');
         }
 
+        // Debug: Log environment variables
+        console.log('📧 Email Configuration Debug:');
+        console.log('  EMAIL_HOST raw:', JSON.stringify(process.env.EMAIL_HOST));
+        console.log('  EMAIL_HOST trimmed:', JSON.stringify((process.env.EMAIL_HOST || 'smtp.gmail.com').trim()));
+        console.log('  EMAIL_PORT raw:', JSON.stringify(process.env.EMAIL_PORT));
+        console.log('  EMAIL_USER raw:', JSON.stringify(process.env.EMAIL_USER));
+        console.log('  APP_URL raw:', JSON.stringify(process.env.APP_URL));
+
         // Setup email transporter
+        const emailHost = (process.env.EMAIL_HOST || 'smtp.gmail.com').trim();
+        const emailPort = parseInt(process.env.EMAIL_PORT) || 587;
+        const emailUser = (process.env.EMAIL_USER || '').trim();
+        const emailPass = (process.env.EMAIL_PASSWORD || '').trim();
+
+        console.log('  Final host:', JSON.stringify(emailHost));
+        console.log('  Final port:', emailPort);
+
         const transporter = nodemailer.createTransport({
-          host: (process.env.EMAIL_HOST || 'smtp.gmail.com').trim(),
-          port: parseInt(process.env.EMAIL_PORT) || 587,
+          host: emailHost,
+          port: emailPort,
           secure: false, // true for 465, false for other ports
           auth: {
-            user: (process.env.EMAIL_USER || '').trim(),
-            pass: (process.env.EMAIL_PASSWORD || '').trim(),
+            user: emailUser,
+            pass: emailPass,
           },
           tls: {
             rejectUnauthorized: false
