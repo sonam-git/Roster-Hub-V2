@@ -1,7 +1,7 @@
 {
   "name": "mern-server",
-  "version": "1.0.0",
-  "description": "",
+  "version": "2.1.0",
+  "description": "RosterHub Server - Multi-tenant Sports Team Management",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
