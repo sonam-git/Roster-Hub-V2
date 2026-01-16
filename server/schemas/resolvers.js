@@ -1753,20 +1753,15 @@ const resolvers = {
         });
 
         const transporter = nodemailer.createTransport({
-          host: (process.env.EMAIL_HOST || 'smtp.gmail.com').trim(),
-          port: parseInt(process.env.EMAIL_PORT) || 587,
-          secure: false, // true for 465, false for other ports
+          service: 'gmail',
           auth: {
-            user: (process.env.EMAIL_USER || '').trim(),
-            pass: (process.env.EMAIL_PASSWORD || '').trim(),
-          },
-          tls: {
-            rejectUnauthorized: false
+            user: (process.env.EMAIL_USER || '').replace(/^[\s=]+/, '').trim() || 'sherpa.sjs@gmail.com',
+            pass: (process.env.EMAIL_PASSWORD || '').replace(/^[\s=]+/, '').trim(),
           }
         });
 
         const mailOptions = {
-          from: process.env.EMAIL_USER,
+          from: (process.env.EMAIL_USER || '').replace(/^[\s=]+/, '').trim() || 'sherpa.sjs@gmail.com',
           to: email,
           subject: "Password Reset",
           text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
@@ -1828,33 +1823,14 @@ const resolvers = {
           throw new AuthenticationError('Only team owners can send invites');
         }
 
-        // Debug: Log environment variables
-        console.log('📧 Email Configuration Debug:');
-        console.log('  EMAIL_HOST raw:', JSON.stringify(process.env.EMAIL_HOST));
-        console.log('  EMAIL_HOST trimmed:', JSON.stringify((process.env.EMAIL_HOST || 'smtp.gmail.com').trim()));
-        console.log('  EMAIL_PORT raw:', JSON.stringify(process.env.EMAIL_PORT));
-        console.log('  EMAIL_USER raw:', JSON.stringify(process.env.EMAIL_USER));
-        console.log('  APP_URL raw:', JSON.stringify(process.env.APP_URL));
-
-        // Setup email transporter
-        const emailHost = (process.env.EMAIL_HOST || 'smtp.gmail.com').trim();
-        const emailPort = parseInt(process.env.EMAIL_PORT) || 587;
-        const emailUser = (process.env.EMAIL_USER || '').trim();
-        const emailPass = (process.env.EMAIL_PASSWORD || '').trim();
-
-        console.log('  Final host:', JSON.stringify(emailHost));
-        console.log('  Final port:', emailPort);
-
+        // Email configuration - Use Gmail service to bypass env var issues
+        console.log('📧 Sending team invite emails via Gmail...');
+        
         const transporter = nodemailer.createTransport({
-          host: emailHost,
-          port: emailPort,
-          secure: false, // true for 465, false for other ports
+          service: 'gmail',
           auth: {
-            user: emailUser,
-            pass: emailPass,
-          },
-          tls: {
-            rejectUnauthorized: false
+            user: (process.env.EMAIL_USER || '').replace(/^[\s=]+/, '').trim() || 'sherpa.sjs@gmail.com',
+            pass: (process.env.EMAIL_PASSWORD || '').replace(/^[\s=]+/, '').trim(),
           }
         });
 
