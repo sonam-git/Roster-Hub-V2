@@ -1752,32 +1752,112 @@ const resolvers = {
           _id: user._id,
         });
 
-        const transporter = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-            user: (process.env.EMAIL_USER || '').replace(/^[\s=]+/, '').trim() || 'sherpa.sjs@gmail.com',
-            pass: (process.env.EMAIL_PASSWORD || '').replace(/^[\s=]+/, '').trim(),
-          }
-        });
+        // Use SendGrid for production (Railway blocks Gmail SMTP), Gmail for local dev
+        const useSendGrid = !!process.env.SENDGRID_API_KEY;
+        
+        console.log('📧 Password Reset Email Configuration:');
+        console.log('  Using SendGrid:', useSendGrid);
+        console.log('  Has SENDGRID_API_KEY:', !!process.env.SENDGRID_API_KEY);
+        console.log('  EMAIL_FROM:', process.env.EMAIL_FROM || 'Not set');
+        
+        const transporter = useSendGrid 
+          ? nodemailer.createTransport({
+              host: 'smtp.sendgrid.net',
+              port: 587,
+              secure: false,
+              auth: {
+                user: 'apikey',
+                pass: process.env.SENDGRID_API_KEY,
+              }
+            })
+          : nodemailer.createTransport({
+              service: 'gmail',
+              auth: {
+                user: (process.env.EMAIL_USER || '').replace(/^[\s=]+/, '').trim() || 'sherpa.sjs@gmail.com',
+                pass: (process.env.EMAIL_PASSWORD || '').replace(/^[\s=]+/, '').trim(),
+              }
+            });
+
+        const appUrl = (process.env.APP_URL || 'https://roster-hub-v2-y6j2.vercel.app').trim();
+        const resetUrl = `${appUrl}/reset-password/${resetToken}`;
+        const fromEmail = process.env.EMAIL_FROM || 'sherpa.sjs@gmail.com';
 
         const mailOptions = {
-          from: (process.env.EMAIL_USER || '').replace(/^[\s=]+/, '').trim() || 'sherpa.sjs@gmail.com',
+          from: fromEmail,
           to: email,
-          subject: "Password Reset",
-          text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
-                   Please click on the following link, or paste this into your browser to complete the process:\n\n
-                   https://roster-hub-v2-y6j2.vercel.app/reset-password/${resetToken}\n\n
-                   If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+          subject: "Password Reset - RosterHub",
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9fafb;">
+              <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h2 style="color: #059669; margin-bottom: 20px;">🔐 Password Reset Request</h2>
+                
+                <p style="font-size: 16px; color: #374151; margin-bottom: 15px;">
+                  Hi ${user.name},
+                </p>
+                
+                <p style="font-size: 14px; color: #6b7280; margin-bottom: 25px;">
+                  You are receiving this email because you (or someone else) have requested to reset the password for your RosterHub account.
+                </p>
+                
+                <div style="margin-bottom: 25px;">
+                  <a href="${resetUrl}" style="display: inline-block; background-color: #059669; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                    Reset Password
+                  </a>
+                </div>
+                
+                <p style="font-size: 14px; color: #6b7280; margin-bottom: 15px;">
+                  Or copy and paste this link into your browser:
+                </p>
+                <p style="font-size: 12px; color: #059669; word-break: break-all; margin-bottom: 25px;">
+                  ${resetUrl}
+                </p>
+                
+                <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 25px;">
+                  <p style="font-size: 13px; color: #6b7280; margin-bottom: 8px;">
+                    <strong>⚠️ Security Notice:</strong>
+                  </p>
+                  <ul style="font-size: 13px; color: #6b7280; margin: 0; padding-left: 20px;">
+                    <li style="margin-bottom: 5px;">This link will expire in 2 hours</li>
+                    <li style="margin-bottom: 5px;">If you didn't request this, please ignore this email</li>
+                    <li>Your password will remain unchanged if you don't click the link</li>
+                  </ul>
+                </div>
+                
+                <p style="font-size: 12px; color: #9ca3af; margin-top: 25px; text-align: center;">
+                  © ${new Date().getFullYear()} RosterHub. All rights reserved.
+                </p>
+              </div>
+            </div>
+          `,
+          text: `
+Password Reset Request
+
+Hi ${user.name},
+
+You are receiving this email because you (or someone else) have requested to reset the password for your RosterHub account.
+
+Please click on the following link, or paste it into your browser to complete the process:
+
+${resetUrl}
+
+This link will expire in 2 hours.
+
+If you did not request this, please ignore this email and your password will remain unchanged.
+
+© ${new Date().getFullYear()} RosterHub. All rights reserved.
+          `,
         };
 
         await transporter.sendMail(mailOptions);
+        
+        console.log('✅ Password reset email sent successfully to:', email);
 
         return {
           message:
             "If an account with that email exists, a reset link has been sent.",
         };
       } catch (error) {
-        console.error(error);
+        console.error('❌ Error sending password reset email:', error);
         return { message: "An error occurred while sending the reset email." };
       }
     },
@@ -1823,25 +1903,61 @@ const resolvers = {
           throw new AuthenticationError('Only team owners can send invites');
         }
 
-        // Email configuration - Use Gmail service to bypass env var issues
-        console.log('📧 Sending team invite emails via Gmail...');
-        
-        const transporter = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-            user: (process.env.EMAIL_USER || '').replace(/^[\s=]+/, '').trim() || 'sherpa.sjs@gmail.com',
-            pass: (process.env.EMAIL_PASSWORD || '').replace(/^[\s=]+/, '').trim(),
-          }
+        // Email configuration - Use SendGrid for production (Railway blocks Gmail SMTP)
+        console.log('📧 Sending team invite emails...');
+        console.log('📧 Environment check:', {
+          hasSendGridKey: !!process.env.SENDGRID_API_KEY,
+          hasEmailUser: !!process.env.EMAIL_USER,
+          hasEmailPassword: !!process.env.EMAIL_PASSWORD,
+          emailFrom: process.env.EMAIL_FROM,
         });
+        
+        // Check if SendGrid API key is available (production), otherwise use Gmail (local dev)
+        const useSendGrid = !!process.env.SENDGRID_API_KEY;
+        
+        let transporter;
+        if (useSendGrid) {
+          console.log('✅ Using SendGrid SMTP for production');
+          transporter = nodemailer.createTransport({
+            host: 'smtp.sendgrid.net',
+            port: 587,
+            secure: false,
+            auth: {
+              user: 'apikey',
+              pass: process.env.SENDGRID_API_KEY,
+            }
+          });
+        } else {
+          console.log('⚠️ Using Gmail SMTP for local development');
+          const emailUser = (process.env.EMAIL_USER || '').replace(/^[\s=]+/, '').trim() || 'sherpa.sjs@gmail.com';
+          const emailPass = (process.env.EMAIL_PASSWORD || '').replace(/^[\s=]+/, '').trim();
+          
+          if (!emailPass) {
+            throw new Error('EMAIL_PASSWORD not configured for Gmail SMTP');
+          }
+          
+          transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: emailUser,
+              pass: emailPass,
+            }
+          });
+        }
 
         // Get the app URL from environment or use default
         const appUrl = (process.env.APP_URL || 'https://roster-hub-v2-y6j2.vercel.app').trim();
         const joinUrl = `${appUrl}/login?inviteCode=${organization.inviteCode}`;
+        
+        const fromEmail = process.env.EMAIL_FROM || process.env.EMAIL_USER || 'sherpa.sjs@gmail.com';
+        console.log('📧 Sending from:', fromEmail);
+        console.log('📧 Join URL:', joinUrl);
 
         // Send email to each recipient
         const sendPromises = emails.map(async (email) => {
+          console.log(`📧 Sending invite to: ${email}`);
           const mailOptions = {
-            from: process.env.EMAIL_USER,
+            from: fromEmail,
             to: email,
             subject: `You're invited to join ${organization.name} on RosterHub!`,
             html: `
@@ -1908,17 +2024,30 @@ If you didn't expect this invitation, you can safely ignore this email.
             `,
           };
 
-          return transporter.sendMail(mailOptions);
+          try {
+            const info = await transporter.sendMail(mailOptions);
+            console.log(`✅ Email sent to ${email}:`, info.messageId);
+            return info;
+          } catch (emailError) {
+            console.error(`❌ Failed to send email to ${email}:`, emailError);
+            throw emailError;
+          }
         });
 
         // Wait for all emails to send
         await Promise.all(sendPromises);
+        console.log(`✅ All ${emails.length} invitation emails sent successfully`);
 
         return {
           message: `Invitations sent successfully to ${emails.length} email(s)`,
         };
       } catch (error) {
-        console.error('Error sending team invites:', error);
+        console.error('❌ Error sending team invites:', error);
+        console.error('Error details:', {
+          message: error.message,
+          code: error.code,
+          command: error.command,
+        });
         return { 
           message: "An error occurred while sending invitations. Please try again." 
         };
