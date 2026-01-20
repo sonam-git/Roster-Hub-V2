@@ -1752,39 +1752,21 @@ const resolvers = {
           _id: user._id,
         });
 
-        // Use SendGrid for production (Railway blocks Gmail SMTP), Gmail for local dev
+        // Use SendGrid HTTP API for production, Gmail for local dev
         const useSendGrid = !!process.env.SENDGRID_API_KEY;
         
         console.log('📧 Password Reset Email Configuration:');
-        console.log('  Using SendGrid:', useSendGrid);
+        console.log('  Using SendGrid HTTP API:', useSendGrid);
         console.log('  Has SENDGRID_API_KEY:', !!process.env.SENDGRID_API_KEY);
         console.log('  EMAIL_FROM:', process.env.EMAIL_FROM || 'Not set');
         
-        const transporter = useSendGrid 
-          ? nodemailer.createTransport({
-              host: 'smtp.sendgrid.net',
-              port: 587,
-              secure: false,
-              auth: {
-                user: 'apikey',
-                pass: process.env.SENDGRID_API_KEY,
-              }
-            })
-          : nodemailer.createTransport({
-              service: 'gmail',
-              auth: {
-                user: (process.env.EMAIL_USER || '').replace(/^[\s=]+/, '').trim() || 'sherpa.sjs@gmail.com',
-                pass: (process.env.EMAIL_PASSWORD || '').replace(/^[\s=]+/, '').trim(),
-              }
-            });
-
         const appUrl = (process.env.APP_URL || 'https://roster-hub-v2-y6j2.vercel.app').trim();
         const resetUrl = `${appUrl}/reset-password/${resetToken}`;
         const fromEmail = process.env.EMAIL_FROM || 'sherpa.sjs@gmail.com';
 
-        const mailOptions = {
-          from: fromEmail,
+        const emailContent = {
           to: email,
+          from: fromEmail,
           subject: "Password Reset - RosterHub",
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9fafb;">
@@ -1848,9 +1830,29 @@ If you did not request this, please ignore this email and your password will rem
           `,
         };
 
-        await transporter.sendMail(mailOptions);
-        
-        console.log('✅ Password reset email sent successfully to:', email);
+        if (useSendGrid) {
+          // Use SendGrid HTTP API (Railway-compatible!)
+          console.log('✅ Using SendGrid HTTP API for password reset');
+          const sgMail = require('@sendgrid/mail');
+          sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+          
+          await sgMail.send(emailContent);
+          console.log('✅ Password reset email sent via SendGrid HTTP API to:', email);
+        } else {
+          // Use Gmail for local dev
+          console.log('⚠️ Using Gmail SMTP for local development');
+          const nodemailer = require('nodemailer');
+          const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: (process.env.EMAIL_USER || '').replace(/^[\s=]+/, '').trim() || 'sherpa.sjs@gmail.com',
+              pass: (process.env.EMAIL_PASSWORD || '').replace(/^[\s=]+/, '').trim(),
+            }
+          });
+          
+          await transporter.sendMail(emailContent);
+          console.log('✅ Password reset email sent via Gmail to:', email);
+        }
 
         return {
           message:
@@ -1858,6 +1860,9 @@ If you did not request this, please ignore this email and your password will rem
         };
       } catch (error) {
         console.error('❌ Error sending password reset email:', error);
+        if (error.response) {
+          console.error('   SendGrid error body:', error.response.body);
+        }
         return { message: "An error occurred while sending the reset email." };
       }
     },
@@ -1903,110 +1908,39 @@ If you did not request this, please ignore this email and your password will rem
           throw new AuthenticationError('Only team owners can send invites');
         }
 
-        // Email configuration - Use SendGrid for production (Railway blocks Gmail SMTP)
         console.log('📧 Sending team invite emails...');
         console.log('📧 Environment check:', {
           hasSendGridKey: !!process.env.SENDGRID_API_KEY,
-          hasEmailUser: !!process.env.EMAIL_USER,
-          hasEmailPassword: !!process.env.EMAIL_PASSWORD,
           emailFrom: process.env.EMAIL_FROM,
+          sendGridKeyStart: process.env.SENDGRID_API_KEY?.substring(0, 10),
         });
         
-        // Check if SendGrid API key is available (production), otherwise use Gmail (local dev)
-        const useSendGrid = !!process.env.SENDGRID_API_KEY;
-        
-        let transporter;
-        if (useSendGrid) {
-          console.log('✅ Using SendGrid SMTP for production');
-          transporter = nodemailer.createTransport({
-            host: 'smtp.sendgrid.net',
-            port: 587,
-            secure: false,
-            auth: {
-              user: 'apikey',
-              pass: process.env.SENDGRID_API_KEY,
-            }
-          });
-        } else {
-          console.log('⚠️ Using Gmail SMTP for local development');
-          const emailUser = (process.env.EMAIL_USER || '').replace(/^[\s=]+/, '').trim() || 'sherpa.sjs@gmail.com';
-          const emailPass = (process.env.EMAIL_PASSWORD || '').replace(/^[\s=]+/, '').trim();
-          
-          if (!emailPass) {
-            throw new Error('EMAIL_PASSWORD not configured for Gmail SMTP');
-          }
-          
-          transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-              user: emailUser,
-              pass: emailPass,
-            }
-          });
-        }
-
         // Get the app URL from environment or use default
         const appUrl = (process.env.APP_URL || 'https://roster-hub-v2-y6j2.vercel.app').trim();
         const joinUrl = `${appUrl}/login?inviteCode=${organization.inviteCode}`;
+        const fromEmail = process.env.EMAIL_FROM || 'sherpa.sjs@gmail.com';
         
-        const fromEmail = process.env.EMAIL_FROM || process.env.EMAIL_USER || 'sherpa.sjs@gmail.com';
         console.log('📧 Sending from:', fromEmail);
         console.log('📧 Join URL:', joinUrl);
-
-        // Send email to each recipient
-        const sendPromises = emails.map(async (email) => {
-          console.log(`📧 Sending invite to: ${email}`);
-          const mailOptions = {
-            from: fromEmail,
-            to: email,
-            subject: `You're invited to join ${organization.name} on RosterHub!`,
-            html: `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9fafb;">
-                <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                  <h2 style="color: #059669; margin-bottom: 20px;">🎉 You're Invited to Join a Team!</h2>
-                  
-                  <p style="font-size: 16px; color: #374151; margin-bottom: 15px;">
-                    <strong>${organization.owner.name}</strong> has invited you to join <strong>${organization.name}</strong> on RosterHub.
-                  </p>
-                  
-                  <p style="font-size: 14px; color: #6b7280; margin-bottom: 25px;">
-                    RosterHub is where teams connect, communicate, and manage games together.
-                  </p>
-                  
-                  <div style="background-color: #ecfdf5; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
-                    <p style="font-size: 14px; color: #065f46; margin-bottom: 10px; font-weight: bold;">
-                      Your Team Invite Code:
-                    </p>
-                    <p style="font-size: 24px; font-weight: bold; color: #059669; letter-spacing: 2px; margin: 0;">
-                      ${organization.inviteCode}
-                    </p>
-                  </div>
-                  
-                  <div style="margin-bottom: 25px;">
-                    <a href="${joinUrl}" style="display: inline-block; background-color: #059669; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
-                      Join ${organization.name}
-                    </a>
-                  </div>
-                  
-                  <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 25px;">
-                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 8px;">
-                      <strong>How to join:</strong>
-                    </p>
-                    <ol style="font-size: 13px; color: #6b7280; margin: 0; padding-left: 20px;">
-                      <li style="margin-bottom: 5px;">Click the button above or visit <a href="${appUrl}/login" style="color: #059669;">${appUrl}/login</a></li>
-                      <li style="margin-bottom: 5px;">Click the "Join Team" tab</li>
-                      <li style="margin-bottom: 5px;">Enter your name, email, password, and the invite code above</li>
-                      <li>Start collaborating with your team!</li>
-                    </ol>
-                  </div>
-                  
-                  <p style="font-size: 12px; color: #9ca3af; margin-top: 25px; text-align: center;">
-                    If you didn't expect this invitation, you can safely ignore this email.
-                  </p>
-                </div>
-              </div>
-            `,
-            text: `
+        
+        // Check if SendGrid API key is available
+        const useSendGrid = !!process.env.SENDGRID_API_KEY;
+        
+        if (useSendGrid) {
+          // Use SendGrid HTTP API (Railway-compatible, not blocked!)
+          console.log('✅ Using SendGrid HTTP API for production');
+          const sgMail = require('@sendgrid/mail');
+          sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+          
+          // Send email to each recipient
+          const sendPromises = emails.map(async (email) => {
+            console.log(`📧 Sending invite to: ${email}`);
+            
+            const msg = {
+              to: email,
+              from: fromEmail,
+              subject: `You're invited to join ${organization.name} on RosterHub!`,
+              text: `
 You're invited to join ${organization.name} on RosterHub!
 
 ${organization.owner.name} has invited you to join their team.
@@ -2021,22 +1955,176 @@ To join:
 Or click this link: ${joinUrl}
 
 If you didn't expect this invitation, you can safely ignore this email.
-            `,
-          };
-
-          try {
-            const info = await transporter.sendMail(mailOptions);
-            console.log(`✅ Email sent to ${email}:`, info.messageId);
-            return info;
-          } catch (emailError) {
-            console.error(`❌ Failed to send email to ${email}:`, emailError);
-            throw emailError;
+              `,
+              html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9fafb;">
+                  <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h2 style="color: #059669; margin-bottom: 20px;">🎉 You're Invited to Join a Team!</h2>
+                    
+                    <p style="font-size: 16px; color: #374151; margin-bottom: 15px;">
+                      <strong>${organization.owner.name}</strong> has invited you to join <strong>${organization.name}</strong> on RosterHub.
+                    </p>
+                    
+                    <p style="font-size: 14px; color: #6b7280; margin-bottom: 25px;">
+                      RosterHub is where teams connect, communicate, and manage games together.
+                    </p>
+                    
+                    <div style="background-color: #ecfdf5; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                      <p style="font-size: 14px; color: #065f46; margin-bottom: 10px; font-weight: bold;">
+                        Your Team Invite Code:
+                      </p>
+                      <p style="font-size: 24px; font-weight: bold; color: #059669; letter-spacing: 2px; margin: 0;">
+                        ${organization.inviteCode}
+                      </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 25px;">
+                      <a href="${joinUrl}" style="display: inline-block; background-color: #059669; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                        Join ${organization.name}
+                      </a>
+                    </div>
+                    
+                    <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 25px;">
+                      <p style="font-size: 13px; color: #6b7280; margin-bottom: 8px;">
+                        <strong>How to join:</strong>
+                      </p>
+                      <ol style="font-size: 13px; color: #6b7280; margin: 0; padding-left: 20px;">
+                        <li style="margin-bottom: 5px;">Click the button above or visit <a href="${appUrl}/login" style="color: #059669;">${appUrl}/login</a></li>
+                        <li style="margin-bottom: 5px;">Click the "Join Team" tab</li>
+                        <li style="margin-bottom: 5px;">Enter your name, email, password, and the invite code above</li>
+                        <li>Start collaborating with your team!</li>
+                      </ol>
+                    </div>
+                    
+                    <p style="font-size: 12px; color: #9ca3af; margin-top: 25px; text-align: center;">
+                      If you didn't expect this invitation, you can safely ignore this email.
+                    </p>
+                  </div>
+                </div>
+              `,
+            };
+            
+            try {
+              const response = await sgMail.send(msg);
+              console.log(`✅ Email sent to ${email} via SendGrid HTTP API`);
+              console.log('   Response status:', response[0].statusCode);
+              return response;
+            } catch (emailError) {
+              console.error(`❌ Failed to send email to ${email}:`, emailError);
+              if (emailError.response) {
+                console.error('   SendGrid error body:', emailError.response.body);
+              }
+              throw emailError;
+            }
+          });
+          
+          // Wait for all emails to send
+          await Promise.all(sendPromises);
+          console.log(`✅ All ${emails.length} invitation emails sent successfully via SendGrid`);
+          
+        } else {
+          // Local dev - use Gmail with nodemailer
+          console.log('⚠️ Using Gmail SMTP for local development');
+          const emailUser = (process.env.EMAIL_USER || '').replace(/^[\s=]+/, '').trim() || 'sherpa.sjs@gmail.com';
+          const emailPass = (process.env.EMAIL_PASSWORD || '').replace(/^[\s=]+/, '').trim();
+          
+          if (!emailPass) {
+            throw new Error('EMAIL_PASSWORD not configured for Gmail SMTP');
           }
-        });
+          
+          const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: emailUser,
+              pass: emailPass,
+            }
+          });
+          
+          // Send email to each recipient
+          const sendPromises = emails.map(async (email) => {
+            console.log(`📧 Sending invite to: ${email}`);
+            const mailOptions = {
+              from: fromEmail,
+              to: email,
+              subject: `You're invited to join ${organization.name} on RosterHub!`,
+              html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9fafb;">
+                  <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h2 style="color: #059669; margin-bottom: 20px;">🎉 You're Invited to Join a Team!</h2>
+                    
+                    <p style="font-size: 16px; color: #374151; margin-bottom: 15px;">
+                      <strong>${organization.owner.name}</strong> has invited you to join <strong>${organization.name}</strong> on RosterHub.
+                    </p>
+                    
+                    <p style="font-size: 14px; color: #6b7280; margin-bottom: 25px;">
+                      RosterHub is where teams connect, communicate, and manage games together.
+                    </p>
+                    
+                    <div style="background-color: #ecfdf5; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                      <p style="font-size: 14px; color: #065f46; margin-bottom: 10px; font-weight: bold;">
+                        Your Team Invite Code:
+                      </p>
+                      <p style="font-size: 24px; font-weight: bold; color: #059669; letter-spacing: 2px; margin: 0;">
+                        ${organization.inviteCode}
+                      </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 25px;">
+                      <a href="${joinUrl}" style="display: inline-block; background-color: #059669; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                        Join ${organization.name}
+                      </a>
+                    </div>
+                    
+                    <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 25px;">
+                      <p style="font-size: 13px; color: #6b7280; margin-bottom: 8px;">
+                        <strong>How to join:</strong>
+                      </p>
+                      <ol style="font-size: 13px; color: #6b7280; margin: 0; padding-left: 20px;">
+                        <li style="margin-bottom: 5px;">Click the button above or visit <a href="${appUrl}/login" style="color: #059669;">${appUrl}/login</a></li>
+                        <li style="margin-bottom: 5px;">Click the "Join Team" tab</li>
+                        <li style="margin-bottom: 5px;">Enter your name, email, password, and the invite code above</li>
+                        <li>Start collaborating with your team!</li>
+                      </ol>
+                    </div>
+                    
+                    <p style="font-size: 12px; color: #9ca3af; margin-top: 25px; text-align: center;">
+                      If you didn't expect this invitation, you can safely ignore this email.
+                    </p>
+                  </div>
+                </div>
+              `,
+              text: `
+You're invited to join ${organization.name} on RosterHub!
 
-        // Wait for all emails to send
-        await Promise.all(sendPromises);
-        console.log(`✅ All ${emails.length} invitation emails sent successfully`);
+${organization.owner.name} has invited you to join their team.
+
+Your Team Invite Code: ${organization.inviteCode}
+
+To join:
+1. Visit ${appUrl}/login
+2. Click "Join Team"
+3. Enter your details and the invite code: ${organization.inviteCode}
+
+Or click this link: ${joinUrl}
+
+If you didn't expect this invitation, you can safely ignore this email.
+              `,
+            };
+
+            try {
+              const info = await transporter.sendMail(mailOptions);
+              console.log(`✅ Email sent to ${email}:`, info.messageId);
+              return info;
+            } catch (emailError) {
+              console.error(`❌ Failed to send email to ${email}:`, emailError);
+              throw emailError;
+            }
+          });
+
+          // Wait for all emails to send
+          await Promise.all(sendPromises);
+          console.log(`✅ All ${emails.length} invitation emails sent successfully`);
+        }
 
         return {
           message: `Invitations sent successfully to ${emails.length} email(s)`,
