@@ -90,7 +90,7 @@ const InvitePlayersModal = ({ isOpen, onClose, organization }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-gradient-to-br from-emerald-600 via-blue-600 to-purple-700 text-white px-6 py-4 rounded-t-2xl">
           <div className="flex items-center justify-between">
@@ -177,7 +177,7 @@ const InvitePlayersModal = ({ isOpen, onClose, organization }) => {
                 {emails.map((email, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between bg-white dark:bg-gray-800 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600"
+                    className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600"
                   >
                     <span className="text-sm text-gray-900 dark:text-white font-medium">
                       {email}
@@ -198,7 +198,7 @@ const InvitePlayersModal = ({ isOpen, onClose, organization }) => {
           )}
 
           {/* Invite Code Section */}
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-300 dark:border-blue-700 rounded-xl p-4">
+          <div className="bg-blue-50 dark:bg-blue-800 border border-blue-300 dark:border-blue-700 rounded-xl p-4">
             <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-2">
               📋 Alternative: Share Invite Code
             </h3>
@@ -206,7 +206,7 @@ const InvitePlayersModal = ({ isOpen, onClose, organization }) => {
               Players can also join by entering this code during signup:
             </p>
             <div className="flex items-center gap-2">
-              <code className="flex-1 text-lg font-bold bg-white dark:bg-gray-800 px-4 py-2 rounded-lg border border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300">
+              <code className="flex-1 text-lg font-bold bg-gray-50 dark:bg-gray-800 px-4 py-2 rounded-lg border border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300">
                 {organization.inviteCode}
               </code>
               <button
@@ -236,7 +236,7 @@ const InvitePlayersModal = ({ isOpen, onClose, organization }) => {
               type="button"
               onClick={handleSendInvites}
               disabled={isLoading || emails.length === 0}
-              className="flex-1 px-6 py-3 bg-gradient-to-br from-emerald-600 via-blue-600 to-purple-700 hover:from-emerald-700 hover:via-blue-700 hover:to-purple-800 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-6 py-3 bg-gradient-to-br from-emerald-600 via-blue-600 to-purple-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">

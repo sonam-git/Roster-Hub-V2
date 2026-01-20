@@ -107,7 +107,7 @@ export default function RatingDisplay({ limit = 10 }) {
               <Link
                 key={player._id}
                 to={`/profiles/${player._id}`}
-                className="flex flex-col items-center p-3 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 border-2 border-transparent hover:border-yellow-400 dark:hover:border-yellow-500"
+                className="flex flex-col items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 border-2 border-transparent hover:border-yellow-400 dark:hover:border-yellow-500"
               >
                 {/* Rank Badge */}
                 <div className={`absolute -top-2 -left-2 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg ${
