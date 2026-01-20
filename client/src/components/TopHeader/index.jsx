@@ -489,7 +489,7 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
           {BUTTONS.map((btn, index) => {
             const isRoster = btn.key === "roster";
             return (
-              <React.Fragment key={btn.key}>
+              <React.Fragment key={btn.key} >
                 {isRoster ? (
                   <div className="relative flex-shrink-0">
                     <button

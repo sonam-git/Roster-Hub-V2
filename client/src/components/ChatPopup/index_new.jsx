@@ -543,7 +543,7 @@ const ChatPopup = ({ currentUser }) => {
             className={`flex-1 overflow-y-auto p-4 space-y-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent ${
               isDarkMode ? 'bg-gray-900/30' : 'bg-gray-50/30'
             }`}
-            style={{ maxHeight: '600px' }}
+            style={{ maxHeight: '320px' }}
           >
             {chatLoading ? (
               <div className="flex items-center justify-center h-full">
@@ -637,7 +637,7 @@ const ChatPopup = ({ currentUser }) => {
               </div>
               <button
                 onClick={handleSend}
-                className={`p-5 rounded-2xl transition-all duration-200 shadow-lg hover:shadow-xl ${
+                className={`p-3 rounded-2xl transition-all duration-200 shadow-lg hover:shadow-xl ${
                   isLoggedIn && selectedUserId && text.trim()
                     ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 transform hover:scale-105"
                     : isDarkMode 
@@ -772,7 +772,7 @@ const ChatPopup = ({ currentUser }) => {
       {/* Chat Body - Mobile View (Portal Modal) */}
       <ChatPortal isOpen={chatPopupOpen}>
         <div 
-          className="lg:hidden fixed inset-0 z-[99999] flex items-stretch animate-modal-fade-in"
+          className="lg:hidden fixed inset-0 z-[99999] flex items-stretch"
           style={{ 
             backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0.5)'
           }}
@@ -785,7 +785,7 @@ const ChatPopup = ({ currentUser }) => {
           
           {/* Modal Content */}
           <div 
-            className={`relative w-full h-full flex flex-col shadow-2xl animate-modal-slide-up ${
+            className={`relative w-full h-full flex flex-col shadow-2xl ${
               isDarkMode 
                 ? 'bg-gradient-to-b from-gray-900 to-gray-800 text-white' 
                 : 'bg-gradient-to-b from-white to-gray-50 text-gray-800'
