@@ -82,7 +82,7 @@ const Footer = ({ className = "" }) => {
               <li>
                 <Link 
                   to="/" 
-                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200"
+                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 hover:no-underline"
                 >
                   🏠 Home
                 </Link>
@@ -90,7 +90,7 @@ const Footer = ({ className = "" }) => {
               <li>
                 <Link 
                   to="/about" 
-                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200"
+                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 hover:no-underline"
                 >
                   ℹ️ About Us
                 </Link>
@@ -98,7 +98,7 @@ const Footer = ({ className = "" }) => {
               <li>
                 <Link 
                   to="/upcoming-games" 
-                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200"
+                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 hover:no-underline"
                 >
                   📅 Upcoming Games
                 </Link>
@@ -106,7 +106,7 @@ const Footer = ({ className = "" }) => {
               <li>
                 <Link 
                   to="/recent-skills" 
-                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200"
+                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 hover:no-underline"
                 >
                   ⭐ Skills & Ratings
                 </Link>
@@ -114,7 +114,7 @@ const Footer = ({ className = "" }) => {
               <li>
                 <Link 
                   to="/message" 
-                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200"
+                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 hover:no-underline"
                 >
                   💬 Messages
                 </Link>
@@ -131,24 +131,15 @@ const Footer = ({ className = "" }) => {
               <li>
                 <Link 
                   to="/help" 
-                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200"
+                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 hover:no-underline"
                 >
                   ❓ Help Center
                 </Link>
               </li>
               <li>
-                <a 
-                  href="#documentation" 
-                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200"
-                  onClick={(e) => e.preventDefault()}
-                >
-                  📚 Documentation
-                </a>
-              </li>
-              <li>
                 <Link 
                   to="/faq" 
-                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200"
+                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 hover:no-underline"
                 >
                   🤔 FAQs
                 </Link>
@@ -156,18 +147,10 @@ const Footer = ({ className = "" }) => {
               <li>
                 <a 
                   href="#support" 
-                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200"
+                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 hover:no-underline"
                   onClick={(e) => e.preventDefault()}
                 >
                   🛟 Support
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="mailto:sherpa.sjs@gmail.com" 
-                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200"
-                >
-                  📧 Contact Us
                 </a>
               </li>
             </ul>
@@ -182,7 +165,7 @@ const Footer = ({ className = "" }) => {
               <li>
                 <Link 
                   to="/privacy" 
-                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-flex items-center gap-2 transition-all duration-200"
+                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-flex items-center gap-2 transition-all duration-200 hover:no-underline"
                 >
                   <FaShieldAlt className="text-xs" /> Privacy Policy
                 </Link>
@@ -190,7 +173,7 @@ const Footer = ({ className = "" }) => {
               <li>
                 <Link 
                   to="/terms" 
-                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-flex items-center gap-2 transition-all duration-200"
+                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-flex items-center gap-2 transition-all duration-200 hover:no-underline"
                 >
                   <FaFileContract className="text-xs" /> Terms of Service
                 </Link>
@@ -198,7 +181,7 @@ const Footer = ({ className = "" }) => {
               <li>
                 <Link 
                   to="/cookies" 
-                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-flex items-center gap-2 transition-all duration-200"
+                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-flex items-center gap-2 transition-all duration-200 hover:no-underline"
                 >
                   <FaCookie className="text-xs" /> Cookie Policy
                 </Link>
@@ -224,7 +207,7 @@ const Footer = ({ className = "" }) => {
                   href="https://www.linkedin.com/in/sonamjsherpa/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-white hover:text-blue-400 transition-colors"
+                  className="font-semibold text-white hover:text-blue-400 transition-colors underline-offset-4 "
                 >
                   Sonam J Sherpa
                 </a>
