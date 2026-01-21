@@ -45,6 +45,11 @@ import CustomComingGames from "./components/CustomComingGames";
 import AllSkillsList from "./components/AllSkillsList";
 import About from "./pages/About";
 import ErrorBoundary from "./components/ErrorBoundary";
+import HelpCenter from "./pages/HelpCenter";
+import FAQ from "./pages/FAQ";
+import PrivacyPage from "./pages/PrivacyPage";
+import TermsPage from "./pages/TermsPage";
+import CookiesPage from "./pages/CookiesPage";
 
 // Define HTTP and WebSocket URIs based on environment
 const httpUri =
@@ -179,6 +184,12 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
             <Route path="/about" element={<About />} />
             <Route path="/game-update/:gameId" element={<GameUpdatePage />} />
             <Route path="/admin" element={<AdminPanel />} />
+            {/* Footer Pages */}
+            <Route path="/help" element={<HelpCenter />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/cookies" element={<CookiesPage />} />
           </Routes>
           </main>
           {Auth.loggedIn() && currentUser && (

@@ -59,11 +59,11 @@ const Home = ({ isDarkMode }) => {
   }
 
   return (
-    <main className="w-full mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 lg:mt-5 pt-4 max-w-7xl">
+    <main className="w-full mx-auto px-1 md:px-6 lg:px-8 xl:px-12 pt-2 max-w-7xl">
       {isLoggedIn ? (
         <>
           {/* Welcome & Hero Section */}
-          <section className="w-full flex flex-col items-center justify-center mt-8 mb-6">
+          <section className="w-full flex flex-col items-center justify-center mb-6">
             <div className="w-full bg-white dark:bg-gradient-to-br dark:from-blue-950 dark:via-gray-900 dark:to-gray-800 rounded-3xl shadow-2xl border-2 border-gray-200 dark:border-blue-900/60 p-6 relative overflow-visible">
               {/* Dashboard Info */}
               <div className="w-full flex justify-center mb-3">
@@ -105,7 +105,7 @@ const Home = ({ isDarkMode }) => {
                     {/* Center Section: Welcome Message & Slogan */}
                     <div className="flex flex-col items-center text-center flex-1">
                       <h2 className="text-xl sm:text-2xl font-bold text-blue-700 dark:text-blue-300 mb-1">
-                        Welcome{profile?.name ? `, ${profile.name}` : ''}!
+                        Welcome{profile?.name ? `, ${profile.name}` : 'to Rosterhub'}!
                       </h2>
                       <p className="text-sm sm:text-base italic text-gray-600 dark:text-gray-400">
                         ⚽ All your soccer activities in one place ⚽

@@ -830,12 +830,12 @@ const ChatPopup = ({ currentUser }) => {
       {/* Modern Delete Confirmation Modal - Outside chat container */}
       {showDeleteModal && (
         <Modal showModal={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
-          <div className={`p-6 rounded-2xl shadow-2xl backdrop-blur-sm border chat-modal-overlay  ${
+          <div className={`p-4 rounded-2xl shadow-2xl border chat-modal-overlay  ${
             isDarkMode 
               ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700' 
               : 'bg-gradient-to-br from-white to-gray-50 border-gray-200'
           }`}>
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-2 mb-6">
               <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
                 <FaTrash className="text-red-600 text-lg" />
               </div>
@@ -869,7 +869,7 @@ const ChatPopup = ({ currentUser }) => {
                 className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-2 rounded-xl font-medium transition-all duration-200 hover:from-red-600 hover:to-red-700 hover:scale-105 shadow-lg"
                 onClick={handleDeleteConversation}
               >
-                Delete Conversation
+                Delete 
               </button>
             </div>
           </div>

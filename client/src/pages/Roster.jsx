@@ -99,20 +99,10 @@ const Roster = () => {
   return (
     <main className="mx-auto w-full px-1 sm:px-2 md:px-4 lg:px-6 xl:px-8 2xl:max-w-7xl"> 
       <div className="flex-row justify-center">
-        <div className="col-12 ">
-          {/* Organization Header */}
-          <div className="mb-6 text-center">
-            <h2 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-              {currentOrganization.name}
-            </h2>
-            <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              {profiles.length} / {currentOrganization.limits?.maxMembers || 20} members
-            </p>
-          </div>
-          
+        <div className="col-12 "> 
           {/* Conditional rendering based on authentication status */}
           {isLoggedIn && (
-            <ProfileList profiles={profiles} title={`The ${year} Roster`} isDarkMode={isDarkMode} />
+            <ProfileList profiles={profiles} title={`The ${currentOrganization.name} Roster ${year}`} isDarkMode={isDarkMode} />
           )}
         </div>
       </div>

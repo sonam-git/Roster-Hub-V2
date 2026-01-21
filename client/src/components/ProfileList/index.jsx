@@ -115,8 +115,8 @@ const ProfileList = ({ profiles, title, isDarkMode }) => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 mt-4 mb-6">
-      <div className="w-full mx-auto">
+    <div className="min-h-screen mt-4 mb-6">
+      <div className="w-full mx-auto ">
         {/* Modern Header Section */}
 <div className={`mb-6 text-center ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
   <div className="inline-flex items-center gap-3 mb-6 px-3 py-3 rounded-full  dark:bg-gray-800/80 ">

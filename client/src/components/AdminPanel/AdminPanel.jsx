@@ -452,29 +452,32 @@ const AdminPanel = () => {
                     return (
                       <tr key={member._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
                         <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10">
+                          <Link 
+                            to={`/profiles/${member._id}`}
+                            className="flex items-center group no-underline"
+                          >
+                            <div className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 transition-transform duration-200 group-hover:scale-110">
                               {member.profilePic ? (
                                 <img
-                                  className="h-8 w-8 sm:h-10 sm:w-10 rounded-full object-cover"
+                                  className="h-8 w-8 sm:h-10 sm:w-10 rounded-full object-cover cursor-pointer ring-2 ring-transparent group-hover:ring-emerald-500 transition-all"
                                   src={member.profilePic}
                                   alt={member?.name || 'User'}
                                 />
                               ) : (
-                                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gradient-to-br from-emerald-400 to-blue-500 flex items-center justify-center text-white text-xs sm:text-base font-bold">
+                                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gradient-to-br from-emerald-400 to-blue-500 flex items-center justify-center text-white text-xs sm:text-base font-bold cursor-pointer ring-2 ring-transparent group-hover:ring-emerald-500 transition-all">
                                   {member?.name ? member.name.charAt(0).toUpperCase() : '?'}
                                 </div>
                               )}
                             </div>
                             <div className="ml-3 sm:ml-4">
-                              <div className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">
+                              <div className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors cursor-pointer">
                                 {member?.name || 'Unknown User'}
                                 {isCurrentUser && (
                                   <span className="ml-1 sm:ml-2 text-xs text-emerald-600 dark:text-emerald-400">(You)</span>
                                 )}
                               </div>
                             </div>
-                          </div>
+                          </Link>
                         </td>
                         <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                           <div className="text-xs sm:text-sm text-gray-900 dark:text-white">{member?.email || 'No email'}</div>

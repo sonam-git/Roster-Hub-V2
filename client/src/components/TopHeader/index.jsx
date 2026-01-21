@@ -9,6 +9,7 @@ import controlImage from "../../assets/images/iconizer-arrow-left.png";
 import Auth from "../../utils/auth";
 import { FaChevronDown } from "react-icons/fa";
 import OrganizationSelector from "../OrganizationSelector/OrganizationSelector";
+import RosterModal from "../RosterModal";
 // import lightLogo from "../../assets/images/roster-hub-logo.png";
 import lightLogo from "../../assets/images/roster-hub-logo.png";
 import darkLogo from "../../assets/images/dark-logo.png";
@@ -65,27 +66,21 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
     { key: "roster", label: "Roster", icon: faPersonRunning, action: "roster" },
   ];
   const [showRosterDropdown, setShowRosterDropdown] = React.useState(false);
+  const [isMobile, setIsMobile] = React.useState(false);
   const rosterBtnRef = useRef(null);
   const mobileRosterBtnRef = useRef(null);
-  const dropdownRef = useRef(null);
 
+  // Detect if we're on mobile
   useEffect(() => {
-    if (!showRosterDropdown) return;
-    function handleClick(e) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target) &&
-        rosterBtnRef.current &&
-        !rosterBtnRef.current.contains(e.target) &&
-        mobileRosterBtnRef.current &&
-        !mobileRosterBtnRef.current.contains(e.target)
-      ) {
-        setShowRosterDropdown(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [showRosterDropdown]);
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 976); // lg breakpoint
+    };
+    
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
 
   return (
     <>
@@ -325,140 +320,115 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
           </div>
         )}
       </div>
-      {/* Roster Dropdown (centered modal-style dropdown) */}
-      {isLoggedIn && showRosterDropdown && (
-        <>
-          {/* Backdrop */}
-          <div 
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[99999] transition-all duration-300"
-            onClick={() => setShowRosterDropdown(false)}
-            aria-label="Close roster dropdown"
-          />
-          
-          {/* Centered Dropdown */}
-          <div
-            ref={dropdownRef}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[999999] shadow-2xl border-2 border-gray-700 rounded-2xl overflow-hidden backdrop-blur-md transition-all duration-300 bg-gray-900 w-[90vw] sm:w-[85vw] max-w-md"
-            style={{
-              animation: 'modalSlideIn 0.3s ease-out forwards',
-              maxHeight: '80vh'
-            }}
-          >
-            <style>{`
-              @keyframes modalSlideIn {
-                from {
-                  opacity: 0;
-                  transform: translate(-50%, -50%) scale(0.9);
-                }
-                to {
-                  opacity: 1;
-                  transform: translate(-50%, -50%) scale(1);
-                }
-              }
-            `}</style>
-          {/* Header */}
-          <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-3 sm:px-4 py-3 sm:py-4 border-b border-gray-700 shadow-sm">
-            <div className="flex items-center justify-between">
-              <h3 className="text-white font-oswald font-bold tracking-wide text-sm sm:text-base flex items-center gap-2">
-                <FontAwesomeIcon icon={faPersonRunning} className="text-gray-300 text-base sm:text-lg" />
-                TEAM ROSTER
-              </h3>
-              <button
-                onClick={() => setShowRosterDropdown(false)}
-                className="text-white hover:text-gray-300 transition-colors p-1 rounded-full hover:bg-white/10"
-                aria-label="Close"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <p className="text-gray-300 text-xs sm:text-sm mt-1">
-              {profilesData?.profiles?.length || 0} team members
-            </p>
-          </div>
-          {/* Player List */}
-          <div className="max-h-56 sm:max-h-64 overflow-y-auto">
-            {profilesData?.profiles?.length > 0 ? (
-              <ul className="py-1 sm:py-2">
-                {profilesData.profiles.map((player) => (
-                  <li key={player._id}>
-                    <button
-                      className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 hover:bg-gray-800 text-white font-medium flex items-center gap-2 sm:gap-3 transition-all duration-200 group border-b border-gray-700 last:border-b-0"
-                      onClick={() => {
-                        setShowRosterDropdown(false);
-                        navigate(`/profiles/${player._id}`);
-                      }}
-                    >
-                      <div className="relative">
-                        {player.profilePic ? (
-                          <img 
-                            src={player.profilePic} 
-                            alt={`${player.name}'s avatar`} 
-                            className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover border-2 border-gray-600 group-hover:border-gray-500 transition-colors" 
-                          />
-                        ) : (
-                          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center border-2 border-gray-600 group-hover:border-gray-500 transition-colors">
-                            <FontAwesomeIcon 
-                              icon={faPersonRunning} 
-                              className="text-white text-sm sm:text-base" 
-                            />
-                          </div>
-                        )}
-                        {/* Online indicator */}
-                        {Auth.loggedIn() && Auth.getProfile().data._id === player._id && (
-                          <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-gray-900 rounded-full"></div>
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs sm:text-sm font-medium text-white truncate group-hover:text-gray-200 transition-colors">
-                          {Auth.loggedIn() && Auth.getProfile().data._id === player._id ? "You" : player.name}
-                        </p>
-                        {player.position && (
-                          <p className="text-xs text-gray-400 truncate">
-                            {player.position}
-                          </p>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {Auth.loggedIn() && Auth.getProfile().data._id === player._id && (
-                          <span className="px-2 py-1 bg-blue-900 text-blue-300 text-xs rounded-full font-medium">
-                            You
-                          </span>
-                        )}
-                        <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </div>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div className="px-4 py-8 text-center">
-                <FontAwesomeIcon icon={faPersonRunning} className="text-4xl text-gray-600 mb-3" />
-                <p className="text-gray-400 text-sm">No team members found</p>
-              </div>
-            )}
-          </div>
-          {/* Footer */}
-          <div className="bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 border-t border-gray-700">
+      {/* Roster Dropdown - Using RosterModal component */}
+      <RosterModal
+        isOpen={showRosterDropdown}
+        onClose={() => setShowRosterDropdown(false)}
+        isMobile={isMobile}
+      >
+        {/* Header */}
+        <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-3 sm:px-4 py-3 sm:py-4 border-b border-gray-700 shadow-sm">
+          <div className="flex items-center justify-between">
+            <h3 className="text-white font-oswald font-bold tracking-wide text-sm sm:text-base flex items-center gap-2">
+              <FontAwesomeIcon icon={faPersonRunning} className="text-gray-300 text-base sm:text-lg" />
+              TEAM ROSTER
+            </h3>
             <button
-              onClick={() => {
-                setShowRosterDropdown(false);
-                navigate('/roster');
-              }}
-              className="w-full text-center text-blue-400 hover:text-blue-300 text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1 sm:gap-2"
+              onClick={() => setShowRosterDropdown(false)}
+              className="text-white hover:text-gray-300 transition-colors p-1 rounded-full hover:bg-white/10"
+              aria-label="Close"
             >
-              <span>View Full Roster</span>
-              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
+          <p className="text-gray-300 text-xs sm:text-sm mt-1">
+            {profilesData?.profiles?.length || 0} team members
+          </p>
         </div>
-        </>
-      )}
+        
+        {/* Player List */}
+        <div className={`overflow-y-auto ${isMobile ? 'max-h-64' : 'max-h-56 sm:max-h-64'}`}>
+          {profilesData?.profiles?.length > 0 ? (
+            <ul className="py-1 sm:py-2">
+              {profilesData.profiles.map((player) => (
+                <li key={player._id}>
+                  <button
+                    className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 hover:bg-gray-800 text-white font-medium flex items-center gap-2 sm:gap-3 transition-all duration-200 group border-b border-gray-700 last:border-b-0"
+                    onClick={() => {
+                      setShowRosterDropdown(false);
+                      navigate(`/profiles/${player._id}`);
+                    }}
+                  >
+                    <div className="relative">
+                      {player.profilePic ? (
+                        <img 
+                          src={player.profilePic} 
+                          alt={`${player.name}'s avatar`} 
+                          className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover border-2 border-gray-600 group-hover:border-gray-500 transition-colors" 
+                        />
+                      ) : (
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center border-2 border-gray-600 group-hover:border-gray-500 transition-colors">
+                          <FontAwesomeIcon 
+                            icon={faPersonRunning} 
+                            className="text-white text-sm sm:text-base" 
+                          />
+                        </div>
+                      )}
+                      {/* Online indicator */}
+                      {Auth.loggedIn() && Auth.getProfile().data._id === player._id && (
+                        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-gray-900 rounded-full"></div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs sm:text-sm font-medium text-white truncate group-hover:text-gray-200 transition-colors">
+                        {Auth.loggedIn() && Auth.getProfile().data._id === player._id ? "You" : player.name}
+                      </p>
+                      {player.position && (
+                        <p className="text-xs text-gray-400 truncate">
+                          {player.position}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {Auth.loggedIn() && Auth.getProfile().data._id === player._id && (
+                        <span className="px-2 py-1 bg-blue-900 text-blue-300 text-xs rounded-full font-medium">
+                          You
+                        </span>
+                      )}
+                      <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="px-4 py-8 text-center">
+              <FontAwesomeIcon icon={faPersonRunning} className="text-4xl text-gray-600 mb-3" />
+              <p className="text-gray-400 text-sm">No team members found</p>
+            </div>
+          )}
+        </div>
+        
+        {/* Footer */}
+        <div className="bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 border-t border-gray-700">
+          <button
+            onClick={() => {
+              setShowRosterDropdown(false);
+              navigate('/roster');
+            }}
+            className="w-full text-center text-blue-400 hover:text-blue-300 text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1 sm:gap-2"
+          >
+            <span>View Full Roster</span>
+            <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </button>
+        </div>
+      </RosterModal>
       {/* Right: Organization Selector, Dark/Light mode toggle and sidebar toggle (arrow always visible) */}
       <div className="hidden lg:flex items-center ml-4 gap-2 mt-3">
         {/* Organization Selector - Only shown when logged in */}
@@ -503,11 +473,6 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
                     >
                       <FontAwesomeIcon icon={btn.icon} className="text-lg" />
                       <span className="text-[10px] font-bold tracking-wide truncate">{btn.label}</span>
-                      <FaChevronDown 
-                        className={`text-[8px] transition-transform duration-200 ${
-                          showRosterDropdown ? 'rotate-0' : 'rotate-180'
-                        }`} 
-                      />
                     </button>
                   </div>
                 ) : (
