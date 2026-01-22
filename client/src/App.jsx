@@ -152,7 +152,7 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
         <div className={!Auth.loggedIn() ? "lg:hidden" : ""}>
           <Header open={sidebarOpen} setOpen={setSidebarOpen} />
         </div>
-        <div className={`flex-1 transition-all duration-300 pt-40 lg:pt-24 relative z-[2] flex flex-col overflow-x-hidden`}>
+        <div className={`flex-1 transition-all duration-300 ${Auth.loggedIn() ? "sm:pt-40" : "sm:pt-20"} lg:pt-24 relative z-[2] flex flex-col overflow-x-hidden`}>
           <main role="main" className="flex-1 overflow-x-hidden">
             <Routes>
             <Route path="/" element={<Home />} />

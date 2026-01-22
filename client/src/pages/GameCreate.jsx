@@ -1,11 +1,8 @@
-import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import GameForm from "../components/GameForm";
-import { ThemeContext } from "../components/ThemeContext";
 
 const GameCreate = () => {
   const navigate = useNavigate();
-  const { isDarkMode } = useContext(ThemeContext);
 
   const handleGameCreated = (newGame) => {
     // Navigate to the newly created game's details page
@@ -18,22 +15,23 @@ const GameCreate = () => {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${
-      isDarkMode 
-        ? "bg-gray-900" 
-        : "bg-gray-50"
-    }`}>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex-1 w-full lg:w-auto">
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                Create New Game
-              </h1>
-              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-                Schedule a New Game
-              </p>
-            </div>
+    <div className="mt-4 mb-6 w-full max-w-full overflow-hidden px-2 sm:px-0">
+      {/* Header */}
+      <div className="mb-6 sm:mb-8">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4 sm:mb-6">
+          <div className="flex-1 w-full lg:w-auto">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              Create New Game
+            </h1>
+            <p className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-gray-400">
+              Schedule a new game for your team
+            </p>
+          </div>
+        </div>
+      </div>
 
-        {/* Game Form */}
+      {/* Game Form */}
+      <div className="w-full">
         <GameForm 
           onGameCreated={handleGameCreated}
           onBackToGames={handleBackToGames}

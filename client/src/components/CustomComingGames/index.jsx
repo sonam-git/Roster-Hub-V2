@@ -80,147 +80,120 @@ export default function CustomComingGames({ isDarkMode }) {
 
   if (!upcomingGames.length) {
     return (
-      <div className="w-full  py-8">
-        <div className={`rounded-2xl shadow-xl border p-5 text-center backdrop-blur-sm ${
-          isDarkMode 
-            ? 'bg-gradient-to-br from-gray-800 via-gray-750 to-gray-700 border-gray-600' 
-            : 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 border-gray-200'
-        }`}>
-          <div className="mb-6">
-            <div className={`w-20 h-20 mx-auto rounded-full flex items-center justify-center shadow-lg ${
-              isDarkMode 
-                ? 'bg-gradient-to-br from-blue-600 to-purple-700' 
-                : 'bg-gradient-to-br from-blue-500 to-purple-600'
-            }`}>
-              <svg 
-                className="w-10 h-10 text-white" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" 
-                />
-              </svg>
+      <div className="mt-4 mb-6 w-full max-w-full overflow-hidden px-2 sm:px-0">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4 sm:mb-6">
+            <div className="flex-1 w-full lg:w-auto">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                Upcoming Games
+              </h1>
+              <p className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-gray-400">
+                Stay updated with your scheduled matches
+              </p>
             </div>
           </div>
-          <h3 className={`text-2xl font-bold mb-3 ${
-            isDarkMode 
-              ? 'text-white bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent' 
-              : 'text-gray-900 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent'
+        </div>
+
+        <div className={`rounded-lg border p-6 sm:p-8 text-center ${
+          isDarkMode 
+            ? 'bg-gray-800 border-gray-700' 
+            : 'bg-white border-gray-200'
+        }`}>
+          <div className={`w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-full flex items-center justify-center ${
+            isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
+          }`}>
+            <svg 
+              className={`w-6 h-6 sm:w-8 sm:h-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" 
+              />
+            </svg>
+          </div>
+          <h3 className={`text-base sm:text-lg font-semibold mb-2 ${
+            isDarkMode ? 'text-white' : 'text-gray-900'
           }`}>
             No Upcoming Games
           </h3>
-          <p className={`text-base mb-6 leading-relaxed ${
-            isDarkMode ? 'text-gray-300' : 'text-gray-600'
+          <p className={`text-xs sm:text-sm ${
+            isDarkMode ? 'text-gray-400' : 'text-gray-600'
           }`}>
             No games scheduled at the moment. Check back soon for new matches!
           </p>
-          <div className={`flex items-center justify-center gap-2 text-sm ${
-            isDarkMode ? 'text-gray-400' : 'text-gray-500'
-          }`}>
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-            </svg>
-            <span>New games will appear here once scheduled</span>
-          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full  mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 mt-8 mb-6 max-w-7xl">
+    <div className="mt-4 mb-6 w-full max-w-full overflow-hidden px-2 sm:px-0">
       {/* Header Section */}
-      <div className="mb-8">
-        <div className="text-center mb-6">
-          <div className="flex items-center justify-center gap-3 mb-3">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-r from-green-500 to-blue-500 flex items-center justify-center shadow-lg">
-              <span className="text-xl text-white">⚽</span>
-            </div>
-            <h2 className={`text-2xl md:text-3xl font-bold ${
-              isDarkMode 
-                ? "text-white" 
-                : "text-gray-800"
-            }`}>
-             Upcoming Games
-            </h2>
+      <div className="mb-6 sm:mb-8">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4 sm:mb-6">
+          <div className="flex-1 w-full lg:w-auto">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              Upcoming Games
+            </h1>
+            <p className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-gray-400">
+              Stay updated with your scheduled matches and game status
+            </p>
           </div>
-          <p className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-            Stay updated with your scheduled matches and game status
-          </p>
         </div>
 
         {/* Category Filter Buttons */}
-        <div className="w-full max-w-5xl mx-auto">
-          <div className="flex gap-1 sm:gap-2 overflow-x-auto scrollbar-hide pb-2 sm:pb-0 sm:justify-center">
-            {categories.map((category) => (
-              <button
-                key={category.key}
-                onClick={() => setSelectedCategory(category.key)}
-                className={`group relative flex flex-row items-center gap-2 sm:gap-3 px-2 sm:px-5 py-1 sm:py-2.5 rounded-xl sm:rounded-md font-semibold text-xs sm:text-sm transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg flex-shrink-0 min-w-[80px] sm:min-w-[100px] justify-center border ${
+        <div className="flex flex-wrap gap-2">
+          {categories.map((category) => (
+            <button
+              key={category.key}
+              onClick={() => setSelectedCategory(category.key)}
+              className={`inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors duration-200 border ${
+                selectedCategory === category.key
+                  ? 'bg-blue-600 text-white border-blue-600'
+                  : isDarkMode
+                    ? "bg-gray-800 hover:bg-gray-700 text-gray-200 border-gray-700"
+                    : "bg-white hover:bg-gray-50 text-gray-700 border-gray-300"
+              }`}
+            >
+              <span className="text-sm sm:text-base">{category.icon}</span>
+              <span className="whitespace-nowrap">{category.label}</span>
+              {category.count > 0 && (
+                <span className={`inline-flex items-center justify-center min-w-[18px] sm:min-w-[20px] h-4 sm:h-5 px-1.5 sm:px-2 rounded-full text-xs font-semibold ${
                   selectedCategory === category.key
-                    ? isDarkMode
-                      ? "bg-blue-600  text-white shadow-blue-500/25 hover:shadow-blue-500/40 border-blue-400/50"
-                      : "bg-blue-600  text-white shadow-blue-500/25 hover:shadow-blue-500/40 border-blue-300/50"
+                    ? "bg-white/20 text-white"
                     : isDarkMode
-                      ? "bg-gray-800/80 hover:bg-gray-700/90 text-gray-200 shadow-gray-800/30 hover:shadow-gray-700/50 border-gray-600/30 hover:border-gray-500/50"
-                      : "bg-white/90 hover:bg-gray-50/95 text-gray-700 shadow-gray-200/40 hover:shadow-gray-300/60 border-gray-300/40 hover:border-gray-400/60"
-                }`}
-              >
-                {/* Icon */}
-                <span className="text-sm sm:text-base">{category.icon}</span>
-                
-                {/* Label and count */}
-                <div className="flex items-center gap-1 sm:gap-2">
-                  <span className="text-xs sm:text-sm font-bold tracking-wide uppercase">
-                    {category.key === "ALL" ? "All" : category.label}
-                  </span>
-                  {category.count > 0 && (
-                    <span className={`flex items-center justify-center min-w-[16px] sm:min-w-[18px] h-4 sm:h-5 px-1.5 sm:px-2 rounded-full text-xs font-bold ${
-                      selectedCategory === category.key
-                        ? "bg-white/25 text-white"
-                        : isDarkMode
-                          ? "bg-gray-600/70 text-gray-200"
-                          : "bg-gray-200/80 text-gray-600"
-                    }`}>
-                      {category.count}
-                    </span>
-                  )}
-                </div>
-              </button>
-            ))}
-          </div>
+                      ? "bg-gray-700 text-gray-300"
+                      : "bg-gray-100 text-gray-600"
+                }`}>
+                  {category.count}
+                </span>
+              )}
+            </button>
+          ))}
         </div>
-        
-        <style jsx>{`
-          .scrollbar-hide {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-          }
-          .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-          }
-        `}</style>
       </div>
 
       {/* Games Grid */}
       {filteredGames.length === 0 ? (
-        <div className="text-center py-12">
-          <div className={`inline-flex items-center gap-3 px-6 py-4 rounded-xl ${
-            isDarkMode ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'
+        <div className={`rounded-lg border p-6 sm:p-8 text-center ${
+          isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+        }`}>
+          <div className={`w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-full flex items-center justify-center ${
+            isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
           }`}>
-            <span className="text-2xl">🔍</span>
-            <p className="font-medium">
-              No {selectedCategory === "ALL" ? "upcoming" : selectedCategory.toLowerCase()} games found.
-            </p>
+            <span className="text-xl sm:text-2xl">🔍</span>
           </div>
+          <p className={`text-sm sm:text-base font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            No {selectedCategory === "ALL" ? "upcoming" : selectedCategory.toLowerCase()} games found.
+          </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
           {filteredGames.map(game => {
           const effectiveStatus = getGameEffectiveStatus(game);
           // Format date and time like GameDetails
@@ -241,136 +214,124 @@ export default function CustomComingGames({ isDarkMode }) {
           return (
             <div
               key={game._id}
-              className={`group relative rounded-2xl shadow-xl border-2 transition-all duration-300 overflow-hidden
-                bg-gradient-to-br hover:shadow-2xl
-                ${isDarkMode 
-                  ? 'from-gray-900 via-gray-800 to-gray-700 border-gray-600 text-gray-100 hover:border-gray-500' 
-                  : 'from-white via-blue-50 to-indigo-50 border-blue-200 text-gray-800 hover:border-blue-300'}
-                transform hover:scale-[1.02] hover:-translate-y-1
-                ${effectiveStatus === 'CONFIRMED' ? (isDarkMode ? 'hover:border-green-400 hover:shadow-green-400/20' : 'hover:border-green-500 hover:shadow-green-500/20') : ''}
-                ${effectiveStatus === 'PENDING' ? (isDarkMode ? 'hover:border-orange-400 hover:shadow-orange-400/20' : 'hover:border-orange-500 hover:shadow-orange-500/20') : ''}
-                ${effectiveStatus === 'EXPIRED' ? (isDarkMode ? 'hover:border-gray-400 hover:shadow-gray-400/20' : 'hover:border-gray-500 hover:shadow-gray-500/20') : ''}
-              `}
+              className={`rounded-lg border overflow-hidden transition-all duration-200 hover:shadow-md ${
+                isDarkMode 
+                  ? 'bg-gray-800 border-gray-700' 
+                  : 'bg-white border-gray-200'
+              }`}
             >
-              {/* Header Section with Opponent and Status */}
-              <div className="p-6 pb-4">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className={`p-2 rounded-lg ${isDarkMode ? 'bg-green-800/30' : 'bg-green-100'}`}>
-                      ⚽
-                    </div>
-                    <div>
-                      <h3 className={`text-xl font-bold tracking-tight ${isDarkMode ? 'text-green-200' : 'text-green-700'}`}>
-                        vs {game.opponent}
-                      </h3>
-                      <p className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                        Upcoming Match
-                      </p>
-                    </div>
+              {/* Header */}
+              <div className={`px-3 sm:px-4 py-2.5 sm:py-3 border-b flex items-center justify-between ${
+                isDarkMode ? 'border-gray-700 bg-gray-800/50' : 'border-gray-200 bg-gray-50'
+              }`}>
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded flex items-center justify-center flex-shrink-0 ${
+                    isDarkMode ? 'bg-blue-500/10' : 'bg-blue-50'
+                  }`}>
+                    <span className="text-xs sm:text-sm">⚽</span>
                   </div>
-                  
-                  <div className={`px-3 py-2 rounded-full text-xs font-bold shadow-sm
-                    ${effectiveStatus === 'CONFIRMED' 
-                      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200' 
-                      : effectiveStatus === 'EXPIRED'
-                      ? 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-200'
-                      : 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-200'}
-                  `}>
-                    <span className="flex items-center gap-1">
-                      {effectiveStatus === 'CONFIRMED' ? '✅ ' : effectiveStatus === 'EXPIRED' ? '⌛ ' : '⏳ '}
-                      {effectiveStatus}
-                    </span>
+                  <div className="min-w-0 flex-1">
+                    <h3 className={`text-xs sm:text-sm font-semibold truncate ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                      vs {game.opponent}
+                    </h3>
+                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      Upcoming Match
+                    </p>
                   </div>
                 </div>
-
-                {/* Date and Time Section */}
-                <div className={`p-4 rounded-xl mb-4 ${isDarkMode ? 'bg-gray-800/50' : 'bg-white/80'} border ${isDarkMode ? 'border-gray-700' : 'border-blue-100'}`}>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-lg">📅</span>
-                      <div>
-                        <p className="text-xs font-medium opacity-75 uppercase tracking-wide">Date</p>
-                        <p className={`font-bold text-sm ${isDarkMode ? 'text-blue-200' : 'text-blue-700'}`}>{humanDate}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-lg">🕐</span>
-                      <div>
-                        <p className="text-xs font-medium opacity-75 uppercase tracking-wide">Time</p>
-                        <p className={`font-bold text-sm ${isDarkMode ? 'text-blue-200' : 'text-blue-700'}`}>{humanTime}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Venue Section */}
-                <div className={`p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-800/30' : 'bg-blue-50/50'} border-l-4 ${isDarkMode ? 'border-blue-400' : 'border-blue-500'}`}>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-lg">🏟️</span>
-                    <div>
-                      <p className="text-xs font-medium opacity-75 uppercase tracking-wide mb-1">Venue</p>
-                      <p className={`font-bold text-sm ${isDarkMode ? 'text-blue-200' : 'text-blue-700'}`}>{game.venue}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* City Section */}
-                <div className={`p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-800/30' : 'bg-blue-50/50'} border-l-4 ${isDarkMode ? 'border-blue-400' : 'border-blue-500'}`}>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-lg">🏙️</span>
-                    <div>
-                      <p className="text-xs font-medium opacity-75 uppercase tracking-wide mb-1">City</p>
-                      <p className={`font-bold text-sm ${isDarkMode ? 'text-blue-200' : 'text-blue-700'}`}>{game.city}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Notes Section */}
-                {game.notes && (
-                  <div className={`p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-800/20' : 'bg-gray-50'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-                    <div className="flex items-start space-x-2">
-                      <span className="text-lg mt-0.5">📝</span>
-                      <div>
-                        <p className="text-xs font-medium opacity-75 uppercase tracking-wide mb-1">Notes</p>
-                        <p className={`text-sm leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                          {game.notes}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Players Section */}
-                <div className="flex items-center justify-between pt-3 border-t border-opacity-20 border-gray-400">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-blue-500 font-bold">👤</span>
-                    <span className="text-green-500 font-bold">✅</span>
-                    <span className={`text-sm font-bold ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>
-                      {game.availableCount} Available
-                    </span>
-                  </div>
-                  
-                  <button
-                    className={`px-4 py-2 rounded-lg font-bold text-sm shadow-lg transition-all duration-200 flex items-center gap-2
-                      ${isDarkMode 
-                        ? 'bg-blue-700 text-white hover:bg-blue-800 hover:shadow-blue-700/50' 
-                        : 'bg-blue-500 text-white hover:bg-blue-600 hover:shadow-blue-500/50'}
-                      hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400
-                    `}
-                    onClick={() => window.location.href = `/game-schedule/${game._id}`}
-                  >
-                    <span>👁️</span>
-                    View Details
-                  </button>
+                
+                <div className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs font-medium whitespace-nowrap flex-shrink-0 ml-2 ${
+                  effectiveStatus === 'CONFIRMED' 
+                    ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' 
+                    : effectiveStatus === 'EXPIRED'
+                    ? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                    : 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'
+                }`}>
+                  <span className="hidden sm:inline">
+                    {effectiveStatus === 'CONFIRMED' ? '✅ ' : effectiveStatus === 'EXPIRED' ? '⌛ ' : '⏳ '}
+                    {effectiveStatus}
+                  </span>
+                  <span className="sm:hidden">
+                    {effectiveStatus === 'CONFIRMED' ? '✅' : effectiveStatus === 'EXPIRED' ? '⌛' : '⏳'}
+                  </span>
                 </div>
               </div>
 
-              {/* Decorative accent line */}
-              <div className={`h-1 w-full ${
-                effectiveStatus === 'CONFIRMED' ? 'bg-green-500' : 
-                effectiveStatus === 'EXPIRED' ? 'bg-gray-500' : 
-                'bg-orange-500'
-              }`}></div>
+              {/* Content */}
+              <div className="p-3 sm:p-4 space-y-2.5 sm:space-y-3">
+                {/* Date and Time */}
+                <div className={`grid grid-cols-2 gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg ${
+                  isDarkMode ? 'bg-gray-700/30' : 'bg-gray-50'
+                }`}>
+                  <div>
+                    <p className={`text-xs font-medium mb-0.5 sm:mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      📅 Date
+                    </p>
+                    <p className={`text-xs sm:text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                      {humanDate}
+                    </p>
+                  </div>
+                  <div>
+                    <p className={`text-xs font-medium mb-0.5 sm:mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      🕐 Time
+                    </p>
+                    <p className={`text-xs sm:text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                      {humanTime}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Venue */}
+                <div>
+                  <p className={`text-xs font-medium mb-0.5 sm:mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    🏟️ Venue
+                  </p>
+                  <p className={`text-xs sm:text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                    {game.venue}
+                  </p>
+                </div>
+
+                {/* City */}
+                <div>
+                  <p className={`text-xs font-medium mb-0.5 sm:mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    🏙️ City
+                  </p>
+                  <p className={`text-xs sm:text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                    {game.city}
+                  </p>
+                </div>
+
+                {/* Notes */}
+                {game.notes && (
+                  <div>
+                    <p className={`text-xs font-medium mb-0.5 sm:mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      📝 Notes
+                    </p>
+                    <p className={`text-xs sm:text-sm line-clamp-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                      {game.notes}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className={`px-3 sm:px-4 py-2.5 sm:py-3 border-t flex items-center justify-between gap-2 ${
+                isDarkMode ? 'border-gray-700 bg-gray-800/30' : 'border-gray-200 bg-gray-50'
+              }`}>
+                <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                  <span className={`text-xs font-medium truncate ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    👤 <span className="hidden xs:inline">Available:</span> {game.availableCount}
+                  </span>
+                </div>
+                
+                <button
+                  className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200 flex-shrink-0"
+                  onClick={() => window.location.href = `/game-schedule/${game._id}`}
+                >
+                  <span>👁️</span>
+                  <span className="hidden xs:inline">View</span>
+                </button>
+              </div>
             </div>
           );
         })}

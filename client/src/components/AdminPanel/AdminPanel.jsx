@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_ME, QUERY_GAMES } from "../../utils/queries";
@@ -116,15 +116,41 @@ const AdminPanel = () => {
   };
 
   // Get game statistics
-  const games = gamesData?.games || [];
+  const games = useMemo(() => gamesData?.games || [], [gamesData?.games]);
+  
+  // Debug: Log game statuses to understand the data
+  useEffect(() => {
+    if (games.length > 0) {
+      console.log('🎮 Game Statistics Debug:', {
+        totalGames: games.length,
+        gameDetails: games.map(g => ({
+          id: g._id,
+          date: g.date,
+          time: g.time,
+          status: g.status,
+          venue: g.venue,
+        })),
+        statuses: games.map(g => g.status),
+      });
+    }
+  }, [games]);
+  
+  // Calculate game statistics based on status and date
   const gameStats = {
     totalGames: games.length,
-    upcomingGames: games.filter(g => g.status === 'UPCOMING').length,
-    completedGames: games.filter(g => g.status === 'COMPLETED').length,
+    // Upcoming: Future games that aren't completed/canceled (may have PENDING or UPCOMING status)
+    upcomingGames: games.filter(g => g.status === 'PENDING').length,
+    // Confirmed: Games with CONFIRMED status (if this status exists in your system)
+    confirmedGames: games.filter(g => g.status === 'CONFIRMED').length,
+    // Canceled: Games marked as canceled
     canceledGames: games.filter(g => g.status === 'CANCELED').length,
+    // Completed: Games marked as completed
+    completedGames: games.filter(g => g.status === 'COMPLETED').length,
+    // Past Due: Games that have passed their date but aren't completed or cancele
     totalVotes: games.reduce((sum, g) => sum + (g.responses?.length || 0), 0),
-    totalFormations: games.reduce((sum, g) => sum + (g.formations?.length || 0), 0),
-    totalFeedback: games.reduce((sum, g) => sum + (g.feedback?.length || 0), 0),
+    totalFormations: games.reduce((sum, g) => sum + (g.formation ? 1 : 0), 0),
+    totalFeedback: games.reduce((sum, g) => sum + (g.feedbacks?.length || 0), 0),
+    avgResponseRate: games.length > 0 ? ((games.reduce((sum, g) => sum + (g.responses?.length || 0), 0) / games.length / Math.max(stats.totalMembers, 1)) * 100).toFixed(0) : 0,
   };
 
   return (
@@ -190,10 +216,13 @@ const AdminPanel = () => {
                   <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mt-1">
                     {stats.totalMembers}
                   </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Active roster size
+                  </p>
                 </div>
                 <div className="ml-3">
-                  <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-2 sm:p-3">
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <div className="bg-blue-100 dark:bg-blue-900/30 rounded-lg p-2 sm:p-3">
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                   </div>
@@ -201,7 +230,7 @@ const AdminPanel = () => {
               </div>
               <div className="flex items-center justify-between mt-2">
                 <span className="text-xs text-gray-500 dark:text-gray-400">
-                  {expandedStat === 'totalMembers' ? 'Hide details' : 'View details'}
+                  {expandedStat === 'totalMembers' ? 'Hide breakdown' : 'View breakdown'}
                 </span>
                 <svg 
                   className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${expandedStat === 'totalMembers' ? 'rotate-180' : ''}`} 
@@ -217,20 +246,25 @@ const AdminPanel = () => {
             {expandedStat === 'totalMembers' && (
               <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 space-y-2">
                 <div className="flex justify-between items-center text-xs sm:text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Owner:</span>
+                  <span className="text-gray-600 dark:text-gray-400">Team Owner:</span>
                   <span className="font-medium text-gray-900 dark:text-white">1</span>
                 </div>
                 <div className="flex justify-between items-center text-xs sm:text-sm">
                   <span className="text-gray-600 dark:text-gray-400">Regular Members:</span>
                   <span className="font-medium text-gray-900 dark:text-white">{stats.regularMembers}</span>
                 </div>
+                <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700"></div>
                 <div className="flex justify-between items-center text-xs sm:text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">With Jersey #:</span>
-                  <span className="font-medium text-gray-900 dark:text-white">{stats.withJerseyNumber}</span>
+                  <span className="text-gray-600 dark:text-gray-400">Profile Completeness:</span>
+                  <span className="font-medium text-gray-900 dark:text-white"></span>
                 </div>
-                <div className="flex justify-between items-center text-xs sm:text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">With Position:</span>
-                  <span className="font-medium text-gray-900 dark:text-white">{stats.withPosition}</span>
+                <div className="flex justify-between items-center text-xs sm:text-sm pl-2">
+                  <span className="text-gray-600 dark:text-gray-400">• With Jersey #:</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{stats.withJerseyNumber} ({stats.totalMembers > 0 ? Math.round((stats.withJerseyNumber / stats.totalMembers) * 100) : 0}%)</span>
+                </div>
+                <div className="flex justify-between items-center text-xs sm:text-sm pl-2">
+                  <span className="text-gray-600 dark:text-gray-400">• With Position:</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{stats.withPosition} ({stats.totalMembers > 0 ? Math.round((stats.withPosition / stats.totalMembers) * 100) : 0}%)</span>
                 </div>
               </div>
             )}
@@ -248,10 +282,13 @@ const AdminPanel = () => {
                   <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mt-1">
                     {gameStats.totalGames}
                   </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    {gameStats.upcomingGames} upcoming
+                  </p>
                 </div>
                 <div className="ml-3">
-                  <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-2 sm:p-3">
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <div className="bg-green-100 dark:bg-green-900/30 rounded-lg p-2 sm:p-3">
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                   </div>
@@ -259,7 +296,7 @@ const AdminPanel = () => {
               </div>
               <div className="flex items-center justify-between mt-2">
                 <span className="text-xs text-gray-500 dark:text-gray-400">
-                  {expandedStat === 'totalGames' ? 'Hide details' : 'View details'}
+                  {expandedStat === 'totalGames' ? 'Hide breakdown' : 'View breakdown'}
                 </span>
                 <svg 
                   className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${expandedStat === 'totalGames' ? 'rotate-180' : ''}`} 
@@ -275,16 +312,32 @@ const AdminPanel = () => {
             {expandedStat === 'totalGames' && (
               <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 space-y-2">
                 <div className="flex justify-between items-center text-xs sm:text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Upcoming:</span>
+                  <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                    Upcoming:
+                  </span>
                   <span className="font-medium text-gray-900 dark:text-white">{gameStats.upcomingGames}</span>
                 </div>
                 <div className="flex justify-between items-center text-xs sm:text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Completed:</span>
-                  <span className="font-medium text-gray-900 dark:text-white">{gameStats.completedGames}</span>
+                  <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    Confirmed:
+                  </span>
+                  <span className="font-medium text-gray-900 dark:text-white">{gameStats.confirmedGames}</span>
                 </div>
                 <div className="flex justify-between items-center text-xs sm:text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Canceled:</span>
+                  <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                    <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+                    Canceled:
+                  </span>
                   <span className="font-medium text-gray-900 dark:text-white">{gameStats.canceledGames}</span>
+                </div>
+                <div className="flex justify-between items-center text-xs sm:text-sm">
+                  <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                    <span className="w-2 h-2 bg-indigo-500 rounded-full"></span>
+                    Completed:
+                  </span>
+                  <span className="font-medium text-gray-900 dark:text-white">{gameStats.completedGames}</span>
                 </div>
                 {games.length > 0 && (
                   <Link
@@ -306,14 +359,17 @@ const AdminPanel = () => {
             >
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Engagement</p>
+                  <p className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Player Engagement</p>
                   <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mt-1">
-                    {gameStats.totalVotes}
+                    {gameStats.avgResponseRate}%
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Response rate
                   </p>
                 </div>
                 <div className="ml-3">
-                  <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-2 sm:p-3">
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <div className="bg-purple-100 dark:bg-purple-900/30 rounded-lg p-2 sm:p-3">
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                     </svg>
                   </div>
@@ -321,7 +377,7 @@ const AdminPanel = () => {
               </div>
               <div className="flex items-center justify-between mt-2">
                 <span className="text-xs text-gray-500 dark:text-gray-400">
-                  {expandedStat === 'engagement' ? 'Hide details' : 'View details'}
+                  {expandedStat === 'engagement' ? 'Hide metrics' : 'View metrics'}
                 </span>
                 <svg 
                   className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${expandedStat === 'engagement' ? 'rotate-180' : ''}`} 
@@ -337,19 +393,20 @@ const AdminPanel = () => {
             {expandedStat === 'engagement' && (
               <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 space-y-2">
                 <div className="flex justify-between items-center text-xs sm:text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Total Votes:</span>
+                  <span className="text-gray-600 dark:text-gray-400">Total Responses:</span>
                   <span className="font-medium text-gray-900 dark:text-white">{gameStats.totalVotes}</span>
                 </div>
                 <div className="flex justify-between items-center text-xs sm:text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Formations:</span>
+                  <span className="text-gray-600 dark:text-gray-400">Formations Created:</span>
                   <span className="font-medium text-gray-900 dark:text-white">{gameStats.totalFormations}</span>
                 </div>
                 <div className="flex justify-between items-center text-xs sm:text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Feedback:</span>
+                  <span className="text-gray-600 dark:text-gray-400">Feedback Given:</span>
                   <span className="font-medium text-gray-900 dark:text-white">{gameStats.totalFeedback}</span>
                 </div>
+                <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700"></div>
                 <div className="flex justify-between items-center text-xs sm:text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Avg per Game:</span>
+                  <span className="text-gray-600 dark:text-gray-400">Avg Responses/Game:</span>
                   <span className="font-medium text-gray-900 dark:text-white">
                     {gameStats.totalGames > 0 ? (gameStats.totalVotes / gameStats.totalGames).toFixed(1) : 0}
                   </span>
@@ -370,10 +427,13 @@ const AdminPanel = () => {
                   <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mt-1">
                     {stats.totalMembers > 0 ? Math.round(((stats.withJerseyNumber + stats.withPosition) / (stats.totalMembers * 2)) * 100) : 0}%
                   </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Profile completion
+                  </p>
                 </div>
                 <div className="ml-3">
-                  <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-2 sm:p-3">
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <div className="bg-amber-100 dark:bg-amber-900/30 rounded-lg p-2 sm:p-3">
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                     </svg>
                   </div>
@@ -381,7 +441,7 @@ const AdminPanel = () => {
               </div>
               <div className="flex items-center justify-between mt-2">
                 <span className="text-xs text-gray-500 dark:text-gray-400">
-                  {expandedStat === 'completion' ? 'Hide details' : 'View details'}
+                  {expandedStat === 'completion' ? 'Hide status' : 'View status'}
                 </span>
                 <svg 
                   className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${expandedStat === 'completion' ? 'rotate-180' : ''}`} 
@@ -397,28 +457,32 @@ const AdminPanel = () => {
             {expandedStat === 'completion' && (
               <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 space-y-2">
                 <div className="flex justify-between items-center text-xs sm:text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">With Jersey #:</span>
+                  <span className="text-gray-600 dark:text-gray-400">Jersey Numbers:</span>
                   <span className="font-medium text-gray-900 dark:text-white">
-                    {stats.withJerseyNumber}/{stats.totalMembers}
+                    {stats.withJerseyNumber}/{stats.totalMembers} ({stats.totalMembers > 0 ? Math.round((stats.withJerseyNumber / stats.totalMembers) * 100) : 0}%)
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-xs sm:text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">With Position:</span>
+                  <span className="text-gray-600 dark:text-gray-400">Positions Set:</span>
                   <span className="font-medium text-gray-900 dark:text-white">
-                    {stats.withPosition}/{stats.totalMembers}
+                    {stats.withPosition}/{stats.totalMembers} ({stats.totalMembers > 0 ? Math.round((stats.withPosition / stats.totalMembers) * 100) : 0}%)
                   </span>
                 </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
-                  <div 
-                    className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-300" 
-                    style={{ width: `${stats.totalMembers > 0 ? ((stats.withJerseyNumber + stats.withPosition) / (stats.totalMembers * 2)) * 100 : 0}%` }}
-                  ></div>
+                <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div 
+                      className="bg-gradient-to-r from-amber-500 to-amber-600 h-2 rounded-full transition-all duration-500"
+                      style={{ 
+                        width: `${stats.totalMembers > 0 ? Math.round(((stats.withJerseyNumber + stats.withPosition) / (stats.totalMembers * 2)) * 100) : 0}%` 
+                      }}
+                    ></div>
+                  </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
+                    {stats.totalMembers > 0 && Math.round(((stats.withJerseyNumber + stats.withPosition) / (stats.totalMembers * 2)) * 100) < 100 
+                      ? 'Encourage members to complete profiles' 
+                      : 'All profiles complete! 🎉'}
+                  </p>
                 </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  {stats.totalMembers > 0 && ((stats.withJerseyNumber + stats.withPosition) / (stats.totalMembers * 2)) < 1
-                    ? 'Encourage members to complete their profiles'
-                    : 'All members have complete profiles!'}
-                </p>
               </div>
             )}
           </div>
