@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { FaLinkedin, FaGithub, FaEnvelope, FaTwitter, FaShieldAlt, FaFileContract, FaCookie } from "react-icons/fa";
 import { useContext } from "react";
 import { ThemeContext } from "../ThemeContext";
-import lightLogo from "../../assets/images/roster-hub-logo.png";
-import darkLogo from "../../assets/images/dark-logo.png";
+import lightLogo from "../../assets/images/RH-Logo-Light.png";
+import darkLogo from "../../assets/images/RH-Logo.png";
 
 const Footer = ({ className = "" }) => {
   const year = new Date().getFullYear();

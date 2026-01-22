@@ -18,28 +18,20 @@ const GameCreate = () => {
   };
 
   return (
-    <div className={`min-h-screen py-8 px-4 transition-colors duration-300 ${
+    <div className={`min-h-screen transition-colors duration-300 ${
       isDarkMode 
-        ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900" 
-        : "bg-gradient-to-br from-blue-50 via-white to-purple-50"
+        ? "bg-gray-900" 
+        : "bg-gray-50"
     }`}>
-      <div className="max-w-4xl mx-auto">
-        {/* Page Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 mb-4 shadow-lg">
-            <span className="text-4xl">⚽</span>
-          </div>
-          <h1 className={`text-4xl font-bold mb-2 ${
-            isDarkMode ? "text-white" : "text-gray-900"
-          }`}>
-            Create New Game
-          </h1>
-          <p className={`text-lg ${
-            isDarkMode ? "text-gray-400" : "text-gray-600"
-          }`}>
-            Schedule a new game for your team
-          </p>
-        </div>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex-1 w-full lg:w-auto">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                Create New Game
+              </h1>
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+                Schedule a New Game
+              </p>
+            </div>
 
         {/* Game Form */}
         <GameForm 

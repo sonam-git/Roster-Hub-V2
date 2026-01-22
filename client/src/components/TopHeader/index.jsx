@@ -10,11 +10,10 @@ import Auth from "../../utils/auth";
 import { FaChevronDown } from "react-icons/fa";
 import OrganizationSelector from "../OrganizationSelector/OrganizationSelector";
 import RosterModal from "../RosterModal";
-// import lightLogo from "../../assets/images/roster-hub-logo.png";
-import lightLogo from "../../assets/images/roster-hub-logo.png";
-import darkLogo from "../../assets/images/dark-logo.png";
+import lightLogo from "../../assets/images/RH-Logo-Light.png";
+import darkLogo from "../../assets/images/RH-Logo.png";
 
-export default function TopHeader({ className, onToggleMenu, open, isVisible = true }) {
+export default function TopHeader({ className, onToggleMenu, open }) {
   const navigate = useNavigate();
   const location = useLocation();
   const isLoggedIn = Auth.loggedIn();
@@ -85,7 +84,7 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
   return (
     <>
       {/* Desktop TopHeader - Hidden below 976px, visible at 976px+ (custom lg breakpoint) */}
-      <div className={`hidden lg:flex w-full flex-row items-center justify-between bg-gray-100 dark:bg-gray-800 py-2 shadow-md sticky z-[10] px-2 sm:px-4 ${isVisible ? 'top-0' : 'top-0'} ${typeof className !== 'undefined' ? className : ''}`}>
+      <header className={`hidden lg:flex fixed top-0 left-0 right-0 w-full flex-row items-center justify-between bg-gray-100 dark:bg-gray-800 py-2 shadow-md z-[100] px-2 sm:px-4 ${typeof className !== 'undefined' ? className : ''}`}>
       {/* Left: Logo and Title (always visible, beautiful UI) */}
       <Link
         to={"/"}
@@ -149,69 +148,74 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
         </div>
       )}
       
-      {/* Center: Menu buttons or promo text */}
-      <div className={`flex flex-row items-center justify-center flex-1 w-full mt-4 lg:mt-0`}>
+      {/* Center: AWS-style navigation or promo text */}
+      <div className={`flex flex-row items-center justify-center flex-1 w-full`}>
         {isLoggedIn ? (
-          <div className="w-full max-w-4xl mx-auto">
-            <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 lg:pb-0 lg:justify-center lg:flex-wrap">
+          <nav className="w-full max-w-5xl mx-auto">
+            {/* AWS-style horizontal navigation bar */}
+            <div className="flex items-center justify-center gap-0">
               {BUTTONS.map((btn) => {
-                // Hide roster button on small screens
+                const isActive = location.pathname === btn.path?.split('#')[0];
+                
+                // Roster button with dropdown
                 if (btn.key === "roster") {
                   return (
-                    <React.Fragment key={btn.key}>
-                      <div className="hidden lg:block relative flex-shrink-0">
-                        <button
-                          ref={rosterBtnRef}
-                          className={`flex flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-md font-semibold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl min-w-[80px] sm:min-w-0 justify-center backdrop-blur-sm ${
-                            isDarkMode
-                              ? "bg-gradient-to-br from-gray-800/80 to-gray-700/80 hover:from-gray-700/90 hover:to-gray-600/90 text-gray-200 shadow-gray-800/50 hover:shadow-gray-700/70"
-                              : "bg-gradient-to-br from-white/90 to-gray-50/90 hover:from-gray-50/95 hover:to-gray-100/95 text-gray-700 shadow-gray-200/50 hover:shadow-gray-300/70"
-                          }`}
-                          onClick={() => setShowRosterDropdown((prev) => !prev)}
-                        >
-                          <FontAwesomeIcon icon={btn.icon} className="text-xs sm:text-sm" />
-                          <span className="text-xs sm:text-sm font-oswald font-bold tracking-wide truncate">{btn.label.toUpperCase()}</span>
+                    <div key={btn.key} className="hidden lg:block relative">
+                      <button
+                        ref={rosterBtnRef}
+                        className={`relative px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 ${
+                          showRosterDropdown
+                            ? isDarkMode
+                              ? "text-white border-blue-500 bg-gray-800/40"
+                              : "text-gray-900 border-blue-600 bg-gray-100/60"
+                            : isDarkMode
+                              ? "text-gray-300 border-transparent hover:text-white hover:bg-gray-800/30"
+                              : "text-gray-600 border-transparent hover:text-gray-900 hover:bg-gray-50"
+                        }`}
+                        onClick={() => setShowRosterDropdown((prev) => !prev)}
+                      >
+                        <span className="flex items-center gap-2">
+                          {btn.label}
                           <FaChevronDown 
-                            className={`text-xs sm:text-sm transition-transform duration-200 ${
+                            className={`text-xs transition-transform duration-200 ${
                               showRosterDropdown ? 'rotate-180' : 'rotate-0'
                             }`} 
                           />
-                        </button>
-                      </div>
-                    </React.Fragment>
+                        </span>
+                      </button>
+                    </div>
                   );
                 }
+                
+                // Regular navigation items (AWS-style: clean text, border-bottom highlight)
                 return (
-                  <React.Fragment key={btn.key}>
-                    <button
-                      className={`flex flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-sm font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl flex-shrink-0 min-w-[80px] sm:min-w-0 justify-center backdrop-blur-sm ${
-                        location.pathname === btn.path?.split('#')[0]
-                          ? isDarkMode
-                            ? "bg-gradient-to-br from-blue-600 via-purple-600 to-blue-700 text-white shadow-blue-500/30 hover:shadow-blue-500/50"
-                            : "bg-gradient-to-br from-blue-500 via-purple-500 to-blue-600 text-white shadow-blue-500/30 hover:shadow-blue-500/50"
-                          : isDarkMode
-                            ? "bg-gradient-to-br from-gray-800/80 to-gray-700/80 hover:from-gray-700/90 hover:to-gray-600/90 text-gray-200 shadow-gray-800/50 hover:shadow-gray-700/70"
-                            : "bg-gradient-to-br from-white/90 to-gray-50/90 hover:from-gray-50/95 hover:to-gray-100/95 text-gray-700 shadow-gray-200/50 hover:shadow-gray-300/70"
-                      }`}
-                      onClick={() => {
-                        if (btn.action === "search") {
-                          // Navigate to dedicated game search page
-                          navigate("/game-search");
-                        } else if (btn.key === "creategame") {
-                          navigate("/game-create", { state: { showCreateGame: true } });
-                        } else {
-                          navigate(btn.path);
-                        }
-                      }}
-                    >
-                      <FontAwesomeIcon icon={btn.icon} className="text-xs sm:text-sm" />
-                      <span className="text-xs sm:text-sm font-oswald font-bold tracking-wide truncate">{btn.label.toUpperCase()}</span>
-                    </button>
-                  </React.Fragment>
+                  <button
+                    key={btn.key}
+                    className={`relative px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 whitespace-nowrap ${
+                      isActive
+                        ? isDarkMode
+                          ? "text-white border-blue-500 bg-gray-800/40"
+                          : "text-gray-900 border-blue-600 bg-gray-100/60"
+                        : isDarkMode
+                          ? "text-gray-300 border-transparent hover:text-white hover:bg-gray-800/30"
+                          : "text-gray-600 border-transparent hover:text-gray-900 hover:bg-gray-50"
+                    }`}
+                    onClick={() => {
+                      if (btn.action === "search") {
+                        navigate("/game-search");
+                      } else if (btn.key === "creategame") {
+                        navigate("/game-create", { state: { showCreateGame: true } });
+                      } else {
+                        navigate(btn.path);
+                      }
+                    }}
+                  >
+                    {btn.label}
+                  </button>
                 );
               })}
             </div>
-          </div>
+          </nav>
         ) : (
           <div className="w-full relative flex items-center justify-center overflow-hidden rounded-3xl shadow-2xl border-2 border-transparent bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-green-500/20 dark:from-blue-600/30 dark:via-purple-600/30 dark:to-green-600/30 backdrop-blur-sm">
             {/* Animated background effects */}
@@ -450,7 +454,7 @@ export default function TopHeader({ className, onToggleMenu, open, isVisible = t
           alt="toggle menu"
         />
       </div>
-    </div>
+    </header>
 
       {/* Mobile Bottom Navigation - Visible below 976px, hidden at 976px+ (custom lg breakpoint) - Only for logged in users */}
       {isLoggedIn && (

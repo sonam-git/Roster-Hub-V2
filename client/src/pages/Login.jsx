@@ -6,7 +6,7 @@ import { useMutation } from "@apollo/client";
 import { GoogleLogin } from "@react-oauth/google";
 import { LOGIN_USER, LOGIN_WITH_GOOGLE, ADD_PROFILE } from "../utils/mutations";
 import Auth from "../utils/auth";
-import sketchImage from "../assets/images/sketch-removebg.png"; 
+import { ThemeContext } from "../components/ThemeContext"; 
 
 const Login = () => {
   const [loginMode, setLoginMode] = useState("login"); // "login" or "join"
@@ -21,6 +21,9 @@ const Login = () => {
   const [loginWithGoogle] = useMutation(LOGIN_WITH_GOOGLE);
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Get theme context
+  const { isDarkMode, toggleDarkMode } = React.useContext(ThemeContext);
 
   // Auto-dismiss error after 5 seconds
   React.useEffect(() => {
@@ -112,107 +115,118 @@ const Login = () => {
   };
 
   return (
-    <main className="relative overflow-hidden min-h-screen">
-      {/* Full-page Hero Image Background */}
+    <main className="relative overflow-hidden min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+      {/* Subtle background pattern */}
       <div className="absolute inset-0 z-0">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25 dark:opacity-20"
-          style={{
-            backgroundImage: `url(${sketchImage})`,
-            backgroundPosition: 'center center',
-            backgroundSize: 'cover',
-          }}
-        ></div>
-        
-        {/* Lighter gradient overlays for better text readability while keeping image visible */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50/85 via-blue-50/75 to-indigo-100/85 dark:from-gray-950/85 dark:via-slate-900/75 dark:to-indigo-950/85"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-white/25 via-transparent to-white/15 dark:from-black/25 dark:via-transparent dark:to-black/15"></div>
-      </div>
-
-      {/* Enhanced Background Elements */}
-      <div className="absolute inset-0 z-[1] overflow-hidden">
-        {/* Animated gradient orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-400/15 to-purple-400/15 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-green-400/15 to-blue-400/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-purple-400/10 to-pink-400/10 rounded-full blur-3xl animate-pulse delay-500"></div>
-        
-        {/* Enhanced Grid pattern */}
-        <div className="absolute inset-0 opacity-[0.04] dark:opacity-[0.08]" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236366f1' fill-opacity='1'%3E%3Ccircle cx='30' cy='30' r='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+        <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M0 0h60v1H0V0zm0 30h60v1H0v-1z'/%3E%3Cpath d='M0 0v60h1V0H0zm30 0v60h1V0h-1z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
         }}></div>
-        
-        {/* Enhanced Floating elements */}
-        <div className="absolute top-20 left-20 w-4 h-4 bg-gradient-to-r from-blue-400/60 to-cyan-400/60 rounded-full animate-pulse shadow-lg"></div>
-        <div className="absolute top-40 right-32 w-3 h-3 bg-gradient-to-r from-green-400/60 to-emerald-400/60 rotate-45 animate-ping shadow-lg"></div>
-        <div className="absolute bottom-32 left-32 w-3 h-3 bg-gradient-to-r from-purple-400/60 to-pink-400/60 rounded-full animate-bounce shadow-lg"></div>
-        <div className="absolute top-60 right-60 w-5 h-5 bg-gradient-to-r from-indigo-400/60 to-purple-400/60 rounded-full animate-bounce delay-300 shadow-lg"></div>
       </div>
 
-      <div className="relative z-10 container mx-auto lg:px-8 py-8 flex items-center justify-center">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full max-w-6xl">
-          {/* Left side: Logo and branding */}
-          <div className="hidden lg:flex flex-col items-center text-center space-y-6">
-            {/* Welcome message with modern styling */}
+      {/* Theme Toggle Button - Fixed in top right */}
+      <button
+        onClick={toggleDarkMode}
+        className="fixed top-4 right-4 z-50 p-3 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+        aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+      >
+        {isDarkMode ? (
+          // Sun icon for light mode
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        ) : (
+          // Moon icon for dark mode
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        )}
+      </button>
+
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-screen flex flex-col justify-center">
+        <div className="grid lg:grid-cols-2 gap-12 items-center w-full max-w-6xl mx-auto">
+          {/* Left side: Branding */}
+          <div className="hidden lg:flex flex-col space-y-8">
+            {/* Logo */}
+            <div >
+              <img
+                src={isDarkMode ? "/RH-Logo.png" : "/RH-Logo-Light.png"}
+                alt="RosterHub Logo"
+                className="w-52 h-52 object-contain"
+              />
+            </div>
+            
+            {/* Title and tagline */}
             <div className="space-y-4">
-              <h1 className="text-4xl lg:text-5xl font-oswald font-black bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 dark:from-green-400 dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent tracking-tight leading-none drop-shadow-2xl">
-                WELCOME TO <span className="text-green-500 dark:text-green-400">ROSTERHUB</span>
+              <h1 className="text-4xl font-semibold text-gray-900 dark:text-white tracking-tight">
+                Welcome to RosterHub
               </h1>
-              <div className="max-w-lg mx-auto p-4 rounded-2xl backdrop-blur-sm bg-white/60 dark:bg-black/30 border border-white/40 dark:border-white/10">
-                <p className="text-lg text-gray-800 dark:text-gray-100 font-oswald font-semibold tracking-wide drop-shadow-lg">
-                  WHERE PLAYERS <span className="text-green-500 dark:text-green-400 animate-pulse">CONNECT</span> & <span className="text-blue-500 dark:text-blue-400 animate-pulse delay-300">UNDERSTAND</span> BEFORE THE GAME!
-                </p>
-              </div>
-              <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full"></div>
+              <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
+                Streamline your team management and player coordination with professional tools designed for success.
+              </p>
             </div>
 
-            {/* Enhanced Features card */}
-            <div className="backdrop-blur-xl bg-white/30 dark:bg-black/20 rounded-2xl p-6 border border-white/40 dark:border-white/15 shadow-2xl">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 drop-shadow-md">
-                🚀 Ready to Get Started?
-              </h3>
-              <ul className="space-y-3 text-sm text-gray-700 dark:text-gray-200">
-                <li className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-green-400/80 to-emerald-500/80 dark:from-green-500/70 dark:to-emerald-600/70 rounded-xl flex items-center justify-center shadow-lg">
-                    <span className="w-2 h-2 bg-white rounded-full"></span>
-                  </div>
-                  <span className="drop-shadow-sm">Connect with your team</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-blue-400/80 to-indigo-500/80 dark:from-blue-500/70 dark:to-indigo-600/70 rounded-xl flex items-center justify-center shadow-lg">
-                    <span className="w-2 h-2 bg-white rounded-full"></span>
-                  </div>
-                  <span className="drop-shadow-sm">Track performance metrics</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-purple-400/80 to-pink-500/80 dark:from-purple-500/70 dark:to-pink-600/70 rounded-xl flex items-center justify-center shadow-lg">
-                    <span className="w-2 h-2 bg-white rounded-full"></span>
-                  </div>
-                  <span className="drop-shadow-sm">Manage game schedules</span>
-                </li>
-              </ul>
+            {/* Features list */}
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 bg-blue-100 dark:bg-blue-900/30 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">Connect with your team</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Real-time communication and updates</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 bg-blue-100 dark:bg-blue-900/30 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">Track performance metrics</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Detailed analytics and insights</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 bg-blue-100 dark:bg-blue-900/30 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">Manage game schedules</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Comprehensive scheduling tools</p>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Right side: Login Form */}
           <div className="w-full lg:w-auto">
-            <div className="backdrop-blur-xl bg-white/40 dark:bg-black/20 rounded-3xl shadow-2xl p-8 border border-white/50 dark:border-white/20 w-full max-w-md mx-auto hover:shadow-3xl transition-all duration-500">
-              <div className="text-center mb-6">
-                <h2 className="text-2xl font-oswald font-black bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 dark:from-green-400 dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-2 drop-shadow-2xl tracking-wide">
-                  {loginMode === "login" ? "WELCOME BACK! 👋" : "JOIN YOUR TEAM! 🎯"}
-                </h2>
-                <div className="max-w-sm mx-auto p-3 rounded-2xl backdrop-blur-sm bg-white/60 dark:bg-black/30 border border-white/40 dark:border-white/10">
-                  <p className="text-gray-800 dark:text-gray-100 text-sm font-oswald font-semibold tracking-wide drop-shadow-lg">
-                    {loginMode === "login" 
-                      ? "SIGN IN TO YOUR ACCOUNT TO CONTINUE" 
-                      : "ENTER YOUR TEAM CODE TO GET STARTED"
-                    }
-                  </p>
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 w-full max-w-md mx-auto">
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                    {loginMode === "login" ? "Sign in" : "Join your team"}
+                  </h2>
+                  <Link
+                    to="/"
+                    className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+                    title="Back to home"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                  </Link>
                 </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {loginMode === "login" 
+                    ? "Enter your credentials to access your account" 
+                    : "Use your team invite code to get started"
+                  }
+                </p>
               </div>
 
               {/* Mode Selector */}
               <div className="mb-6">
-                <div className="bg-gray-100/80 dark:bg-gray-700/50 backdrop-blur-md rounded-xl p-1 flex gap-1">
+                <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-1 flex gap-1">
                   <button
                     type="button"
                     onClick={() => {
@@ -220,13 +234,13 @@ const Login = () => {
                       setFormState({ name: "", email: "", password: "", inviteCode: "" });
                       setError(null);
                     }}
-                    className={`flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all ${
+                    className={`flex-1 py-2 px-4 rounded-md font-medium text-sm transition-all ${
                       loginMode === "login"
-                        ? "bg-white dark:bg-gray-600 text-green-600 dark:text-green-400 shadow-md"
+                        ? "bg-gray-50 dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
                         : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                     }`}
                   >
-                    🔑 Sign In
+                    Sign In
                   </button>
                   <button
                     type="button"
@@ -235,34 +249,34 @@ const Login = () => {
                       setFormState({ name: "", email: "", password: "", inviteCode: "" });
                       setError(null);
                     }}
-                    className={`flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all ${
+                    className={`flex-1 py-2 px-4 rounded-md font-medium text-sm transition-all ${
                       loginMode === "join"
-                        ? "bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-md"
+                        ? "bg-gray-50 dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
                         : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                     }`}
                   >
-                    👥 Join Team
+                    Join Team
                   </button>
                 </div>
               </div>
 
-                {/* Error Alert */}
+              {/* Error Alert */}
               {error && (
                 <div className="mb-6">
-                  <div className="bg-red-100/90 dark:bg-red-900/40 backdrop-blur-md border border-red-300/60 dark:border-red-700/60 text-red-800 dark:text-red-200 px-4 py-3 rounded-xl shadow-xl text-sm flex items-center gap-2 animate-pulse">
-                    <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
+                    <svg className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
                     </svg>
-                    <span className="drop-shadow-sm">{error.message}</span>
+                    <span>{error.message}</span>
                   </div>
                 </div>
               )}
 
-              <form onSubmit={handleFormSubmit} className="space-y-5">
+              <form onSubmit={handleFormSubmit} className="space-y-4">
                 {/* Name (only for join mode) */}
                 {loginMode === "join" && (
                   <div>
-                    <label htmlFor="name" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Your Name
                     </label>
                     <input
@@ -272,7 +286,7 @@ const Login = () => {
                       value={formState.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-gray-600/50 bg-gray-50/50 dark:bg-gray-700/30 backdrop-blur-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300"
+                      className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                       placeholder="Enter your name"
                       disabled={isSubmitting}
                     />
@@ -281,7 +295,7 @@ const Login = () => {
 
                 {/* Email */}
                 <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Email address
                   </label>
                   <input
@@ -291,7 +305,7 @@ const Login = () => {
                     value={formState.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-gray-600/50 bg-gray-50/50 dark:bg-gray-700/30 backdrop-blur-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300"
+                    className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                     placeholder="Enter your email"
                     disabled={isSubmitting}
                   />
@@ -299,7 +313,7 @@ const Login = () => {
 
                 {/* Password */}
                 <div>
-                  <label htmlFor="password" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Password
                   </label>
                   <input
@@ -310,7 +324,7 @@ const Login = () => {
                     onChange={handleChange}
                     required
                     minLength={loginMode === "join" ? 6 : undefined}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-gray-600/50 bg-gray-50/50 dark:bg-gray-700/30 backdrop-blur-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300"
+                    className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                     placeholder={loginMode === "join" ? "Create password (min 6 characters)" : "Enter your password"}
                     disabled={isSubmitting}
                   />
@@ -319,7 +333,7 @@ const Login = () => {
                 {/* Team Code (only for join mode) */}
                 {loginMode === "join" && (
                   <div>
-                    <label htmlFor="inviteCode" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                    <label htmlFor="inviteCode" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Team Invite Code
                     </label>
                     <input
@@ -329,13 +343,13 @@ const Login = () => {
                       value={formState.inviteCode}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-gray-600/50 bg-gray-50/50 dark:bg-gray-700/30 backdrop-blur-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 uppercase"
+                      className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors uppercase"
                       placeholder="Enter 8-digit team code"
                       maxLength={12}
                       disabled={isSubmitting}
                     />
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      🔑 Get this code from your team administrator
+                      Get this code from your team administrator
                     </p>
                   </div>
                 )}
@@ -345,30 +359,19 @@ const Login = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`group relative w-full px-8 py-4 ${
-                      loginMode === "login"
-                        ? "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
-                        : "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-                    } text-white font-oswald font-bold tracking-wide rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 text-base border ${
-                      loginMode === "login" ? "border-green-400/50" : "border-blue-400/50"
-                    } overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none`}
+                    className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <span className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                    <span className="relative flex items-center justify-center gap-2">
-                      {isSubmitting ? (
-                        <>
-                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          {loginMode === "login" ? "SIGNING IN..." : "CREATING ACCOUNT..."}
-                        </>
-                      ) : (
-                        <>
-                          {loginMode === "login" ? "🚀 SIGN IN" : "� GET STARTED"}
-                        </>
-                      )}
-                    </span>
+                    {isSubmitting ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        {loginMode === "login" ? "Signing in..." : "Creating account..."}
+                      </span>
+                    ) : (
+                      loginMode === "login" ? "Sign in" : "Create account"
+                    )}
                   </button>
                 </div>
 
@@ -376,16 +379,16 @@ const Login = () => {
                 <div className="flex flex-col sm:flex-row justify-between pt-4 gap-3 text-sm">
                   <Link
                     to="/signup"
-                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold text-center py-2 transition-colors hover:underline"
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium text-center transition-colors hover:underline underline-offset-4"
                   >
-                    🆕 Create New Team
+                    Create new team
                   </Link>
                   {loginMode === "login" && (
                     <Link
                       to="/forgot-password"
-                      className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold text-center py-2 transition-colors hover:underline"
+                      className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium text-center transition-colors hover:underline underline-offset-4"
                     >
-                      🔑 Forgot Password?
+                      Forgot password?
                     </Link>
                   )}
                 </div>
@@ -397,10 +400,10 @@ const Login = () => {
                   <div className="my-6 w-full">
                     <div className="relative">
                       <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-200/50 dark:border-gray-600/50"></div>
+                        <div className="w-full border-t border-gray-200 dark:border-gray-600"></div>
                       </div>
                       <div className="relative flex justify-center text-sm">
-                        <span className="px-3 bg-white/80 dark:bg-gray-800/80 rounded-lg text-gray-600 dark:text-gray-300 font-medium">
+                        <span className="px-3 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
                           Or continue with
                         </span>
                       </div>
@@ -409,20 +412,18 @@ const Login = () => {
 
                   {/* Google Login */}
                   <div className="flex justify-center w-full">
-                    <div className="bg-gray-50/50 dark:bg-gray-700/30 backdrop-blur-sm rounded-xl p-2 border border-gray-200/50 dark:border-gray-600/50">
-                      <GoogleLogin
-                        onSuccess={handleGoogleSuccess}
-                        onError={handleGoogleError}
-                      />
-                    </div>
+                    <GoogleLogin
+                      onSuccess={handleGoogleSuccess}
+                      onError={handleGoogleError}
+                    />
                   </div>
                 </>
               )}
 
               {/* Success Message */}
               {Auth.loggedIn() && (
-                <div className="mt-4 bg-green-100/80 dark:bg-green-900/30 backdrop-blur-md border border-green-300/50 text-green-800 dark:text-green-200 px-4 py-3 rounded-xl text-center font-semibold">
-                  🎉 Success! You are now logged in.
+                <div className="mt-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 px-4 py-3 rounded-lg text-center text-sm font-medium">
+                  Success! You are now logged in.
                 </div>
               )}
             </div>

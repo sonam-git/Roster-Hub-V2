@@ -1,6 +1,5 @@
 // src/components/Header.jsx
-
-import React, { useContext } from "react";
+import  { useContext } from "react";
 import { useQuery } from "@apollo/client";
 import { QUERY_ME, QUERY_GAMES } from "../../utils/queries";
 
@@ -18,14 +17,13 @@ import {
   HiArrowLeftOnRectangle,
   HiUserPlus,
   HiSparkles,
-  HiInformationCircle,
   HiShieldCheck
 } from "react-icons/hi2";
 
 const Header = ({ open, setOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
+  const { isDarkMode } = useContext(ThemeContext);
   const isLoggedIn = Auth.loggedIn();
 
   // Safely get organizationId
@@ -199,40 +197,6 @@ const Header = ({ open, setOpen }) => {
         <nav className="flex-1 px-2 sm:px-4 overflow-hidden py-2 mt-2">
           {/* Menu Items */}
           <div className="space-y-1">
-            {/* Theme Toggle - styled like other menu items */}
-            <div>
-              <button
-                onClick={toggleDarkMode}
-                className={`w-full flex items-center ${!open ? 'gap-0 justify-center' : 'gap-3'} rounded-lg transition-all duration-300 group relative overflow-hidden ${
-                  !open ? 'px-2 py-2' : 'px-3 py-2.5'
-                } ${
-                  isDarkMode 
-                    ? "hover:bg-gray-800 text-gray-300 hover:text-white border border-transparent" 
-                    : "hover:bg-gray-200 text-gray-700 hover:text-gray-900 border border-transparent"
-                }`}
-              >
-                {/* Theme icon div */}
-                <div className={`flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center transition-colors duration-300 ${
-                  isDarkMode ? "bg-gray-700 group-hover:bg-gray-600" : "bg-white border border-gray-300 group-hover:bg-gray-50"
-                }`}>
-                  <span className="text-sm sm:text-lg">
-                    {isDarkMode ? "☀️" : "🌙"}
-                  </span>
-                </div>
-                
-                {/* Smooth text transition */}
-                <div className={`transition-all duration-500 ease-out overflow-hidden ${
-                  open 
-                    ? "opacity-100 translate-x-0 w-auto" 
-                    : "opacity-0 -translate-x-4 w-0"
-                }`}>
-                  <span className="font-medium text-xs sm:text-sm whitespace-nowrap">
-                    {isDarkMode ? "Light Theme" : "Dark Theme"}
-                  </span>
-                </div>
-              </button>
-            </div>
-            
             {/* Divider after theme toggle */}
             {open && Auth.loggedIn() && (
               <div className={`my-3 border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-300'}`}></div>

@@ -7,218 +7,183 @@ export default function About() {
 
   const features = [
     {
-      icon: "💬",
       title: "Real-time Communication",
-      description: "Instant chat and notifications to keep your team connected"
+      description: "Instant chat and notifications to keep your team connected and informed at all times"
     },
     {
-      icon: "📅",
       title: "Game Management",
-      description: "Schedule games and track player availability with voting polls"
+      description: "Schedule games and track player availability with integrated voting and polling system"
     },
     {
-      icon: "⭐",
       title: "Skill Endorsements",
-      description: "Rate teammates and showcase individual strengths"
+      description: "Rate teammates and showcase individual strengths with comprehensive skill tracking"
     },
     {
-      icon: "👤",
       title: "Player Profiles",
-      description: "Comprehensive profiles with ratings and statistics"
+      description: "Comprehensive player profiles with detailed ratings, statistics, and performance metrics"
     },
     {
-      icon: "💭",
       title: "Social Platform",
-      description: "Share thoughts, comment, and react to team discussions"
+      description: "Share updates, comment, and engage with team discussions in a dedicated social environment"
     },
     {
-      icon: "🌙",
       title: "Modern Design",
-      description: "Dark mode support with fully responsive design"
+      description: "Professional interface with dark mode support and fully responsive design for all devices"
     },
     {
-      icon: "🏆",
       title: "League Integration",
-      description: "Access professional league results and match schedules"
+      description: "Access professional league results, match schedules, and real-time sports data"
     }
   ];
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 font-primary ${
+    <div className={`min-h-screen transition-colors duration-200 ${
       isDarkMode 
-        ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' 
-        : 'bg-gradient-to-br from-blue-50 via-white to-green-50'
+        ? 'bg-gradient-to-b from-gray-900 to-gray-800' 
+        : 'bg-gradient-to-b from-gray-50 to-white'
     }`}>
-      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-12 max-w-7xl">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M0 0h60v1H0V0zm0 30h60v1H0v-1z'/%3E%3Cpath d='M0 0v60h1V0H0zm30 0v60h1V0h-1z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+      }}></div>
+
+      <div className="relative z-10 w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-7xl">
         
-        {/* Hero Section */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-4 mb-6">
-            <div className={`w-16 h-16 rounded-full bg-gradient-to-br from-green-500 via-blue-500 to-purple-500 flex items-center justify-center shadow-2xl transform hover:scale-110 transition-all duration-300 ${
-              isDarkMode ? 'shadow-green-500/25' : 'shadow-green-500/20'
-            }`}>
-              <span className="text-2xl">⚽</span>
-            </div>
-            <h1 className={`text-2xl sm:text-2xl md:text-4xl font-anton font-bold tracking-wider ${
-              isDarkMode 
-                ? "bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 bg-clip-text text-transparent" 
-                : "bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 bg-clip-text text-transparent"
-            }`}>
-              ABOUT ROSTER HUB
-            </h1>
-          </div>
-          <p className={`text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed font-medium ${
-            isDarkMode ? 'text-gray-300' : 'text-gray-600'
+        {/* Page Header */}
+        <div className="mb-12">
+          <h1 className={`text-3xl sm:text-4xl font-semibold mb-3 ${
+            isDarkMode ? 'text-white' : 'text-gray-900'
           }`}>
-            Where passion meets technology. A comprehensive platform designed to unite teams, 
-            enhance communication, and elevate the beautiful game.
+            About RosterHub
+          </h1>
+          <p className={`text-lg max-w-3xl ${
+            isDarkMode ? 'text-gray-400' : 'text-gray-600'
+          }`}>
+            A comprehensive platform designed to unite teams, enhance communication, and elevate team management.
           </p>
         </div>
 
         {/* Developer Section */}
-        <div className={`mb-16 rounded-3xl shadow-2xl overflow-hidden transition-all duration-300 hover:shadow-3xl ${
+        <div className={`mb-12 rounded-lg shadow-sm border overflow-hidden ${
           isDarkMode 
-            ? 'bg-gradient-to-r from-gray-800/50 via-gray-700/50 to-gray-800/50 backdrop-blur-sm border border-gray-600/30' 
-            : 'bg-gradient-to-r from-white/80 via-blue-50/80 to-green-50/80 backdrop-blur-sm border border-gray-200/50'
+            ? 'bg-gray-800 border-gray-700' 
+            : 'bg-white border-gray-200'
         }`}>
-          <div className="p-8 sm:p-12">
-            <div className="flex flex-col lg:flex-row items-center gap-12">
+          <div className="p-6 sm:p-8">
+            <div className="flex flex-col lg:flex-row gap-8">
               
-              {/* Profile Image and Info */}
-              <div className="flex-shrink-0 text-center lg:text-left">
-                <div className="relative mb-6">
-                  <div className="w-48 h-48 sm:w-56 sm:h-56 mx-auto rounded-full overflow-hidden border-4 border-gradient-to-r from-green-500 to-blue-500 shadow-2xl bg-white">
-                    <img src={sjImage} alt="Sonam J Sherpa" className="object-cover w-full h-full" />
-                  </div>
-                  <div className={`absolute -bottom-2 -right-2 w-16 h-16 rounded-full flex items-center justify-center ${
-                    isDarkMode ? 'bg-green-600' : 'bg-green-500'
-                  } shadow-lg`}>
-                    <span className="text-2xl">👨‍💻</span>
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <h3 className={`text-2xl sm:text-3xl font-oswald font-bold tracking-wide ${
-                    isDarkMode ? 'text-white' : 'text-gray-800'
-                  }`}>
-                    SONAM J SHERPA
-                  </h3>
-                  <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${
-                    isDarkMode ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-100 text-blue-700'
-                  }`}>
-                    <span className="text-sm">🚀</span>
-                    <span className="font-semibold font-oswald tracking-wide">FULL-STACK DEVELOPER & SOCCER ENTHUSIAST</span>
-                  </div>
+              {/* Profile Image */}
+              <div className="flex-shrink-0">
+                <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-700">
+                  <img src={sjImage} alt="Sonam J Sherpa" className="object-cover w-full h-full" />
                 </div>
               </div>
 
-              {/* About Content */}
+              {/* Content */}
               <div className="flex-1 space-y-6">
                 <div>
-                  <h2 className={`text-2xl sm:text-3xl font-oswald font-bold mb-6 tracking-wide ${
-                    isDarkMode ? 'text-white' : 'text-gray-800'
+                  <h2 className={`text-2xl font-semibold mb-2 ${
+                    isDarkMode ? 'text-white' : 'text-gray-900'
                   }`}>
-                    THE STORY BEHIND ROSTER HUB
+                    Sonam J Sherpa
                   </h2>
+                  <p className={`text-sm mb-4 ${
+                    isDarkMode ? 'text-blue-400' : 'text-blue-600'
+                  }`}>
+                    Full-Stack Developer
+                  </p>
                   
                   <div className="space-y-4">
-                    <p className={`text-lg leading-relaxed font-medium ${
+                    <p className={`text-base leading-relaxed ${
                       isDarkMode ? 'text-gray-300' : 'text-gray-700'
                     }`}>
-                      Born from a passion for both technology and soccer, <strong className="font-oswald tracking-wide">ROSTER HUB</strong> represents 
-                      the perfect fusion of digital innovation and team sports. As an avid soccer player and 
+                      RosterHub was born from a passion for both technology and soccer. As an avid soccer player and 
                       experienced full-stack developer, I recognized the need for a comprehensive platform 
-                      that could truly unite teams.
+                      that could truly unite teams and streamline team management.
                     </p>
                     
-                    <p className={`text-lg leading-relaxed font-medium ${
+                    <p className={`text-base leading-relaxed ${
                       isDarkMode ? 'text-gray-300' : 'text-gray-700'
                     }`}>
-                      This isn't just another sports app—it's a carefully crafted ecosystem designed to 
-                      enhance every aspect of team dynamics, from game planning to skill development, 
-                      all while fostering the camaraderie that makes soccer the world's most beautiful game.
+                      This platform is designed to enhance every aspect of team dynamics, from game planning 
+                      to skill development, while fostering the camaraderie that makes team sports engaging 
+                      and rewarding.
                     </p>
                   </div>
                 </div>
 
-                {/* Enhanced Contact Section */}
-                <div className={`p-6 rounded-2xl ${
-                  isDarkMode 
-                    ? 'bg-gray-700/30 border border-gray-600/30' 
-                    : 'bg-white/60 border border-gray-200/30'
-                } backdrop-blur-sm`}>
-                  <h4 className={`text-lg font-oswald font-bold mb-4 tracking-wide ${
-                    isDarkMode ? 'text-white' : 'text-gray-800'
+                {/* Contact Section */}
+                <div className={`pt-6 border-t ${
+                  isDarkMode ? 'border-gray-700' : 'border-gray-200'
+                }`}>
+                  <h3 className={`text-sm font-medium mb-3 ${
+                    isDarkMode ? 'text-gray-400' : 'text-gray-600'
                   }`}>
-                    LET'S CONNECT
-                  </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    Connect
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <a 
                       href="mailto:sherpa.sjs@gmail.com" 
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`inline-flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 hover:scale-105 group ${
+                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                         isDarkMode 
-                          ? 'bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30' 
-                          : 'bg-red-100 hover:bg-red-200 text-red-700 border border-red-200'
+                          ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' 
+                          : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                       }`}
                     >
-                      <span className="text-xl group-hover:scale-110 transition-transform">📧</span>
-                      <div>
-                        <div className="font-oswald font-semibold text-sm tracking-wide">EMAIL</div>
-                        <div className="text-xs opacity-90">sherpa.sjs@gmail.com</div>
-                      </div>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      Email
                     </a>
 
                     <a 
                       href="https://github.com/sonam-git" 
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`inline-flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 hover:scale-105 group ${
+                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                         isDarkMode 
-                          ? 'bg-gray-500/20 hover:bg-gray-500/30 text-gray-300 border border-gray-500/30' 
-                          : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200'
+                          ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' 
+                          : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                       }`}
                     >
-                      <span className="text-xl group-hover:scale-110 transition-transform">🐱</span>
-                      <div>
-                        <div className="font-oswald font-semibold text-sm tracking-wide">GITHUB</div>
-                        <div className="text-xs opacity-90">sonam-git</div>
-                      </div>
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                      </svg>
+                      GitHub
                     </a>
 
                     <a 
                       href="https://www.linkedin.com/in/sonam-j-sherpa/" 
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`inline-flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 hover:scale-105 group ${
+                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                         isDarkMode 
-                          ? 'bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/30' 
-                          : 'bg-blue-100 hover:bg-blue-200 text-blue-700 border border-blue-200'
+                          ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' 
+                          : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                       }`}
                     >
-                      <span className="text-xl group-hover:scale-110 transition-transform">�</span>
-                      <div>
-                        <div className="font-oswald font-semibold text-sm tracking-wide">LINKEDIN</div>
-                        <div className="text-xs opacity-90">sonam-j-sherpa</div>
-                      </div>
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                      </svg>
+                      LinkedIn
                     </a>
 
                     <a 
                       href="https://sjsherpa.vercel.app/" 
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`inline-flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 hover:scale-105 group ${
+                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                         isDarkMode 
-                          ? 'bg-green-500/20 hover:bg-green-500/30 text-green-300 border border-green-500/30' 
-                          : 'bg-green-100 hover:bg-green-200 text-green-700 border border-green-200'
+                          ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' 
+                          : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                       }`}
                     >
-                      <span className="text-xl group-hover:scale-110 transition-transform">🌐</span>
-                      <div>
-                        <div className="font-oswald font-semibold text-sm tracking-wide">WEBSITE</div>
-                        <div className="text-xs opacity-90">sjsherpa.vercel.app</div>
-                      </div>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                      </svg>
+                      Website
                     </a>
                   </div>
                 </div>
@@ -228,76 +193,88 @@ export default function About() {
         </div>
 
         {/* Features Section */}
-        <div className="mb-16">
-          <div className="text-center mb-12">
-            <h3 className={`text-3xl sm:text-4xl font-oswald font-bold mb-4 tracking-wide ${
-              isDarkMode ? 'text-white' : 'text-gray-800'
-            }`}>
-              PLATFORM FEATURES
-            </h3>
-            <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mx-auto"></div>
-          </div>
+        <div className="mb-12">
+          <h2 className={`text-2xl font-semibold mb-6 ${
+            isDarkMode ? 'text-white' : 'text-gray-900'
+          }`}>
+            Platform Features
+          </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, index) => (
               <div
                 key={index}
-                className={`group p-6 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
+                className={`p-6 rounded-lg border transition-colors ${
                   isDarkMode 
-                    ? 'bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 hover:border-gray-600/50 backdrop-blur-sm' 
-                    : 'bg-white/70 hover:bg-white/90 border border-gray-200/50 hover:border-gray-300/50 backdrop-blur-sm shadow-lg'
+                    ? 'bg-gray-800 border-gray-700 hover:border-gray-600' 
+                    : 'bg-white border-gray-200 hover:border-gray-300'
                 }`}
               >
-                <div className={`w-16 h-16 rounded-2xl mb-4 flex items-center justify-center text-2xl transition-all duration-300 group-hover:scale-110 ${
-                  isDarkMode 
-                    ? 'bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/30' 
-                    : 'bg-gradient-to-br from-blue-100 to-purple-100 border border-blue-200/50'
-                }`}>
-                  {feature.icon}
+                <div className="flex items-start gap-3">
+                  <div className={`flex-shrink-0 w-2 h-2 rounded-full mt-2 ${
+                    isDarkMode ? 'bg-blue-400' : 'bg-blue-600'
+                  }`}></div>
+                  <div className="flex-1">
+                    <h3 className={`text-base font-medium mb-2 ${
+                      isDarkMode ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      {feature.title}
+                    </h3>
+                    <p className={`text-sm leading-relaxed ${
+                      isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                    }`}>
+                      {feature.description}
+                    </p>
+                  </div>
                 </div>
-                <h4 className={`text-xl font-oswald font-bold mb-3 tracking-wide ${
-                  isDarkMode ? 'text-white' : 'text-gray-800'
-                }`}>
-                  {feature.title.toUpperCase()}
-                </h4>
-                <p className={`leading-relaxed font-medium ${
-                  isDarkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}>
-                  {feature.description}
-                </p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Call to Action */}
-        <div className={`text-center p-12 rounded-3xl ${
+        {/* Technology Stack */}
+        <div className={`rounded-lg shadow-sm border p-6 sm:p-8 ${
           isDarkMode 
-            ? 'bg-gradient-to-r from-green-500/20 via-blue-500/20 to-purple-500/20 border border-green-500/30' 
-            : 'bg-gradient-to-r from-green-100/80 via-blue-100/80 to-purple-100/80 border border-green-200/50'
-        } backdrop-blur-sm shadow-2xl`}>
-          <div className="mb-6">
-            <span className="text-6xl mb-4 block">🏆</span>
-            <h3 className={`text-2xl sm:text-3xl font-bold mb-4 ${
-              isDarkMode ? 'text-white' : 'text-gray-800'
-            }`}>
-              Ready to Elevate Your Team?
-            </h3>
-            <p className={`text-lg sm:text-xl max-w-2xl mx-auto ${
-              isDarkMode ? 'text-gray-300' : 'text-gray-600'
-            }`}>
-              Join thousands of teams already using Roster Hub to transform their game experience.
-            </p>
-          </div>
-          
-          <div className={`inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 animate-pulse ${
-            isDarkMode 
-              ? 'bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white shadow-lg hover:shadow-2xl' 
-              : 'bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white shadow-xl hover:shadow-2xl'
+            ? 'bg-gray-800 border-gray-700' 
+            : 'bg-white border-gray-200'
+        }`}>
+          <h2 className={`text-2xl font-semibold mb-6 ${
+            isDarkMode ? 'text-white' : 'text-gray-900'
           }`}>
-            <span>⚽</span>
-            <span>Play as a Team, Win as a Family!</span>
-            <span>🏆</span>
+            Built With
+          </h2>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { name: 'React', description: 'Frontend Framework' },
+              { name: 'Node.js', description: 'Backend Runtime' },
+              { name: 'GraphQL', description: 'API Layer' },
+              { name: 'MongoDB', description: 'Database' },
+              { name: 'Apollo', description: 'State Management' },
+              { name: 'Tailwind CSS', description: 'Styling' },
+              { name: 'Socket.io', description: 'Real-time Chat' },
+              { name: 'JWT', description: 'Authentication' }
+            ].map((tech, index) => (
+              <div
+                key={index}
+                className={`p-4 rounded-md border text-center ${
+                  isDarkMode 
+                    ? 'bg-gray-700/50 border-gray-600' 
+                    : 'bg-gray-50 border-gray-200'
+                }`}
+              >
+                <p className={`text-sm font-medium mb-1 ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}>
+                  {tech.name}
+                </p>
+                <p className={`text-xs ${
+                  isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                }`}>
+                  {tech.description}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </div>

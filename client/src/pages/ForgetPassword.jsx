@@ -2,11 +2,14 @@ import React, { useState} from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { SEND_RESET_PASSWORD_EMAIL } from "../utils/mutations";
-import sketchImage from "../assets/images/sketch-removebg.png"; 
+import { ThemeContext } from "../components/ThemeContext";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [sendEmail, { data, error }] = useMutation(SEND_RESET_PASSWORD_EMAIL);
+
+  // Get theme context
+  const { isDarkMode, toggleDarkMode } = React.useContext(ThemeContext);
 
   const handleChange = (event) => {
     const { value } = event.target;
@@ -23,103 +26,140 @@ const ForgotPassword = () => {
   };
 
   return (
-    <main className="relative overflow-hidden  bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 dark:from-slate-900 dark:via-gray-900 dark:to-blue-950">
-      {/* Sophisticated Background Pattern - matching Hero */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Grid pattern */}
-        <div className="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]" style={{
+    <main className="relative overflow-hidden min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M0 0h60v1H0V0zm0 30h60v1H0v-1z'/%3E%3Cpath d='M0 0v60h1V0H0zm30 0v60h1V0h-1z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
         }}></div>
-        
-        {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/3 via-emerald-500/2 to-purple-500/3"></div>
-        
-        {/* Floating elements */}
-        <div className="absolute top-20 left-20 w-2 h-2 bg-blue-400/60 rounded-full animate-pulse"></div>
-        <div className="absolute top-40 right-32 w-1 h-1 bg-emerald-400/50 rounded-full animate-ping"></div>
-        <div className="absolute bottom-32 left-32 w-1.5 h-1.5 bg-purple-400/40 rounded-full animate-bounce"></div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-8  flex items-center justify-center">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full max-w-6xl">
-          {/* Left side: Logo and branding */}
-          <div className="hidden lg:flex flex-col items-center text-center space-y-6">
-            {/* Logo/Image */}
-            <div className="relative">
+      {/* Theme Toggle Button - Fixed in top right */}
+      <button
+        onClick={toggleDarkMode}
+        className="fixed top-4 right-4 z-50 p-3 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+        aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+      >
+        {isDarkMode ? (
+          // Sun icon for light mode
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        ) : (
+          // Moon icon for dark mode
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        )}
+      </button>
+
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-screen flex flex-col justify-center">
+        <div className="grid lg:grid-cols-2 gap-12 items-center w-full max-w-6xl mx-auto">
+          {/* Left side: Branding */}
+          <div className="hidden lg:flex flex-col space-y-8">
+            {/* Logo */}
+            <div>
               <img
-                src={sketchImage}
-                alt="RosterHub Sketch"
-                className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 object-contain opacity-90 hover:opacity-100 transition-all duration-500 hover:scale-105 drop-shadow-2xl"
+                src={isDarkMode ? "/RH-Logo.png" : "/RH-Logo-Light.png"}
+                alt="RosterHub Logo"
+                className="w-52 h-52 object-contain"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-full blur-2xl animate-pulse"></div>
             </div>
             
-            {/* Welcome message */}
+            {/* Title and tagline */}
             <div className="space-y-4">
-              <h1 className="text-4xl lg:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-none">
-                Recover Your <span className="text-transparent bg-gradient-to-r from-orange-600 via-red-600 to-orange-700 dark:from-orange-400 dark:via-red-400 dark:to-orange-500 bg-clip-text">Access</span>
+              <h1 className="text-4xl font-semibold text-gray-900 dark:text-white tracking-tight">
+                Recover Your Account
               </h1>
-              <p className="text-lg text-gray-600 dark:text-gray-300 font-medium">
-                Get back to connecting with your team!
+              <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
+                Get back to managing your team with a secure password reset process.
               </p>
-              <div className="w-24 h-1 bg-gradient-to-r from-orange-500 to-red-500 mx-auto rounded-full"></div>
             </div>
 
-            {/* Security info */}
-            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/30 dark:border-gray-700/40">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-                � Secure Recovery
-              </h3>
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                <li className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
-                  Reset link sent to your email
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-red-500 rounded-full"></span>
-                  Secure encrypted process
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
-                  Get back to your team quickly
-                </li>
-              </ul>
+            {/* Security features */}
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 bg-blue-100 dark:bg-blue-900/30 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">Secure reset link</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Sent directly to your registered email</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 bg-blue-100 dark:bg-blue-900/30 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">Encrypted process</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Your security is our priority</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 bg-blue-100 dark:bg-blue-900/30 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">Quick recovery</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Get back to your team in minutes</p>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Right side: Forgot Password Form */}
+          {/* Right side: Password Reset Form */}
           <div className="w-full lg:w-auto">
-            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-xl p-8 border border-white/30 dark:border-gray-700/40 w-full max-w-md mx-auto">
-              <div className="text-center mb-6">
-                <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-2">
-                  Reset Password 🔑
-                </h2>
-                <p className="text-gray-600 dark:text-gray-300 text-sm">
-                  Enter your email to receive a reset link
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 w-full max-w-md mx-auto">
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                    Reset password
+                  </h2>
+                  <Link
+                    to="/"
+                    className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+                    title="Back to home"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                  </Link>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Enter your email to receive a password reset link
                 </p>
               </div>
 
               {/* Success Message */}
               {data ? (
-                <div className="text-center space-y-6">
-                  <div className="bg-green-100/80 dark:bg-green-900/30 backdrop-blur-md border border-green-300/50 dark:border-green-700/50 text-green-800 dark:text-green-200 px-6 py-4 rounded-xl shadow-lg">
-                    <div className="text-4xl mb-3">📧</div>
-                    <h3 className="text-lg font-bold mb-2">Check Your Email!</h3>
+                <div className="space-y-6">
+                  <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 px-4 py-3 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="font-semibold">Email sent successfully!</span>
+                    </div>
                     <p className="text-sm">{data.sendResetPasswordEmail.message}</p>
                   </div>
                   
                   <Link
                     to="/login"
-                    className="inline-flex items-center gap-2 bg-gradient-to-br from-orange-600 via-red-600 to-orange-700 hover:from-orange-700 hover:via-red-700 hover:to-orange-800 text-white font-bold py-3 px-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+                    className="w-full inline-flex justify-center items-center gap-2 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 font-medium py-2.5 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors hover:underline underline-offset-4 "
                   >
-                    <span>👈 Back to Login</span>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    <span >Back to Login</span>
                   </Link>
                 </div>
               ) : (
                 <form onSubmit={handleFormSubmit} className="space-y-5">
                   {/* Email Input */}
                   <div>
-                    <label htmlFor="email" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-900 dark:text-white mb-1.5">
                       Email address
                     </label>
                     <input
@@ -129,10 +169,10 @@ const ForgotPassword = () => {
                       value={email}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-gray-600/50 bg-gray-50/50 dark:bg-gray-700/30 backdrop-blur-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300"
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                       placeholder="Enter your email address"
                     />
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1.5">
                       We'll send you a secure link to reset your password
                     </p>
                   </div>
@@ -141,19 +181,19 @@ const ForgotPassword = () => {
                   <div className="pt-2">
                     <button
                       type="submit"
-                      className="w-full bg-gradient-to-br from-orange-600 via-red-600 to-orange-700 hover:from-orange-700 hover:via-red-700 hover:to-orange-800 text-white font-bold py-3 px-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
                     >
-                      🚀 Send Reset Link
+                      Send reset link
                     </button>
                   </div>
 
                   {/* Navigation Links */}
-                  <div className="text-center pt-4">
+                  <div className="text-center pt-4 border-t border-gray-200 dark:border-gray-700">
                     <Link
                       to="/login"
-                      className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold text-sm transition-colors hover:underline"
+                      className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium text-sm transition-colors hover:underline underline-offset-4"
                     >
-                      👈 Back to Login
+                      Back to Login
                     </Link>
                   </div>
                 </form>
@@ -162,11 +202,13 @@ const ForgotPassword = () => {
               {/* Error Alert */}
               {error && (
                 <div className="mt-6">
-                  <div className="bg-red-100/80 dark:bg-red-900/30 backdrop-blur-md border border-red-300/50 dark:border-red-700/50 text-red-800 dark:text-red-200 px-4 py-3 rounded-xl shadow-lg text-sm flex items-center gap-2 animate-pulse">
-                    <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
-                    </svg>
-                    <span>{error.message}</span>
+                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 px-4 py-3 rounded-lg text-sm">
+                    <div className="flex items-start gap-2">
+                      <svg className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
+                      </svg>
+                      <p className="font-medium">{error.message}</p>
+                    </div>
                   </div>
                 </div>
               )}

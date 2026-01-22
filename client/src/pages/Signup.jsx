@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { ADD_PROFILE } from "../utils/mutations";
 import Auth from "../utils/auth";
-import sketchImage from "../assets/images/sketch-removebg.png";
-import InvitePlayersModal from "../components/InvitePlayersModal"; 
+import InvitePlayersModal from "../components/InvitePlayersModal";
+import { ThemeContext } from "../components/ThemeContext";
+import React from "react"; 
 
 const Signup = () => {
   const [formState, setFormState] = useState({
@@ -21,6 +22,9 @@ const Signup = () => {
 
   const [addProfile] = useMutation(ADD_PROFILE);
   const [isPending, startTransition] = useTransition();
+
+  // Get theme context
+  const { isDarkMode, toggleDarkMode } = React.useContext(ThemeContext);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -97,124 +101,128 @@ const Signup = () => {
   }, [showError]);
 
   return (
-    <main className="relative overflow-hidden min-h-screen">
-      {/* Full-page Hero Image Background */}
+    <main className="relative overflow-hidden min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+      {/* Subtle background pattern */}
       <div className="absolute inset-0 z-0">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25 dark:opacity-20"
-          style={{
-            backgroundImage: `url(${sketchImage})`,
-            backgroundPosition: 'center center',
-            backgroundSize: 'cover',
-          }}
-        ></div>
-        
-        {/* Lighter gradient overlays for better text readability while keeping image visible */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50/85 via-green-50/75 to-blue-100/85 dark:from-gray-950/85 dark:via-slate-900/75 dark:to-green-950/85"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-white/25 via-transparent to-white/15 dark:from-black/25 dark:via-transparent dark:to-black/15"></div>
-      </div>
-
-      {/* Enhanced Background Elements */}
-      <div className="absolute inset-0 z-[1] overflow-hidden">
-        {/* Animated gradient orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-green-400/15 to-emerald-400/15 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-blue-400/15 to-cyan-400/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400/10 to-green-400/10 rounded-full blur-3xl animate-pulse delay-500"></div>
-        
-        {/* Enhanced Grid pattern */}
-        <div className="absolute inset-0 opacity-[0.04] dark:opacity-[0.08]" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2310b981' fill-opacity='1'%3E%3Ccircle cx='30' cy='30' r='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+        <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M0 0h60v1H0V0zm0 30h60v1H0v-1z'/%3E%3Cpath d='M0 0v60h1V0H0zm30 0v60h1V0h-1z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
         }}></div>
-        
-        {/* Enhanced Floating elements */}
-        <div className="absolute top-20 left-20 w-4 h-4 bg-gradient-to-r from-green-400/60 to-emerald-400/60 rounded-full animate-pulse shadow-lg"></div>
-        <div className="absolute top-40 right-32 w-3 h-3 bg-gradient-to-r from-blue-400/60 to-cyan-400/60 rotate-45 animate-ping shadow-lg"></div>
-        <div className="absolute bottom-32 left-32 w-3 h-3 bg-gradient-to-r from-emerald-400/60 to-green-400/60 rounded-full animate-bounce shadow-lg"></div>
-        <div className="absolute top-60 right-60 w-5 h-5 bg-gradient-to-r from-green-400/60 to-blue-400/60 rounded-full animate-bounce delay-300 shadow-lg"></div>
       </div>
 
-      <div className="relative z-10 container mx-auto lg:px-8 py-8  flex items-center justify-center">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full max-w-6xl">
-          {/* Left side: Logo and branding */}
-          <div className="hidden lg:flex flex-col items-center text-center space-y-6">
-            {/* Logo/Image */}
-            <div className="relative">
+      {/* Theme Toggle Button - Fixed in top right */}
+      <button
+        onClick={toggleDarkMode}
+        className="fixed top-4 right-4 z-50 p-3 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+        aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+      >
+        {isDarkMode ? (
+          // Sun icon for light mode
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        ) : (
+          // Moon icon for dark mode
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        )}
+      </button>
+
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-screen flex flex-col justify-center">
+        <div className="grid lg:grid-cols-2 gap-12 items-center w-full max-w-6xl mx-auto">
+          {/* Left side: Branding */}
+          <div className="hidden lg:flex flex-col space-y-8">
+            {/* Logo */}
+            <div>
               <img
-                src={sketchImage}
-                alt="RosterHub Sketch"
-                className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 object-contain opacity-90 hover:opacity-100 transition-all duration-500 hover:scale-105 drop-shadow-2xl"
+                src={isDarkMode ? "/RH-Logo.png" : "/RH-Logo-Light.png"}
+                alt="RosterHub Logo"
+                className="w-52 h-52 object-contain"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-full blur-2xl animate-pulse"></div>
             </div>
             
-            {/* Welcome message */}
+            {/* Title and tagline */}
             <div className="space-y-4">
-              <h1 className="text-4xl lg:text-5xl font-oswald font-black text-gray-900 dark:text-white tracking-tight leading-none">
-                JOIN <span className="text-transparent bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-700 dark:from-emerald-400 dark:via-blue-400 dark:to-purple-500 bg-clip-text">ROSTERHUB</span>
+              <h1 className="text-4xl font-semibold text-gray-900 dark:text-white tracking-tight">
+                Create your team
               </h1>
-              <p className="text-lg text-gray-600 dark:text-gray-300 font-oswald font-medium tracking-wide">
-                WHERE PLAYERS CONNECT & UNDERSTAND BEFORE THE GAME!
+              <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
+                Start managing your team with professional tools designed for success.
               </p>
-              <div className="w-24 h-1 bg-gradient-to-r from-emerald-500 to-blue-500 mx-auto rounded-full"></div>
             </div>
 
             {/* Benefits list */}
-            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/30 dark:border-gray-700/40">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-                🎯 Why Join RosterHub?
-              </h3>
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                <li className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                  Build your championship team
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                  Advanced analytics & insights
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
-                  Real-time team communication
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
-                  Comprehensive game management
-                </li>
-              </ul>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 bg-blue-100 dark:bg-blue-900/30 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">Build your championship team</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Organize and manage players effectively</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 bg-blue-100 dark:bg-blue-900/30 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">Advanced analytics and insights</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Track performance metrics in real-time</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 bg-blue-100 dark:bg-blue-900/30 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">Comprehensive game management</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Schedule and track all your games</p>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Right side: Signup Form */}
           <div className="w-full lg:w-auto">
-            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-xl p-8 border border-white/30 dark:border-gray-700/40 w-full max-w-md mx-auto">
-              <div className="text-center mb-6">
-                <h2 className="text-2xl font-oswald font-black text-gray-900 dark:text-white mb-2 tracking-wide">
-                  CREATE YOUR TEAM 🚀
-                </h2>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-oswald font-medium tracking-wider">
-                  START MANAGING YOUR TEAM TODAY
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 w-full max-w-md mx-auto">
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                    Create your team
+                  </h2>
+                  <Link
+                    to="/"
+                    className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+                    title="Back to home"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                  </Link>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Start managing your team today
                 </p>
               </div>
 
               {/* Error Alert */}
               {showError && (
                 <div className="mb-6">
-                  <div className="bg-red-100/80 dark:bg-red-900/30 backdrop-blur-md border border-red-300/50 dark:border-red-700/50 text-red-800 dark:text-red-200 px-4 py-3 rounded-xl shadow-lg text-sm">
+                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 px-4 py-3 rounded-lg text-sm">
                     <div className="flex items-start gap-2">
                       <svg className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
                       </svg>
                       <div className="flex-1">
-                        <p className="font-semibold mb-1">{errorMessage}</p>
+                        <p className="font-medium">{errorMessage}</p>
                         {errorMessage.includes("already registered") && (
                           <Link
                             to="/login"
-                            className="inline-flex items-center gap-1 text-red-700 dark:text-red-300 hover:text-red-900 dark:hover:text-red-100 font-semibold underline mt-2"
+                            className="inline-flex items-center gap-1 text-red-700 dark:text-red-300 hover:text-red-900 dark:hover:text-red-100 font-medium mt-2 text-xs"
                           >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                            </svg>
-                            Go to Login Page
+                            Go to login page
                           </Link>
                         )}
                       </div>
@@ -226,18 +234,18 @@ const Signup = () => {
               {/* Success Message with Invite Code */}
               {showSuccess && newOrganization && (
                 <div className="mb-6">
-                  <div className="bg-green-100/80 dark:bg-green-900/30 backdrop-blur-md border border-green-300/50 dark:border-green-700/50 text-green-800 dark:text-green-200 px-4 py-3 rounded-xl shadow-lg">
+                  <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 px-4 py-3 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
                       <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="font-bold">🎉 Team Created!</span>
+                      <span className="font-semibold">Team created successfully!</span>
                     </div>
-                    <p className="text-sm mb-3">Your team "{newOrganization.name}" has been created successfully!</p>
-                    <div className="bg-white/50 dark:bg-gray-800/50 p-3 rounded-lg border border-green-300/30 dark:border-green-700/30 mb-3">
-                      <p className="text-xs font-semibold mb-1">📋 Share this code with your team:</p>
+                    <p className="text-sm mb-3">Your team "{newOrganization.name}" has been created.</p>
+                    <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md border border-green-200 dark:border-green-700 mb-3">
+                      <p className="text-xs font-medium mb-1">Share this code with your team:</p>
                       <div className="flex items-center gap-2">
-                        <code className="text-lg font-bold bg-green-50 dark:bg-green-950/50 px-3 py-1 rounded border border-green-300 dark:border-green-700">
+                        <code className="text-lg font-semibold bg-green-50 dark:bg-green-950/50 px-3 py-1 rounded border border-green-300 dark:border-green-700">
                           {newOrganization.inviteCode}
                         </code>
                         <button
@@ -246,7 +254,7 @@ const Signup = () => {
                             navigator.clipboard.writeText(newOrganization.inviteCode);
                             alert("Invite code copied to clipboard!");
                           }}
-                          className="text-xs bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded transition"
+                          className="text-xs bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded transition-colors"
                         >
                           Copy
                         </button>
@@ -256,21 +264,21 @@ const Signup = () => {
                     <button
                       type="button"
                       onClick={() => setShowInviteModal(true)}
-                      className="w-full bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center justify-center gap-2"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
-                      📧 Invite Players via Email
+                      Invite players via email
                     </button>
                   </div>
                 </div>
               )}
 
-              <form onSubmit={handleFormSubmit} className="space-y-5">
+              <form onSubmit={handleFormSubmit} className="space-y-4">
                 {/* Name / Username */}
                 <div>
-                  <label htmlFor="name" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Your Name
                   </label>
                   <input
@@ -280,7 +288,7 @@ const Signup = () => {
                     value={formState.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-gray-600/50 bg-gray-50/50 dark:bg-gray-700/30 backdrop-blur-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-300"
+                    className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                     placeholder="Enter your name"
                     disabled={isPending}
                   />
@@ -288,7 +296,7 @@ const Signup = () => {
 
                 {/* Email */}
                 <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Email Address
                   </label>
                   <input
@@ -298,7 +306,7 @@ const Signup = () => {
                     value={formState.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-gray-600/50 bg-gray-50/50 dark:bg-gray-700/30 backdrop-blur-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-300"
+                    className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                     placeholder="your.email@example.com"
                     disabled={isPending}
                   />
@@ -306,7 +314,7 @@ const Signup = () => {
 
                 {/* Password */}
                 <div>
-                  <label htmlFor="password" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Password
                   </label>
                   <input
@@ -317,7 +325,7 @@ const Signup = () => {
                     onChange={handleChange}
                     required
                     minLength={6}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-gray-600/50 bg-gray-50/50 dark:bg-gray-700/30 backdrop-blur-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-300"
+                    className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                     placeholder="Minimum 6 characters"
                     disabled={isPending}
                   />
@@ -325,7 +333,7 @@ const Signup = () => {
 
                 {/* Team Name */}
                 <div>
-                  <label htmlFor="teamName" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                  <label htmlFor="teamName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Team Name <span className="text-gray-500 font-normal text-xs">(Optional)</span>
                   </label>
                   <input
@@ -334,7 +342,7 @@ const Signup = () => {
                     type="text"
                     value={formState.teamName}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-gray-600/50 bg-gray-50/50 dark:bg-gray-700/30 backdrop-blur-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-300"
+                    className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                     placeholder="e.g., My Team FC"
                     disabled={isPending}
                   />
@@ -348,18 +356,18 @@ const Signup = () => {
                   <button
                     type="submit"
                     disabled={isPending}
-                    className="w-full bg-gradient-to-br from-emerald-600 via-blue-600 to-purple-700 hover:from-emerald-700 hover:via-blue-700 hover:to-purple-800 text-white font-oswald font-bold tracking-wide py-3 px-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isPending ? (
                       <span className="flex items-center justify-center gap-2">
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        CREATING TEAM...
+                        Creating team...
                       </span>
                     ) : (
-                      "🚀 CREATE TEAM"
+                      "Create team"
                     )}
                   </button>
                 </div>
@@ -368,15 +376,15 @@ const Signup = () => {
                 <div className="text-center pt-4">
                   <Link
                     to="/login"
-                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold text-sm transition-colors hover:underline"
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium text-sm transition-colors hover:underline underline-offset-4"
                   >
-                    Already have an account? Sign in here
+                    Already have an account? Sign in
                   </Link>
                 </div>
               </form>
 
               {/* Terms notice */}
-              <div className="mt-6 p-4 bg-gray-50/50 dark:bg-gray-700/30 rounded-xl border border-gray-200/50 dark:border-gray-600/50">
+              <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-md border border-gray-200 dark:border-gray-600">
                 <p className="text-xs text-gray-600 dark:text-gray-400 text-center">
                   By creating an account, you agree to our{' '}
                   <Link to="/terms" className="text-blue-600 dark:text-blue-400 hover:underline">
