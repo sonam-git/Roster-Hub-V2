@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import ProfileList from '../components/ProfileList';
 import { QUERY_PROFILES } from '../utils/queries';
+import Spinner from '../components/Spinner';
 import Auth from '../utils/auth'; 
 import { ThemeContext } from '../components/ThemeContext';
 import { useOrganization } from '../contexts/OrganizationContext';
@@ -48,16 +49,7 @@ const Roster = () => {
 
   // Loading state for organization
   if (!currentOrganization) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
-            Loading organization...
-          </p>
-        </div>
-      </div>
-    );
+    return <Spinner fullScreen />;
   }
 
   if (loading) {

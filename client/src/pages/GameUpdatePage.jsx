@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { QUERY_GAME } from "../utils/queries";
 import { useOrganization } from "../contexts/OrganizationContext";
+import Spinner from "../components/Spinner";
 import GameUpdate from "../components/GameUpdate";
 import { ThemeContext } from "../components/ThemeContext";
 import Auth from "../utils/auth";
@@ -74,16 +75,7 @@ const GameUpdatePage = () => {
 
   // Loading state for organization
   if (!currentOrganization) {
-    return (
-      <div className={`min-h-screen flex items-center justify-center px-4 ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}>
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className={`text-lg font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-            Loading organization...
-          </p>
-        </div>
-      </div>
-    );
+    return <Spinner fullScreen />;
   }
 
   if (loading) {

@@ -3,6 +3,7 @@ import React, { useState, useContext } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_ME } from "../../utils/queries";
 import { SAVE_SOCIAL_MEDIA_LINK, REMOVE_SOCIAL_MEDIA_LINK, UPDATE_PHONE_NUMBER } from "../../utils/mutations";
+import Spinner from "../Spinner";
 import { FaTrash, FaStar, FaTshirt, FaRunning, FaPhone } from "react-icons/fa";
 import ProfilePicUploader from "../ProfilePicUploader";
 import ProfileManagement from "../ProfileManangement";
@@ -41,7 +42,7 @@ const MyProfile = () => {
     refetchQueries: [{ query: QUERY_ME }],
   });
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Spinner />;
 
   const saveLink = async () => {
     if (!socialMediaLink.trim()) {

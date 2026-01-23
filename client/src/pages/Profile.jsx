@@ -3,6 +3,7 @@ import { Navigate, useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { QUERY_SINGLE_PROFILE, QUERY_ME } from "../utils/queries";
 import { useOrganization } from "../contexts/OrganizationContext";
+import Spinner from "../components/Spinner";
 
 import Auth from "../utils/auth";
 import UserProfile from "../components/UserProfile";
@@ -69,18 +70,11 @@ const Profile = () => {
 
   // Loading state for organization
   if (!currentOrganization) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-300">Loading organization...</p>
-        </div>
-      </div>
-    );
+    return <Spinner />;
   }
 
   if (loading) {
-    return <div className="text-center mt-4">Loading...</div>;
+    return <Spinner />;
   }
 
   if (error) {

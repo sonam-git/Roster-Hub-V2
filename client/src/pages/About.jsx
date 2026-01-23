@@ -50,15 +50,11 @@ export default function About() {
       <div className="relative z-10 w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-7xl">
         
         {/* Page Header */}
-        <div className="mb-12">
-          <h1 className={`text-3xl sm:text-4xl font-semibold mb-3 ${
-            isDarkMode ? 'text-white' : 'text-gray-900'
-          }`}>
+        <div className="flex-1 w-full lg:w-auto text-center mb-4">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-2">
             About RosterHub
           </h1>
-          <p className={`text-lg max-w-3xl ${
-            isDarkMode ? 'text-gray-400' : 'text-gray-600'
-          }`}>
+          <p className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-gray-400">
             A comprehensive platform designed to unite teams, enhance communication, and elevate team management.
           </p>
         </div>

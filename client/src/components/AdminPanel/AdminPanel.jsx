@@ -158,7 +158,7 @@ const AdminPanel = () => {
       {/* Header */}
       <div className="mb-6 sm:mb-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4 sm:mb-6">
-            <div className="flex-1 w-full lg:w-auto">
+            <div className="flex-1 w-full lg:w-auto text-center">
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
                 Admin Panel
               </h1>

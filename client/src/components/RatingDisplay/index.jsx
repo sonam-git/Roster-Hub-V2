@@ -3,6 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { FaStar, FaRegStar } from "react-icons/fa";
+import Spinner from "../Spinner";
 import ProfileAvatar from "../../assets/images/profile-avatar.png";
 import { QUERY_PROFILES } from "../../utils/queries";
 import { useOrganization } from "../../contexts/OrganizationContext";
@@ -19,13 +20,7 @@ export default function RatingDisplay({ limit = 10 }) {
 
   // Loading state for organization
   if (!currentOrganization) {
-    return (
-      <div className="flex justify-center items-center p-8">
-        <div className="animate-pulse text-gray-500 dark:text-gray-400">
-          Loading organization...
-        </div>
-      </div>
-    );
+    return <Spinner size="sm" />;
   }
 
   if (loading) {

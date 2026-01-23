@@ -1,6 +1,7 @@
 import { useQuery, useSubscription } from "@apollo/client";
 import { useState, useEffect } from "react";
 import { QUERY_GAMES } from "../../utils/queries";
+import Spinner from "../Spinner";
 import { GAME_CREATED_SUBSCRIPTION, GAME_CONFIRMED_SUBSCRIPTION, GAME_UPDATED_SUBSCRIPTION, GAME_COMPLETED_SUBSCRIPTION, GAME_CANCELLED_SUBSCRIPTION, GAME_DELETED_SUBSCRIPTION } from "../../utils/subscription";
 import { categorizeGamesByStatus, getGameEffectiveStatus } from "../../utils/gameExpiration";
 import { useOrganization } from "../../contexts/OrganizationContext";
@@ -44,19 +45,10 @@ export default function CustomComingGames({ isDarkMode }) {
 
   // Loading state for organization
   if (!currentOrganization) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
-            Loading organization...
-          </p>
-        </div>
-      </div>
-    );
+    return <Spinner />;
   }
 
-  if (loading) return <div className="text-center mt-4">Loading games...</div>;
+  if (loading) return <Spinner />;
   if (error) return <div className="text-center mt-4 text-red-600">Error: {error.message}</div>;
 
   // Get all games and categorize them by effective status (including expired)
@@ -83,7 +75,7 @@ export default function CustomComingGames({ isDarkMode }) {
       <div className="mt-4 mb-6 w-full max-w-full overflow-hidden px-2 sm:px-0">
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4 sm:mb-6">
-            <div className="flex-1 w-full lg:w-auto">
+            <div className="flex-1 w-full lg:w-auto text-center">
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-2">
                 Upcoming Games
               </h1>
@@ -136,7 +128,7 @@ export default function CustomComingGames({ isDarkMode }) {
       {/* Header Section */}
       <div className="mb-6 sm:mb-8">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4 sm:mb-6">
-          <div className="flex-1 w-full lg:w-auto">
+          <div className="flex-1 w-full lg:w-auto text-center">
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               Upcoming Games
             </h1>
@@ -147,34 +139,36 @@ export default function CustomComingGames({ isDarkMode }) {
         </div>
 
         {/* Category Filter Buttons */}
-        <div className="flex flex-wrap gap-2">
-          {categories.map((category) => (
-            <button
-              key={category.key}
-              onClick={() => setSelectedCategory(category.key)}
-              className={`inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors duration-200 border ${
-                selectedCategory === category.key
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : isDarkMode
-                    ? "bg-gray-800 hover:bg-gray-700 text-gray-200 border-gray-700"
-                    : "bg-white hover:bg-gray-50 text-gray-700 border-gray-300"
-              }`}
-            >
-              <span className="text-sm sm:text-base">{category.icon}</span>
-              <span className="whitespace-nowrap">{category.label}</span>
-              {category.count > 0 && (
-                <span className={`inline-flex items-center justify-center min-w-[18px] sm:min-w-[20px] h-4 sm:h-5 px-1.5 sm:px-2 rounded-full text-xs font-semibold ${
+        <div className="overflow-x-auto pb-2 -mx-2 px-2 sm:mx-0 sm:px-0">
+          <div className="flex gap-2 justify-start sm:justify-center min-w-max sm:min-w-0 sm:flex-wrap">
+            {categories.map((category) => (
+              <button
+                key={category.key}
+                onClick={() => setSelectedCategory(category.key)}
+                className={`inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors duration-200 border flex-shrink-0 ${
                   selectedCategory === category.key
-                    ? "bg-white/20 text-white"
+                    ? 'bg-blue-600 text-white border-blue-600'
                     : isDarkMode
-                      ? "bg-gray-700 text-gray-300"
-                      : "bg-gray-100 text-gray-600"
-                }`}>
-                  {category.count}
-                </span>
-              )}
-            </button>
-          ))}
+                      ? "bg-gray-800 hover:bg-gray-700 text-gray-200 border-gray-700"
+                      : "bg-white hover:bg-gray-50 text-gray-700 border-gray-300"
+                }`}
+              >
+                <span className="text-sm sm:text-base">{category.icon}</span>
+                <span className="whitespace-nowrap">{category.label}</span>
+                {category.count > 0 && (
+                  <span className={`inline-flex items-center justify-center min-w-[18px] sm:min-w-[20px] h-4 sm:h-5 px-1.5 sm:px-2 rounded-full text-xs font-semibold ${
+                    selectedCategory === category.key
+                      ? "bg-white/20 text-white"
+                      : isDarkMode
+                        ? "bg-gray-700 text-gray-300"
+                        : "bg-gray-100 text-gray-600"
+                  }`}>
+                    {category.count}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

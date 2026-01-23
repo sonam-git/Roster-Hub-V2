@@ -5,6 +5,7 @@ import { useQuery } from "@apollo/client";
 import GameList from "../components/GameList";
 import GameForm from "../components/GameForm";
 import GameDetails from "../components/GameDetails";
+import Spinner from "../components/Spinner";
 import { ThemeContext } from "../components/ThemeContext";
 import { useOrganization } from "../contexts/OrganizationContext";
 
@@ -97,16 +98,7 @@ const Game = () => {
 
   // Loading state for organization
   if (!currentOrganization) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
-            Loading organization...
-          </p>
-        </div>
-      </div>
-    );
+    return <Spinner fullScreen />;
   }
 
   // Loading state
@@ -154,7 +146,7 @@ const Game = () => {
     );
   }
   if (loadingGame) {
-    return <div className="text-center p-4">Loading...</div>;
+    return <Spinner />;
   }
   if (gameError) {
     return <div className="text-center p-4 text-red-600">Error loading data</div>;

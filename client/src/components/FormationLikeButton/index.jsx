@@ -25,6 +25,14 @@ export default function FormationLikeButton({
   /* keep state in-sync if parent sends new props */
   useEffect(() => {
     setState((prev) => {
+      // Only update if we actually have meaningful prop data
+      // and it differs from current state
+      const hasMeaningfulProps = propLikes > 0 || propLikedBy.length > 0;
+      
+      if (!hasMeaningfulProps) {
+        return prev; // Don't override local state with default props
+      }
+
       const changed =
         prev.likes !== propLikes ||
         prev.likedBy.length !== propLikedBy.length ||
@@ -54,10 +62,25 @@ export default function FormationLikeButton({
     onData: ({ data }) => {
       const updated = data.data?.formationLiked;
       if (!updated) return;
-      startTransition(() =>
-        setState({ likes: updated.likes, likedBy: updated.likedBy ?? [] })
-      );
-      onUpdate?.(updated);
+      
+      // Update local state
+      startTransition(() => {
+        setState((prev) => {
+          // Only update if data actually changed
+          const changed = 
+            prev.likes !== updated.likes ||
+            prev.likedBy.length !== (updated.likedBy?.length ?? 0);
+          
+          return changed 
+            ? { likes: updated.likes, likedBy: updated.likedBy ?? [] }
+            : prev;
+        });
+      });
+      
+      // Only notify parent if callback exists
+      if (onUpdate) {
+        onUpdate(updated);
+      }
     },
   });
 

@@ -6,6 +6,7 @@ import {
   POST_UPDATED_SUBSCRIPTION,
   POST_DELETED_SUBSCRIPTION,
 } from "../../utils/subscription";
+import Spinner from "../Spinner";
 import Post from "../Post";
 import Auth from "../../utils/auth";
 import { useOrganization } from "../../contexts/OrganizationContext";
@@ -76,17 +77,10 @@ const PostsList = ({ profileId, profile }) => {
 
   // Loading state for organization
   if (!currentOrganization) {
-    return (
-      <div className="flex items-center justify-center py-8">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
-          <p className="text-gray-600 dark:text-gray-300 text-sm">Loading organization...</p>
-        </div>
-      </div>
-    );
+    return <Spinner size="sm" />;
   }
 
-  if (loading) return <div>Loading posts...</div>;
+  if (loading) return <Spinner size="sm" />;
   if (error) return <div>Error loading posts.</div>;
   
   // Get the logged-in user ID

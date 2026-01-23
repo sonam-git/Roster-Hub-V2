@@ -191,62 +191,58 @@ function CommentsPane({ gameId, formationId: propFormationId }) {
   // Show placeholder when no formation exists
   if (!formationId) {
     return (
-      <div className="flex flex-col w-full h-full items-center justify-center p-8">
-        <div className="max-w-md w-full bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-750 rounded-2xl border-2 border-dashed border-blue-300 dark:border-blue-700 p-8 text-center shadow-lg">
-          {/* Icon */}
-          <div className="mb-6 flex justify-center">
-            <div className="relative">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-indigo-500 dark:from-blue-600 dark:to-indigo-700 rounded-full flex items-center justify-center shadow-lg">
-                <span className="text-4xl">📋</span>
+      <div className="flex flex-col w-full h-full items-center justify-center p-6">
+        <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700 shadow-sm overflow-hidden">
+          {/* Top accent */}
+          <div className="h-1 bg-gradient-to-r from-gray-400 to-gray-500"></div>
+          
+          <div className="p-6 text-center">
+            {/* Icon */}
+            <div className="mb-4 flex justify-center">
+              <div className="w-14 h-14 bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center">
+                <svg className="w-7 h-7 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
               </div>
-              <div className="absolute -top-1 -right-1 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center shadow-md animate-bounce">
-                <span className="text-lg">✨</span>
+            </div>
+
+            {/* Title */}
+            <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2">
+              Formation Not Available
+            </h3>
+
+            {/* Message */}
+            <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-5">
+              The tactical formation will be available here once it's created. You'll be able to discuss strategies with your teammates.
+            </p>
+
+            {/* Features */}
+            <div className="space-y-2 text-left bg-gray-50 dark:bg-gray-900 rounded-md p-4 border border-gray-200 dark:border-gray-700">
+              <div className="flex items-start gap-2.5">
+                <svg className="w-4 h-4 text-green-600 dark:text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+                <p className="text-xs text-gray-700 dark:text-gray-300">
+                  Share tactical insights
+                </p>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <svg className="w-4 h-4 text-green-600 dark:text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+                <p className="text-xs text-gray-700 dark:text-gray-300">
+                  Discuss team strategies
+                </p>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <svg className="w-4 h-4 text-green-600 dark:text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+                <p className="text-xs text-gray-700 dark:text-gray-300">
+                  Engage with teammates
+                </p>
               </div>
             </div>
-          </div>
-
-          {/* Title */}
-          <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-3">
-            Formation Not Created Yet
-          </h3>
-
-          {/* Message */}
-          <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">
-            Once the formation is created, the comment form and list will be displayed here, where you can react or give your opinion regarding the formation.
-          </p>
-
-          {/* Features List */}
-          <div className="mt-6 space-y-2 text-left">
-            <div className="flex items-start gap-2">
-              <span className="text-green-500 mt-0.5">✓</span>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                Share your tactical insights
-              </p>
-            </div>
-            <div className="flex items-start gap-2">
-              <span className="text-green-500 mt-0.5">✓</span>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                React to team strategies
-              </p>
-            </div>
-            <div className="flex items-start gap-2">
-              <span className="text-green-500 mt-0.5">✓</span>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                Collaborate with teammates
-              </p>
-            </div>
-          </div>
-
-          {/* Waiting Indicator */}
-          <div className="mt-6 flex items-center justify-center gap-2">
-            <div className="flex gap-1">
-              <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-              <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-              <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-            </div>
-            <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">
-              Waiting for formation
-            </span>
           </div>
         </div>
       </div>
@@ -263,33 +259,32 @@ function CommentsPane({ gameId, formationId: propFormationId }) {
       {/* Comments List Section */}
       <div className="flex-1 min-h-0">
         {sorted.length > 0 ? (
-          <div className="bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-600 shadow-sm overflow-hidden">
+          <div className="relative overflow-hidden bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700 shadow-sm">
+            {/* Top accent bar */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-indigo-600"></div>
+            
             {/* Comments Header */}
-            <div className="sticky top-0 z-1 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600 border-b border-gray-200 dark:border-gray-600 px-4 py-3">
+            <div className="border-b border-gray-200 dark:border-gray-700 px-5 py-3 bg-gray-50 dark:bg-gray-900">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">💭</span>
-                  <h4 className="font-semibold text-gray-800 dark:text-white">
-                    Discussion
+                <div className="flex items-center gap-2.5">
+                  <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+                    Comments
                   </h4>
                 </div>
-                <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 dark:bg-blue-900 rounded-full">
-                  <span className="text-xs font-medium text-blue-800 dark:text-blue-200">
-                    {sorted.length} comment{sorted.length !== 1 ? 's' : ''}
-                  </span>
+                <div className="px-2.5 py-1 bg-gray-200 dark:bg-gray-700 rounded text-xs font-medium text-gray-700 dark:text-gray-300">
+                  {sorted.length}
                 </div>
               </div>
             </div>
             
             {/* Comments List */}
-            <div className="max-h-[600px] overflow-y-auto custom-scrollbar">
-              <div className="divide-y divide-gray-100 dark:divide-gray-700">
-                {sorted.map((comment, index) => (
-                  <div key={comment._id} className={`transition-colors duration-200 ${
-                    index % 2 === 0 
-                      ? 'bg-white dark:bg-gray-800' 
-                      : 'bg-gray-50 dark:bg-gray-750'
-                  }`}>
+            <div className="max-h-[600px] overflow-y-auto">
+              <div className="divide-y divide-gray-200 dark:divide-gray-700 ">
+                {sorted.map((comment) => (
+                  <div key={comment._id} className="bg-gray-50 dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
                     <FormationCommentItem
                       comment={comment}
                       formationId={formationId}
@@ -300,20 +295,28 @@ function CommentsPane({ gameId, formationId: propFormationId }) {
             </div>
             
             {/* Footer */}
-            <div className="border-t border-gray-200 dark:border-gray-600 px-4 py-2 bg-gray-50 dark:bg-gray-700">
+            <div className="border-t border-gray-200 dark:border-gray-700 px-5 py-2.5 bg-gray-50 dark:bg-gray-900">
               <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                💡 Share constructive feedback to help improve team strategy
+                Share constructive feedback to improve team strategy
               </p>
             </div>
           </div>
         ) : (
-          <div className="text-center py-8 px-4">
-            <div className="inline-block p-4 bg-gray-100 dark:bg-gray-800 rounded-full mb-3">
-              <span className="text-3xl">💬</span>
+          <div className="relative overflow-hidden bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700 shadow-sm">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gray-400 to-gray-500"></div>
+            <div className="text-center py-12 px-4">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-md mb-3">
+                <svg className="w-6 h-6 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+              </div>
+              <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
+                No comments yet
+              </h4>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Be the first to share your thoughts on this formation
+              </p>
             </div>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
-              No comments yet. Be the first to share your thoughts!
-            </p>
           </div>
         )}
       </div>

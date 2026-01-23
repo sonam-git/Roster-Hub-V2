@@ -2,6 +2,7 @@ import { useQuery, useSubscription, useMutation } from "@apollo/client";
 import { useEffect, useState } from "react";
 import { QUERY_PROFILES } from "../../utils/queries";
 import { SKILL_ADDED_SUBSCRIPTION, SKILL_DELETED_SUBSCRIPTION } from "../../utils/subscription";
+import Spinner from "../Spinner";
 import SkillReaction from "../SkillsList/SkillReaction";
 import { REACT_TO_SKILL, ADD_SKILL } from "../../utils/mutations";
 import { FaUserCircle, FaStar, FaTimes } from "react-icons/fa";
@@ -92,29 +93,11 @@ export default function AllSkillsList({ isDarkMode }) {
 
   // Loading state for organization
   if (!currentOrganization) {
-    return (
-      <div className="flex items-center justify-center min-h-[40vh]">
-        <div className={`text-center p-8 rounded-2xl shadow-2xl backdrop-blur-sm border ${
-          isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 border-gray-200'
-        }`}>
-          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className={`font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading organization...</p>
-        </div>
-      </div>
-    );
+    return <Spinner />;
   }
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[40vh]">
-        <div className={`text-center p-8 rounded-2xl shadow-2xl backdrop-blur-sm border ${
-          isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 border-gray-200'
-        }`}>
-          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className={`font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading skills...</p>
-        </div>
-      </div>
-    );
+    return <Spinner />;
   }
   
   if (error) {
