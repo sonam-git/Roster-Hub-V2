@@ -154,6 +154,12 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
           <Header open={sidebarOpen} setOpen={setSidebarOpen} />
         </div>
         <div className={`flex-1 transition-all duration-300 pt-40 lg:pt-24 relative z-[2] flex flex-col overflow-x-hidden`}>
+                {/* Subtle background pattern */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M0 0h60v1H0V0zm0 30h60v1H0v-1z'/%3E%3Cpath d='M0 0v60h1V0H0zm30 0v60h1V0h-1z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+        }}></div>
+      </div>
           <main role="main" className="flex-1 overflow-x-hidden">
             <Routes>
             <Route path="/" element={<Home />} />
