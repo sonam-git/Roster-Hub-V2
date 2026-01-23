@@ -17,7 +17,9 @@ import {
   HiArrowLeftOnRectangle,
   HiUserPlus,
   HiSparkles,
-  HiShieldCheck
+  HiShieldCheck,
+  HiInformationCircle
+
 } from "react-icons/hi2";
 
 const Header = ({ open, setOpen }) => {
@@ -92,7 +94,7 @@ const Header = ({ open, setOpen }) => {
           badge: gameBadgeCount,
         },
         { title: "ScoreBoard", icon: HiTrophy, path: "/scoreboard" },
-        // { title: "About", icon: HiInformationCircle, path: "/about" },
+        { title: "Game-History", icon: HiInformationCircle, path: "/game-history" },
         { title: "Logout", icon: HiArrowRightOnRectangle, action: handleLogout },
       ]
     : [

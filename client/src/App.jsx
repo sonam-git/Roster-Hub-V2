@@ -30,6 +30,7 @@ import GameCreate from "./pages/GameCreate";
 import GameSearch from "./pages/GameSearch";
 import GameUpdatePage from "./pages/GameUpdatePage";
 import Score from "./pages/Score";
+import GameHistory from "./pages/GameHistory";
 import ForgotPassword from "./pages/ForgetPassword";
 import PasswordReset from "./pages/PasswordReset";
 import AdminPanel from "./pages/AdminPanel";
@@ -184,6 +185,7 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
               element={<Game isDarkMode={isDarkMode} />}
             />
             <Route path="/scoreboard" element={<Score />} />
+            <Route path="/game-history" element={<GameHistory />} />
             <Route path="/about" element={<About />} />
             <Route path="/game-update/:gameId" element={<GameUpdatePage />} />
             <Route path="/admin" element={<AdminPanel />} />

@@ -46,6 +46,7 @@ export default function TopHeader({ className, onToggleMenu, open }) {
   
   // Dynamic buttons based on owner status
   const BUTTONS = isOwner ? [
+     { key: "home", label: "Home", icon: faHome, path: "/" },
     { key: "admin", label: "Admin", icon: faShieldAlt, path: "/admin" },
     { key: "gameschedule", label: "Upcoming", icon: faCalendarAlt, path: "/upcoming-games" },
     { key: "creategame", label: "Create Game", icon: faPlus, path: "/game-create" },
@@ -527,7 +528,7 @@ export default function TopHeader({ className, onToggleMenu, open }) {
             aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
           >
             <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} className="text-lg" />
-            <span className="text-[10px] font-bold tracking-wide">Theme</span>
+            <span className="text-[10px] font-bold tracking-wide">Home</span>
           </button>
         </div>
       </div>
