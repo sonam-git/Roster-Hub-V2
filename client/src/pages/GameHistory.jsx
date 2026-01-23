@@ -156,22 +156,29 @@ const GameHistory = () => {
   };
 
   const getResultBadge = (result) => {
-    if (!result) return null;
+    if (!result) {
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium border bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700">
+          <span>⏳</span>
+          <span>Not Played</span>
+        </span>
+      );
+    }
     
     const resultConfig = {
-      WIN: {
+      HOME_WIN: {
         bg: 'bg-green-50 dark:bg-green-900/20',
         text: 'text-green-700 dark:text-green-300',
         border: 'border-green-200 dark:border-green-800',
         icon: '🏆',
-        label: 'Win'
+        label: 'Home Win'
       },
-      LOSS: {
+      AWAY_WIN: {
         bg: 'bg-red-50 dark:bg-red-900/20',
         text: 'text-red-700 dark:text-red-300',
         border: 'border-red-200 dark:border-red-800',
-        icon: '😔',
-        label: 'Loss'
+        icon: '🏁',
+        label: 'Away Win'
       },
       DRAW: {
         bg: 'bg-yellow-50 dark:bg-yellow-900/20',
@@ -179,10 +186,17 @@ const GameHistory = () => {
         border: 'border-yellow-200 dark:border-yellow-800',
         icon: '🤝',
         label: 'Draw'
+      },
+      NOT_PLAYED: {
+        bg: 'bg-gray-50 dark:bg-gray-800',
+        text: 'text-gray-600 dark:text-gray-400',
+        border: 'border-gray-200 dark:border-gray-700',
+        icon: '⏳',
+        label: 'Not Played'
       }
     };
 
-    const config = resultConfig[result] || resultConfig.DRAW;
+    const config = resultConfig[result] || resultConfig.NOT_PLAYED;
 
     return (
       <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium border ${config.bg} ${config.text} ${config.border}`}>
@@ -295,7 +309,7 @@ const GameHistory = () => {
               placeholder="Search by opponent, venue, city, or notes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md leading-5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md leading-5 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
         </div>

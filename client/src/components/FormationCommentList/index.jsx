@@ -192,7 +192,7 @@ function CommentsPane({ gameId, formationId: propFormationId }) {
   if (!formationId) {
     return (
       <div className="flex flex-col w-full h-full items-center justify-center p-6">
-        <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700 shadow-sm overflow-hidden">
+        <div className="max-w-md w-full bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700 shadow-sm overflow-hidden">
           {/* Top accent */}
           <div className="h-1 bg-gradient-to-r from-gray-400 to-gray-500"></div>
           
@@ -284,7 +284,7 @@ function CommentsPane({ gameId, formationId: propFormationId }) {
             <div className="max-h-[600px] overflow-y-auto">
               <div className="divide-y divide-gray-200 dark:divide-gray-700 ">
                 {sorted.map((comment) => (
-                  <div key={comment._id} className="bg-gray-50 dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
+                  <div key={comment._id} className="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-750 transition-colors">
                     <FormationCommentItem
                       comment={comment}
                       formationId={formationId}
@@ -302,7 +302,7 @@ function CommentsPane({ gameId, formationId: propFormationId }) {
             </div>
           </div>
         ) : (
-          <div className="relative overflow-hidden bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700 shadow-sm">
+          <div className="relative overflow-hidden bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700 shadow-sm">
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gray-400 to-gray-500"></div>
             <div className="text-center py-12 px-4">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-md mb-3">

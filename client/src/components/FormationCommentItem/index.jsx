@@ -109,7 +109,7 @@ export default function FormationCommentItem({ comment, formationId }) {
   };
 
   return (
-    <div className="group p-4 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150">
+    <div className="group p-4 hover:bg-gray-200 dark:hover:bg-gray-850 transition-colors duration-150">
       {editing ? (
         <div className="space-y-3">
           <div className="flex items-center gap-2.5 mb-3">

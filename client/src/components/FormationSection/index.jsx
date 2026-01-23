@@ -432,7 +432,7 @@ export default function FormationSection({
               <div className={`rounded-lg p-5 border transition-colors ${
                 isDarkMode 
                   ? "bg-gray-800 border-gray-700" 
-                  : "bg-white border-gray-200"
+                  : "bg-gray-50 border-gray-200"
               }`}>
                 <div className="flex items-center gap-3 mb-5">
                   <div className={`flex items-center justify-center w-10 h-10 rounded-md ${
@@ -462,7 +462,7 @@ export default function FormationSection({
             <div className={`rounded-lg p-5 border transition-colors ${
               isDarkMode 
                 ? "bg-gray-800 border-gray-700" 
-                : "bg-white border-gray-200"
+                : "bg-gray-50 border-gray-200"
             }`}>
               <div className="flex items-center gap-3 mb-5">
                 <div className={`flex items-center justify-center w-10 h-10 rounded-md ${
@@ -596,7 +596,7 @@ export default function FormationSection({
           <div className={`relative p-6 rounded-lg shadow-xl border max-w-md w-full ${
             isDarkMode 
               ? 'bg-gray-800 border-gray-700' 
-              : 'bg-white border-gray-200'
+              : 'bg-gray-50 border-gray-200'
           }`}>
             {/* Warning Icon */}
             <div className={`w-12 h-12 rounded-md flex items-center justify-center mb-4 ${

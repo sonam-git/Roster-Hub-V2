@@ -14,12 +14,22 @@ const GameFeedback = ({ gameId, isDarkMode, onFeedback }) => {
 
   // Get game data to access available players
   const { data: gameData } = useQuery(QUERY_GAME, {
-    variables: { gameId },
+    variables: { 
+      gameId,
+      organizationId: currentOrganization?._id 
+    },
+    skip: !currentOrganization,
     fetchPolicy: "cache-first",
   });
 
   const [addFeedback, { loading, error }] = useMutation(ADD_FEEDBACK, {
-    refetchQueries: [{ query: QUERY_GAME, variables: { gameId } }],
+    refetchQueries: [{ 
+      query: QUERY_GAME, 
+      variables: { 
+        gameId,
+        organizationId: currentOrganization?._id 
+      } 
+    }],
     awaitRefetchQueries: true,
     onCompleted: () => {
       // clear form
@@ -33,8 +43,10 @@ const GameFeedback = ({ gameId, isDarkMode, onFeedback }) => {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    if (!comment.trim() || isNaN(rating) || rating < 0 || rating > 10) {
-      setValidationError("Please add your feedback and rating (0–10).");
+    
+    // Validate rating
+    if (isNaN(rating) || rating < 0 || rating > 10) {
+      setValidationError("Please provide a rating between 0 and 10.");
       setTimeout(() => setValidationError(""), 3000);
       return;
     }
@@ -47,22 +59,34 @@ const GameFeedback = ({ gameId, isDarkMode, onFeedback }) => {
     
     const variables = { 
       gameId, 
-      comment: comment.trim(), 
-      rating,
+      rating: parseInt(rating, 10),
       organizationId: currentOrganization._id
     };
+    
+    // Only add comment if it's not empty
+    if (comment.trim()) {
+      variables.comment = comment.trim();
+    }
     
     // Only add playerOfTheMatchId if a player is selected
     if (playerOfTheMatchId) {
       variables.playerOfTheMatchId = playerOfTheMatchId;
     }
     
+    console.log('Submitting feedback with variables:', variables);
+    
     try {
       await addFeedback({ variables });
     } catch (error) {
       console.error('Error adding feedback:', error);
-      setValidationError("Failed to submit feedback. Please try again.");
-      setTimeout(() => setValidationError(""), 3000);
+      // Check if it's a GraphQL error with more details
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        const graphQLError = error.graphQLErrors[0];
+        setValidationError(graphQLError.message || "Failed to submit feedback.");
+      } else {
+        setValidationError("Failed to submit feedback. Please try again.");
+      }
+      setTimeout(() => setValidationError(""), 5000);
     }
   };
 
@@ -113,7 +137,7 @@ const GameFeedback = ({ gameId, isDarkMode, onFeedback }) => {
           {/* Feedback Text */}
           <div className="space-y-2">
             <label className={`block text-sm font-semibold ${isDarkMode ? "text-gray-200" : "text-gray-700"}`}>
-              Your thoughts about today's game
+              Your thoughts about today's game <span className="text-gray-400 font-normal">(Optional)</span>
             </label>
             <div className="relative">
               <textarea

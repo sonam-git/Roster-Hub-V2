@@ -46,47 +46,12 @@ function RightColumn({
   game,
   formation,
   isCreator,
-  showThankYou,
-  feedbackGiven,
   startTransition,
   refetchGame,
   setFormation,
-  gameId,
   isDarkMode,
-  handleFeedback,
 }) {
-  // Only show for CONFIRMED games
-  if (game.status === "COMPLETED") {
-    return (
-      <div className={`rounded-3xl shadow-2xl p-8 mb-6 border-2 transition-all duration-500 transform hover:scale-[1.02] ${
-        isDarkMode 
-          ? "bg-gradient-to-br from-gray-800 via-purple-900 to-gray-900 border-purple-600 text-purple-100" 
-          : "bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 border-purple-300 text-purple-900"
-      }`}>
-        <div className="flex items-center justify-center mb-6">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
-            <span className="text-3xl">🏆</span>
-          </div>
-        </div>
-        <h3 className="text-2xl font-bold text-center mb-6">Game Feedback</h3>
-        {showThankYou ? (
-          <div className="p-6 bg-gradient-to-r from-green-400 to-green-600 rounded-2xl text-center shadow-lg">
-            <div className="text-4xl mb-4">🎉</div>
-            <p className="text-white font-bold text-lg">Thank you for your feedback!</p>
-          </div>
-        ) : !feedbackGiven ? (
-          <GameFeedback
-            gameId={gameId}
-            isDarkMode={isDarkMode}
-            onFeedback={handleFeedback}
-          />
-        ) : (
-          <GameFeedbackList gameId={gameId} isDarkMode={isDarkMode} />
-        )}
-      </div>
-    );
-  }
-
+  // Only show formation content for CONFIRMED games
   if (game.status === "CONFIRMED") {
     return (
       <div className={`rounded-3xl shadow-2xl p-8 mb-6 border-2 transition-all duration-500 transform hover:scale-[1.02] ${
@@ -328,7 +293,7 @@ export default function GameDetails({ gameId }) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Date & Time Card */}
             <div className={`rounded-lg shadow-sm border transition-colors ${
-              isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+              isDarkMode ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200"
             }`}>
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-5">
@@ -374,7 +339,7 @@ export default function GameDetails({ gameId }) {
 
             {/* Location Card */}
             <div className={`rounded-lg shadow-sm border transition-colors ${
-              isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+              isDarkMode ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200"
             }`}>
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-5">
@@ -424,7 +389,7 @@ export default function GameDetails({ gameId }) {
       case "weather":
         return (
           <div className={`rounded-lg shadow-sm border transition-colors ${
-            isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+            isDarkMode ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200"
           }`}>
             <div className="p-6">
               <div className="flex items-center gap-3 mb-5">
@@ -456,7 +421,7 @@ export default function GameDetails({ gameId }) {
       case "notes":
         return (
           <div className={`rounded-lg shadow-sm border transition-colors ${
-            isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+            isDarkMode ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200"
           }`}>
             <div className="p-6">
               <div className="flex items-center gap-3 mb-5">
@@ -489,7 +454,7 @@ export default function GameDetails({ gameId }) {
                       className={`w-full px-3 py-2 rounded-md border text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                         isDarkMode 
                           ? "bg-gray-900 border-gray-600 text-white placeholder-gray-500" 
-                          : "bg-white border-gray-300 text-gray-900 placeholder-gray-400"
+                          : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-400"
                       }`}
                       placeholder="Add game notes or instructions for players..."
                     />
@@ -518,7 +483,7 @@ export default function GameDetails({ gameId }) {
       case "management":
         return isCreator ? (
           <div className={`rounded-lg shadow-sm border transition-colors ${
-            isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+            isDarkMode ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200"
           }`}>
             <div className="p-6">
               <div className="flex items-center gap-3 mb-5">
@@ -563,7 +528,7 @@ export default function GameDetails({ gameId }) {
                       className={`flex-1 inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 ${
                         isDarkMode 
                           ? "bg-gray-700 hover:bg-gray-600 text-white" 
-                          : "bg-white hover:bg-gray-50 text-gray-700 border border-gray-300"
+                          : "bg-gray-50 hover:bg-gray-100 text-gray-700 border border-gray-300"
                       }`}
                     >
                       <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -623,7 +588,7 @@ export default function GameDetails({ gameId }) {
       case "responses":
         return (
           <div className={`rounded-lg shadow-sm border transition-colors ${
-            isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+            isDarkMode ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200"
           }`}>
             <div className="p-6">
               {/* Section Header */}
@@ -778,7 +743,7 @@ export default function GameDetails({ gameId }) {
       case "guidelines":
         return (
           <div className={`p-4 sm:p-6 rounded-lg shadow-sm ${
-            isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"
+            isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-gray-50 border border-gray-200"
           }`}>
             <div className="mb-6">
               <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
@@ -875,27 +840,42 @@ export default function GameDetails({ gameId }) {
       case "feedback":
         return game.status === "COMPLETED" ? (
           <div className={`rounded-lg shadow-sm ${
-            isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"
+            isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-gray-50 border border-gray-200"
           }`}>
-            <div className="px-4 sm:px-6 py-4">
-              <h3 className={`text-lg font-semibold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+            <div className="px-4 sm:px-6 py-4 space-y-6">
+              <h3 className={`text-lg font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
                 Game Feedback
               </h3>
               
-              {showThankYou ? (
+              {/* Show Thank You message after submission */}
+              {showThankYou && (
                 <div className="p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-center">
                   <div className="text-4xl mb-3">🎉</div>
                   <p className="text-green-800 dark:text-green-200 font-semibold">Thank you for your feedback!</p>
                 </div>
-              ) : !feedbackGiven ? (
-                <GameFeedback
-                  gameId={gameId}
-                  isDarkMode={isDarkMode}
-                  onFeedback={handleFeedback}
-                />
-              ) : (
-                <GameFeedbackList gameId={gameId} isDarkMode={isDarkMode} />
               )}
+              
+              {/* Show form only if user hasn't given feedback yet */}
+              {!feedbackGiven && !showThankYou && (
+                <div>
+                  <h4 className={`text-md font-semibold mb-3 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                    Share Your Feedback
+                  </h4>
+                  <GameFeedback
+                    gameId={gameId}
+                    isDarkMode={isDarkMode}
+                    onFeedback={handleFeedback}
+                  />
+                </div>
+              )}
+
+              {/* Always show feedback list for completed games */}
+              <div>
+                <h4 className={`text-md font-semibold mb-3 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  All Feedback
+                </h4>
+                <GameFeedbackList gameId={gameId} isDarkMode={isDarkMode} />
+              </div>
             </div>
           </div>
         ) : null;
@@ -937,173 +917,164 @@ export default function GameDetails({ gameId }) {
             const playerOfTheMatch = calculatePlayerOfTheMatch();
 
             return (
-          <div className={`relative overflow-hidden p-8 rounded-3xl shadow-2xl transition-all duration-500 hover:shadow-3xl transform hover:scale-[1.01] ${
+          <div className={`rounded-lg shadow-sm border ${
             isDarkMode 
-              ? "bg-gradient-to-br from-gray-800 via-gray-900 to-black border border-gray-600" 
-              : "bg-gradient-to-br from-white via-blue-50 to-purple-50 border border-blue-200"
+              ? "bg-gray-800 border-gray-700" 
+              : "bg-white border-gray-200"
           }`}>
-            {/* Decorative background elements */}
-            <div className="absolute inset-0 opacity-5">
-              <div className="absolute top-4 right-4 w-32 h-32 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 blur-3xl"></div>
-              <div className="absolute bottom-4 left-4 w-24 h-24 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 blur-2xl"></div>
-            </div>
-
-            {/* Header Section */}
-            <div className="relative text-center mb-8">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 shadow-2xl mb-6 transform rotate-3 hover:rotate-0 transition-transform duration-300">
-                <span className="text-4xl animate-bounce">🏆</span>
+            <div className="p-6">
+              {/* Header Section */}
+              <div className="flex items-center gap-3 mb-6">
+                <div className={`flex items-center justify-center w-10 h-10 rounded-md ${
+                  isDarkMode ? "bg-blue-900/30" : "bg-blue-50"
+                }`}>
+                  <svg className={`w-5 h-5 ${isDarkMode ? "text-blue-400" : "text-blue-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className={`text-lg font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                  Game Results
+                </h3>
               </div>
-              <h3 className={`text-3xl font-bold mb-2 bg-gradient-to-r ${
-                isDarkMode 
-                  ? "from-yellow-400 to-orange-400 bg-clip-text text-transparent" 
-                  : "from-yellow-600 to-orange-600 bg-clip-text text-transparent"
-              }`}>
-                Game Results
-              </h3>
-              <div className={`w-24 h-1 rounded-full mx-auto bg-gradient-to-r from-yellow-400 to-orange-500`}></div>
-            </div>
 
-            {/* Results Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              {/* Final Score Card */}
-              <div className={`group relative overflow-hidden p-6 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl ${
-                isDarkMode 
-                  ? "bg-gradient-to-br from-blue-900/30 to-blue-800/30 border border-blue-500/30" 
-                  : "bg-gradient-to-br from-blue-100/80 to-blue-200/80 border border-blue-300/50"
-              }`}>
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="relative text-center">
-                  <div className="flex items-center justify-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
-                      <span className="text-2xl">⚽</span>
+              <div className={`border-t mb-6 ${isDarkMode ? "border-gray-700" : "border-gray-200"}`}></div>
+
+              {/* Results Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+                {/* Final Score Card */}
+                <div className={`p-5 rounded-lg border ${
+                  isDarkMode 
+                    ? "bg-gray-900/50 border-gray-700" 
+                    : "bg-gray-50 border-gray-200"
+                }`}>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`flex items-center justify-center w-8 h-8 rounded ${
+                      isDarkMode ? "bg-blue-900/30" : "bg-blue-100"
+                    }`}>
+                      <svg className={`w-4 h-4 ${isDarkMode ? "text-blue-400" : "text-blue-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      </svg>
                     </div>
-                    <h4 className={`text-xl font-bold ${isDarkMode ? "text-blue-300" : "text-blue-800"}`}>
+                    <h4 className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
                       Final Score
                     </h4>
                   </div>
-                  <p className={`text-4xl font-black mb-2 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                  <p className={`text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
                     {game.score}
                   </p>
-                  <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full mx-auto"></div>
                 </div>
-              </div>
 
-              {/* Result Card */}
-              <div className={`group relative overflow-hidden p-6 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl ${
-                isDarkMode 
-                  ? "bg-gradient-to-br from-green-900/30 to-emerald-800/30 border border-green-500/30" 
-                  : "bg-gradient-to-br from-green-100/80 to-emerald-200/80 border border-green-300/50"
-              }`}>
-                <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="relative text-center">
-                  <div className="flex items-center justify-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
-                      <span className="text-2xl">🎯</span>
+                {/* Result Card */}
+                <div className={`p-5 rounded-lg border ${
+                  isDarkMode 
+                    ? "bg-gray-900/50 border-gray-700" 
+                    : "bg-gray-50 border-gray-200"
+                }`}>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`flex items-center justify-center w-8 h-8 rounded ${
+                      isDarkMode ? "bg-green-900/30" : "bg-green-100"
+                    }`}>
+                      <svg className={`w-4 h-4 ${isDarkMode ? "text-green-400" : "text-green-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
                     </div>
-                    <h4 className={`text-xl font-bold ${isDarkMode ? "text-green-300" : "text-green-800"}`}>
-                      Result
+                    <h4 className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                      Match Result
                     </h4>
                   </div>
-                  <p className={`text-2xl font-black uppercase tracking-wider mb-2 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                  <p className={`text-3xl font-bold uppercase ${isDarkMode ? "text-white" : "text-gray-900"}`}>
                     {game.result.replace("_", " ")}
                   </p>
-                  <div className="w-16 h-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mx-auto"></div>
                 </div>
               </div>
-            </div>
 
-            {/* Player of the Match and Average Rating - Two Column Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Player of the Match Card */}
-              {playerOfTheMatch ? (
-                <div className={`group relative overflow-hidden p-6 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl ${
+              <div className={`border-t mb-6 ${isDarkMode ? "border-gray-700" : "border-gray-200"}`}></div>
+
+              {/* Player of the Match and Average Rating */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* Player of the Match Card */}
+                <div className={`p-5 rounded-lg border ${
                   isDarkMode 
-                    ? "bg-gradient-to-br from-yellow-900/30 to-amber-800/30 border border-yellow-500/30" 
-                    : "bg-gradient-to-br from-yellow-100/80 to-amber-200/80 border border-yellow-300/50"
+                    ? "bg-gray-900/50 border-gray-700" 
+                    : "bg-gray-50 border-gray-200"
                 }`}>
-                  {/* Sparkle effects */}
-                  <div className="absolute inset-0 opacity-20">
-                    <div className="absolute top-2 left-4 w-1 h-1 bg-yellow-400 rounded-full animate-pulse"></div>
-                    <div className="absolute top-4 right-6 w-0.5 h-0.5 bg-orange-400 rounded-full animate-ping"></div>
-                    <div className="absolute bottom-3 left-8 w-1 h-1 bg-amber-400 rounded-full animate-pulse"></div>
-                  </div>
-                  
-                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/10 to-amber-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="relative text-center">
-                    <div className="flex items-center justify-center gap-3 mb-4">
-                      <div className="relative">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500 flex items-center justify-center shadow-lg transform group-hover:rotate-12 transition-transform duration-300">
-                          <span className="text-2xl">🏆</span>
-                        </div>
-                        <div className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-gradient-to-r from-red-400 to-pink-500 rounded-full flex items-center justify-center">
-                          <span className="text-xs">⭐</span>
-                        </div>
-                      </div>
-                      <h4 className={`text-xl font-bold ${isDarkMode ? "text-yellow-300" : "text-yellow-800"}`}>
-                        Player of the Match
-                      </h4>
-                    </div>
-                    
-                    <p className={`text-2xl font-black mb-3 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
-                      {playerOfTheMatch.name}
-                    </p>
-                    <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm ${
-                      isDarkMode 
-                        ? "bg-yellow-900/50 text-yellow-300 border border-yellow-500/30" 
-                        : "bg-yellow-200/80 text-yellow-800 border border-yellow-400/40"
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`flex items-center justify-center w-8 h-8 rounded ${
+                      isDarkMode ? "bg-yellow-900/30" : "bg-yellow-100"
                     }`}>
-                      <span className="text-base">🗳️</span>
-                      <span className="font-bold">
-                        {playerOfTheMatch.votes} vote{playerOfTheMatch.votes !== 1 ? 's' : ''}
-                      </span>
+                      <svg className={`w-4 h-4 ${isDarkMode ? "text-yellow-400" : "text-yellow-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                      </svg>
                     </div>
-                    <div className="w-16 h-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mx-auto mt-3"></div>
+                    <h4 className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                      Player of the Match
+                    </h4>
                   </div>
-                </div>
-              ) : (
-                <div className={`group relative overflow-hidden p-6 rounded-2xl backdrop-blur-sm border-2 border-dashed ${
-                  isDarkMode 
-                    ? "border-gray-600 bg-gray-800/30 text-gray-400" 
-                    : "border-gray-300 bg-gray-100/50 text-gray-500"
-                }`}>
-                  <div className="text-center">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-gray-400 to-gray-500 flex items-center justify-center mx-auto mb-3">
-                      <span className="text-2xl opacity-50">🏆</span>
+                  {playerOfTheMatch ? (
+                    <div>
+                      <p className={`text-xl font-semibold mb-2 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                        {playerOfTheMatch.name}
+                      </p>
+                      <div className={`inline-flex items-center gap-2 px-3 py-1 rounded text-xs font-medium ${
+                        isDarkMode 
+                          ? "bg-yellow-900/30 text-yellow-400 border border-yellow-800" 
+                          : "bg-yellow-100 text-yellow-800 border border-yellow-200"
+                      }`}>
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>{playerOfTheMatch.votes} vote{playerOfTheMatch.votes !== 1 ? 's' : ''}</span>
+                      </div>
                     </div>
-                    <h4 className="text-xl font-bold mb-2">Player of the Match</h4>
-                    <p className="text-sm italic">No votes cast yet</p>
-                  </div>
+                  ) : (
+                    <p className={`text-sm italic ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}>
+                      No votes cast yet
+                    </p>
+                  )}
                 </div>
-              )}
 
-              {/* Average Rating Card */}
-              <div className={`group relative overflow-hidden p-6 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl ${
-                isDarkMode 
-                  ? "bg-gradient-to-br from-purple-900/30 to-pink-800/30 border border-purple-500/30" 
-                  : "bg-gradient-to-br from-purple-100/80 to-pink-200/80 border border-purple-300/50"
-              }`}>
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="relative text-center">
-                  <div className="flex items-center justify-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
-                      <span className="text-2xl">📊</span>
+                {/* Average Rating Card */}
+                <div className={`p-5 rounded-lg border ${
+                  isDarkMode 
+                    ? "bg-gray-900/50 border-gray-700" 
+                    : "bg-gray-50 border-gray-200"
+                }`}>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`flex items-center justify-center w-8 h-8 rounded ${
+                      isDarkMode ? "bg-purple-900/30" : "bg-purple-100"
+                    }`}>
+                      <svg className={`w-4 h-4 ${isDarkMode ? "text-purple-400" : "text-purple-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                      </svg>
                     </div>
-                    <h4 className={`text-xl font-bold ${isDarkMode ? "text-purple-300" : "text-purple-800"}`}>
+                    <h4 className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
                       Average Rating
                     </h4>
                   </div>
-                  <div className="flex items-center justify-center gap-1 mb-3">
-                    {[...Array(Math.floor(game.averageRating / 2))].map((_, i) => (
-                      <span key={i} className="text-xl animate-pulse" style={{animationDelay: `${i * 0.1}s`}}>⭐</span>
-                    ))}
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <span className={`text-4xl font-black ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                  <div className="flex items-baseline gap-2">
+                    <span className={`text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
                       {game.averageRating.toFixed(1)}
                     </span>
-                    <span className={`text-2xl font-bold ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>/10</span>
+                    <span className={`text-lg font-medium ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
+                      / 10
+                    </span>
                   </div>
-                  <div className="w-16 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto mt-3"></div>
+                  <div className="mt-2 flex gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <svg 
+                        key={i} 
+                        className={`w-4 h-4 ${
+                          i < Math.floor(game.averageRating / 2) 
+                            ? isDarkMode ? "text-yellow-400" : "text-yellow-500"
+                            : isDarkMode ? "text-gray-600" : "text-gray-300"
+                        }`} 
+                        fill="currentColor" 
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -1331,16 +1302,19 @@ export default function GameDetails({ gameId }) {
                 Guidelines
               </button>
 
-              <button
-                onClick={() => setShowFormation(!showFormation)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
-                  showFormation
-                    ? isDarkMode ? "bg-blue-600 text-white" : "bg-blue-600 text-white"
-                    : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                }`}
-              >
-                Formation
-              </button>
+              {/* Formation/Feedback button - Show "Formation" for CONFIRMED, "Feedback" for COMPLETED */}
+              {(game.status === "CONFIRMED" || game.status === "COMPLETED") && (
+                <button
+                  onClick={() => setShowFormation(!showFormation)}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                    showFormation
+                      ? isDarkMode ? "bg-blue-600 text-white" : "bg-blue-600 text-white"
+                      : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                  }`}
+                >
+                  {game.status === "COMPLETED" ? "Feedback" : "Formation"}
+                </button>
+              )}
 
               {isCreator && (game.status === "PENDING" || game.status === "CONFIRMED" || game.status === "CANCELLED") && (
                 <button
@@ -1359,35 +1333,19 @@ export default function GameDetails({ gameId }) {
               )}
 
               {game.status === "COMPLETED" && (
-                <>
-                  <button
-                    onClick={() => { 
-                      if (showFormation) setShowFormation(false);
-                      setActiveSection("results");
-                    }}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
-                      !showFormation && activeSection === "results"
-                        ? isDarkMode ? "bg-blue-600 text-white" : "bg-blue-600 text-white"
-                        : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                    }`}
-                  >
-                    Results
-                  </button>
-                  
-                  <button
-                    onClick={() => {
-                      setShowFormation(false);
-                      setActiveSection("feedback");
-                    }}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
-                      !showFormation && activeSection === "feedback"
-                        ? isDarkMode ? "bg-blue-600 text-white" : "bg-blue-600 text-white"
-                        : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                    }`}
-                  >
-                    Feedback
-                  </button>
-                </>
+                <button
+                  onClick={() => { 
+                    if (showFormation) setShowFormation(false);
+                    setActiveSection("results");
+                  }}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                    !showFormation && activeSection === "results"
+                      ? isDarkMode ? "bg-blue-600 text-white" : "bg-blue-600 text-white"
+                      : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                  }`}
+                >
+                  Results
+                </button>
               )}
             </div>
           </div>
@@ -1404,7 +1362,7 @@ export default function GameDetails({ gameId }) {
             {game.status === "CONFIRMED" && (
               <div className="lg:hidden mb-6">
                 <div className={`rounded-lg border overflow-hidden ${
-                  isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+                  isDarkMode ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200"
                 }`}>
                   <div className="flex overflow-x-auto">
                     <button
@@ -1438,14 +1396,14 @@ export default function GameDetails({ gameId }) {
                       Comment
                     </button>
                     <button
-                      onClick={() => setFormationSubSection("feedback")}
+                      onClick={() => setFormationSubSection("like")}
                       className={`flex-1 px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors ${
-                        formationSubSection === "feedback"
+                        formationSubSection === "like"
                           ? isDarkMode ? "bg-blue-600 text-white" : "bg-blue-600 text-white"
                           : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                       }`}
                     >
-                      Feedback
+                      Like
                     </button>
                   </div>
                 </div>
@@ -1492,7 +1450,7 @@ export default function GameDetails({ gameId }) {
                     <FormationCommentList gameId={gameId} formationId={formation?._id} />
                   )}
 
-                  {formationSubSection === "feedback" && (
+                  {formationSubSection === "like" && (
                     <div className={`text-center p-6 rounded-md ${
                       isDarkMode ? "bg-purple-900/20 border border-purple-800" : "bg-purple-50 border border-purple-200"
                     }`}>
@@ -1509,119 +1467,59 @@ export default function GameDetails({ gameId }) {
                     </div>
                   )}
                 </>
-              ) : (
-                /* For PENDING, COMPLETED, or other statuses - show default view */
+              ) : game.status === "COMPLETED" ? (
+                /* For COMPLETED games - show feedback instead of formation */
                 <div className={`rounded-lg shadow-sm border transition-colors ${
-                  isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+                  isDarkMode ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200"
                 }`}>
-                  <div className="p-6">
-                    <div className="flex items-center gap-3 mb-5">
+                  <div className="p-6 space-y-6">
+                    <div className="flex items-center gap-3">
                       <div className={`flex items-center justify-center w-10 h-10 rounded-md ${
-                        game.status === "COMPLETED"
-                          ? isDarkMode ? "bg-green-900/30" : "bg-green-50"
-                          : isDarkMode ? "bg-indigo-900/30" : "bg-indigo-50"
+                        isDarkMode ? "bg-green-900/30" : "bg-green-50"
                       }`}>
-                        {game.status === "COMPLETED" ? (
-                          <svg className={`w-5 h-5 ${isDarkMode ? "text-green-400" : "text-green-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                        ) : (
-                          <svg className={`w-5 h-5 ${isDarkMode ? "text-indigo-400" : "text-indigo-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                          </svg>
-                        )}
+                        <svg className={`w-5 h-5 ${isDarkMode ? "text-green-400" : "text-green-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                       </div>
                       <h3 className={`text-base font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                        {game.status === "COMPLETED" ? "Game Feedback" : "Game Formation"}
+                        Game Feedback
                       </h3>
                     </div>
-                    <div className={`border-t ${isDarkMode ? "border-gray-700" : "border-gray-200"}`}></div>
-                    <div className="mt-5">
-                      {game.status === "COMPLETED" ? (
-                        <div>
-                          {showThankYou ? (
-                            <div className="p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-center">
-                              <div className="text-4xl mb-3">🎉</div>
-                              <p className="text-green-800 dark:text-green-200 font-semibold">Thank you for your feedback!</p>
-                            </div>
-                          ) : !feedbackGiven ? (
-                            <GameFeedback
-                              gameId={gameId}
-                              isDarkMode={isDarkMode}
-                              onFeedback={handleFeedback}
-                            />
-                          ) : (
-                            <GameFeedbackList gameId={gameId} isDarkMode={isDarkMode} />
-                          )}
-                        </div>
-                      ) : game.status === "PENDING" ? (
-                        <div className={`p-8 rounded-md text-center ${
-                          isDarkMode ? "bg-blue-900/20 border border-blue-800" : "bg-blue-50 border border-blue-200"
-                        }`}>
-                          <svg className={`w-12 h-12 mx-auto mb-3 ${isDarkMode ? "text-blue-400" : "text-blue-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          <p className={`text-sm font-medium ${isDarkMode ? "text-blue-300" : "text-blue-700"}`}>
-                            Formation will be available once the game is confirmed
-                          </p>
-                        </div>
-                      ) : null}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Desktop View - Two Column Layout (unchanged) */}
-            <div className="hidden lg:grid lg:grid-cols-2 gap-6">
-            {/* Formation/Feedback Panel */}
-            <div className={`rounded-lg shadow-sm border transition-colors ${
-              isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
-            }`}>
-              <div className="p-6">
-                {/* Header */}
-                <div className="flex items-center gap-3 mb-5">
-                  <div className={`flex items-center justify-center w-10 h-10 rounded-md ${
-                    game.status === "COMPLETED"
-                      ? isDarkMode ? "bg-green-900/30" : "bg-green-50"
-                      : isDarkMode ? "bg-indigo-900/30" : "bg-indigo-50"
-                  }`}>
-                    {game.status === "COMPLETED" ? (
-                      <svg className={`w-5 h-5 ${isDarkMode ? "text-green-400" : "text-green-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    ) : (
-                      <svg className={`w-5 h-5 ${isDarkMode ? "text-indigo-400" : "text-indigo-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                      </svg>
+                    
+                    {showThankYou && (
+                      <div className="p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-center">
+                        <div className="text-4xl mb-3">🎉</div>
+                        <p className="text-green-800 dark:text-green-200 font-semibold">Thank you for your feedback!</p>
+                      </div>
                     )}
-                  </div>
-                  <h3 className={`text-base font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                    {game.status === "COMPLETED" ? "Game Feedback" : "Game Formation"}
-                  </h3>
-                </div>
-
-                <div className={`border-t ${isDarkMode ? "border-gray-700" : "border-gray-200"}`}></div>
-                
-                <div className="mt-5">
-                  {game.status === "COMPLETED" ? (
-                    <div>
-                      {showThankYou ? (
-                        <div className="p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-center">
-                          <div className="text-4xl mb-3">🎉</div>
-                          <p className="text-green-800 dark:text-green-200 font-semibold">Thank you for your feedback!</p>
-                        </div>
-                      ) : !feedbackGiven ? (
+                    
+                    {!feedbackGiven && !showThankYou && (
+                      <div>
+                        <h4 className={`text-sm font-semibold mb-3 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                          Share Your Feedback
+                        </h4>
                         <GameFeedback
                           gameId={gameId}
                           isDarkMode={isDarkMode}
                           onFeedback={handleFeedback}
                         />
-                      ) : (
-                        <GameFeedbackList gameId={gameId} isDarkMode={isDarkMode} />
-                      )}
+                      </div>
+                    )}
+                    
+                    <div>
+                      <h4 className={`text-sm font-semibold mb-3 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                        All Feedback
+                      </h4>
+                      <GameFeedbackList gameId={gameId} isDarkMode={isDarkMode} />
                     </div>
-                  ) : game.status === "PENDING" ? (
+                  </div>
+                </div>
+              ) : (
+                /* For PENDING or other statuses */
+                <div className={`rounded-lg shadow-sm border transition-colors ${
+                  isDarkMode ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200"
+                }`}>
+                  <div className="p-6">
                     <div className={`p-8 rounded-md text-center ${
                       isDarkMode ? "bg-blue-900/20 border border-blue-800" : "bg-blue-50 border border-blue-200"
                     }`}>
@@ -1632,38 +1530,118 @@ export default function GameDetails({ gameId }) {
                         Formation will be available once the game is confirmed
                       </p>
                     </div>
-                  ) : (
-                    <div>
-                      {!formation && !isCreator ? (
-                        <div className={`p-6 rounded-md text-center ${
-                          isDarkMode ? "bg-yellow-900/20 border border-yellow-800" : "bg-yellow-50 border border-yellow-200"
-                        }`}>
-                          <svg className={`w-12 h-12 mx-auto mb-3 ${isDarkMode ? "text-yellow-400" : "text-yellow-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          <p className={`text-sm font-medium ${isDarkMode ? "text-yellow-300" : "text-yellow-700"}`}>
-                            Formation is being prepared...
-                          </p>
-                        </div>
-                      ) : (
-                        <FormationSection
-                          game={game}
-                          formation={formation}
-                          isCreator={isCreator}
-                          setFormation={setFormation}
-                          refetchFormation={() => startTransition(refetchGame)}
-                          isLoading={loadingGame}
-                        />
-                      )}
-                    </div>
-                  )}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
-            {/* Comments/Discussion Panel */}
+            {/* Desktop View - Two Column Layout */}
+            <div className="hidden lg:grid lg:grid-cols-2 gap-6">
+              {/* Left Panel: Formation (CONFIRMED) or Feedback (COMPLETED) */}
+              <div className={`rounded-lg shadow-sm border transition-colors ${
+                isDarkMode ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200"
+              }`}>
+                <div className="p-6">
+                  {/* Header */}
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className={`flex items-center justify-center w-10 h-10 rounded-md ${
+                      game.status === "COMPLETED"
+                        ? isDarkMode ? "bg-green-900/30" : "bg-green-50"
+                        : isDarkMode ? "bg-indigo-900/30" : "bg-indigo-50"
+                    }`}>
+                      {game.status === "COMPLETED" ? (
+                        <svg className={`w-5 h-5 ${isDarkMode ? "text-green-400" : "text-green-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      ) : (
+                        <svg className={`w-5 h-5 ${isDarkMode ? "text-indigo-400" : "text-indigo-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        </svg>
+                      )}
+                    </div>
+                    <h3 className={`text-base font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                      {game.status === "COMPLETED" ? "Game Feedback" : "Game Formation"}
+                    </h3>
+                  </div>
+
+                  <div className={`border-t ${isDarkMode ? "border-gray-700" : "border-gray-200"}`}></div>
+                  
+                  <div className="mt-5">
+                    {game.status === "COMPLETED" ? (
+                      /* Show Feedback for COMPLETED games */
+                      <div className="space-y-6">
+                        {showThankYou && (
+                          <div className="p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-center">
+                            <div className="text-4xl mb-3">🎉</div>
+                            <p className="text-green-800 dark:text-green-200 font-semibold">Thank you for your feedback!</p>
+                          </div>
+                        )}
+                        
+                        {!feedbackGiven && !showThankYou && (
+                          <div>
+                            <h4 className={`text-sm font-semibold mb-3 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                              Share Your Feedback
+                            </h4>
+                            <GameFeedback
+                              gameId={gameId}
+                              isDarkMode={isDarkMode}
+                              onFeedback={handleFeedback}
+                            />
+                          </div>
+                        )}
+                        
+                        <div>
+                          <h4 className={`text-sm font-semibold mb-3 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                            All Feedback
+                          </h4>
+                          <GameFeedbackList gameId={gameId} isDarkMode={isDarkMode} />
+                        </div>
+                      </div>
+                    ) : game.status === "CONFIRMED" ? (
+                      /* Show Formation for CONFIRMED games */
+                      <div>
+                        {!formation && !isCreator ? (
+                          <div className={`p-6 rounded-md text-center ${
+                            isDarkMode ? "bg-yellow-900/20 border border-yellow-800" : "bg-yellow-50 border border-yellow-200"
+                          }`}>
+                            <svg className={`w-12 h-12 mx-auto mb-3 ${isDarkMode ? "text-yellow-400" : "text-yellow-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p className={`text-sm font-medium ${isDarkMode ? "text-yellow-300" : "text-yellow-700"}`}>
+                              Formation is being prepared...
+                            </p>
+                          </div>
+                        ) : (
+                          <FormationSection
+                            game={game}
+                            formation={formation}
+                            isCreator={isCreator}
+                            setFormation={setFormation}
+                            refetchFormation={() => startTransition(refetchGame)}
+                            isLoading={loadingGame}
+                          />
+                        )}
+                      </div>
+                    ) : (
+                      /* For PENDING or other statuses */
+                      <div className={`p-8 rounded-md text-center ${
+                        isDarkMode ? "bg-blue-900/20 border border-blue-800" : "bg-blue-50 border border-blue-200"
+                      }`}>
+                        <svg className={`w-12 h-12 mx-auto mb-3 ${isDarkMode ? "text-blue-400" : "text-blue-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p className={`text-sm font-medium ${isDarkMode ? "text-blue-300" : "text-blue-700"}`}>
+                          Formation will be available once the game is confirmed
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Panel: Comments/Discussion */}
             <div className={`rounded-lg shadow-sm border transition-colors ${
-              isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+              isDarkMode ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200"
             }`}>
               <div className="p-6">
                 {/* Header */}
@@ -1785,7 +1763,7 @@ export default function GameDetails({ gameId }) {
         {isCreator && showConfirm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
             <div className={`max-w-lg w-full rounded-lg shadow-xl ${
-              isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"
+              isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-gray-50 border border-gray-200"
             }`}>
               <div className="p-6">
                 <h3 className={`text-lg font-semibold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
@@ -1803,7 +1781,7 @@ export default function GameDetails({ gameId }) {
                   className={`w-full px-3 py-2 rounded-md border text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     isDarkMode 
                       ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" 
-                      : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+                      : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"
                   }`}
                   placeholder="Add any important information..."
                 />
@@ -1843,7 +1821,7 @@ export default function GameDetails({ gameId }) {
         {isCreator && showCancel && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
             <div className={`max-w-md w-full rounded-lg shadow-xl ${
-              isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"
+              isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-gray-50 border border-gray-200"
             }`}>
               <div className="p-6">
                 <div className="text-center mb-6">
@@ -1905,7 +1883,7 @@ export default function GameDetails({ gameId }) {
         {isCreator && showReconfirm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
             <div className={`max-w-lg w-full rounded-lg shadow-xl ${
-              isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"
+              isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-gray-50 border border-gray-200"
             }`}>
               <div className="p-6">
                 <h3 className={`text-lg font-semibold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
@@ -1923,7 +1901,7 @@ export default function GameDetails({ gameId }) {
                   className={`w-full px-3 py-2 rounded-md border text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     isDarkMode 
                       ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" 
-                      : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+                      : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"
                   }`}
                   placeholder="Explain why the game is being re-confirmed..."
                 />

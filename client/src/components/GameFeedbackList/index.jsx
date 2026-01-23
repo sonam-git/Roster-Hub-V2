@@ -2,10 +2,16 @@
 import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { QUERY_GAME } from "../../utils/queries";
+import { useOrganization } from "../../contexts/OrganizationContext";
 
 const GameFeedbackList = ({ gameId, isDarkMode }) => {
+  const { currentOrganization } = useOrganization();
   const { loading, error, data } = useQuery(QUERY_GAME, {
-    variables: { gameId },
+    variables: { 
+      gameId,
+      organizationId: currentOrganization?._id 
+    },
+    skip: !currentOrganization,
     fetchPolicy: "network-only",
   });
   const [page, setPage] = useState(0);
@@ -148,17 +154,29 @@ const GameFeedbackList = ({ gameId, isDarkMode }) => {
               </div>
 
               {/* Comment */}
-              <div className={`p-4 rounded-xl italic leading-relaxed ${
-                isDarkMode 
-                  ? "bg-gray-700/50 text-gray-200" 
-                  : "bg-gray-50 text-gray-700"
-              }`}>
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl opacity-50">"</span>
-                  <p className="flex-1 text-sm">{fb.comment}</p>
-                  <span className="text-2xl opacity-50 self-end">"</span>
+              {fb.comment && (
+                <div className={`p-4 rounded-xl italic leading-relaxed ${
+                  isDarkMode 
+                    ? "bg-gray-700/50 text-gray-200" 
+                    : "bg-gray-50 text-gray-700"
+                }`}>
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl opacity-50">"</span>
+                    <p className="flex-1 text-sm">{fb.comment}</p>
+                    <span className="text-2xl opacity-50 self-end">"</span>
+                  </div>
                 </div>
-              </div>
+              )}
+              
+              {!fb.comment && (
+                <div className={`p-4 rounded-xl italic text-center ${
+                  isDarkMode 
+                    ? "bg-gray-700/30 text-gray-400" 
+                    : "bg-gray-100 text-gray-500"
+                }`}>
+                  <p className="text-sm">No comment provided</p>
+                </div>
+              )}
 
               {/* Player of the Match Vote */}
               {fb.playerOfTheMatch && (
