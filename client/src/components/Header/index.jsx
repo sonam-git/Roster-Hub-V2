@@ -184,7 +184,7 @@ const Header = ({ open, setOpen }) => {
 
       {/* Amazon-style Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full transition-all duration-500 ease-out z-[5] pt-10 lg:pt-30 transform-gpu will-change-transform ${
+        className={`fixed top-0 left-0 h-full transition-all duration-500 ease-out z-[60] lg:z-[5] pt-10 lg:pt-20 transform-gpu will-change-transform ${
           open ? "w-64 sm:w-72 translate-x-0 opacity-100" : "w-16 sm:w-20 -translate-x-full lg:translate-x-0 opacity-100 lg:opacity-100"
         } ${
           isDarkMode 
