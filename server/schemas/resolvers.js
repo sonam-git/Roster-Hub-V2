@@ -1740,10 +1740,7 @@ const resolvers = {
       try {
         const user = await Profile.findOne({ email });
         if (!user) {
-          return {
-            message:
-              "If an account with that email exists, a reset link has been sent.",
-          };
+          throw new UserInputError("There is no account associated with this email.");
         }
 
         const resetToken = signToken({
@@ -1855,25 +1852,33 @@ If you did not request this, please ignore this email and your password will rem
         }
 
         return {
-          message:
-            "If an account with that email exists, a reset link has been sent.",
+          message: "A password reset link has been sent to your email.",
         };
       } catch (error) {
         console.error('❌ Error sending password reset email:', error);
         if (error.response) {
           console.error('   SendGrid error body:', error.response.body);
         }
-        return { message: "An error occurred while sending the reset email." };
+        // Re-throw UserInputError so client can display it properly
+        if (error instanceof UserInputError) {
+          throw error;
+        }
+        throw new Error("An error occurred while sending the reset email.");
       }
     },
     // ************************** RESET PASSWORD FUNCTIONALITY *******************************************//
     resetPassword: async (_, { token, newPassword }) => {
       try {
+        // Validate password length
+        if (!newPassword || newPassword.length < 5) {
+          throw new UserInputError("Password must be at least 5 characters long.");
+        }
+
         const decoded = jwt.verify(token, secret);
         const user = await Profile.findOne({ email: decoded.data.email });
 
         if (!user) {
-          throw new UserInputError("Invalid token or user does not exist");
+          throw new UserInputError("Invalid token or user does not exist.");
         }
 
         // Set the new password using the method defined in the Profile model
@@ -1882,14 +1887,17 @@ If you did not request this, please ignore this email and your password will rem
 
         return { message: "Password has been successfully reset." };
       } catch (error) {
+        console.error('❌ Error resetting password:', error);
+        
         if (error instanceof jwt.TokenExpiredError) {
-          throw new AuthenticationError("Password reset token has expired.");
+          throw new AuthenticationError("Password reset token has expired. Please request a new reset link.");
         } else if (error instanceof jwt.JsonWebTokenError) {
-          throw new AuthenticationError("Password reset token is invalid.");
+          throw new AuthenticationError("Password reset token is invalid. Please request a new reset link.");
+        } else if (error instanceof UserInputError) {
+          // Re-throw validation errors
+          throw error;
         } else {
-          throw new AuthenticationError(
-            "An error occurred during password reset."
-          );
+          throw new AuthenticationError("An error occurred during password reset. Please try again.");
         }
       }
     },

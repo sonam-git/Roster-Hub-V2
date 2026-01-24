@@ -5,18 +5,38 @@ import { RESET_PASSWORD } from "../utils/mutations";
 
 const PasswordReset = () => {
   const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [validationError, setValidationError] = useState("");
   const [resetPassword, { error }] = useMutation(RESET_PASSWORD);
   const { token } = useParams();
   const navigate = useNavigate();
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const handleChange = (event) => {
-    const { value } = event.target;
-    setNewPassword(value);
+    const { name, value } = event.target;
+    if (name === "newPassword") {
+      setNewPassword(value);
+      setValidationError("");
+    } else if (name === "confirmPassword") {
+      setConfirmPassword(value);
+      setValidationError("");
+    }
   };
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
+    
+    // Client-side validation
+    if (newPassword.length < 5) {
+      setValidationError("Password must be at least 5 characters long.");
+      return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+      setValidationError("Passwords do not match.");
+      return;
+    }
+    
     try {
       const { data } = await resetPassword({
         variables: { token: token, newPassword: newPassword },
@@ -64,19 +84,43 @@ const PasswordReset = () => {
                 </label>
                 <input
                   className="form-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-400 focus:ring focus:ring-blue-200 focus:ring-opacity-50 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition"
-                  placeholder="New password"
+                  placeholder="New password (min. 5 characters)"
                   name="newPassword"
                   type="password"
                   value={newPassword}
                   onChange={handleChange}
+                  required
+                  minLength="5"
                 />
               </div>
+              <div>
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-semibold leading-6 text-gray-900 dark:text-white mb-1"
+                >
+                  Confirm New Password
+                </label>
+                <input
+                  className="form-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-400 focus:ring focus:ring-blue-200 focus:ring-opacity-50 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition"
+                  placeholder="Confirm new password"
+                  name="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              {validationError && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                  <span className="block sm:inline">{validationError}</span>
+                </div>
+              )}
               <button
-                className="bg-yellow-400 dark:bg-yellow-300 text-green-900 dark:text-green-900 font-extrabold py-2 px-6 rounded-full shadow hover:bg-yellow-300 dark:hover:bg-yellow-200 transition disabled:opacity-50 mt-4"
+                className="bg-yellow-400 dark:bg-yellow-300 text-green-900 dark:text-green-900 font-extrabold py-2 px-6 rounded-full shadow hover:bg-yellow-300 dark:hover:bg-yellow-200 transition disabled:opacity-50 mt-4 w-full"
                 style={{ cursor: "pointer" }}
                 type="submit"
               >
-                Submit
+                Reset Password
               </button>
             </form>
             {showSuccessMessage && (
