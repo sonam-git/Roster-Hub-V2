@@ -72,7 +72,7 @@ export default function CustomComingGames({ isDarkMode }) {
 
   if (!upcomingGames.length) {
     return (
-      <div className="mt-4 mb-6 w-full max-w-full overflow-hidden px-2 sm:px-0">
+      <div className="mt-4 mb-6 w-full max-w-full overflow-hidden px-2 sm:px-0 pt-20 lg:pt-24">
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4 sm:mb-6">
             <div className="flex-1 w-full lg:w-auto text-center">
@@ -89,7 +89,7 @@ export default function CustomComingGames({ isDarkMode }) {
         <div className={`rounded-lg border p-6 sm:p-8 text-center ${
           isDarkMode 
             ? 'bg-gray-800 border-gray-700' 
-            : 'bg-white border-gray-200'
+            : 'bg-gray-50 border-gray-200'
         }`}>
           <div className={`w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-full flex items-center justify-center ${
             isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
@@ -124,7 +124,7 @@ export default function CustomComingGames({ isDarkMode }) {
   }
 
   return (
-    <div className="mt-4 mb-6 w-full max-w-full overflow-hidden px-2 sm:px-0">
+    <div className="mt-4 mb-6 w-full max-w-full overflow-hidden px-2 sm:px-0 pt-20 lg:pt-24">
       {/* Header Section */}
       <div className="mb-6 sm:mb-8">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4 sm:mb-6">
@@ -175,7 +175,7 @@ export default function CustomComingGames({ isDarkMode }) {
       {/* Games Grid */}
       {filteredGames.length === 0 ? (
         <div className={`rounded-lg border p-6 sm:p-8 text-center ${
-          isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+          isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-200'
         }`}>
           <div className={`w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-full flex items-center justify-center ${
             isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
@@ -211,7 +211,7 @@ export default function CustomComingGames({ isDarkMode }) {
               className={`rounded-lg border overflow-hidden transition-all duration-200 hover:shadow-md ${
                 isDarkMode 
                   ? 'bg-gray-800 border-gray-700' 
-                  : 'bg-white border-gray-200'
+                  : 'bg-gray-50 border-gray-200'
               }`}
             >
               {/* Header */}

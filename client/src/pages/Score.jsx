@@ -38,7 +38,7 @@ export default function Score() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6 sm:py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6 sm:py-8 pt-20 lg:pt-24">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-6 max-w-7xl">
         {/* AWS-style Page Header */}
         <div className="mb-6">
@@ -75,7 +75,7 @@ export default function Score() {
               })}
             </div>
           ) : (
-            <div className="relative overflow-hidden bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm">
+            <div className="relative overflow-hidden bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm">
               {/* Top accent bar */}
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 to-yellow-500"></div>
               
@@ -108,8 +108,8 @@ export default function Score() {
               Available Leagues
             </h2>
           </div>
-          
-          <div className="relative overflow-hidden bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm">
+
+          <div className="relative overflow-hidden bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm">
             {/* Top accent bar */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
             

@@ -39,9 +39,9 @@ const Message = ({ isDarkMode }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center pt-20 lg:pt-24">
         <div className={`text-center p-8 rounded-2xl shadow-xl ${
-          isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
+          isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-gray-50 border border-gray-200'
         }`}>
           <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className={`font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -54,7 +54,7 @@ const Message = ({ isDarkMode }) => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center pt-20 lg:pt-24">
         <div className={`text-center p-8 rounded-2xl shadow-xl ${
           isDarkMode ? 'bg-red-900/20 border border-red-700' : 'bg-red-100 border border-red-200'
         }`}>
@@ -75,7 +75,7 @@ const Message = ({ isDarkMode }) => {
   const profile = data?.me || data?.profile || {};
 
   return (
-    <div className={`min-h-screen transition-colors duration-200 ${
+    <div className={`min-h-screen transition-colors duration-200 pt-20 lg:pt-24 ${
       isDarkMode ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' : 'bg-gradient-to-br from-blue-50 via-white to-indigo-50'
     }`}>
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 py-8">

@@ -174,7 +174,7 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
 
   return (
     <div
-      className={`w-full p-6 rounded-lg border transition-colors duration-200
+      className={`w-full p-6 rounded-lg border transition-colors duration-200 relative z-10
       ${isDarkMode 
         ? "bg-gray-800 border-gray-700" 
         : "bg-white border-gray-200"
@@ -190,7 +190,7 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-5 relative z-20">
         {/* Date and Time Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Date Field */}
@@ -204,7 +204,7 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
               name="date"
               value={formState.date}
               onChange={handleChange}
-              className={`w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 transition-colors
+              className={`w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 transition-colors cursor-pointer relative z-10
                 ${validationErrors.date 
                   ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
                   : isDarkMode 
@@ -231,7 +231,7 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
               name="time"
               value={formState.time}
               onChange={handleChange}
-              className={`w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 transition-colors
+              className={`w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 transition-colors cursor-pointer relative z-10
                 ${validationErrors.time 
                   ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
                   : isDarkMode 
@@ -261,7 +261,7 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
               name="venue"
               value={formState.venue}
               onChange={handleChange}
-              className={`w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 transition-colors
+              className={`w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 transition-colors relative z-10
                 ${validationErrors.venue 
                   ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
                   : isDarkMode 
@@ -298,7 +298,7 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
                     setShowCitySuggestions(suggestions.length > 0);
                   }
                 }}
-                className={`w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 transition-colors
+                className={`w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 transition-colors relative z-10
                   ${validationErrors.city 
                     ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
                     : isDarkMode 
@@ -314,7 +314,7 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
               {showCitySuggestions && citySuggestions.length > 0 && (
                 <div
                   ref={cityDropdownRef}
-                  className={`absolute z-50 w-full mt-1 border rounded-md shadow-lg max-h-48 overflow-y-auto
+                  className={`absolute z-[150] w-full mt-1 border rounded-md shadow-lg max-h-48 overflow-y-auto
                     ${isDarkMode 
                       ? "bg-gray-700 border-gray-600" 
                       : "bg-white border-gray-300"
@@ -324,8 +324,12 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
                     <button
                       key={index}
                       type="button"
-                      onClick={() => handleCitySelect(city)}
-                      className={`w-full px-3 py-2 text-left text-sm transition-colors
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleCitySelect(city);
+                      }}
+                      className={`w-full px-3 py-2 text-left text-sm transition-colors cursor-pointer
                         ${isDarkMode 
                           ? "hover:bg-gray-600 text-gray-100" 
                           : "hover:bg-gray-50 text-gray-900"
@@ -358,7 +362,7 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
             name="opponent"
             value={formState.opponent}
             onChange={handleChange}
-            className={`w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 transition-colors
+            className={`w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 transition-colors relative z-10
               ${validationErrors.opponent 
                 ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
                 : isDarkMode 
@@ -387,7 +391,7 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
             name="notes"
             value={formState.notes}
             onChange={handleChange}
-            className={`w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 transition-colors resize-none
+            className={`w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 transition-colors resize-none relative z-10
               ${isDarkMode 
                 ? "bg-gray-700 text-gray-100 border-gray-600 focus:ring-blue-500 focus:border-blue-500" 
                 : "bg-white text-gray-900 border-gray-300 focus:ring-blue-500 focus:border-blue-500"
@@ -411,15 +415,19 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
         )}
 
         {/* Action Buttons */}
-        <div className={`pt-4 ${onBackToGames ? 'flex gap-3' : ''}`}>
+        <div className={`pt-4 relative z-10 ${onBackToGames ? 'flex gap-3' : ''}`}>
           {onBackToGames && (
             <button
               type="button"
-              onClick={onBackToGames}
-              className={`${onBackToGames ? 'flex-1' : 'w-full'} px-4 py-2 text-sm font-medium rounded-md transition-colors
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onBackToGames();
+              }}
+              className={`${onBackToGames ? 'flex-1' : 'w-full'} px-4 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer active:scale-95
                 ${isDarkMode 
-                  ? "bg-gray-700 text-gray-200 hover:bg-gray-600 border border-gray-600" 
-                  : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
+                  ? "bg-gray-700 text-gray-200 hover:bg-gray-600 border border-gray-600 active:bg-gray-500" 
+                  : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300 active:bg-gray-100"
                 } 
                 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500`}
             >
@@ -430,10 +438,10 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
           <button
             type="submit"
             disabled={loading || isSubmitting}
-            className={`${onBackToGames ? 'flex-1' : 'w-full'} px-4 py-2 text-sm font-medium text-white rounded-md transition-colors
+            className={`${onBackToGames ? 'flex-1' : 'w-full'} px-4 py-2 text-sm font-medium text-white rounded-md transition-colors cursor-pointer active:scale-95
               ${(loading || isSubmitting)
                 ? "bg-gray-400 cursor-not-allowed" 
-                : "bg-blue-600 hover:bg-blue-700"
+                : "bg-blue-600 hover:bg-blue-700 active:bg-blue-800"
               }
               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
           >

@@ -54,7 +54,7 @@ const Roster = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen pt-20 lg:pt-24">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
           <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
@@ -68,7 +68,7 @@ const Roster = () => {
   // Error state
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen pt-20 lg:pt-24">
         <div className="text-center bg-red-50 dark:bg-red-900/20 p-8 rounded-lg max-w-md">
           <div className="text-red-500 text-5xl mb-4">⚠️</div>
           <h2 className="text-xl font-bold text-red-600 dark:text-red-400 mb-2">
@@ -89,7 +89,7 @@ const Roster = () => {
   }
 
   return (
-    <main className="mx-auto w-full px-1 sm:px-2 md:px-4 lg:px-6 xl:px-8 2xl:max-w-7xl"> 
+    <main className="mx-auto w-full px-1 sm:px-2 md:px-4 lg:px-6 xl:px-8 2xl:max-w-7xl pt-20 lg:pt-24"> 
       <div className="flex-row justify-center">
         <div className="col-12 "> 
           {/* Conditional rendering based on authentication status */}

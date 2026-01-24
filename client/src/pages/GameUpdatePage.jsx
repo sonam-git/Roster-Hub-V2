@@ -80,7 +80,7 @@ const GameUpdatePage = () => {
 
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center px-4 ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}>
+      <div className={`min-h-screen flex items-center justify-center px-4 pt-20 lg:pt-24 ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}>
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className={`text-lg font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
@@ -93,9 +93,9 @@ const GameUpdatePage = () => {
 
   if (error || !game) {
     return (
-      <div className={`min-h-screen flex items-center justify-center px-4 ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}>
+      <div className={`min-h-screen flex items-center justify-center px-4 pt-20 lg:pt-24 ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}>
         <div className={`max-w-md w-full p-8 rounded-2xl shadow-xl text-center ${
-          isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"
+          isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-gray-50 border border-gray-200"
         }`}>
           <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-3xl">⚠️</span>
@@ -118,7 +118,7 @@ const GameUpdatePage = () => {
   }
 
   return (
-    <div className={`w-full min-h-screen py-8 px-4 transition-colors duration-300 ${
+    <div className={`w-full min-h-screen py-8 px-4 pt-20 lg:pt-24 transition-colors duration-300 ${
       isDarkMode 
         ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900" 
         : "bg-gradient-to-br from-blue-50 via-white to-purple-50"
@@ -194,7 +194,7 @@ const GameUpdatePage = () => {
         <div className={`rounded-2xl shadow-lg p-6 border ${
           isDarkMode 
             ? "bg-gray-800 border-gray-700" 
-            : "bg-white border-gray-200"
+            : "bg-gray-50 border-gray-200"
         }`}>
           <GameUpdate
             gameId={gameId}

@@ -59,12 +59,12 @@ const Home = ({ isDarkMode }) => {
   }
 
   return (
-    <main className="w-full mx-auto px-1 md:px-6 lg:px-8 xl:px-12 pt-2 max-w-7xl">
+    <main className={`w-full mx-auto px-1 md:px-6 lg:px-8 xl:px-12 pt-2 max-w-7xl relative z-0 ${Auth.loggedIn() ? 'mt-16 lg:mt-20 pt-4' : 'mt-0'}`}>
       {isLoggedIn ? (
         <>
           {/* Welcome & Hero Section */}
-          <section className="w-full flex flex-col items-center justify-center mb-6">
-            <div className="w-full bg-white dark:bg-gradient-to-br dark:from-blue-950 dark:via-gray-900 dark:to-gray-800 rounded-3xl shadow-2xl border-2 border-gray-200 dark:border-blue-900/60 p-6 relative overflow-visible">
+          <section className="w-full flex flex-col items-center justify-center mb-6 relative z-10">
+            <div className="w-full bg-gray-50 dark:bg-gradient-to-br dark:from-blue-950 dark:via-gray-900 dark:to-gray-800 rounded-3xl shadow-2xl border-2 border-gray-200 dark:border-blue-900/60 p-6 relative overflow-visible">
               {/* Dashboard Info */}
               <div className="w-full flex justify-center mb-3">
                 <div className="w-full bg-gradient-to-r from-blue-50 via-gray-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-xl shadow-lg border-2 border-blue-300 dark:border-blue-700 p-4">
@@ -125,41 +125,65 @@ const Home = ({ isDarkMode }) => {
           </section>
 
           {/* Quick Actions */}
-          <section className="w-full grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+          <section className="w-full grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 relative z-20">
             <button
-              className={`bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all ${activeSection === "newpost" ? "ring-4 ring-blue-300" : ""}`}
-              onClick={() => setActiveSection("newpost")}
+              type="button"
+              className={`bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all cursor-pointer active:scale-95 ${activeSection === "newpost" ? "ring-4 ring-blue-300" : ""}`}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('New Post button clicked');
+                setActiveSection("newpost");
+              }}
             >
-              <FaRegListAlt className="text-2xl mb-1" />
-              <span className="text-xs">New Post</span>
+              <FaRegListAlt className="text-2xl mb-1 pointer-events-none" />
+              <span className="text-xs pointer-events-none">New Post</span>
             </button>
             <button
-              className={`bg-green-700 hover:bg-green-800 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all ${activeSection === "topplayers" ? "ring-4 ring-green-300" : ""}`}
-              onClick={() => setActiveSection("topplayers")}
+              type="button"
+              className={`bg-green-700 hover:bg-green-800 active:bg-green-900 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all cursor-pointer active:scale-95 ${activeSection === "topplayers" ? "ring-4 ring-green-300" : ""}`}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Top Players button clicked');
+                setActiveSection("topplayers");
+              }}
               aria-label="View top players"
             >
-              <FaStar className="text-2xl mb-1" aria-hidden="true" />
-              <span className="text-xs font-semibold">Top Players</span>
+              <FaStar className="text-2xl mb-1 pointer-events-none" aria-hidden="true" />
+              <span className="text-xs font-semibold pointer-events-none">Top Players</span>
             </button>
             <button
-              className={`bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all ${activeSection === "upcominggames" ? "ring-4 ring-yellow-300" : ""}`}
-              onClick={() => setActiveSection("upcominggames")}
+              type="button"
+              className={`bg-yellow-600 hover:bg-yellow-700 active:bg-yellow-800 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all cursor-pointer active:scale-95 ${activeSection === "upcominggames" ? "ring-4 ring-yellow-300" : ""}`}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Upcoming Games button clicked');
+                setActiveSection("upcominggames");
+              }}
               aria-label="View upcoming games"
             >
-              <FaCalendarAlt className="text-2xl mb-1" aria-hidden="true" />
-              <span className="text-xs font-semibold">Upcoming Games</span>
+              <FaCalendarAlt className="text-2xl mb-1 pointer-events-none" aria-hidden="true" />
+              <span className="text-xs font-semibold pointer-events-none">Upcoming Games</span>
             </button>
             <button
-              className={`bg-gray-700 hover:bg-gray-800 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all ${activeSection === "recentskills" ? "ring-4 ring-gray-400" : ""}`}
-              onClick={() => setActiveSection("recentskills")}
+              type="button"
+              className={`bg-gray-700 hover:bg-gray-800 active:bg-gray-900 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all cursor-pointer active:scale-95 ${activeSection === "recentskills" ? "ring-4 ring-gray-400" : ""}`}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Recent Skills button clicked');
+                setActiveSection("recentskills");
+              }}
             >
-              <FaFutbol className="text-2xl mb-1" />
-              <span className="text-xs">Recent Skills</span>
+              <FaFutbol className="text-2xl mb-1 pointer-events-none" />
+              <span className="text-xs pointer-events-none">Recent Skills</span>
             </button>
           </section>
 
           {/* Main Content Sections - show only active section */}
-          <section className="w-full flex flex-col gap-8 mb-8">
+          <section className="w-full flex flex-col gap-8 mb-8 relative z-10">
             {activeSection === "newpost" && (
               <div className="w-full flex flex-col gap-4">
                 <div className="bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-xl p-4 border-2 border-blue-200 dark:border-gray-700">
@@ -214,14 +238,16 @@ const Home = ({ isDarkMode }) => {
 
         </>
       ) : (
-        <div className="w-full flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="w-full flex flex-col items-center justify-center min-h-[60vh] relative">
                {/* Subtle background pattern */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M0 0h60v1H0V0zm0 30h60v1H0v-1z'/%3E%3Cpath d='M0 0v60h1V0H0zm30 0v60h1V0h-1z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
         }}></div>
       </div>
-          <Hero />
+          <div className="relative z-10">
+            <Hero />
+          </div>
         </div>
       )}
     </main>

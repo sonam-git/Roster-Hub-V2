@@ -37,7 +37,7 @@ const Skill = ({ isDarkMode }) => {
   
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex items-center justify-center min-h-[60vh] pt-20 lg:pt-24">
         <div className={`text-center p-8 rounded-2xl shadow-lg ${
           isDarkMode ? 'bg-red-900/30 text-red-200' : 'bg-red-100 text-red-800'
         }`}>
@@ -58,7 +58,7 @@ const Skill = ({ isDarkMode }) => {
     ) || [];
 
   return (
-    <main className="mx-auto w-full px-1 sm:px-2 md:px-4 lg:px-6 xl:px-8 2xl:max-w-7xl transition-all duration-300">
+    <main className="mx-auto w-full pt-20 lg:pt-24 px-1 sm:px-2 md:px-4 lg:px-6 xl:px-8 2xl:max-w-7xl transition-all duration-300">
       <div className="w-full mx-auto space-y-6 mt-4 mb-6">
         {/* Simple Header like Game.jsx */}
         <div className={`mb-6 text-center ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>

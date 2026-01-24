@@ -14,7 +14,7 @@ const GameSearchPage = () => {
   };
 
   return (
-    <div className="mt-4 mb-6 w-full max-w-full overflow-hidden px-2 sm:px-0">
+    <div className="mt-4 mb-6 w-full max-w-full overflow-hidden px-2 sm:px-0 pt-20 lg:pt-24">
       {/* Header */}
       <div className="mb-6 sm:mb-8">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4 sm:mb-6">

@@ -58,7 +58,7 @@ export default function TopHeader({ className, onToggleMenu, open }) {
   ] : [
     { key: "home", label: "Home", icon: faHome, path: "/" },
     { key: "gameschedule", label: "Upcoming", icon: faCalendarAlt, path: "/upcoming-games" },
-    { key: "creategame", label: "Create Game", icon: faPlus, path: "/game-create" },
+    { key: "creategame", label: "Create", icon: faPlus, path: "/game-create" },
     { key: "search", label: "Search", icon: faSearch, action: "search", path: "/game-search" },
     { key: "messages", label: "Inbox", icon: faInbox, path: "/message" },
     { key: "skilllist", label: "Skills", icon: faStar, path: "/recent-skills" },
@@ -85,61 +85,58 @@ export default function TopHeader({ className, onToggleMenu, open }) {
   return (
     <>
       {/* Desktop TopHeader - Hidden below 976px, visible at 976px+ (custom lg breakpoint) */}
-      <header className={`hidden lg:flex fixed top-0 left-0 right-0 w-full flex-row items-center justify-between bg-gray-100 dark:bg-gray-800 py-2 shadow-md z-[100] px-2 sm:px-4 ${typeof className !== 'undefined' ? className : ''}`}>
-      {/* Left: Logo and Title (always visible, beautiful UI) */}
+      <header className={`hidden lg:flex fixed top-0 left-0 right-0 w-full flex-row items-center justify-between bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm z-[100] px-6 h-16 ${typeof className !== 'undefined' ? className : ''}`}>
+      {/* Left: Logo and Title - AWS-style clean branding */}
       <Link
         to={"/"}
-        className="flex items-center gap-3 no-underline group"
+        className="flex items-center gap-3 no-underline group hover:opacity-80 transition-opacity"
         style={{ textDecoration: "none" }}
       >
-        <div className="flex items-center gap-3 w-full md:w-auto justify-center py-1 px-2">
-          <div className="relative flex items-center justify-center mt-3 ">
+        <div className="flex items-center gap-3">
+          <div className="relative flex items-center justify-center">
             <img
               src={isDarkMode ? darkLogo : lightLogo}
-              className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-2xl shadow-lg border-2 border-blue-400/30 bg-gradient-to-br from-blue-100/60 to-purple-100/40 dark:from-blue-900/40 dark:to-purple-900/30 drop-shadow-xl transition-all duration-500"
-              alt="logo"
+              className="w-10 h-10 rounded-lg"
+              alt="RosterHub logo"
               style={{ objectFit: 'contain', background: 'transparent' }}
             />
-            {/* Animated ring effect */}
-            <span className="absolute inset-0 rounded-2xl border-2 border-blue-400/40 dark:border-purple-400/40 opacity-30 animate-pulse pointer-events-none"></span>
           </div>
-          <div className={`flex flex-col transition-all duration-300 overflow-hidden  mt-3 ${
+          <div className={`flex flex-col transition-all duration-300 ${
             open 
-              ? "opacity-100 translate-x-0 w-auto ml-3 lg:ml-0" 
-              : "opacity-0 -translate-x-4 w-0 ml-0"
+              ? "opacity-100" 
+              : "opacity-0 w-0 overflow-hidden"
           }`}>
-            <h1 className={`font-oswald font-bold text-lg sm:text-xl transition-colors duration-200 whitespace-nowrap tracking-wide ${
+            <h1 className={`font-semibold text-base whitespace-nowrap ${
               isDarkMode ? "text-white" : "text-gray-900"
             }`}>
-              ROSTERHUB
+              RosterHub
             </h1>
-            <p className={`text-xs whitespace-nowrap font-oswald tracking-wider ${
-              isDarkMode ? "text-gray-400" : "text-gray-500"
+            <p className={`text-xs whitespace-nowrap ${
+              isDarkMode ? "text-gray-400" : "text-gray-600"
             }`}>
-              TEAM MANAGEMENT
+              Team Management
             </p>
           </div>
         </div>
       </Link>
       
-      {/* Invite Code Display - Only for Owners */}
+      {/* Invite Code Display - AWS-style badge for owners */}
       {isLoggedIn && isOwner && currentUser?.currentOrganization?.inviteCode && (
-        <div className="hidden xl:flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl px-4 py-2 shadow-lg border border-emerald-400/50 ml-4 mt-3">
+        <div className="hidden xl:flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-3 py-1.5 ml-6">
           <div className="flex flex-col">
-            <span className="text-white/80 text-[10px] font-semibold uppercase tracking-wider">
+            <span className="text-gray-600 dark:text-gray-400 text-[10px] font-medium uppercase tracking-wider">
               Team Code
             </span>
-            <code className="text-white font-mono font-black text-lg tracking-widest">
+            <code className="text-gray-900 dark:text-white font-mono font-semibold text-sm tracking-wide">
               {currentUser.currentOrganization.inviteCode}
             </code>
           </div>
           <button
             onClick={() => {
               navigator.clipboard.writeText(currentUser.currentOrganization.inviteCode);
-              // You could add a toast notification here
-              alert("✅ Invite code copied!");
+              // Add a toast notification if you have one
             }}
-            className="bg-white hover:bg-gray-100 text-emerald-600 p-2 rounded-lg transition-all duration-300 transform hover:scale-110"
+            className="bg-gray-50 dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-blue-600 dark:text-blue-400 p-1.5 rounded border border-gray-200 dark:border-gray-700 transition-colors"
             title="Copy invite code"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -149,12 +146,12 @@ export default function TopHeader({ className, onToggleMenu, open }) {
         </div>
       )}
       
-      {/* Center: AWS-style navigation or promo text */}
-      <div className={`flex flex-row items-center justify-center flex-1 w-full`}>
+      {/* Center: AWS-style horizontal navigation */}
+      <div className={`flex flex-row items-center justify-center flex-1`}>
         {isLoggedIn ? (
           <nav className="w-full max-w-5xl mx-auto">
-            {/* AWS-style horizontal navigation bar */}
-            <div className="flex items-center justify-center gap-0">
+            {/* AWS-style clean horizontal navigation */}
+            <div className="flex items-center justify-center gap-1">
               {BUTTONS.map((btn) => {
                 const isActive = location.pathname === btn.path?.split('#')[0];
                 
@@ -164,14 +161,14 @@ export default function TopHeader({ className, onToggleMenu, open }) {
                     <div key={btn.key} className="hidden lg:block relative">
                       <button
                         ref={rosterBtnRef}
-                        className={`relative px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 ${
+                        className={`relative px-4 py-2 text-sm font-medium transition-all duration-150 ${
                           showRosterDropdown
                             ? isDarkMode
-                              ? "text-white border-blue-500 bg-gray-800/40"
-                              : "text-gray-900 border-blue-600 bg-gray-100/60"
+                              ? "text-blue-400 bg-gray-800"
+                              : "text-blue-600 bg-gray-50"
                             : isDarkMode
-                              ? "text-gray-300 border-transparent hover:text-white hover:bg-gray-800/30"
-                              : "text-gray-600 border-transparent hover:text-gray-900 hover:bg-gray-50"
+                              ? "text-gray-300 hover:text-white hover:bg-gray-800"
+                              : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
                         }`}
                         onClick={() => setShowRosterDropdown((prev) => !prev)}
                       >
@@ -188,18 +185,18 @@ export default function TopHeader({ className, onToggleMenu, open }) {
                   );
                 }
                 
-                // Regular navigation items (AWS-style: clean text, border-bottom highlight)
+                // Regular navigation items - AWS-style: simple, clean text buttons
                 return (
                   <button
                     key={btn.key}
-                    className={`relative px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 whitespace-nowrap ${
+                    className={`relative px-4 py-2 text-sm font-medium transition-all duration-150 whitespace-nowrap ${
                       isActive
                         ? isDarkMode
-                          ? "text-white border-blue-500 bg-gray-800/40"
-                          : "text-gray-900 border-blue-600 bg-gray-100/60"
+                          ? "text-blue-400 bg-gray-800"
+                          : "text-blue-600 bg-gray-50"
                         : isDarkMode
-                          ? "text-gray-300 border-transparent hover:text-white hover:bg-gray-800/30"
-                          : "text-gray-600 border-transparent hover:text-gray-900 hover:bg-gray-50"
+                          ? "text-gray-300 hover:text-white hover:bg-gray-800"
+                          : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
                     }`}
                     onClick={() => {
                       if (btn.action === "search") {
@@ -218,129 +215,54 @@ export default function TopHeader({ className, onToggleMenu, open }) {
             </div>
           </nav>
         ) : (
-          <div className="w-full relative flex items-center justify-center overflow-hidden rounded-3xl shadow-2xl border-2 border-transparent bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-green-500/20 dark:from-blue-600/30 dark:via-purple-600/30 dark:to-green-600/30 backdrop-blur-sm">
-            {/* Animated background effects */}
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 via-purple-400/10 to-green-400/10 dark:from-blue-500/15 dark:via-purple-500/15 dark:to-green-500/15 animate-pulse"></div>
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 animate-pulse"></div>
-            <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 via-purple-500 to-blue-500 animate-pulse delay-1000"></div>
-            
-            {/* Main content container */}
-            <div className="relative z-10 py-2 px-4">
-              <span className="animate-marquee whitespace-nowrap text-lg sm:text-xl md:text-2xl font-bold tracking-wide flex items-center gap-3 sm:gap-4 md:gap-6">
-                {/* Leading icon with enhanced styling */}
-                <div className="relative">
-                  <FontAwesomeIcon 
-                    icon={faPersonRunning} 
-                    className="text-green-600 dark:text-green-300 text-2xl sm:text-3xl md:text-4xl drop-shadow-2xl animate-bounce-slow filter brightness-110" 
-                  />
-                  <div className="absolute inset-0 text-green-300 dark:text-green-100 text-2xl sm:text-3xl md:text-4xl animate-ping opacity-30">
-                    <FontAwesomeIcon icon={faPersonRunning} />
-                  </div>
-                </div>
-                
-                {/* Brand name with gradient text */}
-                <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 dark:from-blue-300 dark:via-purple-300 dark:to-cyan-300 bg-clip-text text-transparent font-oswald font-black text-2xl sm:text-3xl md:text-4xl drop-shadow-lg tracking-wider">
-                  ROSTERHUB
+          <div className="flex items-center justify-center gap-4 px-6 py-2">
+            <div className="flex items-center gap-3">
+              <FontAwesomeIcon 
+                icon={faPersonRunning} 
+                className="text-blue-600 dark:text-blue-400 text-2xl" 
+              />
+              <div className="flex flex-col">
+                <span className="text-gray-900 dark:text-white font-semibold text-lg">
+                  RosterHub
                 </span>
-                
-                {/* Marketing message with enhanced styling */}
-                <span className="hidden sm:inline-flex items-center gap-2 text-gray-700 dark:text-gray-100 font-medium text-sm sm:text-base md:text-lg italic tracking-wide">
-                  <span className="text-yellow-500 dark:text-yellow-300 animate-pulse text-lg">✨</span>
-                  <span className="bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 dark:from-gray-100 dark:via-white dark:to-gray-100 bg-clip-text text-transparent font-semibold">
-                    Where Champions Connect & Teams Thrive!
-                  </span>
-                  <span className="text-yellow-500 dark:text-yellow-300 animate-pulse text-lg delay-500">🏆</span>
+                <span className="text-gray-600 dark:text-gray-400 text-sm">
+                  Where Champions Connect & Teams Thrive
                 </span>
-                
-                {/* Mobile-specific shorter message */}
-                <span className="sm:hidden text-gray-700 dark:text-gray-100 font-medium text-sm italic">
-                  <span className="text-yellow-500 dark:text-yellow-300 animate-pulse">✨</span>
-                  Build Your Dream Team!
-                  <span className="text-yellow-500 dark:text-yellow-300 animate-pulse delay-500">🏆</span>
-                </span>
-                
-                {/* Call-to-action with pulse effect */}
-                <span className="md:inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-400 dark:to-emerald-500 text-white dark:text-gray-900 font-bold text-sm rounded-full shadow-lg animate-pulse border border-green-400/50 dark:border-green-300/50">
-                  <span>JOIN NOW</span>
-                  <span className="animate-bounce">🚀</span>
-                </span>
-                
-                {/* Trailing star with enhanced animation */}
-                <div className="relative">
-                  <FontAwesomeIcon 
-                    icon={faStar} 
-                    className="text-yellow-600 dark:text-yellow-200 text-2xl sm:text-3xl md:text-4xl drop-shadow-2xl animate-spin-slow filter brightness-110" 
-                  />
-                  <div className="absolute inset-0 text-yellow-300 dark:text-yellow-100 text-2xl sm:text-3xl md:text-4xl animate-ping opacity-40 delay-700">
-                    <FontAwesomeIcon icon={faStar} />
-                  </div>
-                </div>
-              </span>
+              </div>
             </div>
-            
-            {/* Enhanced animations and styles */}
-            <style>{`
-              @keyframes marquee {
-                0% { transform: translateX(100%); }
-                100% { transform: translateX(-100%); }
-              }
-              .animate-marquee {
-                animation: marquee 12s linear infinite;
-                animation-play-state: running;
-              }
-              .animate-marquee:hover {
-                animation-play-state: paused;
-              }
-              @keyframes spin-slow {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-              }
-              .animate-spin-slow {
-                animation: spin-slow 8s linear infinite;
-              }
-              @keyframes bounce-slow {
-                0%, 100% { transform: translateY(0); }
-                50% { transform: translateY(-8px); }
-              }
-              .animate-bounce-slow {
-                animation: bounce-slow 2s ease-in-out infinite;
-              }
-              @keyframes pulse {
-                0%, 100% { opacity: 1; transform: scale(1); }
-                50% { opacity: 0.8; transform: scale(1.05); }
-              }
-              .animate-pulse {
-                animation: pulse 2s infinite;
-              }
-              @keyframes ping {
-                75%, 100% {
-                  transform: scale(2);
-                  opacity: 0;
-                }
-              }
-              .animate-ping {
-                animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-              }
-            `}</style>
+            <div className="hidden xl:flex items-center gap-2">
+              <button
+                onClick={() => navigate('/signup')}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+              >
+                Get Started
+              </button>
+              <button
+                onClick={() => navigate('/login')}
+                className="px-4 py-2 bg-gray-50 dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 transition-colors"
+              >
+                Sign In
+              </button>
+            </div>
           </div>
         )}
       </div>
-      {/* Roster Dropdown - Using RosterModal component */}
+      {/* Roster Dropdown - AWS-style clean modal */}
       <RosterModal
         isOpen={showRosterDropdown}
         onClose={() => setShowRosterDropdown(false)}
         isMobile={isMobile}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-3 sm:px-4 py-3 sm:py-4 border-b border-gray-700 shadow-sm">
+        <div className="bg-gray-50 dark:bg-gray-800 px-4 py-3 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
-            <h3 className="text-white font-oswald font-bold tracking-wide text-sm sm:text-base flex items-center gap-2">
-              <FontAwesomeIcon icon={faPersonRunning} className="text-gray-300 text-base sm:text-lg" />
-              TEAM ROSTER
+            <h3 className="text-gray-900 dark:text-white font-semibold text-sm flex items-center gap-2">
+              <FontAwesomeIcon icon={faPersonRunning} className="text-gray-500 dark:text-gray-400" />
+              Team Roster
             </h3>
             <button
               onClick={() => setShowRosterDropdown(false)}
-              className="text-white hover:text-gray-300 transition-colors p-1 rounded-full hover:bg-white/10"
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors p-1"
               aria-label="Close"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -348,148 +270,148 @@ export default function TopHeader({ className, onToggleMenu, open }) {
               </svg>
             </button>
           </div>
-          <p className="text-gray-300 text-xs sm:text-sm mt-1">
+          <p className="text-gray-600 dark:text-gray-400 text-xs mt-1">
             {profilesData?.profiles?.length || 0} team members
           </p>
         </div>
         
         {/* Player List */}
-        <div className={`overflow-y-auto ${isMobile ? 'max-h-64' : 'max-h-56 sm:max-h-64'}`}>
+        <div className={`overflow-y-auto ${isMobile ? 'max-h-64' : 'max-h-56 sm:max-h-64'} bg-gray-50 dark:bg-gray-800`}>
           {profilesData?.profiles?.length > 0 ? (
-            <ul className="py-1 sm:py-2">
+            <ul className="py-1">
               {profilesData.profiles.map((player) => (
                 <li key={player._id}>
                   <button
-                    className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 hover:bg-gray-800 text-white font-medium flex items-center gap-2 sm:gap-3 transition-all duration-200 group border-b border-gray-700 last:border-b-0"
+                    className="w-full text-left px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0"
                     onClick={() => {
                       setShowRosterDropdown(false);
                       navigate(`/profiles/${player._id}`);
                     }}
                   >
-                    <div className="relative">
+                    <div className="relative flex-shrink-0">
                       {player.profilePic ? (
                         <img 
                           src={player.profilePic} 
                           alt={`${player.name}'s avatar`} 
-                          className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover border-2 border-gray-600 group-hover:border-gray-500 transition-colors" 
+                          className="w-8 h-8 rounded-full object-cover" 
                         />
                       ) : (
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center border-2 border-gray-600 group-hover:border-gray-500 transition-colors">
+                        <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                           <FontAwesomeIcon 
                             icon={faPersonRunning} 
-                            className="text-white text-sm sm:text-base" 
+                            className="text-gray-500 dark:text-gray-400 text-sm" 
                           />
                         </div>
                       )}
-                      {/* Online indicator */}
                       {Auth.loggedIn() && Auth.getProfile().data._id === player._id && (
-                        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-gray-900 rounded-full"></div>
+                        <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs sm:text-sm font-medium text-white truncate group-hover:text-gray-200 transition-colors">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                         {Auth.loggedIn() && Auth.getProfile().data._id === player._id ? "You" : player.name}
                       </p>
                       {player.position && (
-                        <p className="text-xs text-gray-400 truncate">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                           {player.position}
                         </p>
                       )}
                     </div>
-                    <div className="flex items-center gap-2">
-                      {Auth.loggedIn() && Auth.getProfile().data._id === player._id && (
-                        <span className="px-2 py-1 bg-blue-900 text-blue-300 text-xs rounded-full font-medium">
-                          You
-                        </span>
-                      )}
-                      <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
+                    {Auth.loggedIn() && Auth.getProfile().data._id === player._id && (
+                      <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs rounded-full font-medium">
+                        You
+                      </span>
+                    )}
                   </button>
                 </li>
               ))}
             </ul>
           ) : (
             <div className="px-4 py-8 text-center">
-              <FontAwesomeIcon icon={faPersonRunning} className="text-4xl text-gray-600 mb-3" />
-              <p className="text-gray-400 text-sm">No team members found</p>
+              <FontAwesomeIcon icon={faPersonRunning} className="text-4xl text-gray-300 dark:text-gray-600 mb-3" />
+              <p className="text-gray-500 dark:text-gray-400 text-sm">No team members found</p>
             </div>
           )}
         </div>
         
         {/* Footer */}
-        <div className="bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 border-t border-gray-700">
+        <div className="bg-gray-50 dark:bg-gray-900 px-4 py-3 border-t border-gray-200 dark:border-gray-700">
           <button
             onClick={() => {
               setShowRosterDropdown(false);
               navigate('/roster');
             }}
-            className="w-full text-center text-blue-400 hover:text-blue-300 text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1 sm:gap-2"
+            className="w-full text-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium transition-colors flex items-center justify-center gap-2"
           >
             <span>View Full Roster</span>
-            <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </button>
         </div>
       </RosterModal>
-      {/* Right: Organization Selector, Dark/Light mode toggle and sidebar toggle (arrow always visible) */}
-      <div className="hidden lg:flex items-center ml-4 gap-2 mt-3">
+      {/* Right: Controls - AWS-style clean buttons */}
+      <div className="hidden lg:flex items-center gap-3">
         {/* Organization Selector - Only shown when logged in */}
         {isLoggedIn && <OrganizationSelector />}
         
+        {/* Theme toggle */}
         <button
           onClick={toggleDarkMode}
-          className="rounded-full p-2 bg-gray-100 dark:bg-gray-600 shadow hover:bg-gray-600 dark:hover:bg-gray-400 transition-colors"
+          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
           aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
         >
-          <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} className="text-xl text-yellow-500 dark:text-gray-200" />
+          <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} className="text-lg" />
         </button>
-        {/* Sidebar toggle controller - always visible */}
-        <img
-          src={controlImage}
-          className={`cursor-pointer w-6 md:w-8 lg:w-10 border-dark-blue border-2 rounded-full bg-white transition-transform duration-300 ml-2 ${open ? '' : 'rotate-180'}`}
-          style={{ marginTop: 2 }}
+        
+        {/* Sidebar toggle - AWS-style arrow button */}
+        <button
           onClick={onToggleMenu}
-          alt="toggle menu"
-        />
+          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
+          aria-label="Toggle sidebar"
+        >
+          <img
+            src={controlImage}
+            className={`w-5 h-5 transition-transform duration-300 ${open ? '' : 'rotate-180'}`}
+            alt="toggle menu"
+          />
+        </button>
       </div>
     </header>
 
-      {/* Mobile Bottom Navigation - Visible below 976px, hidden at 976px+ (custom lg breakpoint) - Only for logged in users */}
+      {/* Mobile Bottom Navigation - AWS-style clean navigation bar */}
       {isLoggedIn && (
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[50] bg-gray-100 dark:bg-gray-800 border-t-2 border-gray-300 dark:border-gray-700 shadow-2xl pb-safe">
-        <div className="flex items-center justify-around px-1 py-2 overflow-x-auto scrollbar-hide">
-          {BUTTONS.map((btn, index) => {
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[50] bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shadow-lg pb-safe">
+        <div className="flex items-center justify-around px-2 py-2.5 overflow-x-auto scrollbar-hide">
+          {BUTTONS.map((btn) => {
             const isRoster = btn.key === "roster";
+            const isActive = location.pathname === btn.path?.split('#')[0];
+            
             return (
-              <React.Fragment key={btn.key} >
+              <React.Fragment key={btn.key}>
                 {isRoster ? (
-                  <div className="relative flex-shrink-0">
-                    <button
-                      ref={mobileRosterBtnRef}
-                      className={`flex flex-col items-center gap-1 px-2 py-1.5 rounded-lg font-semibold text-xs transition-all duration-300 transform active:scale-95 min-w-[60px] justify-center ${
-                        isDarkMode
-                          ? "text-gray-200 hover:bg-gray-700/50"
-                          : "text-gray-700 hover:bg-gray-200/50"
-                      }`}
-                      onClick={() => setShowRosterDropdown((prev) => !prev)}
-                    >
-                      <FontAwesomeIcon icon={btn.icon} className="text-lg" />
-                      <span className="text-[10px] font-bold tracking-wide truncate">{btn.label}</span>
-                    </button>
-                  </div>
+                  <button
+                    ref={mobileRosterBtnRef}
+                    className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg text-xs transition-colors min-w-[64px] ${
+                      isDarkMode
+                        ? "text-gray-300 hover:bg-gray-800"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                    onClick={() => setShowRosterDropdown((prev) => !prev)}
+                  >
+                    <FontAwesomeIcon icon={btn.icon} className="text-lg" />
+                    <span className="text-[10px] font-medium">{btn.label}</span>
+                  </button>
                 ) : (
                   <button
-                    className={`flex flex-col items-center gap-1 px-2 py-1.5 rounded-lg font-bold text-xs transition-all duration-300 transform active:scale-95 flex-shrink-0 min-w-[60px] justify-center ${
-                      location.pathname === btn.path?.split('#')[0]
+                    className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg text-xs transition-colors min-w-[64px] ${
+                      isActive
                         ? isDarkMode
-                          ? "bg-gradient-to-br from-blue-600 via-purple-600 to-blue-700 text-white shadow-lg"
-                          : "bg-gradient-to-br from-blue-500 via-purple-500 to-blue-600 text-white shadow-lg"
+                          ? "bg-gray-800 text-blue-400"
+                          : "bg-gray-100 text-blue-600"
                         : isDarkMode
-                          ? "text-gray-200 hover:bg-gray-700/50"
-                          : "text-gray-700 hover:bg-gray-200/50"
+                          ? "text-gray-300 hover:bg-gray-800"
+                          : "text-gray-700 hover:bg-gray-100"
                     }`}
                     onClick={() => {
                       if (btn.action === "search") {
@@ -502,33 +424,25 @@ export default function TopHeader({ className, onToggleMenu, open }) {
                     }}
                   >
                     <FontAwesomeIcon icon={btn.icon} className="text-lg" />
-                    <span className="text-[10px] font-bold tracking-wide truncate">{btn.label}</span>
+                    <span className="text-[10px] font-medium">{btn.label}</span>
                   </button>
-                )}
-                
-                {/* Separator between buttons */}
-                {index < BUTTONS.length - 1 && (
-                  <div className={`h-8 w-px ${isDarkMode ? 'bg-gray-600' : 'bg-gray-400'}`}></div>
                 )}
               </React.Fragment>
             );
           })}
           
-          {/* Separator before theme toggle */}
-          <div className={`h-8 w-px ${isDarkMode ? 'bg-gray-600' : 'bg-gray-400'}`}></div>
-          
           {/* Dark Mode Toggle for Mobile */}
           <button
             onClick={toggleDarkMode}
-            className={`flex flex-col items-center gap-1 px-2 py-1.5 rounded-lg font-bold text-xs transition-all duration-300 transform active:scale-95 flex-shrink-0 min-w-[60px] justify-center ${
+            className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg text-xs transition-colors min-w-[64px] ${
               isDarkMode
-                ? "text-gray-200 hover:bg-gray-700/50"
-                : "text-gray-700 hover:bg-gray-200/50"
+                ? "text-gray-300 hover:bg-gray-800"
+                : "text-gray-700 hover:bg-gray-100"
             }`}
             aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
           >
             <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} className="text-lg" />
-            <span className="text-[10px] font-bold tracking-wide">Home</span>
+            <span className="text-[10px] font-medium">Theme</span>
           </button>
         </div>
       </div>

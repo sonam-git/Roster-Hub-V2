@@ -40,7 +40,6 @@ import { OrganizationProvider } from "./contexts/OrganizationContext";
 import ChatPopup from "./components/ChatPopup";
 import { QUERY_ME } from "./utils/queries";
 import Auth from "./utils/auth";
-import MainHeader from "./components/MainHeader";
 import TopHeader from "./components/TopHeader";
 import CustomComingGames from "./components/CustomComingGames";
 import AllSkillsList from "./components/AllSkillsList";
@@ -153,7 +152,7 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
         <div className={!Auth.loggedIn() ? "lg:hidden" : ""}>
           <Header open={sidebarOpen} setOpen={setSidebarOpen} />
         </div>
-        <div className={`flex-1 transition-all duration-300 pt-40 lg:pt-24 relative z-[2] flex flex-col overflow-x-hidden`}>
+        <div className={`flex-1 transition-all duration-300 relative z-[2] flex flex-col overflow-x-hidden`}>
                 {/* Subtle background pattern */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{
@@ -216,7 +215,6 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
 // ─── Main App ───
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const isLoggedIn = Auth.loggedIn();
   
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
@@ -230,18 +228,11 @@ function App() {
                   v7_relativeSplatPath: true,
                 }}
               >
-                {/* Hide on large screens when not logged in, but show on small screens always */}
-                <div className={!isLoggedIn ? "lg:hidden" : ""}>
-                  <MainHeader 
-                    open={sidebarOpen} 
-                    setOpen={setSidebarOpen} 
-                  />
-                  {/* TopHeader - always visible, positioned with fixed */}
-                  <TopHeader 
-                    onToggleMenu={() => setSidebarOpen((v) => !v)} 
-                    open={sidebarOpen} 
-                  />
-                </div>
+                {/* TopHeader - always visible, positioned with fixed */}
+                <TopHeader 
+                  onToggleMenu={() => setSidebarOpen((v) => !v)} 
+                  open={sidebarOpen} 
+                />
                 <AppContent 
                   sidebarOpen={sidebarOpen} 
                   setSidebarOpen={setSidebarOpen} 

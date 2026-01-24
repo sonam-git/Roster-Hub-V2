@@ -102,7 +102,7 @@ export default function AllSkillsList({ isDarkMode }) {
   
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-[40vh]">
+      <div className="flex items-center justify-center min-h-[40vh] pt-20 lg:pt-24">
         <div className={`text-center p-8 rounded-2xl shadow-2xl backdrop-blur-sm border ${
           isDarkMode ? 'bg-red-900/30 border-red-700' : 'bg-red-100 border-red-200'
         }`}>
@@ -128,7 +128,7 @@ export default function AllSkillsList({ isDarkMode }) {
 
   if (!allSkills.length) {
     return (
-      <div className="w-full mx-auto mb-4 px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 mt-8 max-w-7xl">
+      <div className="w-full mx-auto mb-4 px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 mt-8 max-w-7xl ">
         {/* Header */}
         <div className={`mb-8 text-center p-6 rounded-2xl backdrop-blur-sm border shadow-lg ${
           isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 border-gray-200'
@@ -351,7 +351,7 @@ export default function AllSkillsList({ isDarkMode }) {
   }
 
   return (
-    <div className="w-full mx-auto mb-4 px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 mt-8 max-w-7xl">
+    <div className="w-full mx-auto mb-4 px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 mt-8 max-w-7xl pt-20 lg:pt-24">
       {/* Modern Header */}
       <div className="mb-8 text-center">
         <h1 className={`text-2xl md:text-3xl font-bold mb-2 ${ isDarkMode ? 'text-white' : 'text-gray-900'}`}>

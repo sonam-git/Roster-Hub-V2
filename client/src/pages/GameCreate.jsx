@@ -15,9 +15,9 @@ const GameCreate = () => {
   };
 
   return (
-    <div className="mt-4 mb-6 w-full max-w-full overflow-hidden px-2 sm:px-0">
+    <div className="mt-4 mb-6 w-full max-w-full overflow-hidden px-2 sm:px-0 pt-20 lg:pt-24 relative z-0">
       {/* Header */}
-      <div className="mb-6 sm:mb-8">
+      <div className="mb-6 sm:mb-8 relative z-10">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4 sm:mb-6">
           <div className="flex-1 w-full lg:w-auto text-center">
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-2">
@@ -31,7 +31,7 @@ const GameCreate = () => {
       </div>
 
       {/* Game Form */}
-      <div className="w-full">
+      <div className="w-full relative z-10">
         <GameForm 
           onGameCreated={handleGameCreated}
           onBackToGames={handleBackToGames}

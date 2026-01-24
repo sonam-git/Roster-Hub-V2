@@ -1150,24 +1150,29 @@ export default function GameDetails({ gameId }) {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${
+    <div className={`min-h-screen transition-colors duration-300 pt-20 lg:pt-24 relative z-0 ${
       isDarkMode ? "bg-gray-900" : "bg-gray-50"
     }`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
         
         {/* Header Section */}
         <div className={`rounded-lg shadow-sm mb-6 ${
           isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"
         }`}>
-          <div className="px-4 sm:px-6 py-4 sm:py-5">
+          <div className="px-4 sm:px-6 py-4 sm:py-5 relative z-20">
             {/* Game Header */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-4">
                 <button
-                  onClick={() => navigate("/game-schedule")}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate("/game-schedule");
+                  }}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer active:scale-95 ${
                     isDarkMode
-                      ? "text-gray-400 hover:text-white hover:bg-gray-700"
+                      ? "text-gray-400 hover:text-white hover:bg-gray-700 active:bg-gray-600"
                       : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                   }`}
                 >
@@ -1230,73 +1235,88 @@ export default function GameDetails({ gameId }) {
         <div className={`rounded-lg shadow-sm mb-6 ${
           isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"
         }`}>
-          <div className="px-4 sm:px-6 py-3 overflow-x-auto">
+          <div className="px-4 sm:px-6 py-3 overflow-x-auto relative z-20">
             <div className="flex gap-2 min-w-max">
               <button
-                onClick={() => { 
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation(); 
                   if (showFormation) setShowFormation(false);
                   setActiveSection("overview");
                 }}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap cursor-pointer active:scale-95 ${
                   !showFormation && activeSection === "overview"
                     ? isDarkMode ? "bg-blue-600 text-white" : "bg-blue-600 text-white"
-                    : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                    : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700 active:bg-gray-600" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 active:bg-gray-200"
                 }`}
               >
                 Overview
               </button>
 
               <button
-                onClick={() => { 
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation(); 
                   if (showFormation) setShowFormation(false);
                   setActiveSection("weather");
                 }}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap cursor-pointer active:scale-95 ${
                   !showFormation && activeSection === "weather"
                     ? isDarkMode ? "bg-blue-600 text-white" : "bg-blue-600 text-white"
-                    : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                    : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700 active:bg-gray-600" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 active:bg-gray-200"
                 }`}
               >
                 Weather
               </button>
 
               <button
-                onClick={() => { 
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation(); 
                   if (showFormation) setShowFormation(false);
                   setActiveSection("notes");
                 }}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap cursor-pointer active:scale-95 ${
                   !showFormation && activeSection === "notes"
                     ? isDarkMode ? "bg-blue-600 text-white" : "bg-blue-600 text-white"
-                    : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                    : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700 active:bg-gray-600" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 active:bg-gray-200"
                 }`}
               >
                 Notes
               </button>
 
               <button
-                onClick={() => { 
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation(); 
                   if (showFormation) setShowFormation(false);
                   setActiveSection("responses");
                 }}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap cursor-pointer active:scale-95 ${
                   !showFormation && activeSection === "responses"
                     ? isDarkMode ? "bg-blue-600 text-white" : "bg-blue-600 text-white"
-                    : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                    : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700 active:bg-gray-600" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 active:bg-gray-200"
                 }`}
               >
                 Responses
               </button>
 
               <button
-                onClick={() => { 
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation(); 
                   if (showFormation) setShowFormation(false);
                   setActiveSection("guidelines");
                 }}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap cursor-pointer active:scale-95 ${
                   !showFormation && activeSection === "guidelines"
                     ? isDarkMode ? "bg-blue-600 text-white" : "bg-blue-600 text-white"
-                    : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                    : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700 active:bg-gray-600" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 active:bg-gray-200"
                 }`}
               >
                 Guidelines
@@ -1305,11 +1325,16 @@ export default function GameDetails({ gameId }) {
               {/* Formation/Feedback button - Show "Formation" for CONFIRMED, "Feedback" for COMPLETED */}
               {(game.status === "CONFIRMED" || game.status === "COMPLETED") && (
                 <button
-                  onClick={() => setShowFormation(!showFormation)}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowFormation(!showFormation);
+                  }}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap cursor-pointer active:scale-95 ${
                     showFormation
                       ? isDarkMode ? "bg-blue-600 text-white" : "bg-blue-600 text-white"
-                      : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                      : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700 active:bg-gray-600" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 active:bg-gray-200"
                   }`}
                 >
                   {game.status === "COMPLETED" ? "Feedback" : "Formation"}
@@ -1318,14 +1343,17 @@ export default function GameDetails({ gameId }) {
 
               {isCreator && (game.status === "PENDING" || game.status === "CONFIRMED" || game.status === "CANCELLED") && (
                 <button
-                  onClick={() => { 
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation(); 
                     if (showFormation) setShowFormation(false);
                     setActiveSection("management");
                   }}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap cursor-pointer active:scale-95 ${
                     !showFormation && activeSection === "management"
                       ? isDarkMode ? "bg-blue-600 text-white" : "bg-blue-600 text-white"
-                      : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                      : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700 active:bg-gray-600" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 active:bg-gray-200"
                   }`}
                 >
                   Management
@@ -1334,14 +1362,17 @@ export default function GameDetails({ gameId }) {
 
               {game.status === "COMPLETED" && (
                 <button
-                  onClick={() => { 
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation(); 
                     if (showFormation) setShowFormation(false);
                     setActiveSection("results");
                   }}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap cursor-pointer active:scale-95 ${
                     !showFormation && activeSection === "results"
                       ? isDarkMode ? "bg-blue-600 text-white" : "bg-blue-600 text-white"
-                      : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                      : isDarkMode ? "text-gray-400 hover:text-white hover:bg-gray-700 active:bg-gray-600" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 active:bg-gray-200"
                   }`}
                 >
                   Results

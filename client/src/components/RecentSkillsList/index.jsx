@@ -181,7 +181,7 @@ export default function RecentSkillsList() {
                             <span 
                               key={i} 
                               title={r.user?.name || "Unknown User"} 
-                              className="text-xl bg-white rounded-full shadow-sm border-2 border-white"
+                              className="text-xl bg-gray-50 rounded-full shadow-sm border-2 border-white"
                             >
                               {r.emoji}
                             </span>
@@ -201,7 +201,7 @@ export default function RecentSkillsList() {
                     isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-gray-50/80 border-gray-200'
                   }`}>
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-white text-gray-600 shadow-sm'
+                      isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600 shadow-sm'
                     }`}>
                       {skill.createdAt}
                     </span>

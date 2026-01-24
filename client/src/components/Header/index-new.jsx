@@ -77,7 +77,7 @@ const Header = ({ open, setOpen }) => {
 
   const Menus = Auth.loggedIn()
     ? [
-        { title: "Home", icon: HiHome, path: "/" },
+        { title: "Home", icon: HiHome, path: "/", hideOnMobile: true },
         { title: "My Profile", icon: HiUser, path: "/me" },
         { title: "Roster", icon: HiUserGroup, path: "/roster" },
         ...(isOwner ? [{ title: "Admin Panel", icon: HiShieldCheck, path: "/admin" }] : []),
@@ -106,14 +106,14 @@ const Header = ({ open, setOpen }) => {
   return (
     <div
       className={`flex min-h-screen ${
-        isDarkMode ? "bg-gray-100 text-gray-900" : "bg-gray-50 text-gray-900"
+        isDarkMode ? "bg-gray-100 text-gray-900" : "bg-white text-gray-900"
       }`}
     >
       {/* Mobile Top Bar - AWS Style Professional Header */}
       <div className={`lg:hidden fixed top-0 left-0 right-0 z-[300] ${
         isDarkMode 
           ? "bg-gray-900 border-b border-gray-800" 
-          : "bg-gray-50 border-b border-gray-200"
+          : "bg-white border-b border-gray-200"
       } shadow-sm`}>
         {/* Status Bar Safe Area */}
         <div className="h-[env(safe-area-inset-top,0px)]"></div>
@@ -163,18 +163,27 @@ const Header = ({ open, setOpen }) => {
             )}
           </button>
         </div>
+
+        {/* Organization Selector - AWS Style */}
+        {isLoggedIn && (
+          <div className={`px-4 py-2 border-t ${
+            isDarkMode ? "border-gray-800 bg-gray-900" : "border-gray-200 bg-gray-50"
+          }`}>
+            <OrganizationSelector />
+          </div>
+        )}
       </div>
 
-      {/* Mobile Auth Buttons - AWS Style Single Row with 3 Columns */}
+      {/* Mobile Auth Buttons - AWS Style */}
       {!Auth.loggedIn() && open && (
-        <div className={`lg:hidden fixed left-0 right-0 z-[250] ${
-          isDarkMode ? "bg-gray-900 border-b border-gray-800" : "bg-gray-50 border-b border-gray-200"
-        } shadow-lg`}
+        <div className={`lg:hidden fixed left-0 right-0 z-[50] ${
+          isDarkMode ? "bg-gray-900 border-b border-gray-800" : "bg-white border-b border-gray-200"
+        } shadow-sm`}
              style={{ top: 'calc(env(safe-area-inset-top, 0px) + 3.5rem)' }}>
-          <div className="grid grid-cols-3 gap-2 p-4">
+          <div className="flex gap-2 p-4">
             <Link
               to="/"
-              className={`px-3 py-3 text-sm font-medium rounded-md text-center transition-colors no-underline ${
+              className={`flex-1 px-4 py-2 text-sm font-medium rounded-md text-center transition-colors no-underline ${
                 location.pathname === "/" 
                   ? isDarkMode
                     ? "bg-blue-600 text-white hover:bg-blue-700"
@@ -183,14 +192,13 @@ const Header = ({ open, setOpen }) => {
                     ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
-              onClick={() => setOpen(false)}
             >
-              🏠 Home
+              Home
             </Link>
             
             <Link
               to="/login"
-              className={`px-3 py-3 text-sm font-medium rounded-md text-center transition-colors no-underline ${
+              className={`flex-1 px-4 py-2 text-sm font-medium rounded-md text-center transition-colors no-underline ${
                 location.pathname === "/login" 
                   ? isDarkMode
                     ? "bg-blue-600 text-white hover:bg-blue-700"
@@ -199,14 +207,13 @@ const Header = ({ open, setOpen }) => {
                     ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
-              onClick={() => setOpen(false)}
             >
-              🔐 Login
+              Login
             </Link>
             
             <Link
               to="/signup"
-              className={`px-3 py-3 text-sm font-medium rounded-md text-center transition-colors no-underline ${
+              className={`flex-1 px-4 py-2 text-sm font-medium rounded-md text-center transition-colors no-underline ${
                 location.pathname === "/signup" 
                   ? isDarkMode
                     ? "bg-blue-600 text-white hover:bg-blue-700"
@@ -215,15 +222,14 @@ const Header = ({ open, setOpen }) => {
                     ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
-              onClick={() => setOpen(false)}
             >
-              ✨ Sign Up
+              Sign Up
             </Link>
           </div>
         </div>
       )}
 
-      {/* Mobile Backdrop Overlay - Only for logged in users */}
+      {/* Mobile Backdrop Overlay */}
       {open && Auth.loggedIn() && (
         <div 
           className="fixed inset-0 bg-black/50 lg:hidden z-[4]"
@@ -232,8 +238,7 @@ const Header = ({ open, setOpen }) => {
         />
       )}
 
-      {/* Sidebar Navigation - AWS Style - Only show for logged in users */}
-      {Auth.loggedIn() && (
+      {/* Sidebar Navigation - AWS Style */}
       <div
         className={`fixed top-0 left-0 h-full transition-all duration-300 z-[60] lg:z-[5] ${
           open ? "w-64 translate-x-0" : "w-0 lg:w-16 -translate-x-full lg:translate-x-0"
@@ -254,7 +259,7 @@ const Header = ({ open, setOpen }) => {
           )}
           {!open && (
             <div className={`w-8 h-8 rounded-md flex items-center justify-center ${
-              isDarkMode ? "bg-gray-800" : "bg-gray-50"
+              isDarkMode ? "bg-gray-800" : "bg-white"
             }`}>
               <HiHome className={`w-5 h-5 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`} />
             </div>
@@ -262,14 +267,15 @@ const Header = ({ open, setOpen }) => {
         </div>
 
         {/* Navigation Menu */}
-        <nav className="px-2 py-4 overflow-y-auto pt-16 lg:pt-4" style={{ height: 'calc(100vh - 3.5rem)' }}>
+        <nav className="flex-1 px-2 py-4 overflow-y-auto h-[calc(100vh-3.5rem)]">
           <div className="space-y-1">
             {Menus.map((Menu, index) => {
               const isActive = location.pathname === Menu.path;
               const isLogout = Menu.title === "Logout";
+              const shouldHideOnMobile = Menu.hideOnMobile;
               
               return (
-                <div key={index}>
+                <div key={index} className={shouldHideOnMobile ? "hidden lg:block" : ""}>
                   {Menu.path ? (
                     <Link
                       to={Menu.path}
@@ -291,10 +297,10 @@ const Header = ({ open, setOpen }) => {
                             : isActive
                             ? isDarkMode
                               ? "bg-gray-800 text-white"
-                              : "bg-gray-50 text-gray-900 shadow-sm"
+                              : "bg-white text-gray-900 shadow-sm"
                             : isDarkMode
                               ? "text-gray-300 hover:bg-gray-800 hover:text-white"
-                              : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                              : "text-gray-700 hover:bg-white hover:text-gray-900"
                         }`}
                       >
                         <Menu.icon className={`w-5 h-5 flex-shrink-0 ${
@@ -338,7 +344,7 @@ const Header = ({ open, setOpen }) => {
                             : "text-red-600 hover:bg-red-50 hover:text-red-700"
                           : isDarkMode
                             ? "text-gray-300 hover:bg-gray-800 hover:text-white"
-                            : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                            : "text-gray-700 hover:bg-white hover:text-gray-900"
                       }`}
                     >
                       <Menu.icon className={`w-5 h-5 flex-shrink-0 ${
@@ -358,7 +364,6 @@ const Header = ({ open, setOpen }) => {
           </div>
         </nav>
       </div>
-      )}
 
       {/* Main Content Area */}
       <div className={`flex-1 transition-all duration-300 ${

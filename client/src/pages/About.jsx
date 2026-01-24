@@ -37,7 +37,7 @@ export default function About() {
   ];
 
   return (
-    <div className={`min-h-screen transition-colors duration-200 ${
+    <div className={`min-h-screen transition-colors duration-200 pt-20 lg:pt-24 ${
       isDarkMode 
         ? 'bg-gradient-to-b from-gray-900 to-gray-800' 
         : 'bg-gradient-to-b from-gray-50 to-white'

@@ -259,8 +259,8 @@ const GameHistory = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6 sm:py-8">
-      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-6 max-w-7xl">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6 sm:py-8 pt-20 lg:pt-24">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-6 max-w-7xl relative z-0">
         {/* AWS-style Page Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -272,23 +272,27 @@ const GameHistory = () => {
         </div>
 
         {/* Filters and Search */}
-        <div className="space-y-4">
+        <div className="space-y-4 relative z-10">
           {/* Status Filters */}
           <div className="flex flex-wrap gap-2">
             {STATUS_FILTERS.map(filter => (
               <button
                 key={filter.key}
-                onClick={() => setFilterStatus(filter.key)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-150 ${
+                type="button"
+                onClick={() => {
+                  console.log('Filter button clicked:', filter.key);
+                  setFilterStatus(filter.key);
+                }}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-150 cursor-pointer active:scale-95 ${
                   filterStatus === filter.key
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750'
+                    ? 'bg-blue-600 text-white shadow-sm hover:bg-blue-700 active:bg-blue-800'
+                    : 'bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-gray-400 dark:hover:border-gray-600 active:bg-gray-200 dark:active:bg-gray-600'
                 }`}
               >
                 <span>{filter.label}</span>
                 <span className={`px-1.5 py-0.5 rounded text-xs font-semibold ${
                   filterStatus === filter.key
-                    ? 'bg-gray-50/20'
+                    ? 'bg-gray-50'
                     : 'bg-gray-100 dark:bg-gray-700'
                 }`}>
                   {filter.count}

@@ -94,7 +94,7 @@ const Profile = () => {
   }
 
   return (
-    <main className="mx-auto w-full px-1 sm:px-2 md:px-4 lg:px-6 xl:px-8 2xl:max-w-7xl">
+    <main className="mx-auto w-full px-1 sm:px-2 md:px-4 lg:px-6 xl:px-8 2xl:max-w-7xl pt-20 lg:pt-24">
       {profileId ? (
         <UserProfile profile={profile} />
       ) : (
