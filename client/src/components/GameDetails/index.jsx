@@ -98,6 +98,10 @@ export default function GameDetails({ gameId }) {
   const { isDarkMode } = useContext(ThemeContext);
   const { currentOrganization } = useOrganization();
   const userId = Auth.getProfile()?.data?._id;
+  
+  // State for other games dropdown
+  const [showOtherGamesDropdown, setShowOtherGamesDropdown] = useState(false);
+  const dropdownRef = useRef(null);
 
   /* ──────────────────────────────────────────────────────────── */
   /*  Local helpers                                               */
@@ -124,6 +128,20 @@ export default function GameDetails({ gameId }) {
     errorPolicy: "ignore", // Ignore network errors
   });
   
+  /* ─── ALL GAMES QUERY (for dropdown) ──────────────────────── */
+  const {
+    data: allGamesData,
+  } = useQuery(QUERY_GAMES, {
+    variables: { 
+      organizationId: currentOrganization?._id 
+    },
+    skip: !currentOrganization,
+    fetchPolicy: "cache-first",
+  });
+  
+  // Filter out the current game from the list
+  const otherGames = allGamesData?.games?.filter(g => g._id !== gameId) || [];
+  
   // Refetch game when organization changes
   useEffect(() => {
     if (currentOrganization && gameId) {
@@ -133,6 +151,18 @@ export default function GameDetails({ gameId }) {
       });
     }
   }, [currentOrganization, gameId, refetchGame]);
+  
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowOtherGamesDropdown(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   /* ─── FORMATION QUERY ──────────────────────────────────────── */
   const [formation, setFormation] = useState(null);
@@ -1159,27 +1189,10 @@ export default function GameDetails({ gameId }) {
         <div className={`rounded-lg shadow-sm mb-6 ${
           isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"
         }`}>
-          <div className="px-4 sm:px-6 py-4 sm:py-5 relative z-20">
+          <div className="px-4 sm:px-6 py-4 sm:py-5 relative">
             {/* Game Header */}
             <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-4">
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    navigate("/game-schedule");
-                  }}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer active:scale-95 ${
-                    isDarkMode
-                      ? "text-gray-400 hover:text-white hover:bg-gray-700 active:bg-gray-600"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                  }`}
-                >
-                  <span>←</span>
-                  <span>Back to Games</span>
-                </button>
-              </div>
+              {/* Status Badge - Left Side */}
               <span className={`${statusBadgeClass(effectiveStatus)} text-xs sm:text-sm`}>
                 {effectiveStatus === 'PENDING' && '⏳ PENDING'}
                 {effectiveStatus === 'CONFIRMED' && '✅ CONFIRMED'}
@@ -1188,6 +1201,143 @@ export default function GameDetails({ gameId }) {
                 {effectiveStatus === 'EXPIRED' && '⏰ EXPIRED'}
                 {!['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED', 'EXPIRED'].includes(effectiveStatus) && effectiveStatus}
               </span>
+              
+              {/* Other Games Dropdown - Right Side */}
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowOtherGamesDropdown(!showOtherGamesDropdown);
+                  }}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer active:scale-95 ${
+                    isDarkMode
+                      ? "text-gray-400 hover:text-white hover:bg-gray-700 active:bg-gray-600"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                  }`}
+                >
+                  <span>📋</span>
+                  <span className="hidden sm:inline">Other Games</span>
+                  <span>{showOtherGamesDropdown ? '▲' : '▼'}</span>
+                </button>
+                
+                {showOtherGamesDropdown && otherGames.length > 0 && (
+                  <div className={`fixed top-auto right-4 sm:right-6 lg:right-8 mt-2 w-[95vw] sm:w-[600px] md:w-[700px] lg:w-[800px] rounded-lg shadow-2xl border z-[9999] max-h-[70vh] overflow-hidden ${
+                    isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+                  }`}
+                  style={{
+                    position: 'fixed',
+                    top: dropdownRef.current ? `${dropdownRef.current.getBoundingClientRect().bottom + 8}px` : 'auto'
+                  }}>
+                    <div className={`px-4 py-3 border-b ${isDarkMode ? "border-gray-700" : "border-gray-200"}`}>
+                      <h3 className={`text-sm font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                        Other Games ({otherGames.length})
+                      </h3>
+                    </div>
+                    <div className="overflow-x-auto overflow-y-auto max-h-[60vh]">
+                      <table className="w-full">
+                        <thead className={`sticky top-0 z-[10000] ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}>
+                          <tr>
+                            <th className={`px-3 py-2 text-left text-xs font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                              Date
+                            </th>
+                            <th className={`px-3 py-2 text-left text-xs font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                              Time
+                            </th>
+                            <th className={`px-3 py-2 text-left text-xs font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                              Opponent
+                            </th>
+                            <th className={`px-3 py-2 text-left text-xs font-medium hidden md:table-cell ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                              Location
+                            </th>
+                            <th className={`px-3 py-2 text-left text-xs font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                              Status
+                            </th>
+                            <th className={`px-3 py-2 text-left text-xs font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                              Action
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className={`divide-y ${isDarkMode ? "divide-gray-700" : "divide-gray-200"}`}>
+                          {otherGames.map((g) => {
+                            const gDate = new Date(+g.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                            const [gh, gm] = g.time.split(":").map(Number);
+                            const ghour12 = ((gh + 11) % 12) + 1;
+                            const gampm = gh >= 12 ? "PM" : "AM";
+                            const gTime = `${ghour12}:${gm.toString().padStart(2, "0")} ${gampm}`;
+                            const gStatus = getGameEffectiveStatus(g);
+                            
+                            return (
+                              <tr 
+                                key={g._id}
+                                className={`transition-colors ${
+                                  isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-50"
+                                }`}
+                              >
+                                <td className={`px-3 py-3 text-xs ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                                  {gDate}
+                                </td>
+                                <td className={`px-3 py-3 text-xs ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                                  {gTime}
+                                </td>
+                                <td className={`px-3 py-3 text-xs font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                                  {g.opponent}
+                                </td>
+                                <td className={`px-3 py-3 text-xs hidden md:table-cell ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                                  {g.venue}, {g.city}
+                                </td>
+                                <td className="px-3 py-3 text-xs">
+                                  <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                                    gStatus === 'CONFIRMED' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' :
+                                    gStatus === 'COMPLETED' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400' :
+                                    gStatus === 'CANCELLED' ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' :
+                                    gStatus === 'EXPIRED' ? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400' :
+                                    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
+                                  }`}>
+                                    {gStatus}
+                                  </span>
+                                </td>
+                                <td className="px-3 py-3 text-xs">
+                                  <button
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      setShowOtherGamesDropdown(false);
+                                      navigate(`/game-schedule/${g._id}`);
+                                    }}
+                                    className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                                      isDarkMode
+                                        ? "bg-blue-600 text-white hover:bg-blue-700"
+                                        : "bg-blue-600 text-white hover:bg-blue-700"
+                                    }`}
+                                  >
+                                    View
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+                
+                {showOtherGamesDropdown && otherGames.length === 0 && (
+                  <div className={`fixed top-auto right-4 sm:right-6 lg:right-8 mt-2 w-64 rounded-lg shadow-xl border z-[9999] p-4 ${
+                    isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+                  }`}
+                  style={{
+                    position: 'fixed',
+                    top: dropdownRef.current ? `${dropdownRef.current.getBoundingClientRect().bottom + 8}px` : 'auto'
+                  }}>
+                    <p className={`text-sm text-center ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                      No other games available
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Game Details Grid */}
@@ -1227,6 +1377,7 @@ export default function GameDetails({ gameId }) {
                   {game.city}
                 </p>
               </div>
+              
             </div>
           </div>
         </div>
@@ -1235,7 +1386,7 @@ export default function GameDetails({ gameId }) {
         <div className={`rounded-lg shadow-sm mb-6 ${
           isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"
         }`}>
-          <div className="px-4 sm:px-6 py-3 overflow-x-auto relative z-20">
+          <div className="px-4 sm:px-6 py-3 overflow-x-auto">
             <div className="flex gap-2 min-w-max">
               <button
                 type="button"

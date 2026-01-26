@@ -118,12 +118,12 @@ const GameUpdatePage = () => {
   }
 
   return (
-    <div className={`w-full min-h-screen py-8 px-4 pt-20 lg:pt-24 transition-colors duration-300 ${
+    <div className={`w-full min-h-screen py-8 px-4 pt-20 lg:pt-24 transition-colors duration-300 relative ${
       isDarkMode 
         ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900" 
         : "bg-gradient-to-br from-blue-50 via-white to-purple-50"
     }`}>
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto relative z-10">
         {/* Header */}
         <div className="mb-6">
           <button

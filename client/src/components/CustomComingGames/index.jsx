@@ -140,23 +140,24 @@ export default function CustomComingGames({ isDarkMode }) {
 
         {/* Category Filter Buttons */}
         <div className="overflow-x-auto pb-2 -mx-2 px-2 sm:mx-0 sm:px-0">
-          <div className="flex gap-2 justify-start sm:justify-center min-w-max sm:min-w-0 sm:flex-wrap">
+          <div className="flex gap-2 justify-start sm:justify-center min-w-max sm:min-w-0 sm:flex-wrap relative z-10">
             {categories.map((category) => (
               <button
                 key={category.key}
+                type="button"
                 onClick={() => setSelectedCategory(category.key)}
-                className={`inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors duration-200 border flex-shrink-0 ${
+                className={`inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors duration-200 border flex-shrink-0 cursor-pointer active:scale-95 relative z-10 ${
                   selectedCategory === category.key
-                    ? 'bg-blue-600 text-white border-blue-600'
+                    ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700 active:bg-blue-800'
                     : isDarkMode
-                      ? "bg-gray-800 hover:bg-gray-700 text-gray-200 border-gray-700"
-                      : "bg-white hover:bg-gray-50 text-gray-700 border-gray-300"
+                      ? "bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-gray-200 border-gray-700"
+                      : "bg-white hover:bg-gray-50 active:bg-gray-100 text-gray-700 border-gray-300"
                 }`}
               >
-                <span className="text-sm sm:text-base">{category.icon}</span>
-                <span className="whitespace-nowrap">{category.label}</span>
+                <span className="text-sm sm:text-base pointer-events-none">{category.icon}</span>
+                <span className="whitespace-nowrap pointer-events-none">{category.label}</span>
                 {category.count > 0 && (
-                  <span className={`inline-flex items-center justify-center min-w-[18px] sm:min-w-[20px] h-4 sm:h-5 px-1.5 sm:px-2 rounded-full text-xs font-semibold ${
+                  <span className={`inline-flex items-center justify-center min-w-[18px] sm:min-w-[20px] h-4 sm:h-5 px-1.5 sm:px-2 rounded-full text-xs font-semibold pointer-events-none ${
                     selectedCategory === category.key
                       ? "bg-white/20 text-white"
                       : isDarkMode
@@ -319,11 +320,16 @@ export default function CustomComingGames({ isDarkMode }) {
                 </div>
                 
                 <button
-                  className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200 flex-shrink-0"
-                  onClick={() => window.location.href = `/game-schedule/${game._id}`}
+                  type="button"
+                  className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 rounded-lg transition-colors duration-200 flex-shrink-0 cursor-pointer active:scale-95 relative z-10"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.location.href = `/game-schedule/${game._id}`;
+                  }}
                 >
-                  <span>👁️</span>
-                  <span className="hidden xs:inline">View</span>
+                  <span className="pointer-events-none">👁️</span>
+                  <span className="hidden xs:inline pointer-events-none">View</span>
                 </button>
               </div>
             </div>

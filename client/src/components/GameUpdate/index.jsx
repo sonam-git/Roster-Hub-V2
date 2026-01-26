@@ -151,9 +151,9 @@ const GameUpdate = ({
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full relative">
       {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
         {/* Date & Time Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
