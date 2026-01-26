@@ -518,13 +518,23 @@ const gameResolvers = {
           likedBy: [],
         });
 
-        await formation.populate('game positions.player');
+        await formation.populate({
+          path: 'game',
+          populate: [
+            { path: 'creator' },
+            { path: 'responses.user' },
+            { path: 'feedbacks.user' },
+            { path: 'feedbacks.playerOfTheMatch' }
+          ]
+        });
+        await formation.populate('positions.player');
 
         // Publish subscription
         console.log('📡 Publishing FORMATION_CREATED for gameId:', gameId);
         console.log('🔍 Formation.game after populate:', {
           hasGame: !!formation.game,
           gameId: formation.game?._id?.toString(),
+          gameCreator: formation.game?.creator?.name,
           gameType: typeof formation.game
         });
         pubsub.publish(FORMATION_CREATED, { formationCreated: formation });
@@ -573,13 +583,23 @@ const gameResolvers = {
         }));
 
         await formation.save();
-        await formation.populate('game positions.player');
+        await formation.populate({
+          path: 'game',
+          populate: [
+            { path: 'creator' },
+            { path: 'responses.user' },
+            { path: 'feedbacks.user' },
+            { path: 'feedbacks.playerOfTheMatch' }
+          ]
+        });
+        await formation.populate('positions.player');
 
         // Publish subscription
         console.log('📡 Publishing FORMATION_UPDATED for gameId:', gameId);
         console.log('🔍 Formation.game after populate:', {
           hasGame: !!formation.game,
           gameId: formation.game?._id?.toString(),
+          gameCreator: formation.game?.creator?.name,
           gameType: typeof formation.game
         });
         pubsub.publish(FORMATION_UPDATED, { formationUpdated: formation });
@@ -673,7 +693,16 @@ const gameResolvers = {
         // Get the newly created comment with its _id (last comment in array)
         const newComment = formation.comments[formation.comments.length - 1];
         
-        await formation.populate('game positions.player comments.user comments.likedBy');
+        await formation.populate({
+          path: 'game',
+          populate: [
+            { path: 'creator' },
+            { path: 'responses.user' },
+            { path: 'feedbacks.user' },
+            { path: 'feedbacks.playerOfTheMatch' }
+          ]
+        });
+        await formation.populate('positions.player comments.user comments.likedBy');
 
         // Publish subscription with the comment that has _id
         console.log('➕ Publishing ADD subscription for formationId:', formationId, 'commentId:', newComment._id);
@@ -888,7 +917,16 @@ const gameResolvers = {
         }
 
         await formation.save();
-        await formation.populate('game positions.player likedBy');
+        await formation.populate({
+          path: 'game',
+          populate: [
+            { path: 'creator' },
+            { path: 'responses.user' },
+            { path: 'feedbacks.user' },
+            { path: 'feedbacks.playerOfTheMatch' }
+          ]
+        });
+        await formation.populate('positions.player likedBy');
 
         // Publish subscription
         pubsub.publish(FORMATION_LIKED, { 

@@ -125,7 +125,7 @@ const Home = ({ isDarkMode }) => {
           </section>
 
           {/* Quick Actions */}
-          <section className="w-full grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 relative z-20">
+          <section className="w-full grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 relative z-0">
             <button
               type="button"
               className={`bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all cursor-pointer active:scale-95 ${activeSection === "newpost" ? "ring-4 ring-blue-300" : ""}`}
@@ -183,7 +183,7 @@ const Home = ({ isDarkMode }) => {
           </section>
 
           {/* Main Content Sections - show only active section */}
-          <section className="w-full flex flex-col gap-8 mb-8 relative z-10">
+          <section className="w-full flex flex-col gap-8 mb-8 relative z-0">
             {activeSection === "newpost" && (
               <div className="w-full flex flex-col gap-4">
                 <div className="bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-xl p-4 border-2 border-blue-200 dark:border-gray-700">

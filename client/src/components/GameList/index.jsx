@@ -292,20 +292,25 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
   return (
     <>
       {/* Status filter buttons and Create Game button */}
-      <div className="mb-6">
+      <div className="mb-6 relative z-10">
         {/* Status filter buttons - responsive grid */}
-        <div className="grid grid-cols-3 lg:grid-cols-6 gap-2 mb-3">
+        <div className="grid grid-cols-3 lg:grid-cols-6 gap-2 mb-3 relative z-20">
           {STATUS_OPTIONS.map(opt => (
             <button
               key={opt.key}
-              onClick={() => setStatusFilter(opt.key)}
-              className={`relative px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setStatusFilter(opt.key);
+              }}
+              className={`relative px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer active:scale-95
                 ${statusFilter === opt.key
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm ring-2 ring-blue-500 ring-offset-2 dark:ring-offset-gray-900'
+                  ? 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white shadow-sm ring-2 ring-blue-500 ring-offset-2 dark:ring-offset-gray-900'
                   : opt.color}
               `}
             >
-              <div className="flex items-center justify-center gap-1.5">
+              <div className="flex items-center justify-center gap-1.5 pointer-events-none">
                 <span className="truncate">{opt.label}</span>
                 <div className={`px-1.5 py-0.5 rounded text-xs font-semibold min-w-[1.25rem] flex items-center justify-center ${
                   statusFilter === opt.key 
@@ -320,26 +325,36 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
         </div>
         
         {/* Action buttons - full width on mobile, inline on desktop */}
-        <div className="grid grid-cols-2 lg:flex lg:flex-wrap gap-2">
+        <div className="grid grid-cols-2 lg:flex lg:flex-wrap gap-2 relative z-20">
           {onCreateGame && (
             <button
-              onClick={onCreateGame}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 rounded-md text-sm font-medium transition-all duration-150 shadow-sm"
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onCreateGame();
+              }}
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-750 active:bg-gray-200 dark:active:bg-gray-700 rounded-md text-sm font-medium transition-all duration-150 shadow-sm cursor-pointer active:scale-95"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-              <span>Create Game</span>
+              <span className="pointer-events-none">Create Game</span>
             </button>
           )}
           <button
-            onClick={() => navigate('/game-search')}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 rounded-md text-sm font-medium transition-all duration-150 shadow-sm"
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              navigate('/game-search');
+            }}
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-750 active:bg-gray-200 dark:active:bg-gray-700 rounded-md text-sm font-medium transition-all duration-150 shadow-sm cursor-pointer active:scale-95"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <span>Search Games</span>
+            <span className="pointer-events-none">Search Games</span>
           </button>
         </div>
       </div>
@@ -575,7 +590,7 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
 
       {/* Pagination */}
       {filteredGames.length > 0 && totalPages > 1 && (
-        <div className="flex items-center justify-between mt-6 mb-4 px-4 py-3 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between mt-6 mb-4 px-4 py-3 border-t border-gray-200 dark:border-gray-700 relative z-20">
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-600 dark:text-gray-400">
               Page <span className="font-semibold text-gray-900 dark:text-white">{page + 1}</span> of <span className="font-semibold text-gray-900 dark:text-white">{totalPages}</span>
@@ -586,24 +601,34 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
           </div>
           <div className="flex gap-2">
             <button
-              onClick={handlePrev}
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handlePrev();
+              }}
               disabled={page === 0}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 active:bg-gray-100 dark:active:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 shadow-sm cursor-pointer active:scale-95"
               aria-label="Previous page"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              <span>Prev</span>
+              <span className="pointer-events-none">Prev</span>
             </button>
             <button
-              onClick={handleNext}
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleNext();
+              }}
               disabled={page >= totalPages - 1}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 active:bg-gray-100 dark:active:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 shadow-sm cursor-pointer active:scale-95"
               aria-label="Next page"
             >
-              <span>Next</span>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <span className="pointer-events-none">Next</span>
+              <svg className="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
@@ -613,8 +638,8 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
 
       {/* AWS-style Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-[400] p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md border border-gray-200 dark:border-gray-700 overflow-hidden relative z-[410]">
             {/* Top accent bar */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-red-500"></div>
             
@@ -651,14 +676,24 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
               {/* Action Buttons */}
               <div className="flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">
                 <button
-                  onClick={closeDeleteModal}
-                  className="w-full sm:w-auto px-4 py-2 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all duration-150 shadow-sm"
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    closeDeleteModal();
+                  }}
+                  className="w-full sm:w-auto px-4 py-2 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 active:bg-gray-100 dark:active:bg-gray-700 transition-all duration-150 shadow-sm cursor-pointer active:scale-95"
                 >
                   Cancel
                 </button>
                 <button
-                  onClick={confirmDelete}
-                  className="w-full sm:w-auto px-4 py-2 rounded-md bg-red-600 hover:bg-red-700 active:bg-red-800 text-white transition-all duration-150 shadow-sm"
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    confirmDelete();
+                  }}
+                  className="w-full sm:w-auto px-4 py-2 rounded-md bg-red-600 hover:bg-red-700 active:bg-red-800 text-white transition-all duration-150 shadow-sm cursor-pointer active:scale-95"
                 >
                   Delete Game
                 </button>

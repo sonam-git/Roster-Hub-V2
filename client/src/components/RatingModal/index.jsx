@@ -101,17 +101,18 @@ const RatingModal = ({ profile, onClose, isDarkMode }) => {
 
         {/* Close Button */}
         <button
+          type="button"
           onClick={() => {
             setErrorMessage("");
             onClose();
           }}
-          className={`absolute top-4 right-4 p-2 rounded-full transition-all duration-200 hover:scale-110 z-10 ${
+          className={`absolute top-4 right-4 p-2 rounded-full transition-all duration-200 hover:scale-110 z-10 cursor-pointer ${
             isDarkMode 
               ? "bg-gray-800/50 text-gray-400 hover:bg-gray-700/70 hover:text-white" 
               : "bg-white/50 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
           }`}
         >
-          <FaTimes className="text-lg" />
+          <FaTimes className="text-lg pointer-events-none" />
         </button>
 
         <div className="relative p-4  ">
@@ -198,12 +199,13 @@ const RatingModal = ({ profile, onClose, isDarkMode }) => {
           {/* Action Buttons */}
           <div className="flex gap-3">
             <button
+              type="button"
               onClick={() => {
                 setErrorMessage("");
                 onClose();
               }}
               disabled={isSubmitting}
-              className={`flex-1 py-3 px-6 rounded-xl font-bold transition-all duration-200 hover:scale-105 transform ${
+              className={`flex-1 py-3 px-6 rounded-xl font-bold transition-all duration-200 hover:scale-105 transform cursor-pointer ${
                 isDarkMode
                   ? "bg-gray-700 hover:bg-gray-600 text-white border border-gray-600 hover:border-gray-500"
                   : "bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 hover:border-gray-400"
@@ -213,9 +215,10 @@ const RatingModal = ({ profile, onClose, isDarkMode }) => {
             </button>
             
             <button
+              type="button"
               onClick={handleSubmit}
               disabled={isSubmitting || rating < 2 || rating > 5}
-              className={`flex-1 py-3 px-6 rounded-xl font-bold transition-all duration-200 hover:scale-105 transform relative overflow-hidden ${
+              className={`flex-1 py-3 px-6 rounded-xl font-bold transition-all duration-200 hover:scale-105 transform relative overflow-hidden cursor-pointer ${
                 isDarkMode
                   ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white border border-blue-500"
                   : "bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-400 hover:to-purple-400 text-white border border-blue-400"

@@ -101,11 +101,12 @@ const InvitePlayersModal = ({ isOpen, onClose, organization }) => {
               </p>
             </div>
             <button
+              type="button"
               onClick={onClose}
-              className="text-white hover:bg-white/20 rounded-lg p-2 transition"
+              className="text-white hover:bg-white/20 rounded-lg p-2 transition cursor-pointer"
               aria-label="Close"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -157,7 +158,7 @@ const InvitePlayersModal = ({ isOpen, onClose, organization }) => {
                 type="button"
                 onClick={handleAddEmail}
                 disabled={isLoading}
-                className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition-colors disabled:opacity-50"
+                className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold rounded-xl transition-colors disabled:opacity-50 cursor-pointer active:scale-95"
               >
                 Add
               </button>
@@ -183,11 +184,12 @@ const InvitePlayersModal = ({ isOpen, onClose, organization }) => {
                       {email}
                     </span>
                     <button
+                      type="button"
                       onClick={() => handleRemoveEmail(email)}
-                      className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition"
+                      className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition cursor-pointer"
                       disabled={isLoading}
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                       </svg>
                     </button>
@@ -215,7 +217,7 @@ const InvitePlayersModal = ({ isOpen, onClose, organization }) => {
                   navigator.clipboard.writeText(organization.inviteCode);
                   alert("Invite code copied to clipboard!");
                 }}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition"
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold rounded-lg transition cursor-pointer active:scale-95"
               >
                 Copy
               </button>
@@ -228,7 +230,7 @@ const InvitePlayersModal = ({ isOpen, onClose, organization }) => {
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold rounded-xl transition-colors disabled:opacity-50"
+              className="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold rounded-xl transition-colors disabled:opacity-50 cursor-pointer active:scale-95"
             >
               Cancel
             </button>
@@ -236,7 +238,7 @@ const InvitePlayersModal = ({ isOpen, onClose, organization }) => {
               type="button"
               onClick={handleSendInvites}
               disabled={isLoading || emails.length === 0}
-              className="flex-1 px-6 py-3 bg-gradient-to-br from-emerald-600 via-blue-600 to-purple-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-6 py-3 bg-gradient-to-br from-emerald-600 via-blue-600 to-purple-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer active:scale-95"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">

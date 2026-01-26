@@ -404,7 +404,15 @@ const resolvers = {
       }
       
       return Formation.findOne({ game: gameId, organizationId: orgId })
-        .populate("game")
+        .populate({
+          path: 'game',
+          populate: [
+            { path: 'creator' },
+            { path: 'responses.user' },
+            { path: 'feedbacks.user' },
+            { path: 'feedbacks.playerOfTheMatch' }
+          ]
+        })
         .populate("positions.player")
         .populate("likedBy")
         .populate("comments.user");

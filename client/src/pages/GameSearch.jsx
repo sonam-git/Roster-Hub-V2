@@ -61,8 +61,9 @@ const GameSearchPage = () => {
                     Search Results
                   </h2>
                   <button
+                    type="button"
                     onClick={handleResetSearch}
-                    className="w-full sm:w-auto px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 border border-gray-200 dark:border-gray-600"
+                    className="w-full sm:w-auto px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 active:bg-gray-300 dark:active:bg-gray-500 text-gray-900 dark:text-white rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 border border-gray-200 dark:border-gray-600 cursor-pointer active:scale-95"
                   >
                     Clear Filters
                   </button>

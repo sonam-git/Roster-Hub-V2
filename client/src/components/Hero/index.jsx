@@ -12,7 +12,7 @@ import { ThemeContext } from "../ThemeContext";
 const Hero = () => {
   
   const navigate = useNavigate();
-  const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
+  const { isDarkMode, } = useContext(ThemeContext);
 
   // Animation states
   const [isLoaded, setIsLoaded] = useState(false);
@@ -26,7 +26,7 @@ const Hero = () => {
  
 
       {/* Theme Toggle Button - Fixed in top right */}
-      <button
+      {/* <button
         onClick={toggleDarkMode}
         className="fixed top-4 right-4 z-50 p-3 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
@@ -43,7 +43,7 @@ const Hero = () => {
             <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
           </svg>
         )}
-      </button>
+      </button> */}
 
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-screen flex flex-col justify-center">
         {/* Top Section: Logo and Title */}
