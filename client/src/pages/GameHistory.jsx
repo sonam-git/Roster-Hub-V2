@@ -160,7 +160,7 @@ const GameHistory = () => {
       return (
         <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium border bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700">
           <span>⏳</span>
-          <span>Not Played</span>
+          <span>Not Played yet</span>
         </span>
       );
     }
