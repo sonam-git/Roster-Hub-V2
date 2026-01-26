@@ -258,7 +258,7 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
         <div className="flex items-center gap-3 mb-2">
           <Link to={`/profiles/${post.userId._id}`} className="flex items-center hover:no-underline">
             <img src={post.userId.profilePic || ProfileAvatar} alt="profile picture" className="w-10 h-10 rounded-full border-2 border-blue-300 dark:border-gray-700 shadow" />
-            <span className="font-bold text-blue-700 dark:text-blue-200 text-sm sm:text-base ml-2">{post.userId.name}</span>
+            <span className="font-bold text-blue-700 dark:text-blue-200 text-sm sm:text-base ml-2">{post.userId.name[0].toUpperCase() + post.userId.name.slice(1)}</span>
           </Link>
           {/* Owner controls: edit/delete icons always visible for post owner */}
           {currentUserId === post.userId._id && (
