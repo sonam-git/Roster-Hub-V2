@@ -22,6 +22,7 @@ import {
   HiXMark,
   HiSun,
   HiMoon,
+  HiCube,
 } from "react-icons/hi2";
 import { HiNewspaper } from "react-icons/hi2"; // Add this import at the top if not already present
 
@@ -81,6 +82,7 @@ const Header = ({ open, setOpen }) => {
         { title: "My Profile", icon: HiUser, path: "/me" },
         { title: "Roster", icon: HiUserGroup, path: "/roster" },
         ...(isOwner ? [{ title: "Admin Panel", icon: HiShieldCheck, path: "/admin" }] : []),
+        { title: "Equipment", icon: HiCube, path: "/equipment" },
         { title: "Skill - List", icon: HiSparkles, path: "/skill" },
         {
           title: "Message",

@@ -708,3 +708,44 @@ export const QUERY_FORMATION = gql`
   }
 `;
 
+// ########## ASSET QUERIES ########## //
+export const QUERY_ASSETS = gql`
+  query getAssets($organizationId: ID!) {
+    assets(organizationId: $organizationId) {
+      _id
+      name
+      quantity
+      category
+      condition
+      notes
+      organizationId
+      createdBy {
+        _id
+        name
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const QUERY_ASSET = gql`
+  query getAsset($assetId: ID!, $organizationId: ID!) {
+    asset(assetId: $assetId, organizationId: $organizationId) {
+      _id
+      name
+      quantity
+      category
+      condition
+      notes
+      organizationId
+      createdBy {
+        _id
+        name
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+

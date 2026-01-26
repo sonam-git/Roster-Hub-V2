@@ -34,6 +34,7 @@ import GameHistory from "./pages/GameHistory";
 import ForgotPassword from "./pages/ForgetPassword";
 import PasswordReset from "./pages/PasswordReset";
 import AdminPanel from "./pages/AdminPanel";
+import SoccerAsset from "./components/SoccerAsset";
 import { ThemeProvider, ThemeContext } from "./components/ThemeContext";
 import { OrganizationProvider } from "./contexts/OrganizationContext";
 // import { OrganizationProvider } from "./contexts/OrganizationContext-simple"; // TEMPORARY: Using simplified version
@@ -194,6 +195,7 @@ function AppContent({ sidebarOpen, setSidebarOpen }) {
             <Route path="/about" element={<About />} />
             <Route path="/game-update/:gameId" element={<GameUpdatePage />} />
             <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/equipment" element={<SoccerAsset />} />
             {/* Footer Pages */}
             <Route path="/help" element={<HelpCenter />} />
             <Route path="/faq" element={<FAQ />} />

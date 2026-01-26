@@ -280,7 +280,6 @@ const GameHistory = () => {
                 key={filter.key}
                 type="button"
                 onClick={() => {
-                  console.log('Filter button clicked:', filter.key);
                   setFilterStatus(filter.key);
                 }}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-150 cursor-pointer active:scale-95 ${
@@ -292,7 +291,7 @@ const GameHistory = () => {
                 <span>{filter.label}</span>
                 <span className={`px-1.5 py-0.5 rounded text-xs font-semibold ${
                   filterStatus === filter.key
-                    ? 'bg-gray-50'
+                    ? 'bg-gray-50 text-gray-700'
                     : 'bg-gray-100 dark:bg-gray-700'
                 }`}>
                   {filter.count}
@@ -353,11 +352,11 @@ const GameHistory = () => {
             {/* Desktop Table View */}
             <div className="hidden lg:block overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-750">
+                <thead className="bg-gray-50 dark:bg-gray-500">
                   <tr>
                     <th 
                       scope="col" 
-                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                       onClick={() => handleSort('date')}
                     >
                       <div className="flex items-center gap-1">
@@ -367,7 +366,7 @@ const GameHistory = () => {
                     </th>
                     <th 
                       scope="col" 
-                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                       onClick={() => handleSort('opponent')}
                     >
                       <div className="flex items-center gap-1">
@@ -377,7 +376,7 @@ const GameHistory = () => {
                     </th>
                     <th 
                       scope="col" 
-                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                       onClick={() => handleSort('venue')}
                     >
                       <div className="flex items-center gap-1">
@@ -385,15 +384,15 @@ const GameHistory = () => {
                         {getSortIcon('venue')}
                       </div>
                     </th>
-                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">
                       Score
                     </th>
-                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">
                       Result
                     </th>
                     <th 
                       scope="col" 
-                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                       onClick={() => handleSort('status')}
                     >
                       <div className="flex items-center gap-1">
@@ -403,7 +402,7 @@ const GameHistory = () => {
                     </th>
                     <th 
                       scope="col" 
-                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                       onClick={() => handleSort('available')}
                     >
                       <div className="flex items-center gap-1">
@@ -411,13 +410,13 @@ const GameHistory = () => {
                         {getSortIcon('available')}
                       </div>
                     </th>
-                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">
                       Formation
                     </th>
-                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">
                       Rating
                     </th>
-                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">
                       Man of Match
                     </th>
                   </tr>
@@ -428,7 +427,7 @@ const GameHistory = () => {
                     return (
                     <tr 
                       key={game._id} 
-                      className="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer"
+                      className="hover:bg-gray-200 dark:hover:bg-gray-500 transition-colors cursor-pointer"
                       onClick={() => window.location.href = `/game-schedule/${game._id}`}
                     >
                       <td className="px-4 py-3 whitespace-nowrap">

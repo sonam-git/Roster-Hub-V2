@@ -1,4 +1,5 @@
 const { gql } = require("apollo-server-express");
+const assetTypeDefs = require("./assetTypeDefs");
 
 const typeDefs = gql`
   scalar Upload
@@ -523,6 +524,8 @@ const typeDefs = gql`
     organizationMemberRemoved(organizationId: ID!): Profile!
     organizationUpdated(organizationId: ID!): Organization!
   }
+  
+  ${assetTypeDefs}
 `;
 
 module.exports = typeDefs;

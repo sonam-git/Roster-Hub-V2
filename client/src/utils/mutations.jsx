@@ -810,3 +810,50 @@ export const REACT_TO_SKILL = gql`
     }
   }
 `;
+
+// ########## ASSET MUTATIONS ########## //
+export const CREATE_ASSET = gql`
+  mutation CreateAsset($input: CreateAssetInput!, $organizationId: ID!) {
+    createAsset(input: $input, organizationId: $organizationId) {
+      _id
+      name
+      quantity
+      category
+      condition
+      notes
+      organizationId
+      createdBy {
+        _id
+        name
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const UPDATE_ASSET = gql`
+  mutation UpdateAsset($assetId: ID!, $input: UpdateAssetInput!, $organizationId: ID!) {
+    updateAsset(assetId: $assetId, input: $input, organizationId: $organizationId) {
+      _id
+      name
+      quantity
+      category
+      condition
+      notes
+      organizationId
+      createdBy {
+        _id
+        name
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const DELETE_ASSET = gql`
+  mutation DeleteAsset($assetId: ID!, $organizationId: ID!) {
+    deleteAsset(assetId: $assetId, organizationId: $organizationId)
+  }
+`;

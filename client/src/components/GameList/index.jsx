@@ -639,7 +639,7 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
       {/* AWS-style Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-[400] p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md border border-gray-200 dark:border-gray-700 overflow-hidden relative z-[410]">
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md border border-gray-200 dark:border-gray-700 overflow-hidden relative z-[410]">
             {/* Top accent bar */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-red-500"></div>
             
@@ -682,7 +682,7 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
                     e.stopPropagation();
                     closeDeleteModal();
                   }}
-                  className="w-full sm:w-auto px-4 py-2 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 active:bg-gray-100 dark:active:bg-gray-700 transition-all duration-150 shadow-sm cursor-pointer active:scale-95"
+                  className="w-full sm:w-auto px-4 py-2 rounded-md bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 active:bg-gray-100 dark:active:bg-gray-700 transition-all duration-150 shadow-sm cursor-pointer active:scale-95"
                 >
                   Cancel
                 </button>

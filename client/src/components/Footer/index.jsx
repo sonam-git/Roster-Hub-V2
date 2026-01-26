@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import { FaLinkedin, FaGithub, FaEnvelope, FaTwitter, FaShieldAlt, FaFileContract, FaCookie } from "react-icons/fa";
 import { useContext } from "react";
 import { ThemeContext } from "../ThemeContext";
+import Auth from "../../utils/auth";
 import lightLogo from "../../assets/images/RH-Logo-Light.png";
 import darkLogo from "../../assets/images/RH-Logo.png";
 
 const Footer = ({ className = "" }) => {
   const year = new Date().getFullYear();
   const { isDarkMode } = useContext(ThemeContext);
+  const isLoggedIn = Auth.loggedIn();
 
   return (
     <footer 
@@ -17,7 +19,7 @@ const Footer = ({ className = "" }) => {
     >
       {/* Main Footer Content */}
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl py-8 sm:py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+        <div className={`grid grid-cols-1 sm:grid-cols-2 ${isLoggedIn ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-8 lg:gap-12`}>
           
           {/* Brand Section */}
           <div className="col-span-1 sm:col-span-2 lg:col-span-1">
@@ -73,54 +75,56 @@ const Footer = ({ className = "" }) => {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="font-oswald font-bold text-base sm:text-lg mb-4 text-white tracking-wide">
-              QUICK LINKS
-            </h4>
-            <ul className="space-y-2.5">
-              <li>
-                <Link 
-                  to="/" 
-                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 hover:no-underline"
-                >
-                  🏠 Home
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/about" 
-                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 hover:no-underline"
-                >
-                  ℹ️ About Us
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/upcoming-games" 
-                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 hover:no-underline"
-                >
-                  📅 Upcoming Games
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/recent-skills" 
-                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 hover:no-underline"
-                >
-                  ⭐ Skills & Ratings
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/message" 
-                  className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 hover:no-underline"
-                >
-                  💬 Messages
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* Quick Links - Only show for logged in users */}
+          {isLoggedIn && (
+            <div>
+              <h4 className="font-oswald font-bold text-base sm:text-lg mb-4 text-white tracking-wide">
+                QUICK LINKS
+              </h4>
+              <ul className="space-y-2.5">
+                <li>
+                  <Link 
+                    to="/" 
+                    className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 hover:no-underline"
+                  >
+                    🏠 Home
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    to="/about" 
+                    className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 hover:no-underline"
+                  >
+                    ℹ️ About Us
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    to="/upcoming-games" 
+                    className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 hover:no-underline"
+                  >
+                    📅 Upcoming Games
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    to="/recent-skills" 
+                    className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 hover:no-underline"
+                  >
+                    ⭐ Skills & Ratings
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    to="/message" 
+                    className="text-sm text-gray-400 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 hover:no-underline"
+                  >
+                    💬 Messages
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          )}
 
           {/* Resources */}
           <div>

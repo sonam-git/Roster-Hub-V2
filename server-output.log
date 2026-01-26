@@ -1,0 +1,18 @@
+✅ PubSub instance created and exported with increased max listeners
+✅ Game resolvers integrated successfully
+✅ Asset resolvers integrated successfully
+🔌 Attempting MongoDB connection...
+🚀 Starting RosterHub Server...
+📝 Environment: development
+🔌 Port: 3001
+🗄️  MongoDB URI exists: true
+🔑 JWT Secret exists: true
+⚙️  Starting Apollo Server...
+✅ Apollo Server started
+✅ GraphQL middleware applied
+✅ HTTP server running on port 3001!
+🔗 GraphQL endpoint: http://localhost:3001/graphql
+🔌 WebSocket endpoint: ws://localhost:3001/graphql
+⏳ Waiting for MongoDB connection...
+✅ MongoDB connected
+✅ MongoDB connected successfully

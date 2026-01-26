@@ -72,7 +72,7 @@ const ChatPopup = ({ currentUser }) => {
       }).subscribe({
         next({ data }) {
           if (data?.onlineStatusChanged) {
-            console.log('Online status changed:', data.onlineStatusChanged);
+            // Removed console.log to prevent infinite rendering messages
             setProfiles(prev =>
               prev.map(p =>
                 p._id === data.onlineStatusChanged._id
@@ -87,7 +87,8 @@ const ChatPopup = ({ currentUser }) => {
     return () => {
       subscriptions.forEach(sub => sub && sub.unsubscribe());
     };
-  }, [profiles, client]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profiles.length, client]); // Only re-subscribe when profile count changes, not on every profile update
 
   // 2) Load chat for selectedUser (only when we have an ID)
   const { loading: chatLoading, refetch: refetchChat } = useQuery(GET_CHAT_BY_USER, {

@@ -18,6 +18,7 @@ const {
   Game,
   Formation,
   Organization,
+  Asset,
 } = require("../models");
 const { signToken } = require("../utils/auth");
 const cloudinary = require("../utils/cloudinary");
@@ -2512,5 +2513,33 @@ if (gameResolvers.FormationComment) {
 }
 
 console.log('✅ Game resolvers integrated successfully');
+
+// ########## INTEGRATE ASSET RESOLVERS ########## //
+const { assetResolvers } = require('./assetResolvers');
+
+// Merge asset queries
+resolvers.Query = {
+  ...resolvers.Query,
+  ...assetResolvers.Query,
+};
+
+// Merge asset mutations
+resolvers.Mutation = {
+  ...resolvers.Mutation,
+  ...assetResolvers.Mutation,
+};
+
+// Merge asset subscriptions
+resolvers.Subscription = {
+  ...resolvers.Subscription,
+  ...assetResolvers.Subscription,
+};
+
+// Merge Asset type resolvers
+if (assetResolvers.Asset) {
+  resolvers.Asset = assetResolvers.Asset;
+}
+
+console.log('✅ Asset resolvers integrated successfully');
 
 module.exports = resolvers;
