@@ -182,18 +182,7 @@ const Game = () => {
     <div className="w-full mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 lg:mt-5  max-w-7xl  lg:pt-24">
       <div className="flex flex-col lg:flex-row lg:space-x-6">
         <div className=" w-full mb-2">
-          <div
-            className={` text-center ${isDarkMode ? "text-white" : "text-gray-800"}`}
-          >
-            <h1 className="text-2xl sm:text-3xl font-bold dark:text-white bg-clip-text ">
-              Match Details
-            </h1>
-            <p
-              className={`text-sm md:text-base ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}
-            >
-              The details information about the selected match.
-            </p>
-          </div>
+        
           <GameDetails gameId={gameId} isDarkMode={isDarkMode} />
         </div>
       </div>

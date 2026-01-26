@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { SEND_TEAM_INVITE } from "../../utils/mutations";
 
@@ -10,6 +10,21 @@ const InvitePlayersModal = ({ isOpen, onClose, organization }) => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const [sendTeamInvite] = useMutation(SEND_TEAM_INVITE);
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      // Save current overflow state
+      const originalOverflow = document.body.style.overflow;
+      // Disable scrolling on body
+      document.body.style.overflow = 'hidden';
+      
+      // Cleanup: restore original overflow when modal closes
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isOpen]);
 
   // Add email to list
   const handleAddEmail = () => {
@@ -89,8 +104,14 @@ const InvitePlayersModal = ({ isOpen, onClose, organization }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div 
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative z-[10000]"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="sticky top-0 bg-gradient-to-br from-emerald-600 via-blue-600 to-purple-700 text-white px-6 py-4 rounded-t-2xl">
           <div className="flex items-center justify-between">

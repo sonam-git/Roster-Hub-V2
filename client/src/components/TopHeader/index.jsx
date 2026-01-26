@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useEffect } from "react";
 import { useNavigate, useLocation,Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPersonRunning, faCalendarAlt, faPlus, faInbox, faStar, faHome, faInfoCircle, faMoon, faSun, faSearch, faShieldAlt } from "@fortawesome/free-solid-svg-icons";
+import { faPersonRunning, faCalendarAlt, faPlus, faStar, faHome, faInfoCircle, faMoon, faSun, faSearch, faShieldAlt } from "@fortawesome/free-solid-svg-icons";
 import { useQuery } from "@apollo/client";
 import { QUERY_ME, QUERY_PROFILES } from "../../utils/queries";
 import { ThemeContext } from "../ThemeContext";
@@ -49,20 +49,18 @@ export default function TopHeader({ className, onToggleMenu, open }) {
      { key: "home", label: "Home", icon: faHome, path: "/" },
     { key: "admin", label: "Admin", icon: faShieldAlt, path: "/admin" },
     { key: "gameschedule", label: "Upcoming", icon: faCalendarAlt, path: "/upcoming-games" },
-    { key: "creategame", label: "Create Game", icon: faPlus, path: "/game-create" },
+     { key: "scheduleinfo", label: "Schedule", icon: faInfoCircle, path: "/game-schedule" },
+    { key: "creategame", label: "Create", icon: faPlus, path: "/game-create" },
     { key: "search", label: "Search", icon: faSearch, action: "search", path: "/game-search" },
-    { key: "messages", label: "Inbox", icon: faInbox, path: "/message" },
     { key: "skilllist", label: "Skills", icon: faStar, path: "/recent-skills" },
-    { key: "about", label: "About", icon: faInfoCircle, path: "/about" },
     { key: "roster", label: "Roster", icon: faPersonRunning, action: "roster" },
   ] : [
     { key: "home", label: "Home", icon: faHome, path: "/" },
     { key: "gameschedule", label: "Upcoming", icon: faCalendarAlt, path: "/upcoming-games" },
+    { key: "scheduleinfo", label: "Schedule", icon: faInfoCircle, path: "/game-schedule" },
     { key: "creategame", label: "Create", icon: faPlus, path: "/game-create" },
     { key: "search", label: "Search", icon: faSearch, action: "search", path: "/game-search" },
-    { key: "messages", label: "Inbox", icon: faInbox, path: "/message" },
     { key: "skilllist", label: "Skills", icon: faStar, path: "/recent-skills" },
-    { key: "about", label: "About", icon: faInfoCircle, path: "/about" },
     { key: "roster", label: "Roster", icon: faPersonRunning, action: "roster" },
   ];
   const [showRosterDropdown, setShowRosterDropdown] = React.useState(false);
@@ -173,6 +171,7 @@ export default function TopHeader({ className, onToggleMenu, open }) {
                         onClick={() => setShowRosterDropdown((prev) => !prev)}
                       >
                         <span className="flex items-center gap-2">
+                          <FontAwesomeIcon icon={btn.icon} className="text-sm" />
                           {btn.label}
                           <FaChevronDown 
                             className={`text-xs transition-transform duration-200 ${
@@ -185,7 +184,7 @@ export default function TopHeader({ className, onToggleMenu, open }) {
                   );
                 }
                 
-                // Regular navigation items - AWS-style: simple, clean text buttons
+                // Regular navigation items - AWS-style: simple, clean text buttons with icons
                 return (
                   <button
                     key={btn.key}
@@ -208,7 +207,10 @@ export default function TopHeader({ className, onToggleMenu, open }) {
                       }
                     }}
                   >
-                    {btn.label}
+                    <span className="flex items-center gap-2">
+                      <FontAwesomeIcon icon={btn.icon} className="text-sm" />
+                      {btn.label}
+                    </span>
                   </button>
                 );
               })}

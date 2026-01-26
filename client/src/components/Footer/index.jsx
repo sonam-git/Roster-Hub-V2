@@ -12,7 +12,7 @@ const Footer = ({ className = "" }) => {
 
   return (
     <footer 
-      className={`w-full bg-gray-800 relative z-[10] mt-auto border-t border-gray-700/50 ${className}`}
+      className={`w-full bg-gray-800 relative mt-auto border-t border-gray-700/50 ${className}`}
       style={{boxShadow: '0 -4px 24px rgba(0,0,0,0.15)'}}
     >
       {/* Main Footer Content */}

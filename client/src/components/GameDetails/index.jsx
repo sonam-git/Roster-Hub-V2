@@ -1132,15 +1132,6 @@ export default function GameDetails({ gameId }) {
   const game = gameData.game;
   const effectiveStatus = getGameEffectiveStatus(game);
   
-  // Debug logging to verify expiration logic
-  console.log('🎮 GameDetails Debug:', {
-    gameId: game._id,
-    originalStatus: game.status,
-    effectiveStatus: effectiveStatus,
-    gameDate: game.date,
-    isExpired: effectiveStatus === 'EXPIRED'
-  });
-  
   const isCreator = game.creator._id === userId;
 
   /* ─── Human-friendly date/time ─────────────────────────────── */
@@ -1180,9 +1171,19 @@ export default function GameDetails({ gameId }) {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 pt-20 lg:pt-24 relative z-0 ${
-      isDarkMode ? "bg-gray-900" : "bg-gray-50"
-    }`}>
+    <div className={`min-h-screen transition-colors duration-300 relative z-0 ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}>
+      <div
+        className={` text-center ${isDarkMode ? "text-white" : "text-gray-800"} `}
+      >
+        <h1 className="text-2xl sm:text-3xl font-bold dark:text-white bg-clip-text ">
+          Match Details
+        </h1>
+        <p
+          className={`text-sm md:text-base ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}
+            >
+              The details information about the selected match.
+            </p>
+          </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
         
         {/* Header Section */}
@@ -1341,13 +1342,13 @@ export default function GameDetails({ gameId }) {
             </div>
 
             {/* Game Details Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Opponent */}
               <div>
                 <h3 className={`text-sm font-medium mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
                   Opponent
                 </h3>
-                <p className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                <p className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
                   {game.opponent}
                 </p>
               </div>
@@ -1376,6 +1377,21 @@ export default function GameDetails({ gameId }) {
                 <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
                   {game.city}
                 </p>
+              </div>
+
+              {/* Creator */}
+              <div>
+                <h3 className={`text-sm font-medium mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                  Created By
+                </h3>
+                <p className={`text-base font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                  {game.creator.name[0].toUpperCase() + game.creator.name.slice(1)}
+                </p>
+                {isCreator && (
+                  <p className={`text-xs ${isDarkMode ? "text-blue-400" : "text-blue-600"}`}>
+                    (You)
+                  </p>
+                )}
               </div>
               
             </div>

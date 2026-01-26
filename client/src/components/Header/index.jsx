@@ -23,7 +23,7 @@ import {
   HiSun,
   HiMoon,
 } from "react-icons/hi2";
-import OrganizationSelector from "../OrganizationSelector/OrganizationSelector";
+import { HiNewspaper } from "react-icons/hi2"; // Add this import at the top if not already present
 
 const Header = ({ open, setOpen }) => {
   const navigate = useNavigate();
@@ -95,7 +95,8 @@ const Header = ({ open, setOpen }) => {
           badge: gameBadgeCount,
         },
         { title: "ScoreBoard", icon: HiTrophy, path: "/scoreboard" },
-        { title: "Game-History", icon: HiInformationCircle, path: "/game-history" },
+        { title: "Pro News / Scores", icon: HiNewspaper, path: "/game-history" }, // Use newspaper icon for pro games news/scores
+        { title: "About", icon: HiInformationCircle, path: "/about" },
         { title: "Logout", icon: HiArrowRightOnRectangle, action: handleLogout },
       ]
     : [

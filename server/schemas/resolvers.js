@@ -2474,6 +2474,43 @@ resolvers.Mutation = {
   ...gameResolvers.Mutation,
 };
 
+// Merge Game type resolvers (fixes flickering name issue)
+// Need to merge instead of replace to keep existing resolvers like availableCount
+if (gameResolvers.Game) {
+  resolvers.Game = {
+    ...resolvers.Game,
+    ...gameResolvers.Game,
+  };
+}
+
+// Merge Response type resolvers
+if (gameResolvers.Response) {
+  resolvers.Response = gameResolvers.Response;
+}
+
+// Merge Feedback type resolvers
+if (gameResolvers.Feedback) {
+  resolvers.Feedback = gameResolvers.Feedback;
+}
+
+// Merge Formation type resolvers
+if (gameResolvers.Formation) {
+  resolvers.Formation = {
+    ...resolvers.Formation,
+    ...gameResolvers.Formation,
+  };
+}
+
+// Merge Position type resolvers
+if (gameResolvers.Position) {
+  resolvers.Position = gameResolvers.Position;
+}
+
+// Merge FormationComment type resolvers
+if (gameResolvers.FormationComment) {
+  resolvers.FormationComment = gameResolvers.FormationComment;
+}
+
 console.log('✅ Game resolvers integrated successfully');
 
 module.exports = resolvers;

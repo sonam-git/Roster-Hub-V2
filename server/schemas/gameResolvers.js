@@ -941,6 +941,154 @@ const gameResolvers = {
       }
     },
   },
+
+  // ############ TYPE RESOLVERS ########## //
+  /**
+   * Type resolvers ensure nested Profile references are properly populated
+   * This fixes the flickering name issue where names would sometimes show null
+   */
+  Game: {
+    creator: async (parent) => {
+      if (!parent.creator) return null;
+      if (typeof parent.creator === 'object' && parent.creator.name) {
+        return parent.creator; // Already populated
+      }
+      return await Profile.findById(parent.creator);
+    },
+    responses: async (parent) => {
+      if (!parent.responses) return [];
+      // Filter out responses where user is null (orphaned responses)
+      return parent.responses.filter((r) => r.user != null);
+    },
+    feedbacks: async (parent) => {
+      if (!parent.feedbacks) return [];
+      return parent.feedbacks;
+    },
+    availableCount: (parent) => {
+      if (!parent.responses) return 0;
+      return parent.responses.filter((r) => r.user && r.isAvailable).length;
+    },
+    unavailableCount: (parent) => {
+      if (!parent.responses) return 0;
+      return parent.responses.filter((r) => r.user && !r.isAvailable).length;
+    },
+    averageRating: (parent) => {
+      return typeof parent.averageRating === "number" ? parent.averageRating : 0;
+    },
+    formation: async (parent) => {
+      if (!parent.formation) return null;
+      if (typeof parent.formation === 'object' && parent.formation._id) {
+        return parent.formation; // Already populated
+      }
+      const formation = await Formation.findOne({ game: parent._id, organizationId: parent.organizationId });
+      if (formation) {
+        await formation.populate('positions.player likedBy comments.user comments.likedBy');
+      }
+      return formation;
+    },
+  },
+
+  Response: {
+    user: async (parent) => {
+      if (!parent.user) return null;
+      if (typeof parent.user === 'object' && parent.user.name) {
+        return parent.user; // Already populated
+      }
+      return await Profile.findById(parent.user);
+    },
+  },
+
+  Feedback: {
+    user: async (parent) => {
+      if (!parent.user) return null;
+      if (typeof parent.user === 'object' && parent.user.name) {
+        return parent.user; // Already populated
+      }
+      return await Profile.findById(parent.user);
+    },
+    playerOfTheMatch: async (parent) => {
+      if (!parent.playerOfTheMatch) return null;
+      if (typeof parent.playerOfTheMatch === 'object' && parent.playerOfTheMatch.name) {
+        return parent.playerOfTheMatch; // Already populated
+      }
+      return await Profile.findById(parent.playerOfTheMatch);
+    },
+  },
+
+  Formation: {
+    game: async (parent) => {
+      if (!parent.game) return null;
+      if (typeof parent.game === 'object' && parent.game._id) {
+        const game = parent.game;
+        // Ensure game has creator populated
+        if (game.creator && typeof game.creator !== 'object') {
+          await game.populate('creator');
+        }
+        return game;
+      }
+      const game = await Game.findById(parent.game);
+      if (game) {
+        await game.populate('creator responses.user feedbacks.user feedbacks.playerOfTheMatch');
+      }
+      return game;
+    },
+    positions: async (parent) => {
+      if (!parent.positions) return [];
+      return parent.positions;
+    },
+    comments: async (parent) => {
+      if (!parent.comments) return [];
+      return parent.comments;
+    },
+    likedBy: async (parent) => {
+      if (!parent.likedBy) return [];
+      // If likedBy contains IDs that aren't populated, populate them
+      const populated = [];
+      for (const user of parent.likedBy) {
+        if (typeof user === 'object' && user.name) {
+          populated.push(user);
+        } else {
+          const profile = await Profile.findById(user);
+          if (profile) populated.push(profile);
+        }
+      }
+      return populated;
+    },
+  },
+
+  Position: {
+    player: async (parent) => {
+      if (!parent.player) return null;
+      if (typeof parent.player === 'object' && parent.player.name) {
+        return parent.player; // Already populated
+      }
+      return await Profile.findById(parent.player);
+    },
+  },
+
+  FormationComment: {
+    user: async (parent) => {
+      if (!parent.user) return null;
+      if (typeof parent.user === 'object' && parent.user.name) {
+        return parent.user; // Already populated
+      }
+      return await Profile.findById(parent.user);
+    },
+    likedBy: async (parent) => {
+      if (!parent.likedBy) return [];
+      // If likedBy contains IDs that aren't populated, populate them
+      const populated = [];
+      for (const user of parent.likedBy) {
+        if (typeof user === 'object' && user.name) {
+          populated.push(user);
+        } else {
+          const profile = await Profile.findById(user);
+          if (profile) populated.push(profile);
+        }
+      }
+      return populated;
+    },
+  },
 };
 
 module.exports = { gameResolvers, pubsub };

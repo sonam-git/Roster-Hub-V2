@@ -57,7 +57,7 @@ const Home = ({ isDarkMode }) => {
       </div>
     );
   }
-
+  
   return (
     <main className={`w-full mx-auto px-1 md:px-6 lg:px-8 xl:px-12 pt-2 max-w-7xl relative z-0 ${Auth.loggedIn() ? 'mt-16 lg:mt-20 pt-4' : 'mt-0'}`}>
       {isLoggedIn ? (
@@ -105,7 +105,7 @@ const Home = ({ isDarkMode }) => {
                     {/* Center Section: Welcome Message & Slogan */}
                     <div className="flex flex-col items-center text-center flex-1">
                       <h2 className="text-xl sm:text-2xl font-bold text-blue-700 dark:text-blue-300 mb-1">
-                        Welcome{profile?.name ? `, ${profile.name}` : 'to Rosterhub'}!
+                        Welcome{profile?.name ? `, ${profile.name[0].toUpperCase() + profile.name.slice(1)}` : 'to Rosterhub'}!
                       </h2>
                       <p className="text-sm sm:text-base italic text-gray-600 dark:text-gray-400">
                         ⚽ All your soccer activities in one place ⚽
