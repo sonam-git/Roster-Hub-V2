@@ -118,29 +118,16 @@ export default function TopHeader({ className, onToggleMenu, open }) {
         </div>
       </Link>
       
-      {/* Invite Code Display - AWS-style badge for owners */}
-      {isLoggedIn && isOwner && currentUser?.currentOrganization?.inviteCode && (
-        <div className="hidden xl:flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-3 py-1.5 ml-6">
-          <div className="flex flex-col">
-            <span className="text-gray-600 dark:text-gray-400 text-[10px] font-medium uppercase tracking-wider">
-              Team Code
-            </span>
-            <code className="text-gray-900 dark:text-white font-mono font-semibold text-sm tracking-wide">
-              {currentUser.currentOrganization.inviteCode}
-            </code>
-          </div>
-          <button
-            onClick={() => {
-              navigator.clipboard.writeText(currentUser.currentOrganization.inviteCode);
-              // Add a toast notification if you have one
-            }}
-            className="bg-gray-50 dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-blue-600 dark:text-blue-400 p-1.5 rounded border border-gray-200 dark:border-gray-700 transition-colors"
-            title="Copy invite code"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-            </svg>
-          </button>
+      {/* Organization Name Display - Professional branding */}
+      {isLoggedIn && currentUser?.currentOrganization?.name && (
+        <div className="hidden xl:flex items-center ml-6 border-r border-l border-gray-400 dark:border-gray-700 rounded-lg px-2 py-2 w-48">
+          <h1 className={`text-lg font-bold tracking-tight leading-tight text-center break-words w-full ${
+            isDarkMode 
+              ? "text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400" 
+              : "text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600"
+          }`}>
+            {currentUser.currentOrganization.name} 
+          </h1>
         </div>
       )}
       

@@ -208,7 +208,7 @@ const Footer = ({ className = "" }) => {
               <p>
                 Developed by {"  "}
                 <a 
-                  href="https://www.linkedin.com/in/sonamjsherpa/"
+                  href="https://www.linkedin.com/in/sonam-j-sherpa/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-semibold text-white hover:text-blue-400 transition-colors underline-offset-4 "

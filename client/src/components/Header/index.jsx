@@ -79,9 +79,9 @@ const Header = ({ open, setOpen }) => {
   const Menus = Auth.loggedIn()
     ? [
         { title: "Home", icon: HiHome, path: "/" },
+           ...(isOwner ? [{ title: "Admin Panel", icon: HiShieldCheck, path: "/admin" }] : []),
         { title: "My Profile", icon: HiUser, path: "/me" },
         { title: "Roster", icon: HiUserGroup, path: "/roster" },
-        ...(isOwner ? [{ title: "Admin Panel", icon: HiShieldCheck, path: "/admin" }] : []),
         { title: "Equipment", icon: HiCube, path: "/equipment" },
         { title: "Skill - List", icon: HiSparkles, path: "/skill" },
         {
@@ -142,10 +142,21 @@ const Header = ({ open, setOpen }) => {
 
           {/* Center: Logo and Brand */}
           <Link to="/" className="flex items-center gap-2 group no-underline">
-            <div className={`text-lg font-semibold tracking-tight ${
-              isDarkMode ? "text-white" : "text-gray-900"
-            }`}>
-              RosterHub
+            <div className="flex flex-col items-center  border-r border-l border-gray-400 dark:border-gray-700 shadow-sm shadow-gray-600 dark:shadow-white rounded-lg px-4 py-1">
+              <div className={`text-lg font-semibold tracking-tight ${
+                isDarkMode ? "text-white" : "text-gray-900"
+              }`}>
+                RosterHub
+              </div>
+              {currentUser?.currentOrganization?.name && (
+                <div className={`text-sm font-medium tracking-tight  ${
+                  isDarkMode 
+                    ? "text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400" 
+                    : "text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600"
+                }`}>
+                  {currentUser.currentOrganization.name} 
+                </div>
+              )}
             </div>
           </Link>
 
