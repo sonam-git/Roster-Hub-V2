@@ -14,11 +14,11 @@ const Footer = ({ className = "" }) => {
 
   return (
     <footer 
-      className={`w-full bg-gray-800 relative mt-auto border-t border-gray-700/50 ${className}`}
-      style={{boxShadow: '0 -4px 24px rgba(0,0,0,0.15)'}}
+      className={`w-full bg-gray-800 relative mt-auto border-t border-gray-700/50 z-10 ${className}`}
+      style={{boxShadow: '0 -4px 24px rgba(0,0,0,0.15)', position: 'relative'}}
     >
       {/* Main Footer Content */}
-      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl py-8 sm:py-12">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl py-8 sm:py-12 pb-24 lg:pb-12 relative z-10">
         <div className={`grid grid-cols-1 sm:grid-cols-2 ${isLoggedIn ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-8 lg:gap-12`}>
           
           {/* Brand Section */}
@@ -196,8 +196,8 @@ const Footer = ({ className = "" }) => {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-gray-800 mb-20">
-        <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl py-4">
+      <div className="border-t border-gray-800 relative z-10">
+        <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl py-4 pb-24 lg:pb-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm">
             <div className="text-gray-400 text-center sm:text-left">
               <p>

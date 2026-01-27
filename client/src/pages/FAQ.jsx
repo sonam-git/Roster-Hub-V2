@@ -19,7 +19,7 @@ const FAQ = () => {
         },
         {
           q: "Can I join multiple organizations?",
-          a: "Yes! You can switch between multiple organizations using the organization selector in the top header. Your profile information will remain consistent across all organizations."
+          a: "Yes! You can switch between multiple organizations using the organization code, however you have to create an account for each organization."
         }
       ]
     },
