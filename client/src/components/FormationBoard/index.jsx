@@ -3,7 +3,7 @@ import { useDroppable } from "@dnd-kit/core";
 import { FormationBoardSkeleton } from "../LoadingSkeleton";
 import { FadeInOut } from "../SmoothTransition";
 
-export default function FormationBoard({ rows, assignments, formationType, creator, isLoading = false, isDragging = false }) {
+export default function FormationBoard({ rows, assignments, formationType, creator, isLoading = false, isDragging = false, onSlotClick, isCreator = false }) {
   // Show loading skeleton while data is loading
   if (isLoading || !formationType) {
     return <FormationBoardSkeleton />;
@@ -16,7 +16,7 @@ export default function FormationBoard({ rows, assignments, formationType, creat
           <div className="flex items-center gap-2">
             <span className="text-xl ">⚽</span>
             <div>
-              <h3 className="font-bold text-lg">Formation: {formationType}</h3>
+              <h3 className="font-bold text-lg">Formation: {formationType.slice(2)}</h3>
               <p className="text-green-100 text-xs">Tactical Formation</p>
             </div>
           </div>
@@ -90,6 +90,8 @@ export default function FormationBoard({ rows, assignments, formationType, creat
                       player={assignments[slotId]} 
                       isDragging={isDragging}
                       isGoalkeeper={isGoalkeeper}
+                      onSlotClick={onSlotClick}
+                      isCreator={isCreator}
                     />
                   ))}
                 </div>
@@ -122,7 +124,7 @@ export default function FormationBoard({ rows, assignments, formationType, creat
   );
 }
 
-function Slot({ slotId, player, isDragging = false, isGoalkeeper = false }) {
+function Slot({ slotId, player, isDragging = false, isGoalkeeper = false, onSlotClick, isCreator = false }) {
   function getFirstName(name) {
     if (!name || typeof name !== 'string') return '';
     return name.split(" ")[0];
@@ -141,12 +143,24 @@ function Slot({ slotId, player, isDragging = false, isGoalkeeper = false }) {
 
   const { hasPlayer, firstName, initial, playerName } = playerData;
 
+  // Handle click/tap for mobile assignment
+  const handleClick = (e) => {
+    // Only trigger if creator and onSlotClick is provided
+    if (isCreator && onSlotClick) {
+      e.stopPropagation(); // Prevent event bubbling
+      onSlotClick(slotId);
+    }
+  };
+
   return (
     <div
       ref={setNodeRef}
+      onClick={handleClick}
       className={`relative group transition-all duration-300 transform hover:scale-110 ${
         isOver ? 'scale-125 z-10' : ''
-      } ${isDragging && !hasPlayer ? 'animate-pulse' : ''}`}
+      } ${isDragging && !hasPlayer ? 'animate-pulse' : ''} ${
+        isCreator && onSlotClick ? 'cursor-pointer' : ''
+      }`}
     >
       {/* Player Circle - Larger for goalkeeper */}
       <div

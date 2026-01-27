@@ -67,7 +67,8 @@ export default function AvailablePlayersList({ players, isCreator, isLoading = f
           </div>
         ) : (
           <FadeInOut show={validPlayers.length > 0} duration={300}>
-            <div className="space-y-2">
+            {/* Grid Layout - 4 players per row */}
+            <div className="grid grid-cols-4 gap-3">
               {validPlayers.map((player) =>
                 isCreator ? (
                   <DraggablePlayer key={player._id} player={player} />
@@ -87,32 +88,45 @@ function PlayerCard({ player }) {
   const playerName = React.useMemo(() => player?.name || 'Unknown Player', [player?.name]);
   const jerseyNumber = React.useMemo(() => player?.jerseyNumber || 'N/A', [player?.jerseyNumber]);
   const position = React.useMemo(() => player?.position || 'N/A', [player?.position]);
+  const initial = React.useMemo(() => playerName ? playerName.charAt(0).toUpperCase() : '?', [playerName]);
   
   return (
-    <div className="bg-gray-50 dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750 border border-gray-200 dark:border-gray-700 rounded-md p-3 transition-colors duration-150">
-      <div className="flex items-center gap-3">
-        {/* Jersey Number Badge */}
-        <div className="flex-shrink-0 w-10 h-10 rounded-md bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center border border-indigo-200 dark:border-indigo-800">
-          <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">
-            {jerseyNumber}
+    <div className="group relative">
+      {/* Square Player Card */}
+      <div className="aspect-square bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-750 border border-gray-200 dark:border-gray-700 rounded-lg p-2 transition-all duration-150 flex flex-col items-center justify-center">
+        {/* Avatar/Initial Circle */}
+        <div className="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center border-2 border-indigo-200 dark:border-indigo-800 mb-1.5">
+          <span className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
+            {initial}
           </span>
         </div>
         
-        {/* Player Info */}
-        <div className="flex-1 min-w-0">
-          <h4 className="font-semibold text-sm text-gray-900 dark:text-white truncate">
-            {playerName}
-          </h4>
-          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-            {position}
-          </p>
+        {/* Jersey Number Badge */}
+        <div className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-900/20 rounded-md border border-indigo-200 dark:border-indigo-800">
+          <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
+            #{jerseyNumber}
+          </span>
         </div>
         
-        {/* Status Icon */}
-        <div className="flex-shrink-0">
-          <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+        {/* Available Status */}
+        <div className="mt-1">
+          <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
           </svg>
+        </div>
+      </div>
+      
+      {/* Tooltip on Hover */}
+      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50">
+        <div className="bg-black text-white text-xs px-3 py-2 rounded-md shadow-lg whitespace-nowrap">
+          <p className="font-semibold">{playerName}</p>
+          {position && position !== 'N/A' && (
+            <p className="text-gray-300 text-xs mt-0.5">{position}</p>
+          )}
+        </div>
+        {/* Arrow */}
+        <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-px">
+          <div className="border-4 border-transparent border-t-black"></div>
         </div>
       </div>
     </div>
@@ -125,6 +139,7 @@ function DraggablePlayer({ player }) {
   const playerName = React.useMemo(() => player?.name || 'Unknown Player', [player?.name]);
   const jerseyNumber = React.useMemo(() => player?.jerseyNumber || 'N/A', [player?.jerseyNumber]);
   const position = React.useMemo(() => player?.position || 'N/A', [player?.position]);
+  const initial = React.useMemo(() => playerName ? playerName.charAt(0).toUpperCase() : '?', [playerName]);
 
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: playerId,
@@ -149,54 +164,64 @@ function DraggablePlayer({ player }) {
       };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...listeners}
-      {...attributes}
-      className={`bg-gray-50 dark:bg-gray-800 border-2 rounded-md p-3 transition-all duration-150 touch-none select-none ${
-        isDragging 
-          ? 'border-blue-500 dark:border-blue-400 opacity-90 scale-105 shadow-lg ring-2 ring-blue-400/50 cursor-grabbing' 
-          : 'border-dashed border-blue-300 dark:border-blue-600 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/10 hover:shadow-md cursor-grab active:cursor-grabbing'
-      }`}
-    >
-      <div className="flex items-center gap-3">
-        {/* Jersey Number Badge */}
-        <div className={`flex-shrink-0 w-10 h-10 rounded-md flex items-center justify-center border-2 transition-all duration-150 ${
+    <div className="group relative">
+      <div
+        ref={setNodeRef}
+        style={style}
+        {...listeners}
+        {...attributes}
+        className={`aspect-square border-2 rounded-lg p-2 transition-all duration-150 touch-none select-none flex flex-col items-center justify-center ${
           isDragging 
-            ? 'bg-blue-100 dark:bg-blue-900/30 border-blue-500 dark:border-blue-400 scale-110' 
-            : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+            ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/30 opacity-90 scale-105 shadow-xl ring-4 ring-blue-400/50 cursor-grabbing' 
+            : 'border-dashed border-blue-300 dark:border-blue-600 bg-blue-50/50 dark:bg-blue-900/10 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:shadow-lg hover:scale-105 cursor-grab active:cursor-grabbing'
+        }`}
+      >
+        {/* Avatar/Initial Circle */}
+        <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 mb-1.5 transition-all duration-150 ${
+          isDragging 
+            ? 'bg-blue-200 dark:bg-blue-800 border-blue-400 dark:border-blue-500 scale-110' 
+            : 'bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700'
         }`}>
-          <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
-            {jerseyNumber}
+          <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
+            {initial}
           </span>
         </div>
         
-        {/* Player Info */}
-        <div className="flex-1 min-w-0">
-          <h4 className="font-semibold text-sm text-gray-900 dark:text-white truncate">
-            {playerName}
-          </h4>
-          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-            {position}
-          </p>
+        {/* Jersey Number Badge */}
+        <div className={`px-2 py-0.5 rounded-md border transition-all duration-150 ${
+          isDragging 
+            ? 'bg-blue-200 dark:bg-blue-800 border-blue-400 dark:border-blue-500' 
+            : 'bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700'
+        }`}>
+          <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
+            {jerseyNumber}{position === 'N/A' ? '' : ` - ${position}`}
+          </span>
         </div>
         
         {/* Drag Icon */}
-        <div className={`flex-shrink-0 transition-all duration-150 ${
-          isDragging ? 'scale-125 rotate-12' : ''
-        }`}>
-          <svg className="w-5 h-5 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-          </svg>
-        </div>
+        {!isDragging && (
+          <div className="mt-1.5">
+            <svg className="w-4 h-4 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+            </svg>
+          </div>
+        )}
       </div>
       
+      {/* Tooltip on Hover - Only show when not dragging */}
       {!isDragging && (
-        <div className="mt-2 pt-2 border-t border-blue-200 dark:border-blue-800">
-          <p className="text-xs text-blue-600 dark:text-blue-400 font-medium text-center">
-            Drag to position
-          </p>
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50">
+          <div className="bg-black text-white text-xs px-3 py-2 rounded-md shadow-lg whitespace-nowrap">
+            <p className="font-semibold">{playerName}</p>
+            {position && position !== 'N/A' && (
+              <p className="text-gray-300 text-xs mt-0.5">{position}</p>
+            )}
+            <p className="text-blue-300 text-xs mt-1 italic">Click & drag to position</p>
+          </div>
+          {/* Arrow */}
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-px">
+            <div className="border-4 border-transparent border-t-black"></div>
+          </div>
         </div>
       )}
     </div>

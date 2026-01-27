@@ -499,6 +499,8 @@ export const QUERY_GAMES = gql`
         user {
           _id
           name
+          jerseyNumber
+          position
         }
         isAvailable
       }
@@ -578,6 +580,8 @@ export const QUERY_GAME = gql`
         user {
           _id
           name
+          jerseyNumber
+          position
         }
         isAvailable
       }

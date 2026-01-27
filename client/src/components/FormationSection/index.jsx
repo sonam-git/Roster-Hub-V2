@@ -51,6 +51,13 @@ export default function FormationSection({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  
+  // Click/Tap selection mode state
+  const [showPlayerModal, setShowPlayerModal] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  
+  // Dropdown state for drag-and-drop section
+  const [showDragDropSection, setShowDragDropSection] = useState(false);
 
   const gameId   = game._id;
   const isFormed = Boolean(formation);
@@ -68,8 +75,7 @@ export default function FormationSection({
   }, [gameId, isFormed, formation]);
 
   // ─── Subscriptions ───────────────────────────────────────────────────────
-  console.log('🔗 Setting up subscriptions for gameId:', gameId);
-
+  
   useSubscription(FORMATION_CREATED_SUBSCRIPTION, {
     variables: { gameId },
     skip: !gameId,
@@ -101,7 +107,6 @@ export default function FormationSection({
     variables: { gameId },
     skip: !gameId,
     onSubscriptionData: ({ subscriptionData }) => {
-      console.log('� FORMATION_UPDATED raw subscription data:', subscriptionData);
       if (subscriptionData.data?.formationUpdated) {
         const updated = subscriptionData.data.formationUpdated;
         console.log('🔔 Formation updated subscription received:', updated);
@@ -128,10 +133,8 @@ export default function FormationSection({
     variables: { gameId },
     skip: !gameId,
     onSubscriptionData: ({ subscriptionData }) => {
-      console.log('� FORMATION_DELETED raw subscription data:', subscriptionData);
       if (subscriptionData.data?.formationDeleted) {
         const deleted = subscriptionData.data.formationDeleted;
-        console.log('🔔 Formation deleted subscription received:', deleted);
         if (deleted === gameId) {
           setFormation(null);
           setAssignments({});
@@ -255,6 +258,51 @@ export default function FormationSection({
     }, 3000); // Hide after 3 seconds
   };
 
+  // Click/Tap selection mode handlers
+  const handleSlotClick = (slotId) => {
+    if (!isCreator) return;
+    setSelectedSlot(slotId);
+    setShowPlayerModal(true);
+  };
+
+  const handlePlayerSelect = (player) => {
+    if (!player || selectedSlot === null || selectedSlot === undefined) return;
+    
+    const newMap = { ...assignments };
+    // Remove player from previous position
+    Object.entries(newMap).forEach(([slot, p]) => {
+      if (p?._id === player._id) delete newMap[slot];
+    });
+    // Assign to selected slot
+    newMap[selectedSlot] = player;
+    setAssignments(newMap);
+    
+    // Close modal
+    setShowPlayerModal(false);
+    setSelectedSlot(null);
+    
+    // Haptic feedback
+    if (navigator.vibrate) {
+      navigator.vibrate(20);
+    }
+  };
+
+  const handleRemovePlayer = () => {
+    if (selectedSlot === null || selectedSlot === undefined) return;
+    
+    const newMap = { ...assignments };
+    delete newMap[selectedSlot];
+    setAssignments(newMap);
+    
+    setShowPlayerModal(false);
+    setSelectedSlot(null);
+  };
+
+  const handleModalClose = () => {
+    setShowPlayerModal(false);
+    setSelectedSlot(null);
+  };
+
   const handleSubmitFormation = async () => {
     if (!currentOrganization) {
       console.error('No organization selected');
@@ -283,8 +331,6 @@ export default function FormationSection({
             organizationId: currentOrganization._id
           } 
         });
-        
-        console.log('✅ Formation created successfully!');
         showSuccess('Formation created successfully!');
       }
       
@@ -315,7 +361,6 @@ export default function FormationSection({
       
       // Show success message for update
       if (isFormed) {
-        console.log('✅ Formation updated successfully!');
         showSuccess('Formation updated successfully!');
       }
     } catch (err) {
@@ -429,33 +474,86 @@ export default function FormationSection({
             onDragEnd={handleDragEnd}
           >
             {isCreator && (
-              <div className={`rounded-lg p-5 border transition-colors ${
+              <div className={`hidden md:block rounded-lg border transition-colors ${
                 isDarkMode 
                   ? "bg-gray-800 border-gray-700" 
                   : "bg-gray-50 border-gray-200"
               }`}>
-                <div className="flex items-center gap-3 mb-5">
-                  <div className={`flex items-center justify-center w-10 h-10 rounded-md ${
-                    isDarkMode ? "bg-gray-700" : "bg-gray-100"
-                  }`}>
-                    <svg className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
+                {/* Collapsible Header */}
+                <button
+                  onClick={() => setShowDragDropSection(!showDragDropSection)}
+                  className={`w-full p-5 text-left transition-colors ${
+                    isDarkMode 
+                      ? "hover:bg-gray-750" 
+                      : "hover:bg-gray-100"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className={`flex items-center justify-center w-10 h-10 rounded-md ${
+                        isDarkMode ? "bg-gray-700" : "bg-gray-100"
+                      }`}>
+                        <svg className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className={`text-base font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                          Assignment Options
+                        </h3>
+                        <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                          {showDragDropSection 
+                            ? "Drag players from the list below to positions" 
+                            : "Tap positions to assign players, or click here for drag & drop"}
+                        </p>
+                      </div>
+                    </div>
+                    <div className={`transition-transform duration-200 ${showDragDropSection ? 'rotate-180' : ''}`}>
+                      <svg className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className={`text-base font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                      Available Players
-                    </h3>
-                    <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                      Drag players to positions on the formation board
-                    </p>
+                </button>
+
+                {/* Collapsible Content */}
+                <div className={`overflow-hidden transition-all duration-300 ${
+                  showDragDropSection ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                }`}>
+                  <div className={`px-5 pb-5 border-t ${
+                    isDarkMode ? "border-gray-700" : "border-gray-200"
+                  }`}>
+                    <div className={`mt-4 mb-4 p-3 rounded-md ${
+                      isDarkMode ? "bg-blue-900/20 border border-blue-800" : "bg-blue-50 border border-blue-200"
+                    }`}>
+                      <div className="flex items-start gap-2">
+                        <svg className={`w-5 h-5 mt-0.5 flex-shrink-0 ${
+                          isDarkMode ? "text-blue-400" : "text-blue-600"
+                        }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div>
+                          <p className={`text-sm font-medium ${
+                            isDarkMode ? "text-blue-300" : "text-blue-900"
+                          }`}>
+                            How to use Drag & Drop
+                          </p>
+                          <p className={`text-xs mt-1 ${
+                            isDarkMode ? "text-blue-400" : "text-blue-700"
+                          }`}>
+                            Click and hold a player card below, then drag it to any position on the formation board above. Release to assign.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <AvailablePlayersList
+                      players={availablePlayers}
+                      isCreator={isCreator}
+                      isLoading={isLoading}
+                    />
                   </div>
                 </div>
-                <AvailablePlayersList
-                  players={availablePlayers}
-                  isCreator={isCreator}
-                  isLoading={isLoading}
-                />
               </div>
             )}
 
@@ -477,7 +575,12 @@ export default function FormationSection({
                     Formation Board 
                   </h3>
                   <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                    {isCreator ? "Drop players onto positions" : "Current tactical setup"}
+                    {isCreator ? (
+                      <>
+                        <span className="md:hidden">Tap positions to assign players</span>
+                        <span className="hidden md:inline">Drag & drop or tap positions to assign players</span>
+                      </>
+                    ) : "Current tactical setup"}
                   </p>
                 </div>
               </div>
@@ -488,6 +591,8 @@ export default function FormationSection({
                 creator={creator}
                 isLoading={isLoading}
                 isDragging={!!draggingPlayer}
+                onSlotClick={handleSlotClick}
+                isCreator={isCreator}
               />
             </div>
 
@@ -581,6 +686,209 @@ export default function FormationSection({
             </div>
           )}
         </>
+      )}
+
+      {/* Player Selection Modal - Click/Tap Mode */}
+      {showPlayerModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={handleModalClose}
+          />
+          
+          {/* Modal Content */}
+          <div className={`relative rounded-lg shadow-xl border max-w-md w-full max-h-[80vh] flex flex-col ${
+            isDarkMode 
+              ? 'bg-gray-800 border-gray-700' 
+              : 'bg-white border-gray-200'
+          }`}>
+            {/* Header */}
+            <div className={`px-6 py-4 border-b ${
+              isDarkMode ? 'border-gray-700' : 'border-gray-200'
+            }`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-md flex items-center justify-center ${
+                    isDarkMode ? 'bg-blue-900/20' : 'bg-blue-50'
+                  }`}>
+                    <svg className={`w-5 h-5 ${
+                      isDarkMode ? 'text-blue-400' : 'text-blue-600'
+                    }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className={`text-base font-semibold ${
+                      isDarkMode ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      {assignments[selectedSlot] ? 'Change Player' : 'Select Player'}
+                    </h3>
+                    <p className={`text-xs ${
+                      isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                    }`}>
+                      Position {selectedSlot === 0 ? 'Goalkeeper' : `#${selectedSlot}`}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={handleModalClose}
+                  className={`p-2 rounded-md transition-colors ${
+                    isDarkMode 
+                      ? 'hover:bg-gray-700 text-gray-400 hover:text-white' 
+                      : 'hover:bg-gray-100 text-gray-600 hover:text-gray-900'
+                  }`}
+                  aria-label="Close"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Current Assignment (if exists) */}
+            {assignments[selectedSlot] && (
+              <div className={`px-6 py-3 border-b ${
+                isDarkMode ? 'border-gray-700 bg-gray-900/50' : 'border-gray-200 bg-gray-50'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-md flex items-center justify-center ${
+                      selectedSlot === 0 
+                        ? 'bg-orange-500/20' 
+                        : 'bg-blue-500/20'
+                    }`}>
+                      <span className="text-lg">
+                        {selectedSlot === 0 ? '🧤' : assignments[selectedSlot]?.name?.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div>
+                      <p className={`text-sm font-semibold ${
+                        isDarkMode ? 'text-white' : 'text-gray-900'
+                      }`}>
+                        {assignments[selectedSlot]?.name}
+                      </p>
+                      <p className={`text-xs ${
+                        isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                      }`}>
+                        Current assignment
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleRemovePlayer}
+                    className="px-3 py-1.5 rounded-md bg-red-600 hover:bg-red-700 text-white text-xs font-medium transition-colors"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Player List */}
+            <div className="flex-1 overflow-y-auto p-4">
+              {availablePlayers.length === 0 ? (
+                <div className="text-center py-8">
+                  <svg className={`w-12 h-12 mx-auto mb-3 ${
+                    isDarkMode ? 'text-gray-600' : 'text-gray-400'
+                  }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  <p className={`text-sm font-semibold ${
+                    isDarkMode ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    No available players
+                  </p>
+                  <p className={`text-xs mt-1 ${
+                    isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                  }`}>
+                    All players are assigned
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {availablePlayers.map((player) => {
+                    const isAssigned = Object.values(assignments).some(p => p?._id === player._id);
+                    const isCurrentlyAssigned = assignments[selectedSlot]?._id === player._id;
+                    
+                    return (
+                      <button
+                        key={player._id}
+                        onClick={() => handlePlayerSelect(player)}
+                        disabled={isCurrentlyAssigned}
+                        className={`w-full p-3 rounded-md border-2 text-left transition-all ${
+                          isCurrentlyAssigned
+                            ? isDarkMode
+                              ? 'bg-blue-900/20 border-blue-700 opacity-50 cursor-not-allowed'
+                              : 'bg-blue-50 border-blue-300 opacity-50 cursor-not-allowed'
+                            : isAssigned
+                            ? isDarkMode
+                              ? 'bg-gray-700 border-gray-600 hover:border-gray-500'
+                              : 'bg-gray-100 border-gray-300 hover:border-gray-400'
+                            : isDarkMode
+                              ? 'bg-gray-800 border-gray-700 hover:border-blue-500 hover:bg-blue-900/20'
+                              : 'bg-white border-gray-200 hover:border-blue-500 hover:bg-blue-50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-md flex items-center justify-center ${
+                            isAssigned
+                              ? 'bg-gray-600 text-white'
+                              : isDarkMode
+                                ? 'bg-blue-900/20 text-blue-400'
+                                : 'bg-blue-50 text-blue-600'
+                          }`}>
+                            <span className="text-lg font-bold">
+                              {player.name?.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className={`text-sm font-semibold truncate ${
+                              isDarkMode ? 'text-white' : 'text-gray-900'
+                            }`}>
+                              {player.name}
+                            </p>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              {player.position && (
+                                <span className={`text-xs truncate ${
+                                  isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                                }`}>
+                                  {player.position}
+                                </span>
+                              )}
+                              {isAssigned && !isCurrentlyAssigned && (
+                                <span className="text-xs px-1.5 py-0.5 rounded bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 font-medium">
+                                  Assigned
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className={`px-6 py-4 border-t ${
+              isDarkMode ? 'border-gray-700' : 'border-gray-200'
+            }`}>
+              <button
+                onClick={handleModalClose}
+                className={`w-full px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isDarkMode 
+                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Delete Confirmation Modal */}
