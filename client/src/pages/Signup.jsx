@@ -137,7 +137,7 @@ const Signup = () => {
             </div>
             
             {/* Title and tagline */}
-            <div className="space-y-4">
+            <div className="space-y-4 ">
               <h1 className="text-4xl font-semibold text-gray-900 dark:text-white tracking-tight">
                 Create your team
               </h1>
@@ -179,7 +179,7 @@ const Signup = () => {
           </div>
 
           {/* Right side: Signup Form */}
-          <div className="w-full lg:w-auto">
+          <div className="w-full lg:w-auto pt-8">
             <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 w-full max-w-md mx-auto">
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-2">

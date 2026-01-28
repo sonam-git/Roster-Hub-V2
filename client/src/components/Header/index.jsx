@@ -122,7 +122,7 @@ const Header = ({ open, setOpen }) => {
         <div className="h-[env(safe-area-inset-top,0px)]"></div>
         
         {/* Main Header Content - Compact AWS Style */}
-        <div className="flex items-center justify-between h-14 px-4">
+        <div className="flex items-center justify-between h-20 px-4">
           {/* Left: Hamburger Menu */}
           <button
             className={`p-2 rounded-md transition-colors ${
@@ -249,7 +249,7 @@ const Header = ({ open, setOpen }) => {
       {/* Sidebar Navigation - AWS Style - Only show for logged in users */}
       {Auth.loggedIn() && (
       <div
-        className={`fixed top-0 left-0 h-full transition-all duration-300 z-[60] lg:z-[5] ${
+        className={`fixed top-0 left-0 h-full lg:pt-4 pt-16 transition-all duration-300 z-[60] lg:z-[5] ${
           open ? "w-64 translate-x-0" : "w-0 lg:w-16 -translate-x-full lg:translate-x-0"
         } ${
           isDarkMode 
@@ -276,7 +276,7 @@ const Header = ({ open, setOpen }) => {
         </div>
 
         {/* Navigation Menu */}
-        <nav className="px-2 py-4 overflow-y-auto pt-16 lg:pt-4" style={{ height: 'calc(100vh - 3.5rem)' }}>
+        <nav className="px-2 py-4 overflow-y-auto pt-16 lg:pt-4 " style={{ height: 'calc(100vh - 3.5rem)' }}>
           <div className="space-y-1">
             {Menus.map((Menu, index) => {
               const isActive = location.pathname === Menu.path;

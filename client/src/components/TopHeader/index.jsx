@@ -83,7 +83,7 @@ export default function TopHeader({ className, onToggleMenu, open }) {
   return (
     <>
       {/* Desktop TopHeader - Hidden below 976px, visible at 976px+ (custom lg breakpoint) */}
-      <header className={`hidden lg:flex fixed top-0 left-0 right-0 w-full flex-row items-center justify-between bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm z-[100] px-6 h-16 ${typeof className !== 'undefined' ? className : ''}`}>
+      <header className={`hidden lg:flex fixed top-0 left-0 right-0 w-full flex-row items-center justify-between bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm z-[100] px-6 h-20 ${typeof className !== 'undefined' ? className : ''}`}>
       {/* Left: Logo and Title - AWS-style clean branding */}
       <Link
         to={"/"}
@@ -370,7 +370,7 @@ export default function TopHeader({ className, onToggleMenu, open }) {
 
       {/* Mobile Bottom Navigation - AWS-style clean navigation bar */}
       {isLoggedIn && (
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[50] bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shadow-lg pb-safe">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[50]  bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shadow-lg pb-safe">
         <div className="flex items-center justify-around px-2 py-2.5 overflow-x-auto scrollbar-hide">
           {BUTTONS.map((btn) => {
             const isRoster = btn.key === "roster";

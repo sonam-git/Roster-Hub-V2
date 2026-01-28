@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_ASSETS, QUERY_ME } from "../../utils/queries";
 import { CREATE_ASSET, UPDATE_ASSET, DELETE_ASSET } from "../../utils/mutations";
@@ -402,9 +403,17 @@ const SoccerAsset = () => {
       )}
 
       {/* Add/Edit Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[100]">
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto relative z-[101]">
+      {showModal && createPortal(
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4" style={{ position: 'fixed', zIndex: 99999 }}>
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={handleCloseModal}
+            style={{ position: 'absolute', zIndex: 99998 }}
+          />
+          
+          {/* Modal Content */}
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto relative z-[100000]" style={{ position: 'relative', zIndex: 100000 }}>
             <div className="p-6">
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
                 {editingAsset ? "Edit Equipment" : "Add New Equipment"}
@@ -514,17 +523,26 @@ const SoccerAsset = () => {
               </form>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Delete Confirmation Modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[100]">
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full relative z-[101]">
+      {showDeleteModal && createPortal(
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4" style={{ position: 'fixed', zIndex: 99999 }}>
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={cancelDelete}
+            style={{ position: 'absolute', zIndex: 99998 }}
+          />
+          
+          {/* Modal Content */}
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full relative z-[100000]" style={{ position: 'relative', zIndex: 100000 }}>
             <div className="p-6">
-              <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
+              <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 dark:bg-red-900/30 rounded-full mb-4">
                 <svg
-                  className="w-6 h-6 text-red-600"
+                  className="w-6 h-6 text-red-600 dark:text-red-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -561,7 +579,8 @@ const SoccerAsset = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
