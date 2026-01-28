@@ -20,6 +20,7 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
     city: "",
     notes: "",
     opponent: "",
+    jerseyColor: "",
   });
 
   const [validationErrors, setValidationErrors] = useState({});
@@ -107,6 +108,7 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
     if (!venue.trim()) errors.venue = "Venue is required";
     if (!city.trim()) errors.city = "City is required";
     if (!opponent.trim()) errors.opponent = "Opponent is required";
+    if (!formState.jerseyColor.trim()) errors.jerseyColor = "Jersey Color is required";
 
     // Check if date is in the past
     if (date) {
@@ -136,12 +138,12 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
     }
 
     setIsSubmitting(true);
-    const { date, time, venue, city, notes, opponent } = formState;
-    
+    const { date, time, venue, city, notes, opponent, jerseyColor } = formState;
+
     try {
       const { data } = await createGame({
-        variables: { 
-          input: { date, time, venue, city, notes, opponent },
+        variables: {
+          input: { date, time, venue, city, notes, opponent, jerseyColor },
           organizationId: currentOrganization._id
         },
       });
@@ -154,6 +156,7 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
         city: "",
         notes: "",
         opponent: "",
+        jerseyColor: "",
       });
       
       // If onGameCreated callback is provided, call it instead of navigating
@@ -351,32 +354,59 @@ const GameForm = ({ onGameCreated, onBackToGames }) => {
           </div>
         </div>
 
-        {/* Opponent Field */}
-        <div className="space-y-1.5">
-          <label className={`block text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-            Opponent Team
-            <span className="text-red-500 ml-1">*</span>
-          </label>
-          <input
-            type="text"
-            name="opponent"
-            value={formState.opponent}
-            onChange={handleChange}
-            className={`w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 transition-colors relative z-10
-              ${validationErrors.opponent 
-                ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
-                : isDarkMode 
-                  ? "bg-gray-700 text-gray-100 border-gray-600 focus:ring-blue-500 focus:border-blue-500" 
-                  : "bg-white text-gray-900 border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-              }`}
-            placeholder="Rockets FC"
-            required
-          />
-          {validationErrors.opponent && (
-            <p className="text-red-500 text-xs mt-1">
-              {validationErrors.opponent}
-            </p>
-          )}
+        {/* Opponent and Jersey Color Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Opponent Field */}
+          <div className="space-y-1.5">
+            <label className={`block text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+              Opponent Team
+              <span className="text-red-500 ml-1">*</span>
+            </label>
+            <input
+              type="text"
+              name="opponent"
+              value={formState.opponent}
+              onChange={handleChange}
+              className={`w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 transition-colors relative z-10
+                ${validationErrors.opponent 
+                  ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
+                  : isDarkMode 
+                    ? "bg-gray-700 text-gray-100 border-gray-600 focus:ring-blue-500 focus:border-blue-500" 
+                    : "bg-white text-gray-900 border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                }`}
+              placeholder="Rockets FC"
+              required
+            />
+            {validationErrors.opponent && (
+              <p className="text-red-500 text-xs mt-1">
+                {validationErrors.opponent}
+              </p>
+            )}
+          </div>
+
+          {/* Jersey Color Field */}
+          <div className="space-y-1.5">
+            <label className={`block text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+              Jersey Color
+              <span className="text-red-500 ml-1">*</span>
+            </label>
+            <input
+              type="text"
+              name="jerseyColor"
+              value={formState.jerseyColor}
+              onChange={handleChange}
+              className={`w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 transition-colors relative z-10
+                ${validationErrors.jerseyColor ? "border-red-500 focus:ring-red-500 focus:border-red-500" : isDarkMode ? "bg-gray-700 text-gray-100 border-gray-600 focus:ring-blue-500 focus:border-blue-500" : "bg-white text-gray-900 border-gray-300 focus:ring-blue-500 focus:border-blue-500"}
+              `}
+              placeholder="Red"
+              required
+            />
+            {validationErrors.jerseyColor && (
+              <p className="text-red-500 text-xs mt-1">
+                {validationErrors.jerseyColor}
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Notes Field */}

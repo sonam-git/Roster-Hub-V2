@@ -103,6 +103,7 @@ const typeDefs = gql`
     city: String!
     notes: String
     opponent: String!
+    jerseyColor: String!
     score: String
     result: GameResult!
     status: GameStatus!
@@ -212,6 +213,7 @@ const typeDefs = gql`
     city: String!
     notes: String
     opponent: String!
+    jerseyColor: String!
   }
 
   input UpdateGameInput {
@@ -221,6 +223,7 @@ const typeDefs = gql`
     city: String
     notes: String
     opponent: String
+    jerseyColor: String
   }
 
   input RespondToGameInput {

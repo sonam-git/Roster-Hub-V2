@@ -12,6 +12,7 @@ const GameUpdate = ({
   initialCity,
   initialNotes,
   initialOpponent,
+  initialJerseyColor,
   onClose,
   isDarkMode,
 }) => {
@@ -23,6 +24,7 @@ const GameUpdate = ({
     city: initialCity || "",
     notes: initialNotes || "",
     opponent: initialOpponent || "",
+    jerseyColor: initialJerseyColor || "",
   });
 
   const [successMessage, setSuccessMessage] = useState("");
@@ -65,8 +67,9 @@ const GameUpdate = ({
       city: initialCity || "",
       notes: initialNotes || "",
       opponent: initialOpponent || "",
+      jerseyColor: initialJerseyColor || "",
     });
-  }, [initialDate, initialTime, initialVenue, initialCity, initialNotes, initialOpponent]);
+  }, [initialDate, initialTime, initialVenue, initialCity, initialNotes, initialOpponent, initialJerseyColor]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -85,7 +88,8 @@ const GameUpdate = ({
       venue: 'Venue',
       city: 'City',
       notes: 'Notes',
-      opponent: 'Opponent Team'
+      opponent: 'Opponent Team',
+      jerseyColor: 'Jersey Color'
     };
     
     if (formState.date     !== initialDate)    {
@@ -111,6 +115,10 @@ const GameUpdate = ({
     if (formState.opponent !== initialOpponent){
       input.opponent = formState.opponent;
       updatedFields.push(fieldLabels.opponent);
+    }
+    if (formState.jerseyColor !== initialJerseyColor) {
+      input.jerseyColor = formState.jerseyColor;
+      updatedFields.push(fieldLabels.jerseyColor);
     }
 
     if (!Object.keys(input).length) {
@@ -228,7 +236,8 @@ const GameUpdate = ({
           </div>
         </div>
 
-        {/* Opponent */}
+        {/* Opponent  */}
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <label className={`text-sm font-medium flex items-center gap-2 ${isDarkMode ? "text-gray-200" : "text-gray-700"}`}>
             🏃‍♂️ <span>Opponent Team</span>
@@ -246,7 +255,25 @@ const GameUpdate = ({
             }`}
           />
         </div>
-
+        {/* Jersey Color */}
+        <div className="space-y-2">
+          <label className={`text-sm font-medium flex items-center gap-2 ${isDarkMode ? "text-gray-200" : "text-gray-700"}`}>
+            👕 <span>Jersey Color</span>
+          </label>
+          <input
+            type="text"
+            name="jerseyColor"
+            value={formState.jerseyColor}
+            onChange={handleChange}
+            placeholder="Red and White"
+            className={`w-full px-4 py-2.5 text-sm rounded-lg border-2 transition-all duration-200 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 ${
+              isDarkMode 
+                ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" 
+                : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+            }`}
+          />
+        </div>
+</div>
         {/* Notes */}
         <div className="space-y-2">
           <label className={`text-sm font-medium flex items-center gap-2 ${isDarkMode ? "text-gray-200" : "text-gray-700"}`}>

@@ -71,6 +71,11 @@ const GameSchema = new Schema(
       trim: true,
       required: true,
     },
+    jerseyColor: {
+      type: String,
+      trim: true,
+      default: "Default",
+    },
     score:{
       type: String,
       trim: true,

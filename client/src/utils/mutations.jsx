@@ -398,6 +398,7 @@ export const CREATE_GAME = gql`
       city
       notes
       opponent
+      jerseyColor
       score
       result
       status
@@ -473,6 +474,7 @@ export const UPDATE_GAME = gql`
       city
       notes
       opponent
+      jerseyColor
       score
       result
       status
@@ -620,7 +622,8 @@ export const COMPLETE_GAME = gql`
       score
       result
       opponent
-      notes 
+      jerseyColor
+      notes
       availableCount
       unavailableCount
       creator { _id name }

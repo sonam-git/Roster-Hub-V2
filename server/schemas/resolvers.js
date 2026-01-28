@@ -1761,11 +1761,6 @@ const resolvers = {
         // Use SendGrid HTTP API for production, Gmail for local dev
         const useSendGrid = !!process.env.SENDGRID_API_KEY;
         
-        console.log('📧 Password Reset Email Configuration:');
-        console.log('  Using SendGrid HTTP API:', useSendGrid);
-        console.log('  Has SENDGRID_API_KEY:', !!process.env.SENDGRID_API_KEY);
-        console.log('  EMAIL_FROM:', process.env.EMAIL_FROM || 'Not set');
-        
         const appUrl = (process.env.APP_URL || 'https://roster-hub-v2-y6j2.vercel.app').trim();
         const resetUrl = `${appUrl}/reset-password/${resetToken}`;
         const fromEmail = process.env.EMAIL_FROM || 'sherpa.sjs@gmail.com';
@@ -1838,12 +1833,10 @@ If you did not request this, please ignore this email and your password will rem
 
         if (useSendGrid) {
           // Use SendGrid HTTP API (Railway-compatible!)
-          console.log('✅ Using SendGrid HTTP API for password reset');
           const sgMail = require('@sendgrid/mail');
           sgMail.setApiKey(process.env.SENDGRID_API_KEY);
           
           await sgMail.send(emailContent);
-          console.log('✅ Password reset email sent via SendGrid HTTP API to:', email);
         } else {
           // Use Gmail for local dev
           console.log('⚠️ Using Gmail SMTP for local development');
@@ -1857,7 +1850,6 @@ If you did not request this, please ignore this email and your password will rem
           });
           
           await transporter.sendMail(emailContent);
-          console.log('✅ Password reset email sent via Gmail to:', email);
         }
 
         return {
@@ -1925,34 +1917,21 @@ If you did not request this, please ignore this email and your password will rem
           throw new AuthenticationError('Only team owners can send invites');
         }
 
-        console.log('📧 Sending team invite emails...');
-        console.log('📧 Environment check:', {
-          hasSendGridKey: !!process.env.SENDGRID_API_KEY,
-          emailFrom: process.env.EMAIL_FROM,
-          sendGridKeyStart: process.env.SENDGRID_API_KEY?.substring(0, 10),
-        });
-        
         // Get the app URL from environment or use default
         const appUrl = (process.env.APP_URL || 'https://roster-hub-v2-y6j2.vercel.app').trim();
         const joinUrl = `${appUrl}/login?inviteCode=${organization.inviteCode}`;
         const fromEmail = process.env.EMAIL_FROM || 'sherpa.sjs@gmail.com';
-        
-        console.log('📧 Sending from:', fromEmail);
-        console.log('📧 Join URL:', joinUrl);
         
         // Check if SendGrid API key is available
         const useSendGrid = !!process.env.SENDGRID_API_KEY;
         
         if (useSendGrid) {
           // Use SendGrid HTTP API (Railway-compatible, not blocked!)
-          console.log('✅ Using SendGrid HTTP API for production');
           const sgMail = require('@sendgrid/mail');
           sgMail.setApiKey(process.env.SENDGRID_API_KEY);
           
           // Send email to each recipient
           const sendPromises = emails.map(async (email) => {
-            console.log(`📧 Sending invite to: ${email}`);
-            
             const msg = {
               to: email,
               from: fromEmail,
@@ -2023,8 +2002,6 @@ If you didn't expect this invitation, you can safely ignore this email.
             
             try {
               const response = await sgMail.send(msg);
-              console.log(`✅ Email sent to ${email} via SendGrid HTTP API`);
-              console.log('   Response status:', response[0].statusCode);
               return response;
             } catch (emailError) {
               console.error(`❌ Failed to send email to ${email}:`, emailError);
@@ -2041,7 +2018,6 @@ If you didn't expect this invitation, you can safely ignore this email.
           
         } else {
           // Local dev - use Gmail with nodemailer
-          console.log('⚠️ Using Gmail SMTP for local development');
           const emailUser = (process.env.EMAIL_USER || '').replace(/^[\s=]+/, '').trim() || 'sherpa.sjs@gmail.com';
           const emailPass = (process.env.EMAIL_PASSWORD || '').replace(/^[\s=]+/, '').trim();
           
@@ -2059,7 +2035,6 @@ If you didn't expect this invitation, you can safely ignore this email.
           
           // Send email to each recipient
           const sendPromises = emails.map(async (email) => {
-            console.log(`📧 Sending invite to: ${email}`);
             const mailOptions = {
               from: fromEmail,
               to: email,
@@ -2130,7 +2105,6 @@ If you didn't expect this invitation, you can safely ignore this email.
 
             try {
               const info = await transporter.sendMail(mailOptions);
-              console.log(`✅ Email sent to ${email}:`, info.messageId);
               return info;
             } catch (emailError) {
               console.error(`❌ Failed to send email to ${email}:`, emailError);
@@ -2140,7 +2114,6 @@ If you didn't expect this invitation, you can safely ignore this email.
 
           // Wait for all emails to send
           await Promise.all(sendPromises);
-          console.log(`✅ All ${emails.length} invitation emails sent successfully`);
         }
 
         return {

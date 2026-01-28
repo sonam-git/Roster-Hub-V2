@@ -490,6 +490,7 @@ export const QUERY_GAMES = gql`
       status
       score
       opponent
+      jerseyColor
       result
       availableCount
       unavailableCount
@@ -568,6 +569,7 @@ export const QUERY_GAME = gql`
       notes
       score
       opponent
+      jerseyColor
       result
       status
       createdAt

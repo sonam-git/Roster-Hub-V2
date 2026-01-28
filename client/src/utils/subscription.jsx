@@ -160,6 +160,7 @@ export const GAME_CREATED_SUBSCRIPTION = gql`
       city
       notes
       opponent
+      jerseyColor
       score
       result
       status
@@ -199,6 +200,7 @@ export const GAME_CONFIRMED_SUBSCRIPTION = gql`
       venue
       city
       opponent
+      jerseyColor
     }
   }
 `;
@@ -213,6 +215,7 @@ export const GAME_UPDATED_SUBSCRIPTION = gql`
       venue
       city
       opponent
+      jerseyColor
     }
   }
 `;
@@ -239,6 +242,7 @@ export const GAME_CANCELLED_SUBSCRIPTION = gql`
       time
       venue
       opponent
+      jerseyColor
     }
   }
 `;

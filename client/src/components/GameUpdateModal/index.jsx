@@ -12,6 +12,7 @@ const GameUpdateModal = ({
   initialCity,
   initialNotes,
   initialOpponent,
+  initialJerseyColor,
   onClose,
   isDarkMode,
 }) => {
@@ -28,6 +29,7 @@ const GameUpdateModal = ({
     city: initialCity || "",
     notes: initialNotes || "",
     opponent: initialOpponent || "",
+    jerseyColor: initialJerseyColor || "",
   });
 
   const [updateGame, { loading, error }] = useMutation(UPDATE_GAME, {
@@ -60,8 +62,9 @@ const GameUpdateModal = ({
       city: initialCity || "",
       notes: initialNotes || "",
       opponent: initialOpponent || "",
+      jerseyColor: initialJerseyColor || "",
     });
-  }, [initialDate, initialTime, initialVenue, initialCity, initialNotes, initialOpponent]);
+  }, [initialDate, initialTime, initialVenue, initialCity, initialNotes, initialOpponent, initialJerseyColor]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -93,6 +96,7 @@ const GameUpdateModal = ({
     { id: "venue", label: "Venue", icon: "🏟️", type: "text" },
     { id: "city", label: "City", icon: "🏙️", type: "text" },
     { id: "opponent", label: "Opponent Team", icon: "🥅", type: "text" },
+    { id: "jerseyColor", label: "Jersey Color", icon: "👕", type: "text" },
     { id: "notes", label: "Additional Notes", icon: "📝", type: "textarea" },
   ];
 

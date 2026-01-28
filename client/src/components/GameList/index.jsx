@@ -235,6 +235,10 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
           aValue = a.opponent.toLowerCase();
           bValue = b.opponent.toLowerCase();
           break;
+        case 'jerseyColor':
+          aValue = a.jerseyColor.toLowerCase();
+          bValue = b.jerseyColor.toLowerCase();
+          break;
         case 'venue':
           aValue = a.venue.toLowerCase();
           bValue = b.venue.toLowerCase();

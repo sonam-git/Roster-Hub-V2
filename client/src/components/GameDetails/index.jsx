@@ -1343,7 +1343,7 @@ export default function GameDetails({ gameId }) {
             </div>
 
             {/* Game Details Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
               {/* Opponent */}
               <div>
                 <h3 className={`text-sm font-medium mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
@@ -1394,12 +1394,62 @@ export default function GameDetails({ gameId }) {
                   </p>
                 )}
               </div>
-              
+              {/* Jersey Color */}
+              <div>
+                <h3 className={`text-sm font-medium mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                  Home Jersey Color
+                </h3>
+                <div className="flex items-center gap-2">
+                  {/* Jersey SVG Icon with dynamic color */}
+                  <svg
+                    width="32"
+                    height="32"
+                    viewBox="0 0 32 32"
+                    fill="none"
+                    className="flex-shrink-0"
+                    aria-label="Jersey Icon"
+                  >
+                    <g>
+                      {/* Jersey body */}
+                      <path
+                        d="M8 4 L16 2 L24 4 L28 10 L24 12 V28 H8 V12 L4 10 Z"
+                        fill={game.jerseyColor ? game.jerseyColor : (isDarkMode ? "#374151" : "#e5e7eb")}
+                        stroke={isDarkMode ? "#d1d5db" : "#374151"}
+                        strokeWidth="1.5"
+                      />
+                      {/* Jersey sleeves */}
+                      <path
+                        d="M8 4 L4 10 L8 12"
+                        fill={game.jerseyColor ? game.jerseyColor : (isDarkMode ? "#374151" : "#e5e7eb")}
+                        stroke={isDarkMode ? "#d1d5db" : "#374151"}
+                        strokeWidth="1.5"
+                      />
+                      <path
+                        d="M24 4 L28 10 L24 12"
+                        fill={game.jerseyColor ? game.jerseyColor : (isDarkMode ? "#374151" : "#e5e7eb")}
+                        stroke={isDarkMode ? "#d1d5db" : "#374151"}
+                        strokeWidth="1.5"
+                      />
+                      {/* Jersey collar */}
+                      <ellipse
+                        cx="16"
+                        cy="6"
+                        rx="3"
+                        ry="1.2"
+                        fill={isDarkMode ? "#d1d5db" : "#374151"}
+                      />
+                    </g>
+                  </svg>
+                  <p className={`text-base font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                    {game.jerseyColor}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Navigation Tabs */}
+        {/* Navigation Tabs Section */}
         <div className={`rounded-lg shadow-sm mb-6 ${
           isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"
         }`}>
