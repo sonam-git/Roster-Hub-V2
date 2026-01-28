@@ -67,13 +67,11 @@ function CommentsPane({ gameId, formationId: propFormationId }) {
     skip: !formationId,
     onData: ({ data }) => {
       const newC = data.data?.formationCommentAdded;
-      console.log('➕ ADD subscription received:', newC, 'for formationId:', formationId);
       if (newC) {
         startTransition(() => 
           setComments((prev) => {
             // Prevent duplicates: only add if comment doesn't already exist
             const exists = prev.some(c => c._id === newC._id);
-            console.log('➕ Comment exists?', exists, 'Adding:', !exists);
             return exists ? prev : [...prev, newC];
           })
         );
@@ -84,14 +82,11 @@ function CommentsPane({ gameId, formationId: propFormationId }) {
     },
   });
 
-  console.log('🎯 Subscribed to formationId:', formationId, 'skip:', !formationId);
-
   useSubscription(FORMATION_COMMENT_UPDATED_SUBSCRIPTION, {
     variables: { formationId },
     skip: !formationId,
     onData: ({ data }) => {
       const upd = data.data?.formationCommentUpdated;
-      console.log('🔄 UPDATE subscription received:', upd, 'for formationId:', formationId);
       if (upd) {
         startTransition(() =>
           setComments((prev) => {
@@ -109,7 +104,6 @@ function CommentsPane({ gameId, formationId: propFormationId }) {
               }
               return c;
             });
-            console.log('🔄 Comments after update:', updated);
             return updated;
           })
         );
@@ -125,12 +119,10 @@ function CommentsPane({ gameId, formationId: propFormationId }) {
     skip: !formationId,
     onData: ({ data }) => {
       const deletedId = data.data?.formationCommentDeleted;
-      console.log('🗑️ DELETE subscription received:', deletedId, 'for formationId:', formationId);
       if (deletedId) {
         startTransition(() =>
           setComments((prev) => {
             const filtered = prev.filter((c) => c._id !== deletedId);
-            console.log('🗑️ Comments after delete:', filtered.length, 'remaining (deleted:', deletedId, ')');
             return filtered;
           })
         );
@@ -146,7 +138,6 @@ function CommentsPane({ gameId, formationId: propFormationId }) {
     skip: !formationId,
     onData: ({ data }) => {
       const liked = data.data?.formationCommentLiked;
-      console.log('❤️ LIKE subscription received:', liked, 'for formationId:', formationId);
       if (liked) {
         startTransition(() =>
           setComments((prev) => {
@@ -161,7 +152,6 @@ function CommentsPane({ gameId, formationId: propFormationId }) {
               }
               return c;
             });
-            console.log('❤️ Comments after like update:', updated);
             return updated;
           })
         );
@@ -176,17 +166,6 @@ function CommentsPane({ gameId, formationId: propFormationId }) {
   const sorted = Array.isArray(comments) ? [...comments].sort(
     (a, b) => parseInt(a.createdAt, 10) - parseInt(b.createdAt, 10)
   ) : [];
-
-  console.log('FormationCommentList Debug:', { 
-    gameId, 
-    propFormationId, 
-    formationId, 
-    hasData: !!data,
-    formation: formation?._id,
-    commentsCount: comments?.length,
-    sortedCount: sorted.length,
-    organizationId: currentOrganization?._id
-  });
 
   // Show placeholder when no formation exists
   if (!formationId) {

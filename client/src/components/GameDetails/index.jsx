@@ -294,6 +294,7 @@ export default function GameDetails({ gameId }) {
   const [showFormation, setShowFormation] = useState(false);
   const [activeSection, setActiveSection] = useState("overview");
   const [formationSubSection, setFormationSubSection] = useState("lineup"); // lineup, players, comment, feedback
+  const [rightPanelTab, setRightPanelTab] = useState("comments"); // comments, like
 
   /* sync misc states when game query resolves */
   useEffect(() => {
@@ -1648,20 +1649,37 @@ export default function GameDetails({ gameId }) {
                     <FormationCommentList gameId={gameId} formationId={formation?._id} />
                   )}
 
-                  {formationSubSection === "like" && (
-                    <div className={`text-center p-6 rounded-md ${
-                      isDarkMode ? "bg-purple-900/20 border border-purple-800" : "bg-purple-50 border border-purple-200"
+                  {formationSubSection === "like" && formation && (
+                    <div className={`rounded-lg shadow-sm border transition-colors ${
+                      isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
                     }`}>
-                      <svg className={`w-12 h-12 mx-auto mb-4 ${isDarkMode ? "text-purple-400" : "text-purple-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                      </svg>
-                      <h4 className={`text-base font-semibold mb-2 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                        Formation Feedback
-                      </h4>
-                      <p className={`text-sm mb-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                        Show your appreciation for this tactical setup
-                      </p>
-                      <FormationLikeButton formationId={formation?._id} isDarkMode={isDarkMode} />
+                      <div className="p-6">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className={`flex items-center justify-center w-12 h-12 rounded-lg ${
+                            isDarkMode ? "bg-purple-900/30" : "bg-purple-50"
+                          }`}>
+                            <svg className={`w-6 h-6 ${isDarkMode ? "text-purple-400" : "text-purple-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                          </div>
+                          <div>
+                            <h3 className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                              Formation Feedback
+                            </h3>
+                            <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
+                              Show your appreciation for this tactical setup
+                            </p>
+                          </div>
+                        </div>
+                        <FormationLikeButton
+                          formationId={formation._id}
+                          likes={formation.likes}
+                          likedBy={formation.likedBy}
+                          onUpdate={partial =>
+                            setFormation(prev => ({ ...prev, ...partial }))
+                          }
+                        />
+                      </div>
                     </div>
                   )}
                 </>
@@ -1842,18 +1860,61 @@ export default function GameDetails({ gameId }) {
               isDarkMode ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200"
             }`}>
               <div className="p-6">
-                {/* Header */}
-                <div className="flex items-center gap-3 mb-5">
-                  <div className={`flex items-center justify-center w-10 h-10 rounded-md ${
-                    isDarkMode ? "bg-gray-700" : "bg-gray-100"
-                  }`}>
-                    <svg className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                  </div>
-                  <h3 className={`text-base font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                    {game.status === "COMPLETED" ? "Feedback Discussion" : "Formation Comments"}
-                  </h3>
+                {/* Header with Tabs */}
+                <div className="mb-5">
+                  {game.status === "CONFIRMED" ? (
+                    /* Tabs for CONFIRMED games */
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setRightPanelTab("comments")}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                          rightPanelTab === "comments"
+                            ? isDarkMode 
+                              ? "bg-blue-600 text-white" 
+                              : "bg-blue-600 text-white"
+                            : isDarkMode 
+                              ? "text-gray-400 hover:text-white hover:bg-gray-700" 
+                              : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                        }`}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                        Comments
+                      </button>
+                      <button
+                        onClick={() => setRightPanelTab("like")}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                          rightPanelTab === "like"
+                            ? isDarkMode 
+                              ? "bg-blue-600 text-white" 
+                              : "bg-blue-600 text-white"
+                            : isDarkMode 
+                              ? "text-gray-400 hover:text-white hover:bg-gray-700" 
+                              : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                        }`}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        Like
+                      </button>
+                    </div>
+                  ) : (
+                    /* Single header for COMPLETED games */
+                    <div className="flex items-center gap-3">
+                      <div className={`flex items-center justify-center w-10 h-10 rounded-md ${
+                        isDarkMode ? "bg-gray-700" : "bg-gray-100"
+                      }`}>
+                        <svg className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                      </div>
+                      <h3 className={`text-base font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                        Feedback Discussion
+                      </h3>
+                    </div>
+                  )}
                 </div>
 
                 <div className={`border-t ${isDarkMode ? "border-gray-700" : "border-gray-200"}`}></div>
@@ -1947,6 +2008,53 @@ export default function GameDetails({ gameId }) {
                         </div>
                       );
                     })()
+                  ) : game.status === "CONFIRMED" ? (
+                    /* Tab content for CONFIRMED games */
+                    rightPanelTab === "comments" ? (
+                      <FormationCommentList gameId={gameId} formationId={formation?._id} />
+                    ) : (
+                      /* Formation Like Tab */
+                      formation ? (
+                        <div>
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className={`flex items-center justify-center w-12 h-12 rounded-lg ${
+                              isDarkMode ? "bg-purple-900/30" : "bg-purple-50"
+                            }`}>
+                              <svg className={`w-6 h-6 ${isDarkMode ? "text-purple-400" : "text-purple-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                              </svg>
+                            </div>
+                            <div>
+                              <h3 className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                                Formation Feedback
+                              </h3>
+                              <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
+                                Show your appreciation for this tactical setup
+                              </p>
+                            </div>
+                          </div>
+                          <FormationLikeButton
+                            formationId={formation._id}
+                            likes={formation.likes}
+                            likedBy={formation.likedBy}
+                            onUpdate={partial =>
+                              setFormation(prev => ({ ...prev, ...partial }))
+                            }
+                          />
+                        </div>
+                      ) : (
+                        <div className={`p-6 rounded-md text-center ${
+                          isDarkMode ? "bg-yellow-900/20 border border-yellow-800" : "bg-yellow-50 border border-yellow-200"
+                        }`}>
+                          <svg className={`w-12 h-12 mx-auto mb-3 ${isDarkMode ? "text-yellow-400" : "text-yellow-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <p className={`text-sm font-medium ${isDarkMode ? "text-yellow-300" : "text-yellow-700"}`}>
+                            Formation is being prepared...
+                          </p>
+                        </div>
+                      )
+                    )
                   ) : (
                     <FormationCommentList gameId={gameId} formationId={formation?._id} />
                   )}

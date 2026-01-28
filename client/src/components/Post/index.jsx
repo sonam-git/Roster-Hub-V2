@@ -327,7 +327,7 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
           <div className="mt-4">
             <CommentList postId={post._id} comments={comments} currentUserId={currentUserId} />
             <div className="mt-4">
-              <textarea className="w-full p-2 border rounded dark:text-black text-xs sm:text-sm mb-2" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Write a comment..." />
+              <textarea className="w-full p-2 border rounded bg-gray-50 dark:bg-gray-900 dark:text-white text-xs sm:text-sm mb-2" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Write a comment..." />
               <div className="flex gap-2">
                 <button className="px-4 py-1 rounded bg-blue-500 text-white hover:bg-blue-700 text-xs sm:text-sm" onClick={handleAddComment}>Add Comment</button>
                 <button className="px-4 py-1 rounded bg-gray-500 text-white hover:bg-gray-700 text-xs sm:text-sm" onClick={() => { handleCancelComment(); setShowComments(false); }}>Cancel</button>

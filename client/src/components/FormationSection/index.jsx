@@ -22,7 +22,6 @@ import { ThemeContext } from "../ThemeContext";
 import { useOrganization } from "../../contexts/OrganizationContext";
 import AvailablePlayersList from "../AvailablePlayersList";
 import FormationBoard from "../FormationBoard";
-import FormationLikeButton from "../FormationLikeButton";
 
 const FORMATION_TYPES = [
   "1-4-3-3",
@@ -655,36 +654,6 @@ export default function FormationSection({
               </>
             )}
           </DndContext>
-
-          {formation && (
-            <div className={`mt-8 rounded-3xl p-4 border-2 transition-all duration-300 hover:shadow-xl ${
-              isDarkMode 
-                ? "bg-gradient-to-br from-gray-800 via-purple-900 to-gray-900 border-purple-700 shadow-lg shadow-purple-900/20" 
-                : "bg-gradient-to-br from-purple-50 via-pink-50 to-white border-purple-200 shadow-lg shadow-purple-200/50"
-            }`}>
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
-                  <span className="text-2xl">❤️</span>
-                </div>
-                <div>
-                  <h3 className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
-                    Formation Feedback
-                  </h3>
-                  <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-                    Show your appreciation for this tactical setup
-                  </p>
-                </div>
-              </div>
-              <FormationLikeButton
-                formationId={formation._id}
-                likes={formation.likes}
-                likedBy={formation.likedBy}
-                onUpdate={partial =>
-                  setFormation(prev => ({ ...prev, ...partial }))
-                }
-              />
-            </div>
-          )}
         </>
       )}
 

@@ -96,8 +96,8 @@ const Header = ({ open, setOpen }) => {
           path: "/game-schedule",
           badge: gameBadgeCount,
         },
-        { title: "ScoreBoard", icon: HiTrophy, path: "/scoreboard" },
-        { title: "Pro News / Scores", icon: HiNewspaper, path: "/game-history" }, // Use newspaper icon for pro games news/scores
+        { title: "Match History", icon: HiNewspaper, path: "/game-history" }, 
+         { title: "ScoreBoard", icon: HiTrophy, path: "/scoreboard" },
         { title: "About", icon: HiInformationCircle, path: "/about" },
         { title: "Logout", icon: HiArrowRightOnRectangle, action: handleLogout },
       ]

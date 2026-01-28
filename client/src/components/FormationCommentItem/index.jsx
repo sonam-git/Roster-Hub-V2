@@ -49,7 +49,6 @@ export default function FormationCommentItem({ comment, formationId }) {
       organizationId: currentOrganization?._id
     },
     onCompleted: (data) => {
-      console.log('❤️ LIKE mutation completed:', data);
       // Update local state immediately for this user
       if (data?.likeFormationComment) {
         setLocalLikes(data.likeFormationComment.likes);
@@ -109,7 +108,7 @@ export default function FormationCommentItem({ comment, formationId }) {
   };
 
   return (
-    <div className="group p-4 hover:bg-gray-200 dark:hover:bg-gray-850 transition-colors duration-150">
+    <div className="group p-4 hover:bg-gray-200 dark:hover:bg-gray-900 transition-colors duration-150">
       {editing ? (
         <div className="space-y-3">
           <div className="flex items-center gap-2.5 mb-3">
@@ -125,7 +124,7 @@ export default function FormationCommentItem({ comment, formationId }) {
           
           <textarea
             rows="3"
-            className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2.5 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:focus:ring-blue-400 transition-all duration-150 resize-none"
+            className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2.5 text-sm bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:focus:ring-blue-400 transition-all duration-150 resize-none"
             value={text}
             onChange={e => setText(e.target.value)}
             placeholder="Update your comment..."
@@ -252,7 +251,7 @@ export default function FormationCommentItem({ comment, formationId }) {
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="relative overflow-hidden bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full border border-gray-300 dark:border-gray-700">
+          <div className="relative overflow-hidden bg-gray-50 dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full border border-gray-300 dark:border-gray-700">
             {/* Top accent */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 to-red-600"></div>
             
@@ -288,7 +287,7 @@ export default function FormationCommentItem({ comment, formationId }) {
                 <button
                   onClick={handleCancelDelete}
                   disabled={deleteLoading}
-                  className="flex-1 px-4 py-2 bg-white hover:bg-gray-50 active:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:active:bg-gray-500 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2 bg-gray-50 hover:bg-gray-50 active:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:active:bg-gray-500 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>

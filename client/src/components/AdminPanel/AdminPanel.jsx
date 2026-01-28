@@ -710,7 +710,7 @@ const AdminPanel = () => {
       {/* Delete Confirmation Modal */}
       {showDeleteModal && selectedPlayer && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-4 sm:p-6 border border-gray-200 dark:border-gray-700 relative z-[210]">
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-4 sm:p-6 border border-gray-200 dark:border-gray-700 relative z-[210]">
             <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 mx-auto bg-red-50 dark:bg-red-900/20 rounded-full mb-3 sm:mb-4">
               <svg className="w-5 h-5 sm:w-6 sm:h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -731,7 +731,7 @@ const AdminPanel = () => {
                   setShowDeleteModal(false);
                   setSelectedPlayer(null);
                 }}
-                className="flex-1 px-3 sm:px-4 py-2 text-sm sm:text-base bg-white hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 active:bg-gray-100 dark:active:bg-gray-500 text-gray-700 dark:text-gray-200 font-medium rounded-lg transition-colors border border-gray-300 dark:border-gray-600 cursor-pointer active:scale-95"
+                className="flex-1 px-3 sm:px-4 py-2 text-sm sm:text-base bg-gray-50 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 active:bg-gray-100 dark:active:bg-gray-500 text-gray-700 dark:text-gray-200 font-medium rounded-lg transition-colors border border-gray-300 dark:border-gray-600 cursor-pointer active:scale-95"
               >
                 Cancel
               </button>
