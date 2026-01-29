@@ -578,7 +578,7 @@ const GameList = ({ onCreateGame, searchFilters = null }) => {
                 {isCreator && (
                   <button
                     onClick={() => openDeleteModal(game._id)}
-                    className="absolute top-4 right-4 p-2 rounded-md bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-300 dark:hover:border-red-800 transition-all duration-150 opacity-0 group-hover:opacity-100 shadow-sm"
+                    className="absolute top-4 right-4 p-2 rounded-md bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-300 dark:hover:border-red-800 transition-all duration-150 opacity-0 group-hover:opacity-100 shadow-sm"
                     title="Delete game"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

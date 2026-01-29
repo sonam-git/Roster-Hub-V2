@@ -158,37 +158,32 @@ const GameUpdateModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm p-4 overflow-y-auto animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm p-4 overflow-y-auto">
       <div className="w-full max-w-2xl my-8">
-        <div className={`rounded-2xl shadow-2xl transform transition-all duration-300 animate-in zoom-in-95 ${
-          isDarkMode ? "bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-600" : "bg-gradient-to-br from-white to-gray-50 border border-gray-200"
+        <div className={`rounded-lg shadow-xl transition-all ${
+          isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"
         }`}>
           {/* Modal Header */}
           <div className={`px-6 py-4 border-b flex items-center justify-between ${
             isDarkMode ? "border-gray-700" : "border-gray-200"
           }`}>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center">
-                <span className="text-xl">✏️</span>
-              </div>
-              <div>
-                <h3 className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
-                  Update Game Details
-                </h3>
-                <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                  {step === 1 ? "Select fields to update" : `Updating ${selectedFields.length} field${selectedFields.length !== 1 ? 's' : ''}`}
-                </p>
-              </div>
+            <div>
+              <h3 className={`text-lg font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                Update Game Details
+              </h3>
+              <p className={`text-xs mt-0.5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                {step === 1 ? "Select fields to update" : `Updating ${selectedFields.length} field${selectedFields.length !== 1 ? 's' : ''}`}
+              </p>
             </div>
             <button
               onClick={onClose}
-              className={`p-2 rounded-full transition-all duration-200 hover:scale-110 ${
+              className={`p-2 rounded-md transition-colors ${
                 isDarkMode 
                   ? "text-gray-400 hover:bg-gray-700 hover:text-white" 
                   : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
               }`}
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -207,27 +202,24 @@ const GameUpdateModal = ({
                 {/* Dropdown Button */}
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-200 flex items-center justify-between ${
+                  className={`w-full px-4 py-3 rounded-md border transition-all flex items-center justify-between ${
                     isDropdownOpen
                       ? isDarkMode
-                        ? "border-green-500 bg-green-900/20"
-                        : "border-green-500 bg-green-50"
+                        ? "border-blue-500 bg-blue-900/20"
+                        : "border-blue-500 bg-blue-50"
                       : isDarkMode
-                        ? "border-gray-600 bg-gray-700/50 hover:border-gray-500"
+                        ? "border-gray-600 bg-gray-700 hover:border-gray-500"
                         : "border-gray-300 bg-white hover:border-gray-400"
                   }`}
                 >
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl">📋</span>
-                    <span className={`font-medium ${isDarkMode ? "text-white" : "text-gray-800"}`}>
-                      {selectedFields.length === 0 
-                        ? "Click to select fields" 
-                        : `${selectedFields.length} field${selectedFields.length !== 1 ? 's' : ''} selected`
-                      }
-                    </span>
-                  </div>
+                  <span className={`text-sm font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                    {selectedFields.length === 0 
+                      ? "Click to select fields" 
+                      : `${selectedFields.length} field${selectedFields.length !== 1 ? 's' : ''} selected`
+                    }
+                  </span>
                   <svg 
-                    className={`w-5 h-5 transition-transform duration-200 ${
+                    className={`w-5 h-5 transition-transform ${
                       isDropdownOpen ? "rotate-180" : ""
                     } ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
                     fill="none" 
@@ -240,8 +232,8 @@ const GameUpdateModal = ({
 
                 {/* Dropdown Content */}
                 {isDropdownOpen && (
-                  <div className={`rounded-xl border-2 overflow-hidden transition-all duration-300 ${
-                    isDarkMode ? "border-gray-600 bg-gray-700/50" : "border-gray-300 bg-white"
+                  <div className={`rounded-md border overflow-hidden transition-all ${
+                    isDarkMode ? "border-gray-600 bg-gray-700" : "border-gray-300 bg-white"
                   }`}>
                     <div className="max-h-96 overflow-y-auto">
                       {fields.map((field) => (
@@ -287,8 +279,8 @@ const GameUpdateModal = ({
                 )}
 
                 {selectedFields.length > 0 && (
-                  <div className={`mt-4 p-4 rounded-xl ${
-                    isDarkMode ? "bg-green-900/20 border border-green-500/30" : "bg-green-50 border border-green-200"
+                  <div className={`mt-4 p-4 rounded-md ${
+                    isDarkMode ? "bg-blue-900/20 border border-blue-800" : "bg-blue-50 border border-blue-200"
                   }`}>
                     <div className="flex flex-wrap gap-2">
                       {selectedFields.map(fieldId => {
@@ -296,10 +288,10 @@ const GameUpdateModal = ({
                         return (
                           <div
                             key={fieldId}
-                            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg ${
+                            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-md ${
                               isDarkMode 
-                                ? "bg-green-800/40 text-green-300 border border-green-600/40" 
-                                : "bg-green-100 text-green-800 border border-green-300"
+                                ? "bg-blue-800/40 text-blue-300 border border-blue-700" 
+                                : "bg-blue-100 text-blue-800 border border-blue-300"
                             }`}
                           >
                             <span className="text-sm">{field.icon}</span>
@@ -342,7 +334,7 @@ const GameUpdateModal = ({
                           onChange={handleChange}
                           rows={4}
                           placeholder={`Enter ${field.label.toLowerCase()}...`}
-                          className={`w-full px-4 py-2.5 text-sm rounded-lg border-2 transition-all duration-200 focus:ring-2 focus:ring-green-500/30 focus:border-green-500 resize-none ${
+                          className={`w-full px-3 py-2 text-sm rounded-md border transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none ${
                             isDarkMode 
                               ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" 
                               : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
@@ -355,7 +347,7 @@ const GameUpdateModal = ({
                           value={formState[fieldId]}
                           onChange={handleChange}
                           placeholder={field.type === "text" ? `Enter ${field.label.toLowerCase()}...` : ""}
-                          className={`w-full px-4 py-2.5 text-sm rounded-lg border-2 transition-all duration-200 focus:ring-2 focus:ring-green-500/30 focus:border-green-500 ${
+                          className={`w-full px-3 py-2 text-sm rounded-md border transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                             isDarkMode 
                               ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" 
                               : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
@@ -389,10 +381,10 @@ const GameUpdateModal = ({
               <>
                 <button
                   onClick={onClose}
-                  className={`flex-1 px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 ${
+                  className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                     isDarkMode 
-                      ? "bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white border border-gray-600" 
-                      : "bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 border border-gray-300"
+                      ? "bg-gray-700 hover:bg-gray-600 text-gray-300 border border-gray-600" 
+                      : "bg-white hover:bg-gray-50 text-gray-700 border border-gray-300"
                   }`}
                 >
                   Cancel
@@ -400,33 +392,33 @@ const GameUpdateModal = ({
                 <button
                   onClick={handleNext}
                   disabled={selectedFields.length === 0}
-                  className={`flex-1 px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 ${
+                  className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors flex items-center justify-center gap-2 ${
                     selectedFields.length === 0
                       ? "bg-gray-400 text-gray-600 cursor-not-allowed"
-                      : "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95"
+                      : "bg-blue-600 hover:bg-blue-700 text-white"
                   }`}
                 >
                   <span>Next</span>
-                  <span className="text-lg">→</span>
+                  <span>→</span>
                 </button>
               </>
             ) : (
               <>
                 <button
                   onClick={handleBack}
-                  className={`flex-1 px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 flex items-center justify-center gap-2 ${
+                  className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors flex items-center justify-center gap-2 ${
                     isDarkMode 
-                      ? "bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white border border-gray-600" 
-                      : "bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 border border-gray-300"
+                      ? "bg-gray-700 hover:bg-gray-600 text-gray-300 border border-gray-600" 
+                      : "bg-white hover:bg-gray-50 text-gray-700 border border-gray-300"
                   }`}
                 >
-                  <span className="text-lg">←</span>
+                  <span>←</span>
                   <span>Back</span>
                 </button>
                 <button
                   onClick={handleSubmit}
                   disabled={loading}
-                  className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold px-6 py-3 text-sm rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:transform-none"
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:bg-gray-400 text-white font-medium px-4 py-2 text-sm rounded-md transition-colors flex items-center justify-center gap-2 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>
@@ -434,10 +426,7 @@ const GameUpdateModal = ({
                       <span>Updating...</span>
                     </>
                   ) : (
-                    <>
-                      <span className="text-lg">✅</span>
-                      <span>Update Game</span>
-                    </>
+                    <span>Update Game</span>
                   )}
                 </button>
               </>

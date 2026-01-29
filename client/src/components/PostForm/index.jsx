@@ -50,39 +50,40 @@ const PostForm = () => {
   };
 
   return (
-    <div className="rounded-2xl shadow-xl border-2 bg-gradient-to-br p-4 mb-6 transition-all duration-300 from-blue-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 border-blue-200 dark:border-gray-700">
-      <h3 className="text-xl font-bold mb-2 ml-3 dark:text-white">What's on your mind?</h3>
+    <div className="rounded-lg border bg-gray-50 dark:bg-gray-800 dark:border-gray-700 border-gray-200 shadow-sm p-6 mb-6">
+      <h3 className="text-lg font-semibold mb-4 dark:text-white text-gray-900">Create Post</h3>
       {Auth.loggedIn() ? (
-        <form onSubmit={handleSubmit} aria-busy={isPending} className="flex flex-col gap-2">
-          <input
+        <form onSubmit={handleSubmit} aria-busy={isPending} className="space-y-3">
+          <textarea
             name="postText"
             placeholder="What's on your mind?"
             disabled={isPending}
             aria-label="Post content"
-            className="mb-2 block w-full rounded-md border px-3 py-2 text-gray-900 shadow-sm focus:ring-2 focus:ring-blue-400 dark:bg-gray-800 dark:text-white disabled:opacity-50"
+            rows={3}
+            className="w-full rounded-md border px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors disabled:opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"
           />
           <button
             type="submit"
             disabled={isPending}
             aria-label="Submit post"
-            className="w-full rounded-md bg-blue-600 py-2 text-white font-semibold shadow-sm hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            className="w-full rounded-md bg-blue-600 py-2 text-sm text-white font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
           >
-            {isPending ? "Posting…" : "Post Now"}
+            {isPending ? "Posting…" : "Post"}
           </button>
           {(clientError || serverError) && (
-            <span className="text-sm text-red-500 px-2 py-1 rounded italic">
+            <div className="text-sm text-red-600 dark:text-red-400 px-3 py-2 rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
               {clientError || serverError}
-            </span>
+            </div>
           )}
         </form>
       ) : (
-        <p className="ml-3">
+        <p className="text-sm text-gray-600 dark:text-gray-400">
           Please{" "}
-          <Link to="/login" className="underline text-blue-600">
+          <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">
             Login
           </Link>{" "}
           or{" "}
-          <Link to="/signup" className="underline text-blue-600">
+          <Link to="/signup" className="text-blue-600 hover:text-blue-700 font-medium">
             Signup
           </Link>{" "}
           to post.

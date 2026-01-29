@@ -145,11 +145,11 @@ const SkillsList = ({
 
   if (!filteredSkills.length) {
     return (
-      <div className={`text-center p-8 rounded-2xl shadow-lg ${
-        isDarkMode ? 'bg-gray-800/50 text-gray-400' : 'bg-gray-50 text-gray-500'
+      <div className={`text-center p-8 rounded-md border ${
+        isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-400' : 'bg-white border-gray-200 text-gray-500'
       }`}>
-        <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
-          isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
+        <div className={`w-16 h-16 mx-auto mb-4 rounded-md flex items-center justify-center ${
+          isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
         }`}>
           <span className="text-2xl">🎯</span>
         </div>
@@ -162,9 +162,9 @@ const SkillsList = ({
   return (
     <>
       {isPending && (
-        <div className={`text-center py-3 px-4 mb-4 rounded-lg ${
-          isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700'
-        } animate-pulse`}>
+        <div className={`text-center py-3 px-4 mb-4 rounded-md border ${
+          isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-300' : 'bg-white border-gray-200 text-gray-700'
+        }`}>
           <span className="inline-flex items-center gap-2">
             <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
             Updating skills...
@@ -181,29 +181,29 @@ const SkillsList = ({
           return (
             <div
               key={skill._id}
-              className={`group relative rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] overflow-hidden border ${
+              className={`group relative rounded-md border transition-colors duration-150 overflow-hidden ${
                 isDarkMode 
-                  ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 hover:border-gray-600' 
-                  : 'bg-gradient-to-br from-white to-blue-50 border-gray-200 hover:border-blue-300'
+                  ? 'bg-gray-800 border-gray-700 hover:border-gray-600' 
+                  : 'bg-white border-gray-200 hover:border-gray-300'
               }`}
             >
-              {/* Modern header with glassmorphism effect */}
+              {/* Header */}
               <div
-                className={`px-4 py-3 backdrop-blur-sm border-b relative ${
+                className={`px-4 py-3 border-b ${
                   isDarkMode
-                    ? "bg-gray-800/80 text-gray-100 border-gray-700"
-                    : "bg-white/80 text-gray-800 border-gray-200"
+                    ? "bg-gray-800 text-gray-100 border-gray-700"
+                    : "bg-white text-gray-800 border-gray-200"
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                      isDarkMode ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white'
+                    <div className={`w-8 h-8 rounded-md flex items-center justify-center text-sm font-semibold ${
+                      isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-700'
                     }`}>
                       {skill.skillAuthor[0].toUpperCase()}
                     </div>
                     <div>
-                      <span className="font-semibold text-sm">
+                      <span className="font-medium text-sm">
                         {skill.skillAuthor[0].toUpperCase() + skill.skillAuthor.slice(1)}
                       </span>
                       <span className={`ml-1 text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
@@ -211,8 +211,8 @@ const SkillsList = ({
                       </span>
                     </div>
                   </div>
-                  <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'
+                  <div className={`px-2 py-1 rounded-md text-xs font-medium border ${
+                    isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-300' : 'bg-gray-50 border-gray-200 text-gray-600'
                   }`}>
                     {skill.recipient?._id === Auth.getProfile()?.data?._id
                       ? "You"
@@ -221,15 +221,15 @@ const SkillsList = ({
                 </div>
               </div>
 
-              {/* Skill content with modern typography */}
+              {/* Skill content */}
               <div
                 className={`flex-1 flex items-center justify-between p-4 min-h-[80px] ${
-                  isDarkMode ? "bg-gradient-to-r from-gray-800 to-gray-900" : "bg-gradient-to-r from-blue-50 to-white"
+                  isDarkMode ? "bg-gray-800" : "bg-white"
                 }`}
               >
                 <div className="flex-1">
-                  <h3 className={`text-lg font-bold leading-tight ${
-                    isDarkMode ? 'text-white' : 'text-gray-800'
+                  <h3 className={`text-base font-medium leading-tight ${
+                    isDarkMode ? 'text-white' : 'text-gray-900'
                   }`}>
                     {skill.skillText[0].toUpperCase() + skill.skillText.slice(1)}
                   </h3>
@@ -241,7 +241,7 @@ const SkillsList = ({
                         <span 
                           key={i} 
                           title={r.user?.name || ""} 
-                          className="text-2xl bg-white rounded-full shadow-sm border-2 border-white"
+                          className="text-xl"
                         >
                           {r.emoji}
                         </span>
@@ -256,12 +256,12 @@ const SkillsList = ({
                 )}
               </div>
 
-              {/* Modern footer with actions */}
+              {/* Footer with actions */}
               <div className={`px-4 py-3 border-t flex items-center justify-between ${
-                isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-gray-50/80 border-gray-200'
+                isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-200'
               }`}>
-                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-white text-gray-600 shadow-sm'
+                <span className={`px-2 py-1 rounded-md text-xs font-medium border ${
+                  isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-300' : 'bg-white border-gray-200 text-gray-600'
                 }`}>
                   {skill.createdAt}
                 </span>
@@ -282,17 +282,17 @@ const SkillsList = ({
                       });
                     }}
                     isDarkMode={isDarkMode}
-                    buttonClass={`transition-colors duration-150 px-3 py-1 rounded-full font-semibold shadow focus:outline-none focus:ring-2 focus:ring-yellow-400 hover:bg-yellow-400 hover:text-white border-2 ${isDarkMode ? 'bg-yellow-500 text-white border-yellow-300' : 'bg-yellow-300 text-yellow-900 border-yellow-500'}`}
+                    buttonClass={`transition-colors duration-150 px-3 py-1.5 rounded-md text-sm font-medium border ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white hover:bg-gray-600' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'}`}
                   />
                   {isLoggedInUser && (
                     <button
                       onClick={() => handleRemoveSkill(skill._id)}
                       disabled={isPending}
                       title="Delete skill"
-                      className={`p-2 rounded-lg transition-all duration-200 hover:scale-110 ${
+                      className={`p-2 rounded-md transition-colors duration-150 ${
                         isDarkMode
-                          ? "text-red-400 hover:text-red-300 hover:bg-red-900/30"
-                          : "text-red-500 hover:text-red-600 hover:bg-red-50"
+                          ? "text-red-400 hover:bg-gray-700"
+                          : "text-red-600 hover:bg-gray-100"
                       }`}
                     >
                       <AiOutlineDelete size={16} />
@@ -304,61 +304,58 @@ const SkillsList = ({
           );
         })}
       </div>
-      {/* Modern Pagination */}
+      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-3 mt-8">
+        <div className="flex items-center justify-center gap-2 mt-6">
           <button
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+            className={`px-4 py-2 rounded-md text-sm font-medium border transition-colors ${
               currentPage === 1
                 ? isDarkMode 
-                  ? 'bg-gray-800 text-gray-500 cursor-not-allowed' 
-                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  ? 'bg-gray-800 border-gray-700 text-gray-500 cursor-not-allowed' 
+                  : 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed'
                 : isDarkMode
-                  ? 'bg-gray-700 hover:bg-gray-600 text-white hover:scale-105 shadow-lg'
-                  : 'bg-white hover:bg-gray-50 text-gray-700 hover:scale-105 shadow-lg border border-gray-200'
+                  ? 'bg-gray-800 border-gray-700 text-white hover:bg-gray-700'
+                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
             }`}
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             disabled={currentPage === 1}
           >
-            <span className="text-sm">←</span>
-            <span className="hidden sm:inline">Previous</span>
+            Previous
           </button>
 
-          <div className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold ${
+          <div className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium ${
             isDarkMode 
-              ? 'bg-blue-900/50 text-blue-300 border border-blue-700' 
-              : 'bg-blue-100 text-blue-700 border border-blue-200'
+              ? 'bg-blue-600 text-white' 
+              : 'bg-blue-600 text-white'
           }`}>
-            <span className="text-sm">Page</span>
             <span>{currentPage}</span>
-            <span className="text-sm">of</span>
+            <span>of</span>
             <span>{totalPages}</span>
           </div>
 
           <button
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+            className={`px-4 py-2 rounded-md text-sm font-medium border transition-colors ${
               currentPage === totalPages
                 ? isDarkMode 
-                  ? 'bg-gray-800 text-gray-500 cursor-not-allowed' 
-                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  ? 'bg-gray-800 border-gray-700 text-gray-500 cursor-not-allowed' 
+                  : 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed'
                 : isDarkMode
-                  ? 'bg-gray-700 hover:bg-gray-600 text-white hover:scale-105 shadow-lg'
-                  : 'bg-white hover:bg-gray-50 text-gray-700 hover:scale-105 shadow-lg border border-gray-200'
+                  ? 'bg-gray-800 border-gray-700 text-white hover:bg-gray-700'
+                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
             }`}
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
           >
-            <span className="hidden sm:inline">Next</span>
-            <span className="text-sm">→</span>
+            Next
           </button>
         </div>
       )}
 
       {error && (
-        <div className={`mt-4 p-4 rounded-xl shadow-lg border ${
+        <div className={`mt-4 p-4 rounded-md border ${
           isDarkMode 
-            ? 'bg-red-900/30 text-red-200 border-red-700' 
-            : 'bg-red-100 text-red-800 border-red-200'
+            ? 'bg-gray-800 text-red-400 border-gray-700' 
+            : 'bg-red-50 text-red-800 border-red-200'
         }`}>
           <div className="flex items-center gap-3">
             <span className="text-xl">⚠️</span>
@@ -373,62 +370,49 @@ const SkillsList = ({
       {showDeleteModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in"
+            className="absolute inset-0 bg-black/50"
             onClick={() => setShowDeleteModal(null)}
           />
-          <div className={`relative flex flex-col items-center justify-center p-6 rounded-3xl shadow-2xl border-2 max-w-md w-full animate-modal-pop ${
+          <div className={`relative flex flex-col p-6 rounded-md border max-w-md w-full ${
             isDarkMode 
-              ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-600' 
-              : 'bg-gradient-to-br from-white to-red-50 border-red-200'
+              ? 'bg-gray-800 border-gray-700' 
+              : 'bg-white border-gray-200'
           }`}>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center">
-                <span className="text-xl text-white">⚠️</span>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-md bg-red-600 flex items-center justify-center">
+                <span className="text-lg text-white">⚠️</span>
               </div>
-              <h3 className={`text-xl font-bold ${
-                isDarkMode ? 'text-white' : 'text-gray-800'
+              <h3 className={`text-lg font-semibold ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
               }`}>
                 Delete Skill?
               </h3>
             </div>
             
-            <p className={`text-center mb-6 ${
+            <p className={`mb-6 text-sm ${
               isDarkMode ? 'text-gray-300' : 'text-gray-600'
             }`}>
               Are you sure you want to delete this skill endorsement? This action cannot be undone.
             </p>
             
-            <div className="flex gap-3 w-full">
+            <div className="flex gap-3">
               <button
-                className="flex-1 px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition-all duration-200 hover:scale-105"
+                className="flex-1 px-4 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition-colors"
                 onClick={() => confirmRemoveSkill(showDeleteModal)}
               >
                 Delete
               </button>
               <button
-                className={`flex-1 px-4 py-2 rounded-xl font-medium transition-all duration-200 hover:scale-105 ${
+                className={`flex-1 px-4 py-2 rounded-md text-sm font-medium border transition-colors ${
                   isDarkMode 
-                    ? 'bg-gray-700 hover:bg-gray-600 text-white' 
-                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                    ? 'bg-gray-700 border-gray-600 text-white hover:bg-gray-600' 
+                    : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
                 }`}
                 onClick={() => setShowDeleteModal(null)}
               >
                 Cancel
               </button>
             </div>
-            
-            {/* Close button */}
-            <button
-              className={`absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 ${
-                isDarkMode 
-                  ? 'text-gray-400 hover:text-white hover:bg-gray-700' 
-                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-              }`}
-              onClick={() => setShowDeleteModal(null)}
-              aria-label="Close"
-            >
-              ×
-            </button>
           </div>
         </div>
       )}

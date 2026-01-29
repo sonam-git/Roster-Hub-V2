@@ -707,45 +707,69 @@ const AdminPanel = () => {
           )}
         </div>
 
-      {/* Delete Confirmation Modal */}
+      {/* AWS-style Delete Confirmation Modal */}
       {showDeleteModal && selectedPlayer && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-4 sm:p-6 border border-gray-200 dark:border-gray-700 relative z-[210]">
-            <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 mx-auto bg-red-50 dark:bg-red-900/20 rounded-full mb-3 sm:mb-4">
-              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-            </div>
-            <h3 className="text-lg sm:text-xl font-semibold text-center text-gray-900 dark:text-white mb-2">
-              Remove Player?
-            </h3>
-            <p className="text-sm sm:text-base text-center text-gray-600 dark:text-gray-400 mb-4 sm:mb-6">
-              Are you sure you want to remove <strong>{selectedPlayer?.name || 'this player'}</strong> from the team? This action cannot be undone.
-            </p>
-            <div className="flex gap-2 sm:gap-3">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setShowDeleteModal(false);
-                  setSelectedPlayer(null);
-                }}
-                className="flex-1 px-3 sm:px-4 py-2 text-sm sm:text-base bg-gray-50 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 active:bg-gray-100 dark:active:bg-gray-500 text-gray-700 dark:text-gray-200 font-medium rounded-lg transition-colors border border-gray-300 dark:border-gray-600 cursor-pointer active:scale-95"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleDeletePlayer();
-                }}
-                className="flex-1 px-3 sm:px-4 py-2 text-sm sm:text-base bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-medium rounded-lg transition-colors cursor-pointer active:scale-95"
-              >
-                Remove
-              </button>
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-[9999] p-4">
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md border border-gray-200 dark:border-gray-700 overflow-hidden relative z-[10000]">
+            {/* Top accent bar */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-red-500"></div>
+            
+            <div className="p-6">
+              {/* Icon and Title */}
+              <div className="flex items-start gap-4 mb-4">
+                <div className="flex-shrink-0 w-10 h-10 rounded-md bg-red-50 dark:bg-red-900/20 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                    Remove Player
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Are you sure you want to remove <strong>{selectedPlayer?.name || 'this player'}</strong> from the team? This action cannot be undone.
+                  </p>
+                </div>
+              </div>
+
+              {/* Warning Box */}
+              <div className="mb-6 p-3 rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+                <div className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-xs text-red-700 dark:text-red-300 font-medium">
+                    The player will lose access to the team and all their data will be removed from this organization.
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowDeleteModal(false);
+                    setSelectedPlayer(null);
+                  }}
+                  className="w-full sm:w-auto px-4 py-2 rounded-md bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 active:bg-gray-100 dark:active:bg-gray-700 transition-all duration-150 shadow-sm cursor-pointer active:scale-95"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleDeletePlayer();
+                  }}
+                  className="w-full sm:w-auto px-4 py-2 rounded-md bg-red-600 hover:bg-red-700 active:bg-red-800 text-white transition-all duration-150 shadow-sm cursor-pointer active:scale-95"
+                >
+                  Remove Player
+                </button>
+              </div>
             </div>
           </div>
         </div>

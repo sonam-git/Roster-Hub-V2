@@ -89,12 +89,12 @@ const PostsList = ({ profileId, profile }) => {
   
   if (!data || !data?.posts || !data?.posts.length) {
     return (
-      <div className="w-full py-8">
-        <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-800 dark:via-gray-750 dark:to-gray-700 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-600 p-10 text-center backdrop-blur-sm">
-          <div className="mb-6">
-            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700 rounded-full flex items-center justify-center shadow-lg">
+      <div className="w-full">
+        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-8 text-center">
+          <div className="mb-4">
+            <div className="w-16 h-16 mx-auto bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
               <svg 
-                className="w-10 h-10 text-white" 
+                className="w-8 h-8 text-gray-400 dark:text-gray-500" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
@@ -108,23 +108,17 @@ const PostsList = ({ profileId, profile }) => {
               </svg>
             </div>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
             No Posts Yet
           </h3>
-          <p className="text-base text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             {isOwnProfile || !profileId
-              ? "Be the first to share your thoughts! Create your first post and start engaging with the community."
+              ? "Be the first to share your thoughts!"
               : profile?.username 
-                ? `${profile.username}'s thoughts will appear here once posted. Your reaction and thoughts on their posts will be appreciated. Stay tuned!`
-                : "Posts will appear here once shared. Stay tuned!"
+                ? `${profile.username}'s posts will appear here.`
+                : "Posts will appear here once shared."
             }
           </p>
-          <div className="flex items-center justify-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
-            </svg>
-            <span>{isOwnProfile || !profileId ? "Your posts will appear here" : "Check back soon"}</span>
-          </div>
         </div>
       </div>
     );
@@ -136,12 +130,12 @@ const PostsList = ({ profileId, profile }) => {
   const loginPost = allPosts.filter((p) => p.userId._id === profileId)
   if(loginPost.length === 0 && profileId) { 
     return (
-      <div className="w-full py-8">
-        <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-800 dark:via-gray-750 dark:to-gray-700 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-600 p-10 text-center backdrop-blur-sm">
-          <div className="mb-6">
-            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700 rounded-full flex items-center justify-center shadow-lg">
+      <div className="w-full">
+        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-8 text-center">
+          <div className="mb-4">
+            <div className="w-16 h-16 mx-auto bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
               <svg 
-                className="w-10 h-10 text-white" 
+                className="w-8 h-8 text-gray-400 dark:text-gray-500" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
@@ -155,21 +149,15 @@ const PostsList = ({ profileId, profile }) => {
               </svg>
             </div>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
             No Posts Yet
           </h3>
-          <p className="text-base text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-            {profile?.username 
-              ? `${profile.username}'s thoughts will appear here once posted. Your reaction and thoughts on their posts will be appreciated. Stay tuned!`
-              : "Posts will appear here. Stay tuned for the first post!"
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {profile?.name 
+              ? `${profile.name}'s posts will appear here.`
+              : "Posts1 will appear here soon."
             }
           </p>
-          <div className="flex items-center justify-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
-            </svg>
-            <span>Check back soon</span>
-          </div>
         </div>
       </div>
     );
@@ -185,36 +173,41 @@ const PostsList = ({ profileId, profile }) => {
     currentPage * PAGE_SIZE
   );
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {paginated.map((post) => (
         <Post key={post._id} post={post} />
       ))}
 
-      {/* ← Prev / Next Pagination → */}
-      <div className="flex justify-center mt-4 space-x-2">
-        <button
-          onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-          disabled={currentPage === 1}
-          className={`px-4 py-1 rounded ${
-            currentPage === 1
-              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-              : "bg-blue-600 text-white hover:bg-blue-700"
-          }`}
-        >
-          Prev
-        </button>
-        <button
-          onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-          disabled={currentPage === totalPages}
-          className={`px-4 py-1 rounded ${
-            currentPage === totalPages
-              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-              : "bg-blue-600 text-white hover:bg-blue-700"
-          }`}
-        >
-          Next
-        </button>
-      </div>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center gap-2 mt-6">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            disabled={currentPage === 1}
+            className={`px-4 py-2 rounded-md text-sm font-medium border transition-colors ${
+              currentPage === 1
+                ? "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 border-gray-200 dark:border-gray-600 cursor-not-allowed"
+                : "bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
+            }`}
+          >
+            Previous
+          </button>
+          <div className="flex items-center px-4 py-2 rounded-md text-sm font-medium bg-blue-600 text-white border border-blue-600">
+            {currentPage} of {totalPages}
+          </div>
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className={`px-4 py-2 rounded-md text-sm font-medium border transition-colors ${
+              currentPage === totalPages
+                ? "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 border-gray-200 dark:border-gray-600 cursor-not-allowed"
+                : "bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
+            }`}
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };

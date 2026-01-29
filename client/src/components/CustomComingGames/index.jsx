@@ -45,11 +45,12 @@ export default function CustomComingGames({ isDarkMode }) {
 
   // Loading state for organization
   if (!currentOrganization) {
-    return <Spinner />;
+
+ return <div className="flex items-center justify-center min-h-[40vh] pt-20 lg:pt-24"><Spinner /> </div>;
   }
 
-  if (loading) return <Spinner />;
-  if (error) return <div className="text-center mt-4 text-red-600">Error: {error.message}</div>;
+  if (loading) return <div className="flex items-center justify-center min-h-[40vh] pt-20 lg:pt-24"><Spinner /></div>;
+  if (error) return <div className="text-center mt-4 text-red-600 min-h-[40vh] pt-20 lg:pt-24">Error: {error.message}</div>;
 
   // Get all games and categorize them by effective status (including expired)
   const allGames = data?.games || [];
@@ -64,10 +65,10 @@ export default function CustomComingGames({ isDarkMode }) {
     : upcomingGames.filter(g => getGameEffectiveStatus(g) === selectedCategory);
 
   const categories = [
-    { key: "ALL", label: "All Games", icon: "🎯", count: upcomingGames.length },
-    { key: "PENDING", label: "Pending", icon: "⏳", count: gameCategories.PENDING.length },
-    { key: "CONFIRMED", label: "Confirmed", icon: "✅", count: gameCategories.CONFIRMED.length },
-    { key: "EXPIRED", label: "Expired", icon: "⌛", count: gameCategories.EXPIRED.length }
+    { key: "ALL", label: "All Games",  count: upcomingGames.length },
+    { key: "PENDING", label: "Pending", count: gameCategories.PENDING.length },
+    { key: "CONFIRMED", label: "Confirmed", count: gameCategories.CONFIRMED.length },
+    { key: "EXPIRED", label: "Expired", count: gameCategories.EXPIRED.length }
   ];
 
   if (!upcomingGames.length) {

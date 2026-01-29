@@ -63,27 +63,27 @@ const Home = ({ isDarkMode }) => {
       {isLoggedIn ? (
         <>
           {/* Welcome & Hero Section */}
-          <section className="w-full flex flex-col items-center justify-center mb-6 relative z-10">
-            <div className="w-full bg-gray-50 dark:bg-gradient-to-br dark:from-blue-950 dark:via-gray-900 dark:to-gray-800 rounded-3xl shadow-2xl border-2 border-gray-200 dark:border-blue-900/60 p-6 relative overflow-visible">
+          <section className="w-full flex flex-col items-center justify-center mb-6 relative  z-5">
+            <div className="w-full bg-gray-50 dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-6 relative overflow-visible ">
               {/* Dashboard Info */}
-              <div className="w-full flex justify-center mb-3">
-                <div className="w-full bg-gradient-to-r from-blue-50 via-gray-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-xl shadow-lg border-2 border-blue-300 dark:border-blue-700 p-4">
-                  
+              <div className="w-full flex justify-center mb-4">
+                <div className="w-full bg-gray-50 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-700 p-4">
+
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                    
+
                     {/* Left Section: Profile Image with Rating Badge */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 ">
                       {/* Profile Image with Rating Badge */}
-                      <div className="flex-shrink-0 relative">
+                      <div className="flex-shrink-0 relative ">
                         {profile?.profilePic && profile?.profilePic.trim() !== "" ? (
                           <img
                             src={profile.profilePic}
                             alt="Profile"
-                            className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-blue-500 dark:border-yellow-400 shadow-xl object-cover bg-white hover:scale-110 transition-transform duration-300"
+                            className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-blue-600 dark:border-blue-500 shadow-md object-cover bg-gray-50 hover:scale-105 transition-transform duration-200"
                             onError={e => { e.target.onerror=null; e.target.src=ProfileAvatar; }}
                           />
                         ) : (
-                          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center bg-gradient-to-br from-blue-400 via-blue-600 to-blue-900 border-4 border-blue-500 dark:border-yellow-400 shadow-xl hover:scale-110 transition-transform duration-300">
+                          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center bg-blue-600 dark:bg-blue-500 border-2 border-blue-700 dark:border-blue-400 shadow-md hover:scale-105 transition-transform duration-200">
                             <img
                               src={ProfileAvatar}
                               alt="Avatar"
@@ -93,7 +93,7 @@ const Home = ({ isDarkMode }) => {
                         )}
                         
                         {/* Rating Badge - Bottom Right */}
-                        <div className="absolute -bottom-1 -right-1 bg-gradient-to-br from-yellow-400 to-yellow-500 dark:from-yellow-500 dark:to-yellow-600 rounded-full px-2 py-1 shadow-lg border-2 border-white dark:border-gray-800 flex items-center gap-1">
+                        <div className="absolute -bottom-1 -right-1 bg-yellow-500 dark:bg-yellow-600 rounded-full px-2 py-1 shadow-md border-2 border-white dark:border-gray-800 flex items-center gap-1">
                           <FaStar className="text-white text-xs sm:text-sm" />
                           <span className="text-xs sm:text-sm font-bold text-white">
                             {profile?.averageRating ? profile.averageRating.toFixed(1) : '0.0'}
@@ -104,11 +104,11 @@ const Home = ({ isDarkMode }) => {
 
                     {/* Center Section: Welcome Message & Slogan */}
                     <div className="flex flex-col items-center text-center flex-1">
-                      <h2 className="text-xl sm:text-2xl font-bold text-blue-700 dark:text-blue-300 mb-1">
+                      <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white mb-1">
                         Welcome{profile?.name ? `, ${profile.name[0].toUpperCase() + profile.name.slice(1)}` : 'to Rosterhub'}!
                       </h2>
-                      <p className="text-sm sm:text-base italic text-gray-600 dark:text-gray-400">
-                        ⚽ All your soccer activities in one place ⚽
+                      <p className="text-sm sm:text-base text-gray-800 dark:text-gray-200">
+                        ⚽ All your soccer activities in one place
                       </p>
                     </div>
 
@@ -128,7 +128,7 @@ const Home = ({ isDarkMode }) => {
           <section className="w-full grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 relative z-0">
             <button
               type="button"
-              className={`bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all cursor-pointer active:scale-95 ${activeSection === "newpost" ? "ring-4 ring-blue-300" : ""}`}
+              className={`bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-md shadow-sm flex flex-col items-center justify-center transition-all cursor-pointer ${activeSection === "newpost" ? "ring-2 ring-blue-600 ring-offset-2 dark:ring-offset-gray-900" : ""}`}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -141,7 +141,7 @@ const Home = ({ isDarkMode }) => {
             </button>
             <button
               type="button"
-              className={`bg-green-700 hover:bg-green-800 active:bg-green-900 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all cursor-pointer active:scale-95 ${activeSection === "topplayers" ? "ring-4 ring-green-300" : ""}`}
+              className={`bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-md shadow-sm flex flex-col items-center justify-center transition-all cursor-pointer ${activeSection === "topplayers" ? "ring-2 ring-green-600 ring-offset-2 dark:ring-offset-gray-900" : ""}`}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -155,7 +155,7 @@ const Home = ({ isDarkMode }) => {
             </button>
             <button
               type="button"
-              className={`bg-yellow-600 hover:bg-yellow-700 active:bg-yellow-800 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all cursor-pointer active:scale-95 ${activeSection === "upcominggames" ? "ring-4 ring-yellow-300" : ""}`}
+              className={`bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-3 rounded-md shadow-sm flex flex-col items-center justify-center transition-all cursor-pointer ${activeSection === "upcominggames" ? "ring-2 ring-yellow-600 ring-offset-2 dark:ring-offset-gray-900" : ""}`}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -169,7 +169,7 @@ const Home = ({ isDarkMode }) => {
             </button>
             <button
               type="button"
-              className={`bg-gray-700 hover:bg-gray-800 active:bg-gray-900 text-white font-bold py-3 rounded-xl shadow flex flex-col items-center justify-center transition-all cursor-pointer active:scale-95 ${activeSection === "recentskills" ? "ring-4 ring-gray-400" : ""}`}
+              className={`bg-gray-700 hover:bg-gray-800 text-white font-medium py-3 rounded-md shadow-sm flex flex-col items-center justify-center transition-all cursor-pointer ${activeSection === "recentskills" ? "ring-2 ring-gray-600 ring-offset-2 dark:ring-offset-gray-900" : ""}`}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -186,27 +186,27 @@ const Home = ({ isDarkMode }) => {
           <section className="w-full flex flex-col gap-8 mb-8 relative z-0">
             {activeSection === "newpost" && (
               <div className="w-full flex flex-col gap-4">
-                <div className="bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-xl p-4 border-2 border-blue-200 dark:border-gray-700">
-                  <div className="flex items-center gap-2 mb-2">
-                    <FaRegListAlt className="text-blue-600 dark:text-blue-300 text-xl" />
-                    <span className="font-bold text-lg dark:text-white">Share a Thought</span>
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <FaRegListAlt className="text-blue-600 dark:text-blue-400 text-lg" />
+                    <span className="font-semibold text-base text-gray-900 dark:text-white">Share a Thought</span>
                   </div>
                   <PostForm />
                 </div>
-                <div className="bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-xl p-4 border-2 border-blue-200 dark:border-gray-700">
-                  <div className="flex items-center gap-2 mb-2">
-                    <FaRegListAlt className="text-green-600 dark:text-green-300 text-xl" />
-                    <span className="font-bold text-lg dark:text-white">Recent Posts</span>
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <FaRegListAlt className="text-green-600 dark:text-green-400 text-lg" />
+                    <span className="font-semibold text-base text-gray-900 dark:text-white">Recent Posts</span>
                   </div>
                   <PostsList isDarkMode={isDarkMode} />
                 </div>
               </div>
             )}
             {activeSection === "topplayers" && (
-              <div className="w-full max-w-full bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-xl p-4 border-2 border-blue-200 dark:border-gray-700">
-                <div className="flex items-center gap-2 mb-2">
-                  <FaStar className="text-yellow-500 dark:text-yellow-300 text-xl" />
-                  <span className="font-bold text-lg dark:text-white">Top Rated Players</span>
+              <div className="w-full max-w-full bg-gray-50 dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <FaStar className="text-yellow-500 dark:text-yellow-400 text-lg" />
+                  <span className="font-semibold text-base text-gray-900 dark:text-white">Top Rated Players</span>
                 </div>
                 <div className="w-full overflow-x-auto">
                   <RatingDisplay limit={10} />
@@ -214,10 +214,10 @@ const Home = ({ isDarkMode }) => {
               </div>
             )}
             {activeSection === "upcominggames" && (
-              <div className="w-full max-w-full bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-xl p-4 border-2 border-blue-200 dark:border-gray-700 flex flex-col items-center">
-                <div className="flex items-center gap-2 mb-2 w-full">
-                  <FaCalendarAlt className="text-blue-600 dark:text-blue-300 text-xl" />
-                  <span className="font-bold text-lg dark:text-white">Upcoming Games</span>
+              <div className="w-full max-w-full bg-gray-50 dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4 flex flex-col items-center">
+                <div className="flex items-center gap-2 mb-3 w-full">
+                  <FaCalendarAlt className="text-blue-600 dark:text-blue-400 text-lg" />
+                  <span className="font-semibold text-base text-gray-900 dark:text-white">Upcoming Games</span>
                 </div>
                 <div className="w-full max-w-full overflow-x-auto">
                   <ComingGames />
@@ -225,10 +225,10 @@ const Home = ({ isDarkMode }) => {
               </div>
             )}
             {activeSection === "recentskills" && (
-              <div className="bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-xl p-4 border-2 border-blue-200 dark:border-gray-700">
-                <div className="flex items-center gap-2 mb-2">
-                  <FaFutbol className="text-yellow-500 dark:text-yellow-300 text-xl" />
-                  <span className="font-bold text-lg dark:text-white">Recent Skills</span>
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <FaFutbol className="text-yellow-500 dark:text-yellow-400 text-lg" />
+                  <span className="font-semibold text-base text-gray-900 dark:text-white">Recent Skills</span>
                 </div>
                 <RecentSkillsList />
               </div>

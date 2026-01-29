@@ -111,137 +111,113 @@ const MyGames = () => {
 
   if (myGames.length === 0) {
     return (
-      <div className={`p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-lg text-center ${
-        isDarkMode ? 'bg-gray-800/50 text-gray-400 border border-gray-700' : 'bg-gray-50 text-gray-500 border border-gray-200'
+      <div className={`p-6 rounded-lg border text-center ${
+        isDarkMode ? 'bg-gray-800 text-gray-400 border-gray-700' : 'bg-white text-gray-500 border-gray-200'
       }`}>
-        <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full mx-auto mb-3 sm:mb-4 flex items-center justify-center ${
-          isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
+        <div className={`w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center ${
+          isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
         }`}>
-          <span className="text-xl sm:text-2xl">⚽</span>
+          <span className="text-2xl">⚽</span>
         </div>
-        <h3 className={`text-base sm:text-lg font-bold mb-1 sm:mb-2 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-          No Games Voted Yet
+        <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+          No Games Yet
         </h3>
-        <p className={`text-xs sm:text-sm mb-3 sm:mb-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-          You haven't voted on any pending or confirmed games yet.
+        <p className={`text-sm mb-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          You haven't voted on any games yet.
         </p>
         <Link
           to="/game-schedule"
-          className="inline-block px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 underline-offset-2"
+          className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
         >
-          Game | Schedule
+          View Games
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3 sm:space-y-4">
+    <div className="space-y-4">
       {/* Header with filter buttons */}
-      <div className={`p-3 sm:p-4 rounded-xl ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-blue-50 border border-blue-200'}`}>
-        <h3 className={`text-base sm:text-lg font-bold mb-2 sm:mb-3 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+      <div className={`p-4 rounded-lg border ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+        <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
           My Games
         </h3>
-        <p className={`text-xs sm:text-sm mb-3 sm:mb-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+        <p className={`text-sm mb-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
           Games you've created or voted on ({myGames.length} total)
         </p>
 
         {/* Filter Buttons */}
-        <div className={`grid grid-cols-2 sm:grid-cols-4 gap-2 rounded-xl p-1 shadow-md border ${
+        <div className={`grid grid-cols-2 sm:grid-cols-4 gap-2 rounded-lg p-1 border ${
           isDarkMode 
-            ? 'bg-gray-700/60 border-gray-600/50 shadow-gray-900/20' 
-            : 'bg-white/80 border-gray-200/60 shadow-blue-100/50'
+            ? 'bg-gray-700 border-gray-600' 
+            : 'bg-gray-50 border-gray-200'
         }`}>
           <button
-            className={`px-2 py-2 sm:px-3 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-1 ${
+            className={`px-3 py-2 rounded-md font-medium text-sm transition-colors ${
               filter === 'all'
-                ? `${isDarkMode 
-                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/30' 
-                    : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25'
-                  }` 
-                : `${isDarkMode 
-                    ? 'text-gray-300 hover:text-white hover:bg-gray-600/50' 
-                    : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50/80'
-                  }`
+                ? 'bg-blue-600 text-white' 
+                : isDarkMode 
+                  ? 'text-gray-300 hover:text-white hover:bg-gray-600' 
+                  : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
             }`}
             onClick={() => setFilter('all')}
           >
-            <span className="text-sm">⚽</span>
-            <span className="hidden xs:inline">All ({myGames.length})</span>
-            <span className="xs:hidden">{myGames.length}</span>
+            All ({myGames.length})
           </button>
           <button
-            className={`px-2 py-2 sm:px-3 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-1 ${
+            className={`px-3 py-2 rounded-md font-medium text-sm transition-colors ${
               filter === 'created'
-                ? `${isDarkMode 
-                    ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-500/30' 
-                    : 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/25'
-                  }` 
-                : `${isDarkMode 
-                    ? 'text-gray-300 hover:text-white hover:bg-gray-600/50' 
-                    : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50/80'
-                  }`
+                ? 'bg-blue-600 text-white' 
+                : isDarkMode 
+                  ? 'text-gray-300 hover:text-white hover:bg-gray-600' 
+                  : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
             }`}
             onClick={() => setFilter('created')}
           >
-            <span className="text-sm">➕</span>
-            <span className="hidden xs:inline">Created ({createdGames.length})</span>
-            <span className="xs:hidden">{createdGames.length}</span>
+            Created ({createdGames.length})
           </button>
           <button
-            className={`px-2 py-2 sm:px-3 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-1 ${
+            className={`px-3 py-2 rounded-md font-medium text-sm transition-colors ${
               filter === 'available'
-                ? `${isDarkMode 
-                    ? 'bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg shadow-green-500/30' 
-                    : 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg shadow-green-500/25'
-                  }` 
-                : `${isDarkMode 
-                    ? 'text-gray-300 hover:text-white hover:bg-gray-600/50' 
-                    : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50/80'
-                  }`
+                ? 'bg-blue-600 text-white' 
+                : isDarkMode 
+                  ? 'text-gray-300 hover:text-white hover:bg-gray-600' 
+                  : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
             }`}
             onClick={() => setFilter('available')}
           >
-            <span className="text-sm">✅</span>
-            <span className="hidden xs:inline">Available ({availableGamesCount})</span>
-            <span className="xs:hidden">{availableGamesCount}</span>
+            Available ({availableGamesCount})
           </button>
           <button
-            className={`px-2 py-2 sm:px-3 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-1 ${
+            className={`px-3 py-2 rounded-md font-medium text-sm transition-colors ${
               filter === 'unavailable'
-                ? `${isDarkMode 
-                    ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg shadow-red-500/30' 
-                    : 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg shadow-red-500/25'
-                  }` 
-                : `${isDarkMode 
-                    ? 'text-gray-300 hover:text-white hover:bg-gray-600/50' 
-                    : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50/80'
-                  }`
+                ? 'bg-blue-600 text-white' 
+                : isDarkMode 
+                  ? 'text-gray-300 hover:text-white hover:bg-gray-600' 
+                  : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
             }`}
             onClick={() => setFilter('unavailable')}
           >
-            <span className="text-sm">❌</span>
-            <span className="hidden xs:inline">Unavailable ({unavailableGamesCount})</span>
-            <span className="xs:hidden">{unavailableGamesCount}</span>
+            Unavailable ({unavailableGamesCount})
           </button>
         </div>
       </div>
 
       <div className="space-y-3">
         {filteredGames.length === 0 ? (
-          <div className={`p-4 sm:p-6 rounded-xl text-center ${
-            isDarkMode ? 'bg-gray-800/50 text-gray-400' : 'bg-gray-50 text-gray-500'
+          <div className={`p-6 rounded-lg border text-center ${
+            isDarkMode ? 'bg-gray-800 text-gray-400 border-gray-700' : 'bg-white text-gray-500 border-gray-200'
           }`}>
-            <div className="text-2xl sm:text-4xl mb-2">
+            <div className="text-3xl mb-2">
               {filter === 'all' && '⚽'}
               {filter === 'created' && '➕'}
               {filter === 'available' && '✅'}
               {filter === 'unavailable' && '❌'}
             </div>
-            <p className="font-medium text-sm sm:text-base">
+            <p className="font-medium text-sm">
               No {filter === 'all' ? '' : filter} games found
             </p>
-            <p className="text-xs sm:text-sm mt-1">
+            <p className="text-xs mt-1">
               {filter === 'all' && "You haven't created or voted on any games yet."}
               {filter === 'created' && "You haven't created any games yet."}
               {filter === 'available' && "You haven't voted as available for any games yet."}

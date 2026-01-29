@@ -93,43 +93,40 @@ const ProfileSettings = ({ isDarkMode }) => {
   };
 
   return (
-    <div className={`w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto p-2
-        sm:p-4 md:p-8 lg:p-10 `}>
+    <div className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto">
       
       {/* Update Name Section */}
-      <div className={`rounded-2xl p-4 sm:p-5 mb-5 border backdrop-blur-sm
+      <div className={`rounded-md p-4 sm:p-5 mb-5 border
         ${isDarkMode 
-          ? 'bg-gray-800/40 border-gray-600/40' 
-          : 'bg-white/60 border-blue-200/40'
+          ? 'bg-gray-900/50 border-gray-700' 
+          : 'bg-gray-50 border-gray-200'
         }`}>
-        <div className="flex items-center gap-3 mb-4">
-          <div className={`p-2 rounded-xl ${isDarkMode ? 'bg-blue-600/30' : 'bg-blue-100'}`}>
-            <FaUser className={`text-base ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
-          </div>
-          <h2 className={`text-sm sm:text-base md:text-lg font-bold
-            ${isDarkMode ? 'text-blue-300' : 'text-blue-700'}`}>
+        <div className="flex items-center gap-2 mb-4">
+          <FaUser className={`text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`} />
+          <h2 className={`text-sm sm:text-base font-semibold
+            ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
             Update Name
           </h2>
         </div>
         
         {errorNameMessage && (
-          <div className={`p-2 sm:p-3 rounded-xl border-l-4 mb-3 animate-in slide-in-from-left-2 duration-300 flex items-center
+          <div className={`p-3 rounded-md border mb-3 flex items-start gap-2
             ${isDarkMode 
-              ? 'bg-red-900/50 border-red-500 text-red-200' 
-              : 'bg-red-50 border-red-500 text-red-700'
+              ? 'bg-red-900/20 border-red-800 text-red-200' 
+              : 'bg-red-50 border-red-200 text-red-700'
             }`}>
-            <FaExclamationTriangle className="h-4 w-4 text-red-500 mr-2 flex-shrink-0" />
+            <FaExclamationTriangle className="h-4 w-4 text-red-500 flex-shrink-0 mt-0.5" />
             <span className="text-sm font-medium">{errorNameMessage}</span>
           </div>
         )}
         
         {successMessage && (
-          <div className={`p-2 sm:p-3 rounded-xl border-l-4 mb-3 animate-in slide-in-from-left-2 duration-300 flex items-center
+          <div className={`p-3 rounded-md border mb-3 flex items-start gap-2
             ${isDarkMode 
-              ? 'bg-green-900/50 border-green-500 text-green-200' 
-              : 'bg-green-50 border-green-500 text-green-700'
+              ? 'bg-green-900/20 border-green-800 text-green-200' 
+              : 'bg-green-50 border-green-200 text-green-700'
             }`}>
-            <FaCheck className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+            <FaCheck className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
             <span className="text-sm font-medium">{successMessage}</span>
           </div>
         )}
@@ -139,112 +136,101 @@ const ProfileSettings = ({ isDarkMode }) => {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className={`flex-1 rounded-xl border-0 px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm font-medium
+            className={`flex-1 rounded-md border px-3 py-2 text-sm
               ${isDarkMode 
-                ? 'bg-gray-700/60 text-white placeholder-gray-400 ring-gray-600/50 focus:ring-indigo-500/60' 
-                : 'bg-white/90 text-gray-900 placeholder-gray-500 ring-blue-200/60 focus:ring-indigo-500/60'
+                ? 'bg-gray-700 text-white placeholder-gray-400 border-gray-600 focus:ring-blue-500 focus:border-blue-500' 
+                : 'bg-white text-gray-900 placeholder-gray-500 border-gray-300 focus:ring-blue-500 focus:border-blue-500'
               } 
-              shadow-lg ring-1 ring-inset backdrop-blur-sm
-              focus:ring-2 focus:ring-inset focus:shadow-xl
-              transition-all duration-300 hover:shadow-lg hover:scale-[1.01]`}
+              focus:ring-2 focus:outline-none transition-colors`}
             placeholder="Enter your new name"
           />
           <button
             onClick={handleNameUpdate}
-            className={`px-4 sm:px-5 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-semibold text-white 
-              shadow-lg transition-all duration-300 transform hover:scale-[1.02]
+            className={`px-4 py-2 rounded-md text-sm font-medium text-white 
+              transition-colors
               ${isDarkMode 
-                ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-500 hover:via-purple-500 hover:to-blue-500' 
-                : 'bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 hover:from-blue-500 hover:via-indigo-500 hover:to-cyan-500'
+                ? 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800' 
+                : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800'
               }
-              hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-indigo-300/50 button-glow
-              relative overflow-hidden group min-w-[80px]`}
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+              ${isDarkMode ? 'focus:ring-offset-gray-800' : 'focus:ring-offset-white'}`}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-            <span className="relative z-10">Update</span>
+            Update
           </button>
         </div>
       </div>
 
       {/* Update Password Section */}
-      <div className={`rounded-2xl p-4 sm:p-5 mb-5 border backdrop-blur-sm
+      <div className={`rounded-md p-4 sm:p-5 mb-5 border
         ${isDarkMode 
-          ? 'bg-gray-800/40 border-gray-600/40' 
-          : 'bg-white/60 border-blue-200/40'
+          ? 'bg-gray-900/50 border-gray-700' 
+          : 'bg-gray-50 border-gray-200'
         }`}>
-        <div className="flex items-center gap-3 mb-4">
-          <div className={`p-2 rounded-xl ${isDarkMode ? 'bg-purple-600/30' : 'bg-purple-100'}`}>
-            <FaLock className={`text-base ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`} />
-          </div>
-          <h2 className={`text-sm sm:text-base md:text-lg font-bold
-            ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>
+        <div className="flex items-center gap-2 mb-4">
+          <FaLock className={`text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`} />
+          <h2 className={`text-sm sm:text-base font-semibold
+            ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
             Update Password
           </h2>
         </div>
         
         {errorMessage && (
-          <div className={`p-2 sm:p-3 rounded-xl border-l-4 mb-3 animate-in slide-in-from-left-2 duration-300 flex items-center
+          <div className={`p-3 rounded-md border mb-3 flex items-start gap-2
             ${isDarkMode 
-              ? 'bg-red-900/50 border-red-500 text-red-200' 
-              : 'bg-red-50 border-red-500 text-red-700'
+              ? 'bg-red-900/20 border-red-800 text-red-200' 
+              : 'bg-red-50 border-red-200 text-red-700'
             }`}>
-            <FaExclamationTriangle className="h-4 w-4 text-red-500 mr-2 flex-shrink-0" />
+            <FaExclamationTriangle className="h-4 w-4 text-red-500 flex-shrink-0 mt-0.5" />
             <span className="text-sm font-medium">{errorMessage}</span>
           </div>
         )}
         
         {passwordSuccessMessage && (
-          <div className={`p-2 sm:p-3 rounded-xl border-l-4 mb-3 animate-in slide-in-from-left-2 duration-300 flex items-center
+          <div className={`p-3 rounded-md border mb-3 flex items-start gap-2
             ${isDarkMode 
-              ? 'bg-green-900/50 border-green-500 text-green-200' 
-              : 'bg-green-50 border-green-500 text-green-700'
+              ? 'bg-green-900/20 border-green-800 text-green-200' 
+              : 'bg-green-50 border-green-200 text-green-700'
             }`}>
-            <FaCheck className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+            <FaCheck className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
             <span className="text-sm font-medium">{passwordSuccessMessage}</span>
           </div>
         )}
         
-        <div className="space-y-2">
+        <div className="space-y-3">
           <input
             type="password"
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
-            className={`w-full rounded-xl border-0 px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm font-medium
+            className={`w-full rounded-md border px-3 py-2 text-sm
               ${isDarkMode 
-                ? 'bg-gray-700/60 text-white placeholder-gray-400 ring-gray-600/50 focus:ring-purple-500/60' 
-                : 'bg-white/90 text-gray-900 placeholder-gray-500 ring-purple-200/60 focus:ring-purple-500/60'
+                ? 'bg-gray-700 text-white placeholder-gray-400 border-gray-600 focus:ring-blue-500 focus:border-blue-500' 
+                : 'bg-white text-gray-900 placeholder-gray-500 border-gray-300 focus:ring-blue-500 focus:border-blue-500'
               } 
-              shadow-lg ring-1 ring-inset backdrop-blur-sm
-              focus:ring-2 focus:ring-inset focus:shadow-xl
-              transition-all duration-300 hover:shadow-lg hover:scale-[1.01]`}
+              focus:ring-2 focus:outline-none transition-colors`}
             placeholder="Enter current password"
           />
           <input
             type="password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-            className={`w-full rounded-xl border-0 px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm font-medium
+            className={`w-full rounded-md border px-3 py-2 text-sm
               ${isDarkMode 
-                ? 'bg-gray-700/60 text-white placeholder-gray-400 ring-gray-600/50 focus:ring-purple-500/60' 
-                : 'bg-white/90 text-gray-900 placeholder-gray-500 ring-purple-200/60 focus:ring-purple-500/60'
+                ? 'bg-gray-700 text-white placeholder-gray-400 border-gray-600 focus:ring-blue-500 focus:border-blue-500' 
+                : 'bg-white text-gray-900 placeholder-gray-500 border-gray-300 focus:ring-blue-500 focus:border-blue-500'
               } 
-              shadow-lg ring-1 ring-inset backdrop-blur-sm
-              focus:ring-2 focus:ring-inset focus:shadow-xl
-              transition-all duration-300 hover:shadow-lg hover:scale-[1.01]`}
+              focus:ring-2 focus:outline-none transition-colors`}
             placeholder="Enter new password"
           />
           <input
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className={`w-full rounded-xl border-0 px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm font-medium
+            className={`w-full rounded-md border px-3 py-2 text-sm
               ${isDarkMode 
-                ? 'bg-gray-700/60 text-white placeholder-gray-400 ring-gray-600/50 focus:ring-purple-500/60' 
-                : 'bg-white/90 text-gray-900 placeholder-gray-500 ring-purple-200/60 focus:ring-purple-500/60'
+                ? 'bg-gray-700 text-white placeholder-gray-400 border-gray-600 focus:ring-blue-500 focus:border-blue-500' 
+                : 'bg-white text-gray-900 placeholder-gray-500 border-gray-300 focus:ring-blue-500 focus:border-blue-500'
               } 
-              shadow-lg ring-1 ring-inset backdrop-blur-sm
-              focus:ring-2 focus:ring-inset focus:shadow-xl
-              transition-all duration-300 hover:shadow-lg hover:scale-[1.01]`}
+              focus:ring-2 focus:outline-none transition-colors`}
             placeholder="Confirm your new password"
           />
         </div>
@@ -252,17 +238,16 @@ const ProfileSettings = ({ isDarkMode }) => {
         <div className="grid grid-cols-1 sm:flex sm:flex-row sm:justify-between sm:items-center gap-3 mt-4">
           <button
             onClick={handlePasswordChange}
-            className={`w-full sm:w-auto px-4 sm:px-5 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-semibold text-white 
-              shadow-lg transition-all duration-300 transform hover:scale-[1.02]
+            className={`w-full sm:w-auto px-4 py-2 rounded-md text-sm font-medium text-white 
+              transition-colors
               ${isDarkMode 
-                ? 'bg-gradient-to-r from-purple-600 via-blue-600 to-green-600 hover:from-purple-500 hover:via-green-500 hover:to-red-500' 
-                : 'bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-500 hover:via-indigo-500 hover:to-blue-500'
+                ? 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800' 
+                : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800'
               }
-              hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-purple-300/50 button-glow
-              relative overflow-hidden group min-w-[120px]`}
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+              ${isDarkMode ? 'focus:ring-offset-gray-800' : 'focus:ring-offset-white'}`}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-            <span className="relative z-10">Change Password</span>
+            Change Password
           </button>
           <RemoveAccount onRemove={handleRemove} profileId={userId} isDarkMode={isDarkMode} />
         </div>

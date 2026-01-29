@@ -49,22 +49,18 @@ const UserProfile = ({ profile }) => {
     <div className={`md:flex md:space-x-1 mt-4 mb-6 ${isDarkMode ? 'text-white' : 'text-black'}`}>
       {/* Left Side - Profile Card */}
       <div className="md:w-2/5">
-        <div className={`w-full mt-3 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border-2 transition-all duration-500 hover:shadow-3xl transform hover:scale-[1.02] ${
+        <div className={`w-full mt-3 rounded-lg overflow-hidden shadow-lg border transition-all ${
           isDarkMode 
-            ? "bg-gradient-to-br from-gray-800 via-gray-900 to-black border-gray-600 shadow-gray-900/50" 
-            : "bg-gradient-to-br from-white via-blue-50 to-indigo-50 border-blue-300 shadow-blue-500/20"
+            ? "bg-gray-800 border-gray-700" 
+            : "bg-white border-gray-200"
         }`}>
           {/* Header with friend indicator */}
-          <div className={`w-full h-12 sm:h-16 flex items-center justify-center relative overflow-hidden ${
+          <div className={`w-full h-12 sm:h-14 flex items-center justify-center ${
             isDarkMode 
-              ? "bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600" 
-              : "bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
+              ? "bg-blue-600" 
+              : "bg-blue-600"
           }`}>
-            <div className="absolute inset-0 bg-black/10"></div>
-            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10 animate-pulse"></div>
-            <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-8 -translate-x-8 animate-pulse"></div>
-            
-            <div className="relative z-10 flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/20 backdrop-blur-sm text-white font-bold text-xs sm:text-sm shadow-lg border border-white/30">
+            <div className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-md bg-white/20 text-white font-medium text-xs sm:text-sm">
               <FaUserFriends className="text-xs sm:text-sm" />
               <span className="hidden xs:inline">Friend's Profile</span>
               <span className="xs:hidden">Friend</span>
@@ -77,60 +73,44 @@ const UserProfile = ({ profile }) => {
 
           {/* Modern Action Buttons */}
           <div className="px-3 sm:px-4 pb-4 sm:pb-6">
-            <div className="grid grid-cols-2 gap-2 sm:gap-4">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
               {/* Rate Button */}
               <button
                 onClick={handleRateClick}
-                className={`group relative overflow-hidden px-3 py-3 sm:px-6 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 shadow-lg hover:shadow-2xl ${
+                className={`px-3 py-2.5 sm:px-4 sm:py-3 rounded-md font-medium text-xs sm:text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                   isDarkMode 
-                    ? 'bg-gradient-to-r from-amber-600 via-yellow-600 to-orange-600 hover:from-amber-500 hover:via-yellow-500 hover:to-orange-500 text-white focus:ring-amber-400/50 shadow-amber-500/20' 
-                    : 'bg-gradient-to-r from-amber-400 via-yellow-400 to-orange-400 hover:from-amber-300 hover:via-yellow-300 hover:to-orange-300 text-gray-900 focus:ring-amber-300/50 shadow-amber-400/30'
+                    ? 'bg-yellow-600 hover:bg-yellow-700 text-white focus:ring-yellow-500 focus:ring-offset-gray-800' 
+                    : 'bg-yellow-500 hover:bg-yellow-600 text-white focus:ring-yellow-500 focus:ring-offset-white'
                 }`}
               >
-                {/* Animated background glow */}
-                <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-white/30 to-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-                
-                <div className="relative z-10 flex items-center justify-center gap-1.5 sm:gap-2">
-                  <div className="relative">
-                    <FaStar className="text-sm sm:text-lg group-hover:animate-pulse" />
-                    <div className="absolute -inset-1 bg-yellow-400/20 rounded-full blur-sm group-hover:bg-yellow-300/40 transition-all duration-300"></div>
-                  </div>
-                  <span className="font-bold tracking-wide hidden xs:inline">Rate Player</span>
-                  <span className="font-bold tracking-wide xs:hidden">Rate</span>
+                <div className="flex items-center justify-center gap-1.5 sm:gap-2">
+                  <FaStar className="text-sm sm:text-base" />
+                  <span className="hidden xs:inline">Rate Player</span>
+                  <span className="xs:hidden">Rate</span>
                 </div>
               </button>
 
               {/* Message Button */}
               <button
                 onClick={handleMessageClick}
-                className={`group relative overflow-hidden px-3 py-3 sm:px-6 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 shadow-lg hover:shadow-2xl ${
+                className={`px-3 py-2.5 sm:px-4 sm:py-3 rounded-md font-medium text-xs sm:text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                   isDarkMode 
-                    ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white focus:ring-blue-400/50 shadow-blue-500/20' 
-                    : 'bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 hover:from-blue-400 hover:via-indigo-400 hover:to-purple-400 text-white focus:ring-blue-300/50 shadow-blue-400/30'
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500 focus:ring-offset-gray-800' 
+                    : 'bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500 focus:ring-offset-white'
                 }`}
               >
-                {/* Animated background glow */}
-                <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-white/30 to-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-                
-                <div className="relative z-10 flex items-center justify-center gap-1.5 sm:gap-2">
-                  <div className="relative">
-                    <FaCommentDots className="text-sm sm:text-lg group-hover:animate-bounce" />
-                    <div className="absolute -inset-1 bg-blue-400/20 rounded-full blur-sm group-hover:bg-blue-300/40 transition-all duration-300"></div>
-                  </div>
-                  <span className="font-bold tracking-wide hidden xs:inline">Send Message</span>
-                  <span className="font-bold tracking-wide xs:hidden">Message</span>
+                <div className="flex items-center justify-center gap-1.5 sm:gap-2">
+                  <FaCommentDots className="text-sm sm:text-base" />
+                  <span className="hidden xs:inline">Send Message</span>
+                  <span className="xs:hidden">Message</span>
                 </div>
               </button>
             </div>
 
             {/* Action Buttons Description */}
-            <div className={`mt-3 sm:mt-4 text-center text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            <div className={`mt-3 text-center text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
               <p className="flex items-center justify-center gap-1 sm:gap-2 flex-wrap">
-                <span className="text-amber-500">⭐</span>
-                <span className="text-xs">Rate {profile.name}'s performance</span>
-                <span className="mx-1 sm:mx-2 hidden xs:inline">•</span>
-                <span className="text-blue-500">💬</span>
-                <span className="text-xs">Start a conversation</span>
+                <span>Rate {profile.name}'s performance or start a conversation</span>
               </p>
             </div>
           </div>
@@ -139,28 +119,28 @@ const UserProfile = ({ profile }) => {
 
       {/* Right Side - Content */}
       <div className="md:w-3/5 mt-4 md:mt-0">
-        <div className={`w-full h-full rounded-2xl sm:rounded-3xl shadow-2xl border-2 backdrop-blur-lg transition-all duration-500 hover:shadow-3xl ${
+        <div className={`w-full h-full rounded-lg shadow-lg border transition-all ${
           isDarkMode 
-            ? 'bg-gradient-to-br from-gray-800/90 via-gray-900/90 to-purple-900/90 border-gray-600/30 shadow-purple-500/20' 
-            : 'bg-gradient-to-br from-white/90 via-blue-50/90 to-indigo-100/90 border-blue-200/50 shadow-blue-500/20'
+            ? 'bg-gray-800 border-gray-700' 
+            : 'bg-white border-gray-200'
         }`}>
           {/* Modern Tab Navigation */}
           <div className="p-4 sm:p-6 pb-0">
-            <div className={`flex rounded-xl sm:rounded-2xl p-1 sm:p-1.5 shadow-lg border transition-all duration-300 ${
+            <div className={`flex rounded-md p-1 border ${
               isDarkMode 
-                ? 'bg-gray-800/60 border-gray-600/50 shadow-gray-900/20 backdrop-blur-sm' 
-                : 'bg-white/70 border-gray-200/60 shadow-blue-100/50 backdrop-blur-sm'
+                ? 'bg-gray-900/50 border-gray-700' 
+                : 'bg-gray-50 border-gray-200'
             }`}>
               <button
-                className={`relative flex-1 px-2 py-2 sm:px-3 sm:py-3 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 flex items-center justify-center gap-1 sm:gap-2 ${
+                className={`relative flex-1 px-2 py-2 sm:px-3 sm:py-2.5 rounded-md font-medium text-xs sm:text-sm transition-colors focus:outline-none focus:ring-2 flex items-center justify-center gap-1 sm:gap-2 ${
                   activeTab === 'posts'
                     ? `${isDarkMode 
-                        ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-500/30' 
-                        : 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/25'
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-blue-600 text-white'
                       }` 
                     : `${isDarkMode 
-                        ? 'text-gray-300 hover:text-white hover:bg-gray-700/50' 
-                        : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50/80'
+                        ? 'text-gray-400 hover:text-white hover:bg-gray-800' 
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                       }`
                 }`}
                 onClick={() => setActiveTab('posts')}
@@ -169,20 +149,17 @@ const UserProfile = ({ profile }) => {
                 <span className="hidden xs:inline sm:hidden">Posts</span>
                 <span className="hidden sm:inline">Posts</span>
                 <span className="xs:hidden sm:hidden">P</span>
-                {activeTab === 'posts' && (
-                  <div className="absolute -bottom-0.5 left-1/2 transform -translate-x-1/2 w-1 h-1 sm:w-1.5 sm:h-1.5 bg-purple-400 rounded-full animate-pulse"></div>
-                )}
               </button>
               <button
-                className={`relative flex-1 px-2 py-2 sm:px-3 sm:py-3 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 flex items-center justify-center gap-1 sm:gap-2 ${
+                className={`relative flex-1 px-2 py-2 sm:px-3 sm:py-2.5 rounded-md font-medium text-xs sm:text-sm transition-colors focus:outline-none focus:ring-2 flex items-center justify-center gap-1 sm:gap-2 ${
                   activeTab === 'skills'
                     ? `${isDarkMode 
-                        ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/30' 
-                        : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25'
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-blue-600 text-white'
                       }` 
                     : `${isDarkMode 
-                        ? 'text-gray-300 hover:text-white hover:bg-gray-700/50' 
-                        : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50/80'
+                        ? 'text-gray-400 hover:text-white hover:bg-gray-800' 
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                       }`
                 }`}
                 onClick={() => setActiveTab('skills')}
@@ -191,20 +168,17 @@ const UserProfile = ({ profile }) => {
                 <span className="hidden xs:inline sm:hidden">Skills</span>
                 <span className="hidden sm:inline">Skills</span>
                 <span className="xs:hidden sm:hidden">S</span>
-                {activeTab === 'skills' && (
-                  <div className="absolute -bottom-0.5 left-1/2 transform -translate-x-1/2 w-1 h-1 sm:w-1.5 sm:h-1.5 bg-blue-400 rounded-full animate-pulse"></div>
-                )}
               </button>
               <button
-                className={`relative flex-1 px-2 py-2 sm:px-3 sm:py-3 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 flex items-center justify-center gap-1 sm:gap-2 ${
+                className={`relative flex-1 px-2 py-2 sm:px-3 sm:py-2.5 rounded-md font-medium text-xs sm:text-sm transition-colors focus:outline-none focus:ring-2 flex items-center justify-center gap-1 sm:gap-2 ${
                   activeTab === 'games'
                     ? `${isDarkMode 
-                        ? 'bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg shadow-green-500/30' 
-                        : 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg shadow-green-500/25'
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-blue-600 text-white'
                       }` 
                     : `${isDarkMode 
-                        ? 'text-gray-300 hover:text-white hover:bg-gray-700/50' 
-                        : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50/80'
+                        ? 'text-gray-400 hover:text-white hover:bg-gray-800' 
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                       }`
                 }`}
                 onClick={() => setActiveTab('games')}
@@ -213,35 +187,34 @@ const UserProfile = ({ profile }) => {
                 <span className="hidden xs:inline sm:hidden">Games</span>
                 <span className="hidden sm:inline">Games</span>
                 <span className="xs:hidden sm:hidden">G</span>
-                {activeTab === 'games' && (
-                  <div className="absolute -bottom-0.5 left-1/2 transform -translate-x-1/2 w-1 h-1 sm:w-1.5 sm:h-1.5 bg-green-400 rounded-full animate-pulse"></div>
-                )}
               </button>
             </div>
           </div>
 
           {/* Content Area */}
-          <div className=" sm:p-6 pt-3 sm:pt-4">
+          <div className="sm:p-6 pt-3 sm:pt-4">
             {activeTab === 'skills' ? (
               <div className="w-full flex flex-col gap-4 sm:gap-6">
                 {profile.skills && profile.skills.length > 0 ? (
-                  <div className={`rounded-xl sm:rounded-2xl p-2 sm:p-6 border transition-all duration-300 ${
+                  <div className={`rounded-md border ${
                     isDarkMode 
-                      ? 'bg-gray-800/30 border-gray-700/50 shadow-gray-900/20' 
-                      : 'bg-white/70 border-gray-200/50 shadow-blue-100/50'
-                  } backdrop-blur-sm shadow-lg`}>
-                    <div className="flex items-center justify-between mb-3 sm:mb-4">
+                      ? 'bg-gray-800 border-gray-700' 
+                      : 'bg-white border-gray-200'
+                  }`}>
+                    <div className={`flex items-center justify-between px-4 py-3 border-b ${
+                      isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+                    }`}>
                       <div className="flex items-center gap-2 sm:gap-3">
-                        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${
-                          isDarkMode ? 'bg-gradient-to-r from-blue-600 to-blue-700' : 'bg-gradient-to-r from-blue-500 to-blue-600'
+                        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md flex items-center justify-center ${
+                          isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
                         }`}>
-                          <span className="text-white text-sm sm:text-lg animate-spin-slow">⚡</span>
+                          <span className="text-sm sm:text-base">⚡</span>
                         </div>
                         <div>
-                          <h3 className={`font-bold text-base sm:text-lg ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                          <h3 className={`font-semibold text-base sm:text-lg ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                             Endorsed Skills
                           </h3>
-                          <p className="text-xs font-thin dark:text-white">
+                          <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                             {profile.name}'s friends have endorsed {profile.skills?.length ?? 0}{" "}
                             skill
                             {profile.skills?.length === 1 ? "" : "s"}
@@ -255,13 +228,13 @@ const UserProfile = ({ profile }) => {
                           <button
                             onClick={handlePrevSkills}
                             disabled={skillsPage === 0}
-                            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                            className={`w-8 h-8 rounded-md flex items-center justify-center text-sm font-medium transition-colors ${
                               skillsPage === 0
-                                ? isDarkMode ? 'bg-gray-700/50 text-gray-500 cursor-not-allowed' : 'bg-gray-200/50 text-gray-400 cursor-not-allowed'
-                                : isDarkMode ? 'bg-blue-600 hover:bg-blue-700 text-white hover:scale-110' : 'bg-blue-500 hover:bg-blue-600 text-white hover:scale-110'
+                                ? isDarkMode ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                : isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                             }`}
                           >
-                            <span className="text-sm">‹</span>
+                            ‹
                           </button>
                           <span className={`text-xs px-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                             {skillsPage + 1} / {totalSkillsPages}
@@ -269,79 +242,101 @@ const UserProfile = ({ profile }) => {
                           <button
                             onClick={handleNextSkills}
                             disabled={skillsPage === totalSkillsPages - 1}
-                            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                            className={`w-8 h-8 rounded-md flex items-center justify-center text-sm font-medium transition-colors ${
                               skillsPage === totalSkillsPages - 1
-                                ? isDarkMode ? 'bg-gray-700/50 text-gray-500 cursor-not-allowed' : 'bg-gray-200/50 text-gray-400 cursor-not-allowed'
-                                : isDarkMode ? 'bg-blue-600 hover:bg-blue-700 text-white hover:scale-110' : 'bg-blue-500 hover:bg-blue-600 text-white hover:scale-110'
+                                ? isDarkMode ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                : isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                             }`}
                           >
-                            <span className="text-sm">›</span>
+                            ›
                           </button>
                         </div>
                       )}
                     </div>
-                    <SkillsList skills={paginatedSkills} isDarkMode={isDarkMode} profile={profile} />
+                    <div className="p-4">
+                      <SkillsList skills={paginatedSkills} isDarkMode={isDarkMode} profile={profile} />
+                    </div>
                   </div>
                 ) : (
-                  <div className={`w-full flex flex-col items-center justify-center py-8 sm:py-12 rounded-xl sm:rounded-2xl border-2 border-dashed transition-all duration-300 ${
+                  <div className={`w-full rounded-md border ${
                     isDarkMode 
-                      ? 'border-gray-700 bg-gray-800/20 text-gray-400' 
-                      : 'border-gray-300 bg-gray-50/80 text-gray-500'
+                      ? 'border-gray-700 bg-gray-800 text-gray-400' 
+                      : 'border-gray-200 bg-white text-gray-500'
                   }`}>
-                    <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full mb-3 sm:mb-4 flex items-center justify-center ${
-                      isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
-                    }`}>
-                      <span className="text-xl sm:text-2xl">⚡</span>
+                    <div className={`flex flex-col items-center justify-center py-8 sm:py-12`}>
+                      <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-md mb-3 sm:mb-4 flex items-center justify-center ${
+                        isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
+                      }`}>
+                        <span className="text-xl sm:text-2xl">⚡</span>
+                      </div>
+                      <p className={`text-base sm:text-lg font-semibold mb-1 sm:mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                        No Skills Yet
+                      </p>
+                      <p className={`text-xs sm:text-sm text-center max-w-sm px-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                        {profile.name} hasn't received any skill endorsements from teammates yet.
+                      </p>
                     </div>
-                    <p className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">No Skills Yet</p>
-                    <p className="text-xs sm:text-sm text-center max-w-sm px-4">
-                      {profile.name} hasn't received any skill endorsements from teammates yet.
-                    </p>
                   </div>
                 )}
                 
                 {/* Skill Endorsement Form */}
-                <div className={`rounded-xl sm:rounded-2xl p-2 sm:p-6 border transition-all duration-300 ${
+                <div className={`rounded-md border ${
                   isDarkMode 
-                    ? 'bg-gray-800/40 border-gray-700/50 shadow-gray-900/20' 
-                    : 'bg-white/80 border-gray-200/60 shadow-blue-100/50'
-                } backdrop-blur-sm shadow-lg`}>
-                  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                    <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${
-                      isDarkMode ? 'bg-gradient-to-r from-green-600 to-green-700' : 'bg-gradient-to-r from-green-500 to-green-600'
-                    }`}>
-                      <span className="text-white text-sm sm:text-lg">👍</span>
-                    </div>
-                    <div>
-                      <h3 className={`font-bold text-base sm:text-lg ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                        Endorse Skills
-                      </h3>
-                      <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                        Add skills you've seen {profile.name} demonstrate
-                      </p>
+                    ? 'bg-gray-800 border-gray-700' 
+                    : 'bg-white border-gray-200'
+                }`}>
+                  <div className={`px-4 py-3 border-b ${
+                    isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+                  }`}>
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md flex items-center justify-center ${
+                        isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
+                      }`}>
+                        <span className="text-sm sm:text-base">👍</span>
+                      </div>
+                      <div>
+                        <h3 className={`font-semibold text-base sm:text-lg ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                          Endorse Skills
+                        </h3>
+                        <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                          Add skills you've seen {profile.name} demonstrate
+                        </p>
+                      </div>
                     </div>
                   </div>
-                  <SkillForm profileId={profile._id} teamMate={profile.name} />
+                  <div className="p-4">
+                    <SkillForm profileId={profile._id} teamMate={profile.name} isDarkMode={isDarkMode} />
+                  </div>
                 </div>
               </div>
             ) : activeTab === 'posts' ? (
-              <div className={`rounded-xl sm:rounded-2xl p-2 sm:p-6 border transition-all duration-300 ${
+              <div className={`rounded-md p-2 sm:p-6 border transition-all ${
                 isDarkMode 
-                  ? 'bg-gray-800/30 border-gray-700/50 shadow-gray-900/20' 
-                  : 'bg-white/70 border-gray-200/50 shadow-blue-100/50'
-              } backdrop-blur-sm shadow-lg`}>
+                  ? 'bg-gray-900/50 border-gray-700' 
+                  : 'bg-gray-50 border-gray-200'
+              }`}>
                 <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
            
-                          <div className={`w-full flex flex-col items-center justify-center py-8 sm:py-12 rounded-xl sm:rounded-2xl border-2 border-dashed transition-all duration-300 ${
+                  <div className={`w-full flex flex-col items-center justify-center py-8 sm:py-12 rounded-md border transition-all ${
                     isDarkMode 
-                      ? 'border-gray-700 bg-gray-800/20 text-gray-400' 
-                      : 'border-gray-300 bg-gray-50/80 text-gray-500'
+                      ? 'border-gray-700 bg-gray-800/50 text-gray-400' 
+                      : 'border-gray-300 bg-gray-50 text-gray-500'
                   }`}>
-                    <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full mb-3 sm:mb-4 flex items-center justify-center ${
-                      isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
-                    }`}>
-                      <span className="text-xl sm:text-2xl animate-spin-slow">📝</span>
-                    </div>
+                          <div className="w-16 h-16 mx-auto bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+              <svg 
+                className="w-8 h-8 text-gray-400 dark:text-gray-500" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" 
+                />
+              </svg>
+            </div>
                     <p className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Posts & Updates</p>
                     <p className="text-xs sm:text-sm text-center max-w-sm px-4">
                       {profile.name} hasn't posted anything yet. Stay tuned for updates.
@@ -351,23 +346,23 @@ const UserProfile = ({ profile }) => {
                 <PostsList profileId={profile._id} isDarkMode={isDarkMode} profile={profile} />
               </div>
             ) : (
-              <div className={`rounded-xl sm:rounded-2xl p-2 sm:p-6 border transition-all duration-300 ${
+              <div className={`rounded-md p-2 sm:p-6 border transition-all ${
                 isDarkMode 
-                  ? 'bg-gray-800/30 border-gray-700/50 shadow-gray-900/20' 
-                  : 'bg-white/70 border-gray-200/50 shadow-blue-100/50'
-              } backdrop-blur-sm shadow-lg`}>
+                  ? 'bg-gray-900/50 border-gray-700' 
+                  : 'bg-gray-50 border-gray-200'
+              }`}>
                 <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${
-                    isDarkMode ? 'bg-gradient-to-r from-green-600 to-green-700' : 'bg-gradient-to-r from-green-500 to-green-600'
+                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md flex items-center justify-center ${
+                    isDarkMode ? 'bg-green-600' : 'bg-green-600'
                   }`}>
-                    <span className="text-white text-sm sm:text-lg animate-spin-slow">⚽</span>
+                    <span className="text-white text-sm sm:text-base">⚽</span>
                   </div>
                   <div>
-                    <h3 className={`font-bold text-base sm:text-lg ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                    <h3 className={`font-semibold text-base sm:text-lg ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                       Game Availability
                     </h3>
                     <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                      {profile.name} 's availability and unavailability for upcoming games.
+                      {profile.name}'s availability and unavailability for upcoming games.
                     </p>
                   </div>
                 </div>
@@ -383,7 +378,6 @@ const UserProfile = ({ profile }) => {
       </div>
 
       {/* Modals */}
-      {console.log('🔴 UserProfile RENDER - showMessageModal:', showMessageModal)}
       {showMessageModal && (
         <MessageBox
           recipient={profile}

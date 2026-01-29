@@ -93,24 +93,28 @@ export default function AllSkillsList({ isDarkMode }) {
 
   // Loading state for organization
   if (!currentOrganization) {
-    return <Spinner />;
+    return <div className="flex items-center justify-center min-h-[40vh] pt-20 lg:pt-24">
+      <Spinner />;
+    </div>;
   }
 
   if (loading) {
-    return <Spinner />;
+    return <div className="flex items-center justify-center min-h-[40vh] pt-20 lg:pt-24">
+      <Spinner />;
+    </div>;
   }
   
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-[40vh] pt-20 lg:pt-24">
-        <div className={`text-center p-8 rounded-2xl shadow-2xl backdrop-blur-sm border ${
-          isDarkMode ? 'bg-red-900/30 border-red-700' : 'bg-red-100 border-red-200'
+        <div className={`text-center p-8 rounded-md border ${
+          isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
         }`}>
-          <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-red-500 flex items-center justify-center">
+          <div className="w-12 h-12 mx-auto mb-4 rounded-md bg-red-600 flex items-center justify-center">
             <span className="text-xl text-white">⚠️</span>
           </div>
-          <p className={`font-semibold ${isDarkMode ? 'text-red-200' : 'text-red-800'}`}>Error loading skills</p>
-          <p className={`text-sm mt-1 ${isDarkMode ? 'text-red-300' : 'text-red-600'}`}>{error.message}</p>
+          <p className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Error loading skills</p>
+          <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{error.message}</p>
         </div>
       </div>
     );
@@ -130,21 +134,21 @@ export default function AllSkillsList({ isDarkMode }) {
     return (
       <div className="w-full mx-auto mb-4 px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 mt-8 max-w-7xl ">
         {/* Header */}
-        <div className={`mb-8 text-center p-6 rounded-2xl backdrop-blur-sm border shadow-lg ${
-          isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 border-gray-200'
+        <div className={`mb-8 text-center p-6 rounded-md border ${
+          isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
         }`}>
-          <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full mb-4 flex items-center justify-center mx-auto ${
-            isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'
+          <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-md mb-4 flex items-center justify-center mx-auto ${
+            isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
           }`}>
             <span className="text-3xl sm:text-4xl">⚡</span>
           </div>
-          <h1 className={`text-2xl md:text-3xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+          <h1 className={`text-2xl md:text-3xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
             No Skills Endorsed Yet
           </h1>
           <p className={`text-sm md:text-base mb-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
             Be the first to endorse someone's skills!
           </p>
-          <p className={`text-xs md:text-sm italic ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+          <p className={`text-xs md:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
             Click on a player below to endorse their skills
           </p>
         </div>
@@ -156,32 +160,30 @@ export default function AllSkillsList({ isDarkMode }) {
               <button
                 key={profile._id}
                 onClick={() => setSelectedPlayer(profile)}
-                className={`group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] border backdrop-blur-sm text-left ${
+                className={`group relative overflow-hidden rounded-md p-6 transition-colors duration-150 border text-left ${
                   isDarkMode 
-                    ? 'bg-gradient-to-br from-gray-800/80 to-gray-900/80 border-gray-700 hover:border-blue-500 hover:shadow-xl hover:shadow-blue-500/20' 
-                    : 'bg-gradient-to-br from-white to-blue-50 border-gray-200 hover:border-blue-400 hover:shadow-xl hover:shadow-blue-500/20'
+                    ? 'bg-gray-800 border-gray-700 hover:border-gray-600' 
+                    : 'bg-white border-gray-200 hover:border-gray-300'
                 }`}
               >
                 {/* Profile Image */}
                 <div className="flex flex-col items-center mb-4">
                   <div className="relative mb-3">
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 p-0.5">
-                      <img
-                        src={profile?.profilePic || ProfileAvatar}
-                        alt={`${profile.name}'s profile`}
-                        className="w-full h-full rounded-full object-cover bg-white"
-                        onError={(e) => { e.target.src = ProfileAvatar; }}
-                      />
-                    </div>
+                    <img
+                      src={profile?.profilePic || ProfileAvatar}
+                      alt={`${profile.name}'s profile`}
+                      className="w-20 h-20 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
+                      onError={(e) => { e.target.src = ProfileAvatar; }}
+                    />
                     {/* Rating Badge */}
                     {profile.averageRating > 0 && (
-                      <div className={`absolute -bottom-1 -right-1 flex items-center gap-1 px-2 py-1 rounded-full shadow-lg ${
+                      <div className={`absolute -bottom-1 -right-1 flex items-center gap-1 px-2 py-1 rounded-md border ${
                         isDarkMode 
-                          ? 'bg-gradient-to-r from-amber-500/90 to-yellow-500/90' 
-                          : 'bg-gradient-to-r from-amber-400 to-yellow-400'
+                          ? 'bg-gray-700 border-gray-600 text-yellow-400' 
+                          : 'bg-white border-gray-200 text-yellow-600'
                       }`}>
-                        <FaStar className="text-white text-xs" />
-                        <span className="text-white text-xs font-bold">
+                        <FaStar className="text-xs" />
+                        <span className="text-xs font-semibold">
                           {profile.averageRating.toFixed(1)}
                         </span>
                       </div>
@@ -189,7 +191,7 @@ export default function AllSkillsList({ isDarkMode }) {
                   </div>
                   
                   {/* Name */}
-                  <h3 className={`text-lg font-bold text-center mb-1 ${
+                  <h3 className={`text-lg font-semibold text-center mb-1 ${
                     isDarkMode ? 'text-white' : 'text-gray-900'
                   }`}>
                     {profile.name}
@@ -199,15 +201,15 @@ export default function AllSkillsList({ isDarkMode }) {
                   {(profile.position || profile.jerseyNumber) && (
                     <div className="flex items-center gap-2 text-sm">
                       {profile.position && (
-                        <span className={`px-2 py-1 rounded-lg ${
-                          isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'
+                        <span className={`px-2 py-1 rounded-md border text-xs font-medium ${
+                          isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-300' : 'bg-white border-gray-200 text-gray-600'
                         }`}>
                           {profile.position}
                         </span>
                       )}
                       {profile.jerseyNumber && (
-                        <span className={`px-2 py-1 rounded-lg font-bold ${
-                          isDarkMode ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white'
+                        <span className={`px-2 py-1 rounded-md text-xs font-semibold ${
+                          isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-900'
                         }`}>
                           #{profile.jerseyNumber}
                         </span>
@@ -221,7 +223,7 @@ export default function AllSkillsList({ isDarkMode }) {
                   isDarkMode ? 'border-gray-700' : 'border-gray-200'
                 }`}>
                   <span className={`text-sm font-medium ${
-                    isDarkMode ? 'text-blue-400 group-hover:text-blue-300' : 'text-blue-600 group-hover:text-blue-700'
+                    isDarkMode ? 'text-gray-400' : 'text-gray-600'
                   }`}>
                     Click to Endorse →
                   </span>
@@ -230,8 +232,8 @@ export default function AllSkillsList({ isDarkMode }) {
             ))}
           </div>
         ) : (
-          <div className={`text-center p-8 rounded-2xl ${
-            isDarkMode ? 'bg-gray-800/50' : 'bg-gray-100'
+          <div className={`text-center p-8 rounded-md border ${
+            isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
           }`}>
             <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
               No other players available to endorse
@@ -241,11 +243,11 @@ export default function AllSkillsList({ isDarkMode }) {
 
         {/* Endorsement Modal */}
         {selectedPlayer && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <div className={`relative w-full max-w-md rounded-2xl shadow-2xl border ${
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50">
+            <div className={`relative w-full max-w-md rounded-md border ${
               isDarkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700' 
-                : 'bg-gradient-to-br from-white to-blue-50 border-gray-200'
+                ? 'bg-gray-800 border-gray-700' 
+                : 'bg-white border-gray-200'
             }`}>
               {/* Close Button */}
               <button
@@ -254,13 +256,13 @@ export default function AllSkillsList({ isDarkMode }) {
                   setSkillText("");
                   setErrorMessage("");
                 }}
-                className={`absolute top-4 right-4 p-2 rounded-full transition-all ${
+                className={`absolute top-4 right-4 p-2 rounded-md transition-colors ${
                   isDarkMode 
                     ? 'hover:bg-gray-700 text-gray-400 hover:text-white' 
                     : 'hover:bg-gray-100 text-gray-600 hover:text-gray-900'
                 }`}
               >
-                <FaTimes className="text-xl" />
+                <FaTimes className="text-lg" />
               </button>
 
               {/* Modal Content */}
@@ -270,10 +272,10 @@ export default function AllSkillsList({ isDarkMode }) {
                   <img
                     src={selectedPlayer?.profilePic || ProfileAvatar}
                     alt={selectedPlayer.name}
-                    className="w-20 h-20 rounded-full object-cover border-4 border-blue-500 mb-3"
+                    className="w-20 h-20 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700 mb-3"
                     onError={(e) => { e.target.src = ProfileAvatar; }}
                   />
-                  <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                     Endorse {selectedPlayer.name}
                   </h2>
                   <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -292,14 +294,14 @@ export default function AllSkillsList({ isDarkMode }) {
                       }}
                       placeholder={`e.g., "Excellent ball control and vision on the field"`}
                       rows={4}
-                      className={`w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+                      className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-600 transition-colors ${
                         isDarkMode 
                           ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
                           : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                       }`}
                     />
                     {errorMessage && (
-                      <p className="mt-2 text-sm text-red-500 italic">{errorMessage}</p>
+                      <p className={`mt-2 text-sm ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>{errorMessage}</p>
                     )}
                   </div>
 
@@ -311,10 +313,10 @@ export default function AllSkillsList({ isDarkMode }) {
                         setSkillText("");
                         setErrorMessage("");
                       }}
-                      className={`flex-1 px-4 py-3 rounded-xl font-semibold transition-all ${
+                      className={`flex-1 px-4 py-2.5 rounded-md text-sm font-medium border transition-colors ${
                         isDarkMode 
-                          ? 'bg-gray-700 hover:bg-gray-600 text-white' 
-                          : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
+                          ? 'bg-gray-700 border-gray-600 text-white hover:bg-gray-600' 
+                          : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
                       }`}
                     >
                       Cancel
@@ -322,10 +324,10 @@ export default function AllSkillsList({ isDarkMode }) {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className={`flex-1 px-4 py-3 rounded-xl font-semibold text-white transition-all ${
+                      className={`flex-1 px-4 py-2.5 rounded-md text-sm font-medium text-white transition-colors ${
                         isSubmitting
                           ? 'bg-gray-400 cursor-not-allowed'
-                          : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl'
+                          : 'bg-blue-600 hover:bg-blue-700'
                       }`}
                     >
                       {isSubmitting ? (
@@ -337,7 +339,7 @@ export default function AllSkillsList({ isDarkMode }) {
                           Submitting...
                         </span>
                       ) : (
-                        'Submit Endorsement'
+                        'Endorse'
                       )}
                     </button>
                   </div>
@@ -352,10 +354,10 @@ export default function AllSkillsList({ isDarkMode }) {
 
   return (
     <div className="w-full mx-auto mb-4 px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 mt-8 max-w-7xl pt-20 lg:pt-24">
-      {/* Modern Header */}
+      {/* Header */}
       <div className="mb-8 text-center">
-        <h1 className={`text-2xl md:text-3xl font-bold mb-2 ${ isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-          🌟 Endorsed Skills
+        <h1 className={`text-2xl md:text-3xl font-semibold mb-2 ${ isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+          Endorsed Skills
         </h1>
         <p className={`text-sm md:text-base mb-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
           Discover the amazing skills endorsed by our team members
@@ -367,14 +369,14 @@ export default function AllSkillsList({ isDarkMode }) {
         {/* Toggle Button */}
         <button
           onClick={() => setShowPlayersList(!showPlayersList)}
-          className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 ${
+          className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-md text-sm font-medium border transition-colors ${
             showPlayersList
               ? isDarkMode
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg'
-                : 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-lg'
+                ? 'bg-gray-700 border-gray-600 text-white hover:bg-gray-600'
+                : 'bg-gray-100 border-gray-300 text-gray-900 hover:bg-gray-200'
               : isDarkMode
-                ? 'bg-gray-700 hover:bg-gray-600 text-white border border-gray-600'
-                : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 shadow-md'
+                ? 'bg-gray-800 border-gray-700 text-white hover:bg-gray-700'
+                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
           }`}
         >
           {showPlayersList ? (
@@ -397,36 +399,33 @@ export default function AllSkillsList({ isDarkMode }) {
           {/* Players Grid */}
           {filteredProfiles.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
-              {filteredProfiles.map((profile) => (
-                <button
-                  key={profile._id}
-                  onClick={() => setSelectedPlayer(profile)}
-                  className={`group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] border backdrop-blur-sm text-left ${
-                    isDarkMode 
-                      ? 'bg-gradient-to-br from-gray-800/80 to-gray-900/80 border-gray-700 hover:border-blue-500 hover:shadow-xl hover:shadow-blue-500/20' 
-                      : 'bg-gradient-to-br from-white to-blue-50 border-gray-200 hover:border-blue-400 hover:shadow-xl hover:shadow-blue-500/20'
-                  }`}
-                >
+              {filteredProfiles.map((profile) => (              <button
+                key={profile._id}
+                onClick={() => setSelectedPlayer(profile)}
+                className={`group relative overflow-hidden rounded-md p-6 transition-colors duration-150 border text-left ${
+                  isDarkMode 
+                    ? 'bg-gray-800 border-gray-700 hover:border-gray-600' 
+                    : 'bg-white border-gray-200 hover:border-gray-300'
+                }`}
+              >
                   {/* Profile Image */}
                   <div className="flex flex-col items-center mb-4">
                     <div className="relative mb-3">
-                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 p-0.5">
-                        <img
-                          src={profile?.profilePic || ProfileAvatar}
-                          alt={`${profile.name}'s profile`}
-                          className="w-full h-full rounded-full object-cover bg-white"
-                          onError={(e) => { e.target.src = ProfileAvatar; }}
-                        />
-                      </div>
+                      <img
+                        src={profile?.profilePic || ProfileAvatar}
+                        alt={`${profile.name}'s profile`}
+                        className="w-20 h-20 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
+                        onError={(e) => { e.target.src = ProfileAvatar; }}
+                      />
                       {/* Rating Badge */}
                       {profile.averageRating > 0 && (
-                        <div className={`absolute -bottom-1 -right-1 flex items-center gap-1 px-2 py-1 rounded-full shadow-lg ${
+                        <div className={`absolute -bottom-1 -right-1 flex items-center gap-1 px-2 py-1 rounded-md border ${
                           isDarkMode 
-                            ? 'bg-gradient-to-r from-amber-500/90 to-yellow-500/90' 
-                            : 'bg-gradient-to-r from-amber-400 to-yellow-400'
+                            ? 'bg-gray-700 border-gray-600 text-yellow-400' 
+                            : 'bg-white border-gray-200 text-yellow-600'
                         }`}>
-                          <FaStar className="text-white text-xs" />
-                          <span className="text-white text-xs font-bold">
+                          <FaStar className="text-xs" />
+                          <span className="text-xs font-semibold">
                             {profile.averageRating.toFixed(1)}
                           </span>
                         </div>
@@ -434,7 +433,7 @@ export default function AllSkillsList({ isDarkMode }) {
                     </div>
                     
                     {/* Name */}
-                    <h3 className={`text-lg font-bold text-center mb-1 ${
+                    <h3 className={`text-lg font-semibold text-center mb-1 ${
                       isDarkMode ? 'text-white' : 'text-gray-900'
                     }`}>
                       {profile.name}
@@ -444,15 +443,15 @@ export default function AllSkillsList({ isDarkMode }) {
                     {(profile.position || profile.jerseyNumber) && (
                       <div className="flex items-center gap-2 text-sm">
                         {profile.position && (
-                          <span className={`px-2 py-1 rounded-lg ${
-                            isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'
+                          <span className={`px-2 py-1 rounded-md border text-xs font-medium ${
+                            isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-300' : 'bg-white border-gray-200 text-gray-600'
                           }`}>
                             {profile.position}
                           </span>
                         )}
                         {profile.jerseyNumber && (
-                          <span className={`px-2 py-1 rounded-lg font-bold ${
-                            isDarkMode ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white'
+                          <span className={`px-2 py-1 rounded-md text-xs font-semibold ${
+                            isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-900'
                           }`}>
                             #{profile.jerseyNumber}
                           </span>
@@ -466,7 +465,7 @@ export default function AllSkillsList({ isDarkMode }) {
                     isDarkMode ? 'border-gray-700' : 'border-gray-200'
                   }`}>
                     <span className={`text-sm font-medium ${
-                      isDarkMode ? 'text-blue-400 group-hover:text-blue-300' : 'text-blue-600 group-hover:text-blue-700'
+                      isDarkMode ? 'text-gray-400' : 'text-gray-600'
                     }`}>
                       Click to Endorse →
                     </span>
@@ -475,8 +474,8 @@ export default function AllSkillsList({ isDarkMode }) {
               ))}
             </div>
           ) : (
-            <div className={`text-center p-8 rounded-2xl ${
-              isDarkMode ? 'bg-gray-800/50' : 'bg-gray-100'
+            <div className={`text-center p-8 rounded-md border ${
+              isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
             }`}>
               <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
                 No other players available to endorse
@@ -491,30 +490,30 @@ export default function AllSkillsList({ isDarkMode }) {
         {allSkills.map(skill => (
           <div
             key={skill._id}
-            className={`group relative rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] overflow-hidden border backdrop-blur-sm ${
+            className={`group relative rounded-md border transition-colors duration-150 overflow-hidden ${
               isDarkMode 
-                ? 'bg-gradient-to-br from-gray-800/80 to-gray-900/80 border-gray-700 hover:border-gray-600' 
-                : 'bg-gradient-to-br from-white/90 to-blue-50/90 border-gray-200 hover:border-blue-300'
+                ? 'bg-gray-800 border-gray-700 hover:border-gray-600' 
+                : 'bg-white border-gray-200 hover:border-gray-300'
             }`}
             style={{ minHeight: '160px' }}
           >
-            {/* Modern header with glassmorphism effect */}
+            {/* Header */}
             <div
-              className={`px-4 py-3 backdrop-blur-sm border-b relative ${
+              className={`px-4 py-3 border-b ${
                 isDarkMode
-                  ? "bg-gray-800/80 text-gray-100 border-gray-700"
-                  : "bg-white/80 text-gray-800 border-gray-200"
+                  ? "bg-gray-800 text-gray-100 border-gray-700"
+                  : "bg-white text-gray-800 border-gray-200"
               }`}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                    isDarkMode ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white'
+                  <div className={`w-8 h-8 rounded-md flex items-center justify-center text-sm font-semibold ${
+                    isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-700'
                   }`}>
                     {skill.skillAuthor[0].toUpperCase()}
                   </div>
                   <div>
-                    <span className="font-semibold text-sm">
+                    <span className="font-medium text-sm">
                       {skill.skillAuthor[0].toUpperCase() + skill.skillAuthor.slice(1)}
                     </span>
                     <span className={`ml-1 text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
@@ -522,23 +521,23 @@ export default function AllSkillsList({ isDarkMode }) {
                     </span>
                   </div>
                 </div>
-                <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'
+                <div className={`px-2 py-1 rounded-md text-xs font-medium border ${
+                  isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-300' : 'bg-gray-50 border-gray-200 text-gray-600'
                 }`}>
                   {skill.recipient?.name ? skill.recipient.name : "—"}
                 </div>
               </div>
             </div>
 
-            {/* Skill content with modern typography */}
+            {/* Skill content */}
             <div
               className={`flex-1 flex items-center justify-between p-4 min-h-[80px] ${
-                isDarkMode ? "bg-gradient-to-r from-gray-800/60 to-gray-900/60" : "bg-gradient-to-r from-blue-50/60 to-white/60"
+                isDarkMode ? "bg-gray-800" : "bg-white"
               }`}
             >
               <div className="flex-1">
-                <h3 className={`text-lg font-bold leading-tight ${
-                  isDarkMode ? 'text-white' : 'text-gray-800'
+                <h3 className={`text-base font-medium leading-tight ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
                 }`}>
                   {skill.skillText[0].toUpperCase() + skill.skillText.slice(1)}
                 </h3>
@@ -550,7 +549,7 @@ export default function AllSkillsList({ isDarkMode }) {
                       <span 
                         key={i} 
                         title={r.user?.name || ""} 
-                        className="text-2xl bg-white rounded-full shadow-sm border-2 border-white mr-1"
+                        className="text-xl"
                       >
                         {r.emoji}
                       </span>
@@ -565,12 +564,12 @@ export default function AllSkillsList({ isDarkMode }) {
               )}
             </div>
 
-            {/* Modern footer with actions */}
+            {/* Footer with actions */}
             <div className={`px-4 py-3 border-t flex items-center justify-between ${
-              isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-gray-50/80 border-gray-200'
+              isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-200'
             }`}>
-              <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-white text-gray-600 shadow-sm'
+              <span className={`px-2 py-1 rounded-md text-xs font-medium border ${
+                isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-300' : 'bg-white border-gray-200 text-gray-600'
               }`}>
                 {skill.createdAt}
               </span>
@@ -590,6 +589,7 @@ export default function AllSkillsList({ isDarkMode }) {
                     });
                   }}
                   isDarkMode={isDarkMode}
+                  buttonClass={`transition-colors duration-150 px-3 py-1.5 rounded-md text-sm font-medium border ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white hover:bg-gray-600' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'}`}
                 />
               </div>
             </div>
@@ -601,11 +601,11 @@ export default function AllSkillsList({ isDarkMode }) {
 
       {/* Endorsement Modal - shared for both views */}
       {selectedPlayer && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className={`relative w-full max-w-md rounded-2xl shadow-2xl border ${
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50">
+          <div className={`relative w-full max-w-md rounded-md border ${
             isDarkMode 
-              ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700' 
-              : 'bg-gradient-to-br from-white to-blue-50 border-gray-200'
+              ? 'bg-gray-800 border-gray-700' 
+              : 'bg-white border-gray-200'
           }`}>
             {/* Close Button */}
             <button
@@ -614,26 +614,26 @@ export default function AllSkillsList({ isDarkMode }) {
                 setSkillText("");
                 setErrorMessage("");
               }}
-              className={`absolute top-4 right-4 p-2 rounded-full transition-all ${
+              className={`absolute top-4 right-4 p-2 rounded-md transition-colors ${
                 isDarkMode 
                   ? 'hover:bg-gray-700 text-gray-400 hover:text-white' 
                   : 'hover:bg-gray-100 text-gray-600 hover:text-gray-900'
               }`}
             >
-              <FaTimes className="text-xl" />
+              <FaTimes className="text-lg" />
             </button>
 
             {/* Modal Content */}
-            <div className="p-2 sm:p-4 ">
+            <div className="p-6 sm:p-8">
               {/* Player Info */}
               <div className="flex flex-col items-center mb-6">
                 <img
                   src={selectedPlayer?.profilePic || ProfileAvatar}
                   alt={selectedPlayer.name}
-                  className="w-20 h-20 rounded-full object-cover border-4 border-blue-500 mb-3"
+                  className="w-20 h-20 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700 mb-3"
                   onError={(e) => { e.target.src = ProfileAvatar; }}
                 />
-                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                   Endorse {selectedPlayer.name}
                 </h2>
                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -652,14 +652,14 @@ export default function AllSkillsList({ isDarkMode }) {
                     }}
                     placeholder={`e.g., "Excellent ball control and vision on the field"`}
                     rows={4}
-                    className={`w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+                    className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-600 transition-colors ${
                       isDarkMode 
                         ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
                         : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                     }`}
                   />
                   {errorMessage && (
-                    <p className="mt-2 text-sm text-red-500 italic">{errorMessage}</p>
+                    <p className={`mt-2 text-sm ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>{errorMessage}</p>
                   )}
                 </div>
 
@@ -671,10 +671,10 @@ export default function AllSkillsList({ isDarkMode }) {
                       setSkillText("");
                       setErrorMessage("");
                     }}
-                    className={`flex-1 px-2 py-3 rounded-xl font-semibold transition-all ${
+                    className={`flex-1 px-4 py-2.5 rounded-md text-sm font-medium border transition-colors ${
                       isDarkMode 
-                        ? 'bg-gray-700 hover:bg-gray-600 text-white' 
-                        : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
+                        ? 'bg-gray-700 border-gray-600 text-white hover:bg-gray-600' 
+                        : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
                     }`}
                   >
                     Cancel
@@ -682,10 +682,10 @@ export default function AllSkillsList({ isDarkMode }) {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`flex-1 px-2 py-3 rounded-xl font-semibold text-white transition-all ${
+                    className={`flex-1 px-4 py-2.5 rounded-md text-sm font-medium text-white transition-colors ${
                       isSubmitting
                         ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl'
+                        : 'bg-blue-600 hover:bg-blue-700'
                     }`}
                   >
                     {isSubmitting ? (

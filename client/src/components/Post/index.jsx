@@ -221,118 +221,226 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
 
   return (
     <>
-      {/* Delete Confirmation Modal */}
+      {/* AWS-style Delete Confirmation Modal */}
       {showDeleteModal && (
-        <>
-          {/* Blurred background overlay */}
-          <div className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-all duration-200" />
-          {/* Modal */}
-          <div className="fixed inset-0 z-50 flex items-center justify-center">
-            <div className="rounded-xl shadow-lg p-6 w-full max-w-xs sm:max-w-sm flex flex-col items-center border-2 transition-all duration-200
-              bg-gray-100 text-gray-900 border-red-200
-              dark:bg-gray-900 dark:text-white dark:border-red-700">
-              <h2 className="text-lg font-bold mb-4 text-center
-                text-gray-900 dark:text-red-200">
-                Are you sure you want to delete this post?
-              </h2>
-              <div className="flex gap-4 mt-2">
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-[400] p-4">
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md border border-gray-200 dark:border-gray-700 overflow-hidden relative z-[410]">
+            {/* Top accent bar */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-red-500"></div>
+            
+            <div className="p-6">
+              {/* Icon and Title */}
+              <div className="flex items-start gap-4 mb-4">
+                <div className="flex-shrink-0 w-10 h-10 rounded-md bg-red-50 dark:bg-red-900/20 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                    Delete Post
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Are you sure you want to delete this post? This action cannot be undone.
+                  </p>
+                </div>
+              </div>
+
+              {/* Warning Box */}
+              <div className="mb-6 p-3 rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+                <div className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-xs text-red-700 dark:text-red-300 font-medium">
+                    All comments and likes will be permanently removed.
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">
                 <button
-                  className="px-4 py-2 rounded bg-red-600 text-white font-semibold hover:bg-red-700 transition"
-                  onClick={handleDeletePost}
-                >
-                  Yes, Delete
-                </button>
-                <button
-                  className="px-4 py-2 rounded bg-gray-300 text-gray-800 font-semibold hover:bg-gray-400 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 transition"
-                  onClick={() => setShowDeleteModal(false)}
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowDeleteModal(false);
+                  }}
+                  className="w-full sm:w-auto px-4 py-2 rounded-md bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 active:bg-gray-100 dark:active:bg-gray-700 transition-all duration-150 shadow-sm cursor-pointer active:scale-95"
                 >
                   Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleDeletePost();
+                  }}
+                  className="w-full sm:w-auto px-4 py-2 rounded-md bg-red-600 hover:bg-red-700 active:bg-red-800 text-white transition-all duration-150 shadow-sm cursor-pointer active:scale-95"
+                >
+                  Delete Post
                 </button>
               </div>
             </div>
           </div>
-        </>
+        </div>
       )}
-      <div className="relative rounded-2xl shadow-xl border-2 bg-gradient-to-br p-4 px-2 sm:px-4 xl:px-8 mb-6 transition-all duration-300 hover:border-blue-400 flex flex-col gap-2 w-full from-blue-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 border-blue-200 dark:border-gray-700">
+      <div className="relative rounded-md border mb-4 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
         {/* Header */}
-        <div className="flex items-center gap-3 mb-2">
-          <Link to={`/profiles/${post.userId._id}`} className="flex items-center hover:no-underline">
-            <img src={post.userId.profilePic || ProfileAvatar} alt="profile picture" className="w-10 h-10 rounded-full border-2 border-blue-300 dark:border-gray-700 shadow" />
-            <span className="font-bold text-blue-700 dark:text-blue-200 text-sm sm:text-base ml-2">{post.userId.name[0].toUpperCase() + post.userId.name.slice(1)}</span>
+        <div className="flex items-center gap-3 px-4 py-3">
+          <Link to={`/profiles/${post.userId._id}`} className="flex items-center gap-2 hover:no-underline flex-1">
+            <img 
+              src={post.userId.profilePic || ProfileAvatar} 
+              alt="profile picture" 
+              className="w-10 h-10 rounded-full object-cover" 
+            />
+            <div className="flex flex-col">
+              <span className="font-semibold text-gray-900 dark:text-white text-sm">
+                {post.userId.name[0].toUpperCase() + post.userId.name.slice(1)}
+              </span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                {new Date(parseInt(post.createdAt)).toLocaleString()}
+              </span>
+            </div>
           </Link>
-          {/* Owner controls: edit/delete icons always visible for post owner */}
-          {currentUserId === post.userId._id && (
-            <div className="flex items-center gap-2 ml-auto">
-              {!isEditing && (
-                <>
-                  <button title="Edit Post" className="flex items-center px-2 py-1 rounded hover:bg-blue-100 dark:hover:bg-blue-900" onClick={() => setIsEditing(true)}>
-                    <FaPencilAlt className="h-5 w-5 text-blue-500 cursor-pointer" />
-                  </button>
-                  <button title="Delete Post" className="flex items-center px-2 py-1 rounded hover:bg-red-100 dark:hover:bg-red-900" onClick={() => setShowDeleteModal(true)}>
-                    <FaTrash className="h-5 w-5 text-red-500 cursor-pointer" />
-                  </button>
-                </>
-              )}
+          {/* Owner controls: edit/delete icons */}
+          {currentUserId === post.userId._id && !isEditing && (
+            <div className="flex items-center gap-1">
+              <button 
+                title="Edit Post" 
+                className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" 
+                onClick={() => setIsEditing(true)}
+              >
+                <FaPencilAlt className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+              </button>
+              <button 
+                title="Delete Post" 
+                className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" 
+                onClick={() => setShowDeleteModal(true)}
+              >
+                <FaTrash className="h-4 w-4 text-red-600 dark:text-red-400" />
+              </button>
             </div>
           )}
         </div>
         {/* Post Content (edit/view) */}
-        <div className="mb-2 relative">
+        <div className="px-4 pb-3">
           {isEditing ? (
-            <div className="mt-2">
-              <textarea value={postText} onChange={(e) => setPostText(e.target.value)} className="w-full p-2 border rounded dark:text-black text-xs sm:text-sm mb-2" />
+            <div className="space-y-2">
+              <textarea 
+                value={postText} 
+                onChange={(e) => setPostText(e.target.value)} 
+                className="w-full p-3 border rounded-md text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-600
+                  bg-gray-50 border-gray-300 text-gray-900
+                  dark:bg-gray-700 dark:border-gray-600 dark:text-white" 
+                rows={3}
+              />
               <div className="flex gap-2">
-                <button className="px-4 py-1 rounded bg-blue-500 text-white hover:bg-blue-700 text-xs sm:text-sm" onClick={handleUpdatePost}>Update Post</button>
-                <button className="px-4 py-1 rounded bg-gray-500 text-white hover:bg-gray-700 text-xs sm:text-sm" onClick={() => setIsEditing(false)}>Cancel</button>
+                <button 
+                  className="px-4 py-2 rounded-md bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors" 
+                  onClick={handleUpdatePost}
+                >
+                  Update
+                </button>
+                <button 
+                  className="px-4 py-2 rounded-md border text-sm font-medium transition-colors
+                    bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100
+                    dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:bg-gray-600" 
+                  onClick={() => setIsEditing(false)}
+                >
+                  Cancel
+                </button>
               </div>
-              {isEdited && <div className="text-green-500 text-xs mt-2">Post updated successfully!</div>}
+              {isEdited && (
+                <div className="text-green-600 dark:text-green-400 text-xs">
+                  Post updated successfully!
+                </div>
+              )}
             </div>
           ) : (
-            <>
-              <p className="text-gray-800 dark:bg-gray-800 dark:text-gray-100 text-base sm:text-lg font-serif font-medium leading-relaxed mt-2 bg-gray-100 rounded-lg px-4 py-3 shadow-sm transition-colors duration-300">
-                {postText}
-              </p>
-            </>
+            <p className="text-gray-900 dark:text-gray-100 text-sm leading-relaxed whitespace-pre-wrap">
+              {postText}
+            </p>
           )}
         </div>
-        {/* Actions: Like, Comment, Date/Time - always visible, fixed position */}
-        <div className="flex items-center gap-4 mt-2 justify-between">
-          <div className="flex items-center gap-4">
-            <div className="relative flex items-center">
+        {/* Actions: Like, Comment */}
+        <div className="border-t border-gray-200 dark:border-gray-700 px-2 py-1">
+          <div className="flex items-center">
+            <div className="relative flex-1">
               <button
-                className={`flex items-center gap-1 px-3 py-1 rounded-full font-semibold shadow transition bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-700 text-xs sm:text-sm`}
+                className="flex items-center justify-center gap-2 w-full py-2 rounded-md text-sm font-medium transition-colors
+                  text-blue-600 hover:bg-gray-100
+                  dark:text-blue-200 dark:hover:bg-gray-700"
                 onClick={handleLike}
                 onMouseEnter={() => setShowTooltip(true)}
                 onMouseLeave={() => setShowTooltip(false)}
               >
-                <FaHeart className="h-4 w-4" /> {likes}
+                <FaHeart className={`h-4 w-4 ${likedBy.some(u => u._id === currentUserId) ? 'text-red-500' : ''}`} />
+                <span>{likes > 0 ? `Like (${likes})` : 'Like'}</span>
               </button>
               {/* Tooltip for liked users */}
               {showTooltip && likedBy.length > 0 && (
-                <div className="absolute left-full top-0 ml-2 w-max bg-white dark:bg-gray-700 text-black dark:text-white text-xs rounded p-2 shadow z-10">
-                  {likedBy.map((u) => (
-                    <div key={u._id}>{u.name}</div>
-                  ))}
+                <div className="absolute left-0 bottom-full mb-2 w-max max-w-xs bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-md p-2 shadow-lg z-10">
+                  <div className="max-h-32 overflow-y-auto">
+                    {likedBy.map((u) => (
+                      <div key={u._id} className="py-0.5">{u.name}</div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
-            <button className={`flex items-center gap-1 px-3 py-1 rounded-full font-semibold shadow transition bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-700 text-xs sm:text-sm`} onClick={() => setShowComments((v) => !v)}>
-              <FaComment className="h-4 w-4" /> {comments.length}
+            <button 
+              className="flex items-center justify-center gap-2 flex-1 py-2 rounded-md text-sm font-medium transition-colors
+                text-blue-600 hover:bg-gray-100
+                dark:text-blue-200 dark:hover:bg-gray-700" 
+              onClick={() => setShowComments((v) => !v)}
+            >
+              <FaComment className="h-4 w-4" />
+              <span>{comments.length > 0 ? `Comment (${comments.length})` : 'Comment'}</span>
             </button>
           </div>
-          <span className="text-xs text-gray-500 dark:text-gray-400">{new Date(parseInt(post.createdAt)).toLocaleString()}</span>
         </div>
-        {/* Comments section - always below actions */}
+        {/* Comments section */}
         {showComments && (
-          <div className="mt-4">
-            <CommentList postId={post._id} comments={comments} currentUserId={currentUserId} />
-            <div className="mt-4">
-              <textarea className="w-full p-2 border rounded bg-gray-50 dark:bg-gray-900 dark:text-white text-xs sm:text-sm mb-2" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Write a comment..." />
-              <div className="flex gap-2">
-                <button className="px-4 py-1 rounded bg-blue-500 text-white hover:bg-blue-700 text-xs sm:text-sm" onClick={handleAddComment}>Add Comment</button>
-                <button className="px-4 py-1 rounded bg-gray-500 text-white hover:bg-gray-700 text-xs sm:text-sm" onClick={() => { handleCancelComment(); setShowComments(false); }}>Cancel</button>
+          <div className="border-t border-gray-200 dark:border-gray-700 px-4 pt-3 pb-3">
+            {comments.length > 0 && (
+              <div className="mb-3  ">
+                <CommentList postId={post._id} comments={comments} currentUserId={currentUserId} />
               </div>
-              {errorMessage && <div className="text-red-500 text-xs mt-2 animate-fade-in">{errorMessage}</div>}
+            )}
+            <div className="space-y-2 ">
+              <textarea 
+                className="w-full p-2 border rounded-md text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-600
+                  bg-gray-50 border-gray-300 text-gray-900
+                  dark:bg-gray-600 dark:border-gray-600 dark:text-white" 
+                value={commentText} 
+                onChange={(e) => setCommentText(e.target.value)} 
+                placeholder="Write a comment..." 
+                rows={2}
+              />
+              <div className="flex gap-2">
+                <button 
+                  className="px-4 py-1.5 rounded-md bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors" 
+                  onClick={handleAddComment}
+                >
+                  Comment
+                </button>
+                <button 
+                  className="px-4 py-1.5 rounded-md border text-sm font-medium transition-colors
+                    bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100
+                    dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:bg-gray-600" 
+                  onClick={() => { handleCancelComment(); setShowComments(false); }}
+                >
+                  Cancel
+                </button>
+              </div>
+              {errorMessage && (
+                <div className="text-red-600 dark:text-red-400 text-xs">
+                  {errorMessage}
+                </div>
+              )}
             </div>
           </div>
         )}

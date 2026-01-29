@@ -86,19 +86,12 @@ const RatingModal = ({ profile, onClose, isDarkMode }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/60 backdrop-blur-sm p-2 mt-24 sm:mt-0">
       <div 
-        className={`relative max-w-md w-full mx-auto transform transition-all duration-300 scale-100 ${
+        className={`relative max-w-md w-full mx-auto transform transition-all ${
           isDarkMode 
-            ? "bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 border border-gray-700" 
-            : "bg-gradient-to-br from-white via-blue-50 to-purple-50 border border-gray-200"
-        } rounded-3xl shadow-2xl overflow-hidden`}
+            ? "bg-gray-800 border border-gray-700" 
+            : "bg-white border border-gray-200"
+        } rounded-lg shadow-xl overflow-hidden`}
       >
-        {/* Animated Background Pattern */}
-        <div className={`absolute inset-0 opacity-20 ${
-          isDarkMode 
-            ? "bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-gray-900/20" 
-            : "bg-gradient-to-br from-blue-100/30 via-purple-100/30 to-pink-100/30"
-        }`}></div>
-
         {/* Close Button */}
         <button
           type="button"
@@ -106,44 +99,41 @@ const RatingModal = ({ profile, onClose, isDarkMode }) => {
             setErrorMessage("");
             onClose();
           }}
-          className={`absolute top-4 right-4 p-2 rounded-full transition-all duration-200 hover:scale-110 z-10 cursor-pointer ${
+          className={`absolute top-4 right-4 p-2 rounded-md transition-colors z-10 cursor-pointer ${
             isDarkMode 
-              ? "bg-gray-800/50 text-gray-400 hover:bg-gray-700/70 hover:text-white" 
-              : "bg-white/50 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+              ? "text-gray-400 hover:bg-gray-700 hover:text-white" 
+              : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
           }`}
         >
           <FaTimes className="text-lg pointer-events-none" />
         </button>
 
-        <div className="relative p-4  ">
+        <div className="relative p-6">
           {/* Header with Profile Info */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-6">
             <div className="flex justify-center mb-4">
               <div className="relative">
                 <img
                   src={profile?.profilePic || ProfileAvatar}
                   alt={`${profile.name}'s profile`}
-                  className="w-20 h-20 rounded-full object-cover border-4 border-gradient-to-r from-blue-400 to-purple-400 shadow-lg"
+                  className="w-20 h-20 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700 shadow-md"
                 />
-                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-2 animate-pulse">
-                  <HiSparkles className="text-white text-sm" />
-                </div>
               </div>
             </div>
             
-            <h3 className={`text-2xl font-black mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            <h3 className={`text-xl font-semibold mb-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               Rate {profile.name}
             </h3>
             
-            <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
               Share your experience playing with this teammate
             </p>
           </div>
 
           {/* Rating Stars Section */}
-          <div className="mb-8">
+          <div className="mb-6">
             <div className="text-center mb-4">
-              <p className={`text-sm font-semibold mb-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+              <p className={`text-sm font-medium mb-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                 Select your rating
               </p>
               
@@ -157,12 +147,12 @@ const RatingModal = ({ profile, onClose, isDarkMode }) => {
                     }}
                     onMouseEnter={() => setHoveredRating(value)}
                     onMouseLeave={() => setHoveredRating(0)}
-                    className="focus:outline-none transform transition-all duration-200 hover:scale-125 active:scale-110"
+                    className="focus:outline-none transform transition-all hover:scale-110"
                   >
                     {value <= (hoveredRating || rating) ? (
-                      <AiFillStar className="text-yellow-400 text-4xl drop-shadow-lg animate-pulse" />
+                      <AiFillStar className="text-yellow-400 text-3xl" />
                     ) : (
-                      <AiOutlineStar className={`text-3xl transition-colors duration-200 ${
+                      <AiOutlineStar className={`text-3xl transition-colors ${
                         isDarkMode ? 'text-gray-600 hover:text-yellow-300' : 'text-gray-300 hover:text-yellow-400'
                       }`} />
                     )}
@@ -175,7 +165,7 @@ const RatingModal = ({ profile, onClose, isDarkMode }) => {
                 <div className="text-2xl">
                   {getRatingIcon(hoveredRating || rating)}
                 </div>
-                <p className={`text-lg font-bold ${getRatingColor(hoveredRating || rating)} transition-all duration-200`}>
+                <p className={`text-base font-semibold ${getRatingColor(hoveredRating || rating)} transition-all`}>
                   {getRatingText(hoveredRating || rating)}
                 </p>
               </div>
@@ -184,13 +174,15 @@ const RatingModal = ({ profile, onClose, isDarkMode }) => {
 
           {/* Error Message */}
           {errorMessage && (
-            <div className={`mb-6 p-3 rounded-xl border ${
+            <div className={`mb-4 p-3 rounded-md border ${
               isDarkMode 
-                ? "bg-red-900/30 border-red-700/50 text-red-300" 
+                ? "bg-red-900/30 border-red-700 text-red-300" 
                 : "bg-red-50 border-red-200 text-red-700"
-            } animate-pulse`}>
+            }`}>
               <div className="flex items-center gap-2">
-                <span className="text-lg">⚠️</span>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
                 <p className="text-sm font-medium">{errorMessage}</p>
               </div>
             </div>
@@ -205,11 +197,11 @@ const RatingModal = ({ profile, onClose, isDarkMode }) => {
                 onClose();
               }}
               disabled={isSubmitting}
-              className={`flex-1 py-3 px-6 rounded-xl font-bold transition-all duration-200 hover:scale-105 transform cursor-pointer ${
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors cursor-pointer ${
                 isDarkMode
-                  ? "bg-gray-700 hover:bg-gray-600 text-white border border-gray-600 hover:border-gray-500"
-                  : "bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 hover:border-gray-400"
-              } disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100`}
+                  ? "bg-gray-700 hover:bg-gray-600 text-white border border-gray-600"
+                  : "bg-white hover:bg-gray-50 text-gray-700 border border-gray-300"
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               Cancel
             </button>
@@ -218,29 +210,23 @@ const RatingModal = ({ profile, onClose, isDarkMode }) => {
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting || rating < 2 || rating > 5}
-              className={`flex-1 py-3 px-6 rounded-xl font-bold transition-all duration-200 hover:scale-105 transform relative overflow-hidden cursor-pointer ${
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors cursor-pointer ${
                 isDarkMode
-                  ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white border border-blue-500"
-                  : "bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-400 hover:to-purple-400 text-white border border-blue-400"
-              } disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg hover:shadow-xl`}
+                  ? "bg-blue-600 hover:bg-blue-700 text-white"
+                  : "bg-blue-600 hover:bg-blue-700 text-white"
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
                   Submitting...
                 </span>
               ) : (
-                <span className="flex items-center justify-center gap-2">
-                  <HiSparkles className="text-lg" />
-                  Submit Rating
-                </span>
+                "Submit Rating"
               )}
-              
-              {/* Shimmer effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full hover:translate-x-full transition-transform duration-700"></div>
             </button>
           </div>
 
