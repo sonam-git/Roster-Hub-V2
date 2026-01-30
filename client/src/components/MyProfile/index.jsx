@@ -42,7 +42,11 @@ const MyProfile = () => {
     refetchQueries: [{ query: QUERY_ME }],
   });
 
-  if (loading) return <Spinner />;
+  if (loading) return (
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/30">
+      <Spinner />
+    </div>
+  );
 
   const saveLink = async () => {
     if (!socialMediaLink.trim()) {

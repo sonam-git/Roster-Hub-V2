@@ -1324,6 +1324,63 @@ const resolvers = {
       }
     },
 
+    // ************************** MARK CHAT AS SEEN *******************************************//
+    // Updates all unread messages from a specific user to 'seen' status
+    markChatAsSeen: async (_, { userId, organizationId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You must be logged in");
+      }
+
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
+
+      const me = context.user._id;
+      
+      try {
+        // Find all unread messages from the other user to the current user
+        const unseenMessages = await Chat.find({
+          from: userId,
+          to: me,
+          organizationId: organizationId,
+          seen: false,
+          deletedBy: { $ne: me }
+        });
+
+        if (unseenMessages.length === 0) {
+          return true; // No messages to mark as seen
+        }
+
+        // Mark all these messages as seen
+        await Chat.updateMany(
+          {
+            from: userId,
+            to: me,
+            organizationId: organizationId,
+            seen: false,
+            deletedBy: { $ne: me }
+          },
+          { $set: { seen: true } }
+        );
+
+        // Publish seen status update for each message so sender gets notified
+        for (const msg of unseenMessages) {
+          const updatedChat = await Chat.findById(msg._id).populate('from to');
+          pubsub.publish("CHAT_SEEN", { 
+            chatSeen: updatedChat,
+            to: userId // Notify the original sender
+          });
+        }
+
+        console.log(`✅ Marked ${unseenMessages.length} messages as seen from user ${userId}`);
+        return true;
+      } catch (error) {
+        console.error("Error marking chat as seen:", error);
+        throw new Error("Failed to mark chat as seen");
+      }
+    },
+
     // ************************** SAVE SOCIAL MEDIA LINK  *******************************************//
     saveSocialMediaLink: async (_, { userId, type, link, organizationId }, context) => {
       if (!context.user) {
@@ -1881,7 +1938,16 @@ const resolvers = {
         // Use SendGrid HTTP API for production, Gmail for local dev
         const useSendGrid = !!process.env.SENDGRID_API_KEY;
         
-        const appUrl = (process.env.APP_URL || 'https://roster-hub-v2-y6j2.vercel.app').trim();
+        // Get the app URL - always use production URL for emails, never localhost
+        const PRODUCTION_URL = 'https://roster-hub-v2-y6j2.vercel.app';
+        let appUrl = (process.env.APP_URL || '').trim();
+        
+        // If APP_URL is empty, localhost, or 127.0.0.1, use production URL instead
+        if (!appUrl || appUrl.includes('localhost') || appUrl.includes('127.0.0.1')) {
+          appUrl = PRODUCTION_URL;
+          console.log('📧 Using production URL for password reset email:', appUrl);
+        }
+        
         const resetUrl = `${appUrl}/reset-password/${resetToken}`;
         const fromEmail = process.env.EMAIL_FROM || 'sherpa.sjs@gmail.com';
 
@@ -2037,10 +2103,20 @@ If you did not request this, please ignore this email and your password will rem
           throw new AuthenticationError('Only team owners can send invites');
         }
 
-        // Get the app URL from environment or use default
-        const appUrl = (process.env.APP_URL || 'https://roster-hub-v2-y6j2.vercel.app').trim();
+        // Get the app URL - always use production URL for emails, never localhost
+        const PRODUCTION_URL = 'https://roster-hub-v2-y6j2.vercel.app';
+        let appUrl = (process.env.APP_URL || '').trim();
+        
+        // If APP_URL is empty, localhost, or 127.0.0.1, use production URL instead
+        if (!appUrl || appUrl.includes('localhost') || appUrl.includes('127.0.0.1')) {
+          appUrl = PRODUCTION_URL;
+          console.log('📧 Using production URL for email:', appUrl);
+        }
+        
         const joinUrl = `${appUrl}/login?inviteCode=${organization.inviteCode}`;
         const fromEmail = process.env.EMAIL_FROM || 'sherpa.sjs@gmail.com';
+        
+        console.log('📧 Sending team invite emails with URL:', appUrl);
         
         // Check if SendGrid API key is available
         const useSendGrid = !!process.env.SENDGRID_API_KEY;
@@ -2477,6 +2553,7 @@ If you didn't expect this invitation, you can safely ignore this email.
   },
   // ############  Type‐level resolvers for Chat ############## //
   Chat: {
+    id: (chat) => chat._id.toString(),
     from: async (chat) => {
       return await Profile.findById(chat.from);
     },
