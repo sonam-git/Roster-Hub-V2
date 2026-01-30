@@ -1,17 +1,18 @@
-Internal error emitted on the WebSocket server. Please check your implementation. Error: listen EADDRINUSE: address already in use :::3001
-    at Server.setupListenHandle [as _listen2] (node:net:1751:16)
-    at listenInCluster (node:net:1799:12)
-    at Server.listen (node:net:1887:7)
-    at NativeConnection.<anonymous> (/Users/sonamjsherpa/Desktop/Roster-Hub copy/server/server.js:151:16)
-    at Object.onceWrapper (node:events:628:28)
-    at NativeConnection.emit (node:events:514:28)
-    at Connection.onOpen (/Users/sonamjsherpa/Desktop/Roster-Hub copy/server/node_modules/mongoose/lib/connection.js:712:8)
-    at _setClient (/Users/sonamjsherpa/Desktop/Roster-Hub copy/server/node_modules/mongoose/lib/drivers/node-mongodb-native/connection.js:395:8)
-    at NativeConnection.createClient (/Users/sonamjsherpa/Desktop/Roster-Hub copy/server/node_modules/mongoose/lib/drivers/node-mongodb-native/connection.js:298:3)
-    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'EADDRINUSE',
-  errno: -48,
-  syscall: 'listen',
-  address: '::',
-  port: 3001
-}
+✅ PubSub instance created and exported with increased max listeners
+✅ Game resolvers integrated successfully
+✅ Asset resolvers integrated successfully
+🔌 Attempting MongoDB connection...
+🚀 Starting RosterHub Server...
+📝 Environment: development
+🔌 Port: 3001
+🗄️  MongoDB URI exists: true
+🔑 JWT Secret exists: true
+⚙️  Starting Apollo Server...
+✅ Apollo Server started
+✅ GraphQL middleware applied
+✅ HTTP server running on port 3001!
+🔗 GraphQL endpoint: http://localhost:3001/graphql
+🔌 WebSocket endpoint: ws://localhost:3001/graphql
+⏳ Waiting for MongoDB connection...
+✅ MongoDB connected
+✅ MongoDB connected successfully

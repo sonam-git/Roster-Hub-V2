@@ -70,7 +70,7 @@ const Profile = () => {
 
   // Loading state for organization
   if (!currentOrganization) {
-    return <Spinner />;
+    return <div ><Spinner /></div>;
   }
 
   if (loading) {

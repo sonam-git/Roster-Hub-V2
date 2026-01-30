@@ -179,7 +179,7 @@ const Game = () => {
   }
 
   return (
-    <div className="w-full mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 lg:mt-5  max-w-7xl  lg:pt-24">
+    <div className="w-full mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 mt-6 lg:mt-5 max-w-7xl pt-20 lg:pt-24">
       <div className="flex flex-col lg:flex-row lg:space-x-6">
         <div className=" w-full mb-2">
         

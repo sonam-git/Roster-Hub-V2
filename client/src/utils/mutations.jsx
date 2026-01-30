@@ -136,12 +136,27 @@ export const REMOVE_MESSAGE = gql`
     }
   }
 `;
-// Mutation to delete a conversation history
+// Mutation to delete a chat conversation history (real-time chat feature - ChatPopup)
 export const DELETE_CONVERSATION = gql`
   mutation deleteConversation($userId: ID!, $organizationId: ID!) {
     deleteConversation(userId: $userId, organizationId: $organizationId)
   }
 `;
+
+// Alias for DELETE_CONVERSATION for clarity
+export const DELETE_CHAT_CONVERSATION = gql`
+  mutation deleteChatConversation($userId: ID!, $organizationId: ID!) {
+    deleteChatConversation(userId: $userId, organizationId: $organizationId)
+  }
+`;
+
+// Mutation to delete a message conversation history (inbox-style messages - MessageList)
+export const DELETE_MESSAGE_CONVERSATION = gql`
+  mutation deleteMessageConversation($userId: ID!, $organizationId: ID!) {
+    deleteMessageConversation(userId: $userId, organizationId: $organizationId)
+  }
+`;
+
 // Mutation to send a message
 export const SEND_MESSAGE = gql`
   mutation SendMessage($recipientId: ID!, $text: String!, $organizationId: ID!) {

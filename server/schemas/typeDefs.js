@@ -423,6 +423,8 @@ const typeDefs = gql`
     removeSkill(skillId: ID!, organizationId: ID!): Skill
     removeMessage(messageId: ID!, organizationId: ID!): Message
     deleteConversation(userId: ID!, organizationId: ID!): Boolean!
+    deleteChatConversation(userId: ID!, organizationId: ID!): Boolean!
+    deleteMessageConversation(userId: ID!, organizationId: ID!): Boolean!
     saveSocialMediaLink(
       userId: ID!
       type: String!

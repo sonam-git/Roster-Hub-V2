@@ -46,7 +46,12 @@ const ChatPopup = ({ currentUser }) => {
     variables: { organizationId: currentOrganization?._id },
     onCompleted: data => {
       if (Array.isArray(data?.profiles)) {
-        setProfiles(data.profiles);
+        // Deduplicate profiles by _id
+        const uniqueProfiles = data.profiles.filter(
+          (profile, index, self) => 
+            index === self.findIndex(p => p._id === profile._id)
+        );
+        setProfiles(uniqueProfiles);
       } else {
         setProfiles([]);
       }
@@ -134,7 +139,13 @@ const ChatPopup = ({ currentUser }) => {
         ((from._id === selectedUserId && to._id === userId) ||
          (to._id === selectedUserId && from._id === userId))
       ) {
-        setMessages(prev => [...prev, chatData]);
+        setMessages(prev => {
+          // Check if message already exists to prevent duplicates
+          if (prev.some(m => m.id === chatData.id)) {
+            return prev;
+          }
+          return [...prev, chatData];
+        });
         // Only clear notification if user is actively viewing the chat and it's open
         if (!isFromMe && chatPopupOpen) {
           console.log('🔕 Clearing notification for active chat:', from.name);
@@ -593,9 +604,9 @@ const ChatPopup = ({ currentUser }) => {
                         {date}
                       </span>
                     </div>
-                    {msgs.map((c) => (
+                    {msgs.map((c, idx) => (
                       <ChatMessage
-                        key={c.id}
+                        key={c.id || `msg-${idx}`}
                         chat={c}
                         userId={userId}
                         currentUser={currentUser}

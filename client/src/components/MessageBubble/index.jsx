@@ -12,6 +12,9 @@ const MessageBubble = ({
   isLoggedInUser,
   isDarkMode,
 }) => {
+  // Debug log to verify isLoggedInUser is being passed correctly
+  // console.log("MessageBubble render - isLoggedInUser:", isLoggedInUser, "msg._id:", msg._id);
+  
   const avatar = (isMe ? loggedInUser : user).profilePic || ProfileAvatar;
   const time = relativeTime(getDateFromObjectId(msg._id));
 
@@ -56,6 +59,7 @@ const MessageBubble = ({
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                console.log("Delete button clicked for message:", msg._id, "isLoggedInUser:", isLoggedInUser);
                 onDelete(msg._id);
               }}
               onKeyDown={(e) => {

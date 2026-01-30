@@ -23,21 +23,22 @@ import { useOrganization } from "../../contexts/OrganizationContext";
 
 export default function Post({ post }) {
   const { currentOrganization } = useOrganization();
+  
   // UI State
   const [isEditing, setIsEditing] = useState(false);
-  const [postText, setPostText] = useState(post.postText);
+  const [postText, setPostText] = useState(post?.postText || '');
   const [isEdited, setIsEdited] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [likes, setLikes] = useState(post.likes);
-  const [likedBy, setLikedBy] = useState(post.likedBy || []);
-  const [comments, setComments] = useState(post.comments || []);
+  const [likes, setLikes] = useState(post?.likes || 0);
+  const [likedBy, setLikedBy] = useState(post?.likedBy || []);
+  const [comments, setComments] = useState(post?.comments || []);
   const [deleted, setDeleted] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const currentUserId = Auth.getProfile().data._id;
+  const currentUserId = Auth.getProfile()?.data?._id;
 
   // GraphQL Mutations
   const [removePost] = useMutation(REMOVE_POST);
@@ -49,7 +50,8 @@ export default function Post({ post }) {
 
 // 1️⃣ Likes
 useSubscription(POST_LIKED_SUBSCRIPTION, {
-  variables: { postId: post._id },
+  variables: { postId: post?._id },
+  skip: !post?._id,
   onData: ({ data }) => {
     const liked = data?.data?.postLiked;
     if (liked) {
@@ -62,7 +64,8 @@ useSubscription(POST_LIKED_SUBSCRIPTION, {
 
 // 2️⃣ New comments
 useSubscription(COMMENT_ADDED_SUBSCRIPTION, {
-  variables: { postId: post._id },
+  variables: { postId: post?._id },
+  skip: !post?._id,
   onData: ({ data }) => {
     const newComment = data?.data?.commentAdded;
     if (!newComment) return;
@@ -97,7 +100,7 @@ useSubscription(COMMENT_DELETED_SUBSCRIPTION, {
 useSubscription(POST_UPDATED_SUBSCRIPTION, {
   onData: ({ data }) => {
     const updated = data?.data?.postUpdated;
-    if (updated && updated._id === post._id) {
+    if (updated && updated._id === post?._id) {
       setPostText(updated.postText);
       setIsEdited(true);
       setLikes(updated.likes);
@@ -111,7 +114,7 @@ useSubscription(POST_UPDATED_SUBSCRIPTION, {
 // 6️⃣ Post deletions
 useSubscription(POST_DELETED_SUBSCRIPTION, {
   onData: ({ data }) => {
-    if (data?.postDeleted === post._id) {
+    if (data?.postDeleted === post?._id) {
       setDeleted(true);
     }
   },
@@ -218,6 +221,9 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
   };
 
   if (deleted) return null;
+  
+  // Guard against null or invalid post data
+  if (!post || !post._id) return null;
 
   return (
     <>
@@ -290,15 +296,15 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
       <div className="relative rounded-md border mb-4 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
         {/* Header */}
         <div className="flex items-center gap-3 px-4 py-3">
-          <Link to={`/profiles/${post.userId._id}`} className="flex items-center gap-2 hover:no-underline flex-1">
+          <Link to={`/profiles/${post.userId?._id || ''}`} className="flex items-center gap-2 hover:no-underline flex-1">
             <img 
-              src={post.userId.profilePic || ProfileAvatar} 
+              src={post.userId?.profilePic || ProfileAvatar} 
               alt="profile picture" 
               className="w-10 h-10 rounded-full object-cover" 
             />
             <div className="flex flex-col">
               <span className="font-semibold text-gray-900 dark:text-white text-sm">
-                {post.userId.name[0].toUpperCase() + post.userId.name.slice(1)}
+                {post.userId?.name ? post.userId.name[0].toUpperCase() + post.userId.name.slice(1) : 'Unknown User'}
               </span>
               <span className="text-xs text-gray-500 dark:text-gray-400">
                 {new Date(parseInt(post.createdAt)).toLocaleString()}
@@ -306,7 +312,7 @@ useSubscription(POST_DELETED_SUBSCRIPTION, {
             </div>
           </Link>
           {/* Owner controls: edit/delete icons */}
-          {currentUserId === post.userId._id && !isEditing && (
+          {currentUserId === post.userId?._id && !isEditing && (
             <div className="flex items-center gap-1">
               <button 
                 title="Edit Post" 

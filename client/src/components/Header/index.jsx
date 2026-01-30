@@ -1,5 +1,5 @@
 // src/components/Header.jsx - AWS-style Professional UI
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { QUERY_ME, QUERY_GAMES } from "../../utils/queries";
 import { Link, useNavigate, Outlet, useLocation } from "react-router-dom";
@@ -43,25 +43,61 @@ const Header = ({ open, setOpen }) => {
     }
   }
 
-  // Live message count
+  // Live message count - track unread messages using localStorage
   const { data: meData } = useQuery(QUERY_ME, {
     skip: !isLoggedIn,
     pollInterval: 5000,
   });
-  const messageCount = meData?.me?.receivedMessages?.length || 0;
+  
+  // Get current user ID
+  const currentUserId = meData?.me?._id;
+  
+  // Calculate unread message count
+  const allMessages = meData?.me?.receivedMessages || [];
+  const [readMessageIds, setReadMessageIds] = useState(() => {
+    try {
+      const stored = localStorage.getItem('readMessageIds');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+  
+  // Update read messages when localStorage changes (for cross-tab sync)
+  useEffect(() => {
+    const handleStorageChange = () => {
+      try {
+        const stored = localStorage.getItem('readMessageIds');
+        setReadMessageIds(stored ? JSON.parse(stored) : []);
+      } catch {
+        setReadMessageIds([]);
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+  
+  // Count only unread messages
+  const messageCount = allMessages.filter(msg => !readMessageIds.includes(msg._id)).length;
 
   // Fetch all games to compute badges
   const { data: allGamesData } = useQuery(QUERY_GAMES, {
     skip: !isLoggedIn || !organizationId,
     variables: { organizationId },
     fetchPolicy: "network-only",
+    pollInterval: 10000,
   });
   const allGames = allGamesData?.games || [];
 
-  // Count pending and confirmed
-  const pendingCount = allGames.filter((g) => g.status === "PENDING").length;
-  const confirmedCount = allGames.filter((g) => g.status === "CONFIRMED").length;
-  const gameBadgeCount = pendingCount + confirmedCount;
+  // Count only PENDING games where the current user hasn't responded yet
+  const unansweredPendingGames = allGames.filter((g) => {
+    if (g.status !== "PENDING") return false;
+    // Check if user has already responded
+    const hasResponded = g.responses?.some(r => r.user?._id === currentUserId);
+    return !hasResponded;
+  });
+  
+  const gameBadgeCount = unansweredPendingGames.length;
 
   // Handle logout
   const handleLogout = () => {
@@ -181,11 +217,11 @@ const Header = ({ open, setOpen }) => {
 
       {/* Mobile Auth Buttons - AWS Style Single Row with 3 Columns */}
       {!Auth.loggedIn() && open && (
-        <div className={`lg:hidden fixed left-0 right-0 z-[250] ${
+        <div className={`lg:hidden fixed left-0 right-0 z-[250] pt-4 ${
           isDarkMode ? "bg-gray-900 border-b border-gray-800" : "bg-gray-50 border-b border-gray-200"
         } shadow-lg`}
              style={{ top: 'calc(env(safe-area-inset-top, 0px) + 3.5rem)' }}>
-          <div className="grid grid-cols-3 gap-2 p-4">
+          <div className="grid grid-cols-3 gap-2 p-1">
             <Link
               to="/"
               className={`px-3 py-3 text-sm font-medium rounded-md text-center transition-colors no-underline ${

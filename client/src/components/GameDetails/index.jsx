@@ -1170,23 +1170,23 @@ export default function GameDetails({ gameId }) {
         return `${baseClass} bg-gradient-to-r from-gray-400 to-gray-600 text-white`;
     }
   };
-
+// display game details page
   return (
-    <div className={`min-h-screen transition-colors duration-300 relative z-0 ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}>
-      <div
-        className={` text-center ${isDarkMode ? "text-white" : "text-gray-800"} `}
-      >
-        <h1 className="text-2xl sm:text-3xl font-bold dark:text-white bg-clip-text ">
-          Match Details
-        </h1>
-        <p
-          className={`text-sm md:text-base ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}
-            >
-              The details information about the selected match.
-            </p>
-          </div>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
-        
+    <div className={`min-h-screen transition-colors duration-300  relative z-0 ${isDarkMode ? "bg-gray-900" : "bg-gray-50"} `}>
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div
+          className={`mb-6 text-center ${isDarkMode ? "text-white" : "text-gray-800"}`}
+        >
+          <h1 className="text-2xl sm:text-3xl font-bold dark:text-white bg-clip-text">
+            Match Details
+          </h1>
+          <p
+            className={`text-sm md:text-base ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}
+          >
+            The details information about the selected match.
+          </p>
+        </div>
         {/* Header Section */}
         <div className={`rounded-lg shadow-sm mb-6 ${
           isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"

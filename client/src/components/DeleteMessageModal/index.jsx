@@ -24,7 +24,7 @@ const DeleteMessageModal = ({ show, onConfirm, onCancel, isDarkMode }) => {
             Delete Message
           </h3>
           <p className={`text-sm leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-            Are you sure you want to delete this message? This action cannot be undone and the message will be permanently removed.
+            Are you sure you want to delete this message? It will be removed from your view only. The other person will still see the message.
           </p>
         </div>
         

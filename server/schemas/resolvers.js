@@ -93,6 +93,50 @@ const validateOrganizationMembership = async (organizationId, userId) => {
 };
 
 const resolvers = {
+  // ############ TYPE RESOLVERS ########## //
+  // Profile type resolver to filter soft-deleted messages and track online status
+  Profile: {
+    receivedMessages: async (parent, _, context) => {
+      const userId = context.user?._id || parent._id;
+      try {
+        // Fetch messages where this profile is recipient, excluding soft-deleted ones
+        // Also filter out any null/invalid messages and ensure text field exists
+        const messages = await Message.find({
+          recipient: parent._id,
+          deletedBy: { $ne: userId },
+          text: { $exists: true, $ne: null } // Ensure text field exists and is not null
+        }).populate('sender').populate('recipient');
+        
+        // Filter out any messages with null sender/recipient (orphaned references)
+        return messages.filter(msg => msg && msg.text && msg.sender && msg.recipient);
+      } catch (error) {
+        console.error("Error fetching receivedMessages:", error);
+        return [];
+      }
+    },
+    sentMessages: async (parent, _, context) => {
+      const userId = context.user?._id || parent._id;
+      try {
+        // Fetch messages where this profile is sender, excluding soft-deleted ones
+        // Also filter out any null/invalid messages and ensure text field exists
+        const messages = await Message.find({
+          sender: parent._id,
+          deletedBy: { $ne: userId },
+          text: { $exists: true, $ne: null } // Ensure text field exists and is not null
+        }).populate('sender').populate('recipient');
+        
+        // Filter out any messages with null sender/recipient (orphaned references)
+        return messages.filter(msg => msg && msg.text && msg.sender && msg.recipient);
+      } catch (error) {
+        console.error("Error fetching sentMessages:", error);
+        return [];
+      }
+    },
+    online: (parent) => {
+      // parent._id may be an ObjectId, so convert to string for Set comparison
+      return onlineUsers.has(String(parent._id));
+    },
+  },
   // ############ QUERIES ########## //
   Query: {
     // ************************** QUERY ALL PROFILES *******************************************//
@@ -111,19 +155,13 @@ const resolvers = {
       }
 
       // Return only profiles that are members of the current organization
+      // Note: receivedMessages and sentMessages are NOT populated here
+      // They are resolved by the Profile type resolver which filters out soft-deleted messages
       const profiles = await Profile.find({ _id: { $in: org.members } })
-        .populate({
-          path: "receivedMessages",
-          populate: { path: "sender" },
-        })
         .populate("skills")
         .populate({
           path: "socialMediaLinks",
           populate: { path: "link" },
-        })
-        .populate({
-          path: "sentMessages",
-          populate: [{ path: "sender" }, { path: "recipient" }],
         })
         .populate({
           path: "posts",
@@ -137,11 +175,9 @@ const resolvers = {
       // Use organizationId from args if provided, otherwise use context
       const orgId = organizationId || context.organizationId;
       
+      // Note: receivedMessages and sentMessages are NOT populated here
+      // They are resolved by the Profile type resolver which filters out soft-deleted messages
       const profile = await Profile.findOne({ _id: profileId })
-        .populate({
-          path: "receivedMessages",
-          populate: { path: "sender" },
-        })
         .populate("skills")
         .populate({
           path: "socialMediaLinks",
@@ -166,15 +202,9 @@ const resolvers = {
     me: async (parent, args, context) => {
       if (context.user) {
         const userId = context.user._id;
+        // Note: receivedMessages and sentMessages are NOT populated here
+        // They are resolved by the Profile type resolver which filters out soft-deleted messages
         return Profile.findById(userId)
-          .populate({
-            path: "receivedMessages",
-            populate: { path: "sender" },
-          })
-          .populate({
-            path: "sentMessages",
-            populate: { path: "recipient" },
-          })
           .populate("skills")
           .populate({
             path: "socialMediaLinks",
@@ -197,8 +227,11 @@ const resolvers = {
       }
 
       try {
-        // Retrieve messages received by the authenticated user
-        const messages = await Message.find({ recipient: user._id });
+        // Retrieve messages received by the authenticated user, excluding soft-deleted ones
+        const messages = await Message.find({ 
+          recipient: user._id,
+          deletedBy: { $ne: user._id } // Exclude messages deleted by this user
+        });
         return messages;
       } catch (error) {
         console.error("Error fetching messages:", error);
@@ -1078,42 +1111,59 @@ const resolvers = {
       }
     },
     // ************************** REMOVE MESSAGE (its different functionality,not related to the chat functionality) *******************************************//
+    // Soft delete: Only removes the message from the current user's view
     removeMessage: async (parent, { messageId, organizationId }, context) => {
-      if (!context.user._id) {
+      console.log("removeMessage called with:", { messageId, organizationId, userId: context.user?._id });
+      
+      if (!context.user || !context.user._id) {
         throw new AuthenticationError("You need to be logged in!");
       }
 
       // Validate organizationId
       if (!organizationId || context.organizationId !== organizationId) {
+        console.log("Organization validation failed:", { contextOrgId: context.organizationId, providedOrgId: organizationId });
         throw new AuthenticationError("Invalid organization access");
       }
 
+      const me = context.user._id;
+
       try {
         const message = await Message.findById(messageId);
+        console.log("Found message:", message ? { _id: message._id, sender: message.sender, recipient: message.recipient, orgId: message.organizationId } : null);
+        
         if (!message) {
           throw new Error("Message not found");
         }
 
         // Validate message belongs to organization
         if (message.organizationId.toString() !== organizationId) {
+          console.log("Message org mismatch:", { messageOrgId: message.organizationId.toString(), providedOrgId: organizationId });
           throw new AuthenticationError("Message does not belong to this organization");
         }
 
-        const deletedMessage = await Message.findOneAndDelete({
-          _id: messageId,
-        });
-
-        if (!deletedMessage) {
-          throw new Error("Message not found");
+        // Verify user is sender or recipient of the message
+        if (message.sender.toString() !== me.toString() && message.recipient.toString() !== me.toString()) {
+          console.log("User not sender/recipient:", { sender: message.sender.toString(), recipient: message.recipient.toString(), userId: me.toString() });
+          throw new AuthenticationError("You can only delete your own messages");
         }
 
-        return deletedMessage; // Return the deleted message object
+        // Soft delete: Add current user to deletedBy array
+        const updatedMessage = await Message.findByIdAndUpdate(
+          messageId,
+          { $addToSet: { deletedBy: me } }, // Use addToSet to prevent duplicates
+          { new: true }
+        ).populate('sender').populate('recipient');
+
+        console.log("Message soft deleted successfully:", updatedMessage._id, "deletedBy:", updatedMessage.deletedBy);
+        
+        return updatedMessage;
       } catch (error) {
         console.error("Error deleting Message:", error);
         throw new Error("Error deleting Message.");
       }
     },
     // ************************** DELETE CONVERSATION HISTORY IN THE CHAT *******************************************//
+    // This mutation only soft-deletes Chat records (real-time chat feature)
     deleteConversation: async (_, { userId, organizationId }, context) => {
       if (!context.user) {
         throw new AuthenticationError("You must be logged in");
@@ -1132,7 +1182,7 @@ const resolvers = {
 
       const me = context.user._id;
       try {
-        // Add the current user's ID to the deletedBy array for all relevant chats
+        // Add the current user's ID to the deletedBy array for all relevant chats (soft delete)
         await Chat.updateMany(
           {
             organizationId: organizationId,
@@ -1144,18 +1194,88 @@ const resolvers = {
           },
           { $push: { deletedBy: me } }
         );
-        // remove every message where sender↔recipient is this pair within organization
-        await Message.deleteMany({
-          organizationId: organizationId,
-          $or: [
-            { sender: me, recipient: userId },
-            { sender: userId, recipient: me },
-          ],
-        });
         return true;
       } catch (error) {
-        console.error("Error deleting conversation:", error);
-        throw new Error("Error deleting conversation.");
+        console.error("Error deleting chat conversation:", error);
+        throw new Error("Error deleting chat conversation.");
+      }
+    },
+
+    // Alias for deleteConversation (for clarity in ChatPopup component)
+    deleteChatConversation: async (_, { userId, organizationId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You must be logged in");
+      }
+
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
+
+      // Validate user is member of organization
+      const org = await Organization.findById(organizationId);
+      if (!org || !org.isUserMember(context.user._id)) {
+        throw new AuthenticationError("You are not a member of this organization");
+      }
+
+      const me = context.user._id;
+      try {
+        // Add the current user's ID to the deletedBy array for all relevant chats (soft delete)
+        await Chat.updateMany(
+          {
+            organizationId: organizationId,
+            $or: [
+              { from: me, to: userId },
+              { from: userId, to: me },
+            ],
+            deletedBy: { $ne: me },
+          },
+          { $push: { deletedBy: me } }
+        );
+        return true;
+      } catch (error) {
+        console.error("Error deleting chat conversation:", error);
+        throw new Error("Error deleting chat conversation.");
+      }
+    },
+
+    // ************************** DELETE MESSAGE CONVERSATION (Inbox-style messages) *******************************************//
+    // This mutation soft-deletes Message records for the current user only
+    // The other user will still see the messages unless they also delete them
+    deleteMessageConversation: async (_, { userId, organizationId }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You must be logged in");
+      }
+
+      // Validate organizationId
+      if (!organizationId || context.organizationId !== organizationId) {
+        throw new AuthenticationError("Invalid organization access");
+      }
+
+      // Validate user is member of organization
+      const org = await Organization.findById(organizationId);
+      if (!org || !org.isUserMember(context.user._id)) {
+        throw new AuthenticationError("You are not a member of this organization");
+      }
+
+      const me = context.user._id;
+      try {
+        // Soft delete: Add current user to deletedBy array for all messages in this conversation
+        await Message.updateMany(
+          {
+            organizationId: organizationId,
+            $or: [
+              { sender: me, recipient: userId },
+              { sender: userId, recipient: me },
+            ],
+            deletedBy: { $ne: me }, // Only update messages not already deleted by this user
+          },
+          { $push: { deletedBy: me } }
+        );
+        return true;
+      } catch (error) {
+        console.error("Error deleting message conversation:", error);
+        throw new Error("Error deleting message conversation.");
       }
     },
 
@@ -2385,14 +2505,6 @@ If you didn't expect this invitation, you can safely ignore this email.
         "positions.player"
       );
     },
-  },
-  // ############  Type‐level resolvers for Profile ############## //
-  Profile: {
-    online: (parent) => {
-      // parent._id may be an ObjectId, so convert to string for Set comparison
-      return onlineUsers.has(String(parent._id));
-    },
-    // ...other field resolvers if needed...
   },
   // ############  Type‐level resolvers for Skill ############ //
   Skill: {

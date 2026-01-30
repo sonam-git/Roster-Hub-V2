@@ -155,7 +155,7 @@ const PostsList = ({ profileId, profile }) => {
           <p className="text-sm text-gray-600 dark:text-gray-400">
             {profile?.name 
               ? `${profile.name}'s posts will appear here.`
-              : "Posts1 will appear here soon."
+              : "Your posts will appear here."
             }
           </p>
         </div>

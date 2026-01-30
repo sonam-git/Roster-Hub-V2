@@ -186,7 +186,7 @@ const MessageCard = ({
               Delete Conversation
             </h3>
             <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-              Are you sure you want to delete your entire conversation with <strong>{conv.user.name}</strong>? This action cannot be undone.
+              Are you sure you want to delete your conversation with <strong>{conv.user.name}</strong>? Messages will be removed from your view only. {conv.user.name} will still see the messages.
             </p>
           </div>
           

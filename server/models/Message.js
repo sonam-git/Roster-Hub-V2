@@ -28,11 +28,12 @@ const messageSchema = new Schema({
     required: true,
     index: true,
   },
-  // deletedBy: [{
-  //   type: Schema.Types.ObjectId,
-  //   ref: 'Profile',
-  //   default: []
-  // }],
+  // Soft delete: track which users have deleted this message from their view
+  deletedBy: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Profile',
+    default: []
+  }],
 });
 
 // Indexes for efficient organization-scoped queries

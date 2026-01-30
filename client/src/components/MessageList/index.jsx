@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_ME, QUERY_PROFILES } from "../../utils/queries";
-import { REMOVE_MESSAGE, SEND_MESSAGE, DELETE_CONVERSATION } from "../../utils/mutations";
+import { REMOVE_MESSAGE, SEND_MESSAGE, DELETE_MESSAGE_CONVERSATION } from "../../utils/mutations";
 import { HiMail, HiPlus, HiChatAlt2, HiUsers } from "react-icons/hi";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import MessageBox from "../MessageBox";
@@ -13,22 +13,50 @@ import { useOrganization } from "../../contexts/OrganizationContext";
 
 const MessageList = ({ isLoggedInUser = false, isDarkMode }) => {
   const { currentOrganization } = useOrganization();
-  const { data: userData, loading: userLoading, error: userError } = useQuery(QUERY_ME);
+  const { data: userData, loading: userLoading, error: userError, refetch: refetchUser } = useQuery(QUERY_ME);
   const { data: profileData, loading: profilesLoading, error: profilesError } = useQuery(QUERY_PROFILES, {
     skip: !currentOrganization,
     variables: { organizationId: currentOrganization?._id }
   });
-  const [removeMessage] = useMutation(REMOVE_MESSAGE);
+  const [removeMessage] = useMutation(REMOVE_MESSAGE, {
+    refetchQueries: [{ query: QUERY_ME }],
+    onCompleted: (data) => {
+      console.log("Message soft deleted successfully:", data);
+      // Refetch to update the message list after soft delete
+      refetchUser();
+    },
+    onError: (error) => {
+      console.error("Error deleting message:", error);
+    },
+  });
   const [sendMessage] = useMutation(SEND_MESSAGE);
-  const [deleteConversation] = useMutation(DELETE_CONVERSATION, {
+  const [deleteMessageConversation] = useMutation(DELETE_MESSAGE_CONVERSATION, {
     refetchQueries: [{ query: QUERY_ME }],
     onError: (error) => {
-      console.error("Error deleting conversation:", error);
+      console.error("Error deleting message conversation:", error);
     },
   });
 
   const loggedInUser = userData?.me || {};
   const profiles = profileData?.profiles || [];
+
+  // Mark all received messages as read when component mounts or messages change
+  useEffect(() => {
+    const receivedMessages = loggedInUser.receivedMessages || [];
+    if (receivedMessages.length > 0) {
+      try {
+        const stored = localStorage.getItem('readMessageIds');
+        const existingIds = stored ? JSON.parse(stored) : [];
+        const newIds = receivedMessages.map(msg => msg._id);
+        const mergedIds = [...new Set([...existingIds, ...newIds])];
+        localStorage.setItem('readMessageIds', JSON.stringify(mergedIds));
+        // Trigger storage event for other tabs/components
+        window.dispatchEvent(new Event('storage'));
+      } catch (error) {
+        console.error('Error updating read messages:', error);
+      }
+    }
+  }, [loggedInUser.receivedMessages]);
 
   const allMessages = [
     ...(loggedInUser.receivedMessages || []),
@@ -105,12 +133,16 @@ const handleSendMessage = async (recipientId) => {
   };
 
   const handleDeleteMessage = (msgId) => {
+    console.log("handleDeleteMessage called with msgId:", msgId);
     setDeleteMessageId(msgId);
     setShowDeleteModal(true);
   };
 
   const confirmDeleteMessage = async () => {
-    if (!deleteMessageId) return;
+    if (!deleteMessageId) {
+      console.log("No deleteMessageId set");
+      return;
+    }
     
     if (!currentOrganization) {
       console.error('No organization selected');
@@ -118,19 +150,22 @@ const handleSendMessage = async (recipientId) => {
       return;
     }
     
+    console.log("Attempting to delete message:", deleteMessageId, "from org:", currentOrganization._id);
+    
     try {
-      await removeMessage({ 
+      const result = await removeMessage({ 
         variables: { 
           messageId: deleteMessageId,
           organizationId: currentOrganization._id
-        }, 
-        refetchQueries: [{ query: QUERY_ME }] 
+        }
       });
+      console.log("Delete mutation result:", result);
       setShowDeleteModal(false);
       setDeleteMessageId(null);
     } catch (error) {
       console.error('Error deleting message:', error);
       setShowDeleteModal(false);
+      setDeleteMessageId(null);
     }
   };
 
@@ -148,14 +183,14 @@ const handleSendMessage = async (recipientId) => {
     }
     
     try {
-      await deleteConversation({ 
+      await deleteMessageConversation({ 
         variables: { 
           userId,
           organizationId: currentOrganization._id
         } 
       });
     } catch (err) {
-      console.error("Error deleting conversation", err);
+      console.error("Error deleting message conversation", err);
     }
   };
 
