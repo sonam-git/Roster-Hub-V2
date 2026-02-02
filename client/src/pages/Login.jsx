@@ -1,7 +1,7 @@
 // src/pages/Login.jsx
 
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { GoogleLogin } from "@react-oauth/google";
 import { LOGIN_USER, LOGIN_WITH_GOOGLE, ADD_PROFILE } from "../utils/mutations";
@@ -9,13 +9,27 @@ import Auth from "../utils/auth";
 import { ThemeContext } from "../components/ThemeContext"; 
 
 const Login = () => {
-  const [loginMode, setLoginMode] = useState("login"); // "login" or "join"
+  const [searchParams] = useSearchParams();
+  const inviteCodeFromUrl = searchParams.get("inviteCode");
+  
+  const [loginMode, setLoginMode] = useState(inviteCodeFromUrl ? "join" : "login"); // "login" or "join"
   const [formState, setFormState] = useState({ 
     name: "",
     email: "", 
     password: "",
-    inviteCode: ""
+    inviteCode: inviteCodeFromUrl || ""
   });
+  
+  // If invite code is in URL, switch to join mode and fill the code
+  useEffect(() => {
+    if (inviteCodeFromUrl) {
+      setLoginMode("join");
+      setFormState(prev => ({ 
+        ...prev, 
+        inviteCode: inviteCodeFromUrl.trim().toUpperCase() 
+      }));
+    }
+  }, [inviteCodeFromUrl]);
   const [login] = useMutation(LOGIN_USER);
   const [addProfile] = useMutation(ADD_PROFILE);
   const [loginWithGoogle] = useMutation(LOGIN_WITH_GOOGLE);
@@ -224,7 +238,7 @@ const Login = () => {
                     type="button"
                     onClick={() => {
                       setLoginMode("login");
-                      setFormState({ name: "", email: "", password: "", inviteCode: "" });
+                      setFormState({ name: "", email: "", password: "", inviteCode: inviteCodeFromUrl || "" });
                       setError(null);
                     }}
                     className={`flex-1 py-2 px-4 rounded-md font-medium text-sm transition-all ${
@@ -239,7 +253,7 @@ const Login = () => {
                     type="button"
                     onClick={() => {
                       setLoginMode("join");
-                      setFormState({ name: "", email: "", password: "", inviteCode: "" });
+                      setFormState({ name: "", email: "", password: "", inviteCode: inviteCodeFromUrl || "" });
                       setError(null);
                     }}
                     className={`flex-1 py-2 px-4 rounded-md font-medium text-sm transition-all ${
