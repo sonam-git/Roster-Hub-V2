@@ -150,8 +150,6 @@ const handleSendMessage = async (recipientId) => {
       return;
     }
     
-    console.log("Attempting to delete message:", deleteMessageId, "from org:", currentOrganization._id);
-    
     try {
       const result = await removeMessage({ 
         variables: { 

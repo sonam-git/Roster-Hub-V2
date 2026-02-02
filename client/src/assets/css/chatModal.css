@@ -30,35 +30,7 @@
     top: 50% !important;
     left: 50% !important;
     transform: translate(-50%, -50%) !important;
-    /* background-color: white; */
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     z-index: 1000000 !important; /* Ensure modal content is above overlay and chat portal */
-    max-width: 90vw;
-  }
-  
-  /* Add margin-top on smaller screens to avoid top header */
-  @media (max-width: 480px) {
-    .modal-content {
-      top: 50% !important;
-      max-width: 95vw;
-      padding: 15px;
-    }
-  }
-
-  @media (min-width: 481px) and (max-width: 640px) {
-    .modal-content {
-      top: 50% !important;
-      max-width: 90vw;
-    }
-  }
-  
-  @media (min-width: 641px) and (max-width: 975px) {
-    .modal-content {
-      top: 50% !important;
-      max-width: 85vw;
-    }
   }
   
   /* Close Button */

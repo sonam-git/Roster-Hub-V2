@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { SEND_MESSAGE } from "../../utils/mutations";
 import Modal from "../Modal";
 import MessageSentModal from "../MessageSentModal";
@@ -14,7 +14,6 @@ const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode, skip
   const [error, setError] = useState(false);
   const [messageSent, setMessageSent] = useState(false);
   const [sendMessage] = useMutation(SEND_MESSAGE);
-  const { data } = useQuery(QUERY_ME);
 
   // Reset messageSent when component mounts (always reset on mount)
   useEffect(() => {
@@ -36,10 +35,6 @@ const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode, skip
     }
 
     try {
-      console.log('🔵 MessageBox: Sending message...');
-      console.log('🔵 skipSuccessModal:', skipSuccessModal);
-      console.log('🔵 skipNavigation:', skipNavigation);
-      
       await sendMessage({
         variables: {
           recipientId: recipient._id,
@@ -49,11 +44,10 @@ const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode, skip
         refetchQueries: [{ query: QUERY_ME }],
       });
       
-      console.log('✅ MessageBox: Message sent successfully');
+  
       
       // If skipSuccessModal is true, close immediately without showing success modal
       if (skipSuccessModal) {
-        console.log('⚠️ MessageBox: Skipping success modal, closing immediately');
         setMessage("");
         setError(false);
         onCloseModal(true); // Pass true to indicate message was sent
@@ -90,8 +84,6 @@ const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode, skip
     handleCloseModal(true); // Pass true to indicate cancellation
   };
 
-  const isSender = selectedMessage?.sender?._id === data?.me?._id;
-
   console.log('🟢 MessageBox RENDER - messageSent:', messageSent, 'skipSuccessModal:', skipSuccessModal, 'skipNavigation:', skipNavigation);
 
   return (
@@ -99,129 +91,146 @@ const MessageBox = ({ recipient, selectedMessage, onCloseModal, isDarkMode, skip
       <>
         {!messageSent ? (
           <Modal showModal={true} onClose={handleCloseModal}>
-            <div className={`rounded-2xl shadow-2xl p-8 border max-w-2xl w-full mx-4 ${
+            <div className={`rounded-lg shadow-lg border max-w-md w-full mx-4 overflow-hidden ${
               isDarkMode
-                ? "bg-gradient-to-br from-gray-800 to-gray-900 text-white border-gray-700"
-                : "bg-gradient-to-br from-white to-gray-50 text-gray-900 border-gray-200"
+                ? "bg-gray-800 border-gray-700"
+                : "bg-white border-gray-200"
             }`}>
               {/* Header */}
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-4">
+              <div className={`px-4 py-3 border-b flex items-center justify-between ${
+                isDarkMode ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200"
+              }`}>
+                <div className="flex items-center gap-3">
                   <div className="relative">
                     <img
                       src={recipient.profilePic || ProfileAvatar}
                       alt={recipient.name}
-                      className="w-12 h-12 rounded-full object-cover border-2 border-blue-400 shadow-md"
+                      className={`w-10 h-10 rounded-full object-cover border-2 ${
+                        isDarkMode ? "border-gray-600" : "border-gray-300"
+                      }`}
                     />
-                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+                    <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 ${
+                      isDarkMode ? "border-gray-800" : "border-white"
+                    }`}></div>
                   </div>
                   <div>
-                    <h3 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                    <h3 className={`text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                       {selectedMessage ? (
-                        <span className="flex items-center gap-2">
-                          <HiReply className="w-5 h-5 text-blue-500" />
+                        <span className="flex items-center gap-1.5">
+                          <HiReply className="w-4 h-4 text-blue-500" />
                           Reply to {recipient.name}
                         </span>
                       ) : (
-                        <span className="flex items-center gap-2">
-                          <HiUser className="w-5 h-5 text-blue-500" />
+                        <span className="flex items-center gap-1.5">
+                          <HiUser className="w-4 h-4 text-blue-500" />
                           Message {recipient.name}
                         </span>
                       )}
                     </h3>
-                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                      {selectedMessage ? 'Replying to a message' : 'Starting a new conversation'}
+                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      {selectedMessage ? 'Replying to a message' : 'New conversation'}
                     </p>
                   </div>
                 </div>
                 
                 <button
                   onClick={handleCancel}
-                  className={`p-2 rounded-full transition-all duration-200 hover:scale-110 ${
+                  className={`p-1.5 rounded-md transition-colors ${
                     isDarkMode 
                       ? 'text-gray-400 hover:bg-gray-700 hover:text-white' 
                       : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
                   }`}
                 >
-                  <HiX className="w-6 h-6" />
+                  <HiX className="w-5 h-5" />
                 </button>
               </div>
 
-              {selectedMessage ? (
-                <div
-                  className={`p-3 rounded-md mb-4 max-h-56 overflow-y-auto message-scroll-container scrollbar-thin ${
-                    isDarkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-black"
-                  }`}
-                >
-                  <div className="mb-3">
-                    <p className="font-semibold mb-1">
-                      {selectedMessage.sender?.name || "Sender"}
-                    </p>
-                    <p
-                      className={`p-2 rounded-md text-sm ${
-                        isSender ? "bg-blue-500 text-white" : "bg-gray-500 text-white"
-                      }`}
-                    >
-                      {selectedMessage.text}
-                    </p>
-                    <p className="text-xs mt-1 text-gray-400">
-                      {selectedMessage.createdAt || ""}
-                    </p>
+              {/* Body */}
+              <div className="p-4 space-y-4">
+                {selectedMessage && (
+                  <div className={`p-3 rounded-lg border ${
+                    isDarkMode ? "bg-gray-700/50 border-gray-600" : "bg-gray-50 border-gray-200"
+                  }`}>
+                    <div className="flex items-start gap-2">
+                      <div className="flex-1">
+                        <p className={`text-xs font-medium mb-1 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                          {selectedMessage.sender?.name || "Sender"}
+                        </p>
+                        <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                          {selectedMessage.text}
+                        </p>
+                        <p className={`text-xs mt-1.5 ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}>
+                          {selectedMessage.createdAt || ""}
+                        </p>
+                      </div>
+                    </div>
                   </div>
+                )}
+
+                {!selectedMessage && (
+                  <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
+                    Start a new conversation with {recipient.name}
+                  </p>
+                )}
+
+                <div>
+                  <label className={`block text-xs font-medium mb-1.5 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                    Your message
+                  </label>
+                  <textarea
+                    value={message}
+                    onChange={(e) => {
+                      setMessage(e.target.value);
+                      if (error && e.target.value.trim() !== "") {
+                        setError(false);
+                      }
+                    }}
+                    placeholder="Type your message..."
+                    rows={4}
+                    className={`w-full px-3 py-2 rounded-md border text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${
+                      error 
+                        ? isDarkMode
+                          ? "border-red-500 bg-red-900/20 text-white placeholder-gray-400"
+                          : "border-red-500 bg-red-50 text-gray-900 placeholder-gray-500"
+                        : isDarkMode
+                          ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400"
+                          : "border-gray-300 bg-white text-gray-900 placeholder-gray-500"
+                    }`}
+                  />
                 </div>
-              ) : (
-                <p className="mb-4 text-sm italic">
-                  You’re starting a new message to {recipient.name}.
-                </p>
-              )}
 
-              <textarea
-                value={message}
-                onChange={(e) => {
-                  setMessage(e.target.value);
-                  if (error && e.target.value.trim() !== "") {
-                    setError(false);
-                  }
-                }}
-                placeholder="Type your message..."
-                rows={4}
-                className={`w-full p-4 rounded-2xl border-2 focus:outline-none focus:ring-2 transition-all duration-200 resize-none ${
-                  error 
-                    ? isDarkMode
-                      ? "border-red-500 focus:border-red-400 focus:ring-red-400/20 bg-gray-700 text-white placeholder-gray-400"
-                      : "border-red-500 focus:border-red-400 focus:ring-red-400/20 bg-white text-gray-900 placeholder-gray-500"
-                    : isDarkMode
-                      ? "border-gray-600 focus:border-blue-400 focus:ring-blue-400/20 bg-gray-700 text-white placeholder-gray-400"
-                      : "border-gray-300 focus:border-blue-400 focus:ring-blue-400/20 bg-white text-gray-900 placeholder-gray-500"
-                }`}
-              />
+                {error && (
+                  <div className={`flex items-center gap-2 px-3 py-2 rounded-md border text-sm ${
+                    isDarkMode 
+                      ? 'bg-red-900/20 border-red-800 text-red-400' 
+                      : 'bg-red-50 border-red-200 text-red-700'
+                  }`}>
+                    <HiExclamationCircle className="w-4 h-4 flex-shrink-0" />
+                    <p>Please write your message first.</p>
+                  </div>
+                )}
+              </div>
 
-              {error && (
-                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg mb-4 ${
-                  isDarkMode ? 'bg-red-900/20 border border-red-800/30' : 'bg-red-50 border border-red-200'
-                }`}>
-                  <HiExclamationCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
-                  <p className="text-sm text-red-500">Please write your message first.</p>
-                </div>
-              )}
-
-              <div className="flex gap-3 pt-2">
+              {/* Footer */}
+              <div className={`px-4 py-3 border-t flex justify-end gap-3 ${
+                isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-gray-50 border-gray-200"
+              }`}>
                 <button
                   onClick={handleCancel}
-                  className={`flex-1 px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 ${
+                  className={`px-4 py-2 rounded-md text-sm font-medium border transition-colors ${
                     isDarkMode
-                      ? 'bg-gray-700 hover:bg-gray-600 text-white'
-                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                      ? 'bg-gray-700 hover:bg-gray-600 text-gray-300 border-gray-600'
+                      : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-300'
                   }`}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSendMessage}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-medium transition-all duration-200 hover:scale-105 flex items-center justify-center gap-2 shadow-lg hover:shadow-blue-500/25"
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors flex items-center gap-2"
                 >
                   <HiPaperAirplane className="w-4 h-4 transform rotate-90" />
-                  Send Message
+                  Send
                 </button>
               </div>
             </div>

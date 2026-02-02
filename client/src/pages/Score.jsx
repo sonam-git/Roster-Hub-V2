@@ -119,7 +119,7 @@ export default function Score() {
                 return (
                   <div
                     key={code}
-                    className="p-4 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150"
+                    className="p-4 hover:bg-blue-100 dark:hover:bg-gray-700 transition-colors duration-150"
                   >
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-center gap-3 min-w-0 flex-1">
